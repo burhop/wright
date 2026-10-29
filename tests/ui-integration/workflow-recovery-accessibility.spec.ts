@@ -163,7 +163,7 @@ test("keeps the complete screen-reader contract available at a two-times page sc
     page.getByRole("button", { name: "Open Approved CAD model output" }),
   ).toHaveCount(0);
   await expect(
-    page.getByRole("button", { name: "Fit workflow to view" }),
+    page.getByRole("button", { name: "Show all steps" }),
   ).toBeVisible();
   await page.getByTestId("workflow-recovery-block-block.review-design").focus();
   await page.keyboard.press("Enter");

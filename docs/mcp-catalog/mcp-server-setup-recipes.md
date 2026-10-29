@@ -2908,3 +2908,7 @@ selected environment plus its uv-managed Python tree; use the discovered
 read-only STEP inputs. Direct MCP and fixture-catalog gateway meshing succeeded;
 strength and live enrollment remain unqualified. Do not add these prerequisites
 to Wright's base image or claim catalog-wide validation.
+
+## Bambu P1S MCP offline slicing
+
+Use the [offline slicing guide](usage-guides/bambu-p1s-mcp.md) and exact catalog provider revision. Keep selected native slicer software in its own environment/container. For the GB10 qualification, verify the official OrcaSlicer ARM64 release digest before installation and test the pinned MCP's CLI compatibility. Pin the actual P1S machine, PETG filament and process profiles; the provider's PLA defaults do not satisfy the handle requirements. Runtime containers have no network or printer credentials. Only bounded offline slicing is in scope. Existing Windows coupon evidence does not qualify this ARM64 setup; full catalog clean-container status remains incomplete.

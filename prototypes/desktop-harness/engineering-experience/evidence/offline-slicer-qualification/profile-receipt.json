@@ -1,0 +1,74 @@
+{
+  "scope": "offline coupon qualification only, not accepted handle profiles",
+  "sources": [
+    {
+      "path": "/opt/orca/resources/profiles/BBL/machine/Bambu Lab P1S 0.4 nozzle.json",
+      "sha256": "3e72ef1682406940986edb1ebd7d3b2c99afe59789b9c9389ffbdf6831e07b6a"
+    },
+    {
+      "path": "/opt/orca/resources/profiles/BBL/machine/fdm_bbl_3dp_001_common.json",
+      "sha256": "e90597a202d5461a2f8636a06c35409cffc79a2c1991bb726c6e465e9a0bd26c"
+    },
+    {
+      "path": "/opt/orca/resources/profiles/BBL/machine/fdm_machine_common.json",
+      "sha256": "cdcaa5e5061934a9b960c94e203cc7d1e3b869a407182644f2dda9fdcbf5c2b3"
+    },
+    {
+      "path": "/opt/orca/resources/profiles/BBL/process/0.20mm Standard @BBL X1C.json",
+      "sha256": "1b2b5e890d042ba34abe317cd443fd1190e095912240dc65ce8596558cdc7453"
+    },
+    {
+      "path": "/opt/orca/resources/profiles/BBL/process/fdm_process_single_0.20.json",
+      "sha256": "b26b4c110e0f44dc25985af0acb2deb00d7d1b3eba57b8d2241ad8106fc8e034"
+    },
+    {
+      "path": "/opt/orca/resources/profiles/BBL/process/fdm_process_single_common.json",
+      "sha256": "59fc5ca43dcf9850076708b8ca14b7f9098fe90b9b32ceffc6741b4fcaf3e73e"
+    },
+    {
+      "path": "/opt/orca/resources/profiles/BBL/process/fdm_process_common.json",
+      "sha256": "398fcb322a7f459edab00cb2daf524345a19b8cef074415af52f377f91e4bd5b"
+    },
+    {
+      "path": "/opt/orca/resources/profiles/BBL/filament/Generic PETG.json",
+      "sha256": "12185605cae0f69442ca848bf488045b3ebf05273187dfb88fc44795e5150727"
+    },
+    {
+      "path": "/opt/orca/resources/profiles/BBL/filament/Generic PETG @base.json",
+      "sha256": "a8742f2dc6f1d73f8affe69eb12fefe3e16f0da5e7054c09cea400c145398708"
+    },
+    {
+      "path": "/opt/orca/resources/profiles/BBL/filament/fdm_filament_pet.json",
+      "sha256": "9d49bae4fd046871c7ea9254af61c9c2e02fa343e15b3ff8d755ab0dd49bebe4"
+    },
+    {
+      "path": "/opt/orca/resources/profiles/BBL/filament/fdm_filament_common.json",
+      "sha256": "05725cc129f96ea903dc77c40d248fa1bd0137cfc41216d09d952cfdd37d3683"
+    }
+  ],
+  "profiles": {
+    "machine": {
+      "file": "machine.json",
+      "sha256": "592792d59f9a6c472c122feffc2f6c1dcd3ad595631b815d388e35943a3c318f",
+      "name": "Bambu Lab P1S 0.4 nozzle",
+      "overrides": {}
+    },
+    "process": {
+      "file": "process.json",
+      "sha256": "8580f608ce201aa0b14da2226d43d787d00a45be8e32d7cde9d261b7032acede",
+      "name": "0.20mm Standard @BBL X1C",
+      "overrides": {
+        "wall_loops": "5",
+        "sparse_infill_density": "40%",
+        "layer_height": "0.2",
+        "curr_bed_type": "Textured PEI Plate"
+      }
+    },
+    "filament": {
+      "file": "filament.json",
+      "sha256": "e9b822d4074fc69530de0508c37dbf9fe97d53e967f3d5229e10243c3140df29",
+      "name": "Generic PETG",
+      "overrides": {}
+    }
+  }
+}

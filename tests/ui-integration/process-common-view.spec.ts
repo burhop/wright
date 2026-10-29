@@ -28,7 +28,7 @@ end
   const walk = processWalkthrough(page, testInfo);
   const common = page.getByTestId("common-process-view");
   const prepare = page.getByRole("button", {name: "Prepare and check inputs", exact: true});
-  const start = page.getByRole("button", {name: "Start process", exact: true});
+  const start = page.getByRole("button", {name: "Start workflow", exact: true});
   await walk.step({id:"S01", label:"Normal workspace and accepted process", purpose:"Use Wright's existing authoring entry.", action:"Open the isolated workspace and click Workflows.", controls:["Workflows"], expected:"The accepted process opens in the existing editor.", actual:"The normal workspace editor opens; no run is submitted."},
     () => openRecoveryEditor(page), async () => {expect(fixture.starts()).toBe(0);});
   await walk.step({id:"S02", label:"Common working tab", purpose:"Inspect the optional shared interface on the same process.", action:"Click Use saved process.", controls:["Use saved process"], expected:"Inputs and preparation controls open in a workspace tab.", actual:"The common view shows Design request and Reference image; starting is disabled."},
@@ -59,10 +59,10 @@ end
   await walk.step({id:"S05", label:"Transfer finishes before preparation", purpose:"Retain an exact scoped file reference.", action:"Wait for the file upload to complete.", controls:["Prepare and check inputs"], expected:"Preparation becomes available after the scoped upload reply.", actual:"The upload's original SHA-256 and process scope are retained; the thumbnail stays visible."},
     async () => {fixture.releaseImageUpload();},
     async () => {await expect(prepare).toBeEnabled(); await expect(common.getByText("Preparing file…",{exact:true})).toHaveCount(0); await expect(common.getByRole("alert")).toHaveCount(0); expect(fixture.uploads()).toHaveLength(1); expect(fixture.uploads()[0].sha256).toBe(createHash("sha256").update(bitmap).digest("hex"));});
-  await walk.step({id:"S06", label:"Check all supplied inputs", purpose:"Prepare immutable run inputs before starting.", action:"Click Prepare and check inputs.", controls:["Prepare and check inputs"], expected:"The exact prompt and file binding are prepared, then start becomes permitted.", actual:"Prepared inputs contain the same uploaded reference and Start process is enabled."},
+  await walk.step({id:"S06", label:"Check all supplied inputs", purpose:"Prepare immutable run inputs before starting.", action:"Click Prepare and check inputs.", controls:["Prepare and check inputs"], expected:"The exact prompt and file binding are prepared, then start becomes permitted.", actual:"Prepared inputs contain the same uploaded reference and Start workflow is enabled."},
     async () => {await prepare.click();},
     async () => {await expect(start).toBeEnabled(); expect(fixture.preparedInput()?.bindings?.find(value => value.input_id === "reference")).toMatchObject({kind:"file",reference:fixture.uploads()[0]});});
-  await walk.step({id:"S07", label:"Observe the recorded run", purpose:"Show backend-supplied activity, progress and observation provenance.", action:"Click Start process and open Observation details.", controls:["Start process","Observation details"], expected:"The returned run is attached once and the observed activity/percentage/provider are shown.", actual:"The exact run attaches; 20 percent observed completion and the controlled provider/activity are visible without guessed completion."},
+  await walk.step({id:"S07", label:"Observe the recorded run", purpose:"Show backend-supplied activity, progress and observation provenance.", action:"Click Start workflow and open Observation details.", controls:["Start workflow","Observation details"], expected:"The returned run is attached once and the observed activity/percentage/provider are shown.", actual:"The exact run attaches; 20 percent observed completion and the controlled provider/activity are visible without guessed completion."},
     async () => {await start.click(); await common.getByText("Observation details",{exact:true}).click();},
     async () => {await expect(page.getByTestId("workspace-process-view")).toHaveAttribute("data-run-id",fixtureRunId); await expect(common.getByRole("progressbar",{name:"Observed completion"})).toHaveAttribute("value","20"); await expect(common.getByText("Preparing the controlled fixture report",{exact:true})).toBeVisible(); await expect(common.getByText("Provider: controlled-browser-fixture",{exact:true})).toBeVisible(); expect(fixture.starts()).toBe(1);});
   await walk.step({id:"S08", label:"Inspect completion and scoped accessibility", purpose:"Present a completed recorded result while retaining evidence limits.", action:"Wait for completion, refresh, then expand Completed · Run details.", controls:["Refresh view","Completed · Run details"], expected:"Recorded completion and the exact result appear; common controls pass the scoped automated accessibility scan.", actual:"Completion and the saved result are visible before expanding run details; 100 percent last reported remains inspectable. Scoped WCAG A/AA scanning finds zero violations."},
@@ -118,10 +118,10 @@ test("shows an unattended-input diagnostic without inventing a form and reopens 
     .getByRole("button", { name: "Prepare and check inputs", exact: true })
     .click();
   await expect(
-    page.getByRole("button", { name: "Start process", exact: true }),
+    page.getByRole("button", { name: "Start workflow", exact: true }),
   ).toBeEnabled();
   await page
-    .getByRole("button", { name: "Start process", exact: true })
+    .getByRole("button", { name: "Start workflow", exact: true })
     .click();
   await expect(page.getByTestId("workspace-process-view")).toHaveAttribute(
     "data-run-id",
@@ -189,7 +189,7 @@ test("uses the normal workspace to prepare, follow and inspect an exact run whil
   await page.getByRole("tab").filter({ hasText: "mounting-bracket" }).last().click();
   await expect(common).toBeVisible();
   await expect(
-    page.getByRole("button", { name: "Start process", exact: true }),
+    page.getByRole("button", { name: "Start workflow", exact: true }),
   ).toBeDisabled();
   expect(fixture.starts()).toBe(0);
   await page
@@ -201,7 +201,7 @@ test("uses the normal workspace to prepare, follow and inspect an exact run whil
     }),
   ).toBeVisible();
   await expect(
-    page.getByRole("button", { name: "Start process", exact: true }),
+    page.getByRole("button", { name: "Start workflow", exact: true }),
   ).toBeDisabled();
   await page
     .getByLabel("Design request (required)")
@@ -213,10 +213,10 @@ test("uses the normal workspace to prepare, follow and inspect an exact run whil
     page.getByRole("button", { name: "Preparing and checking…", exact: true }),
   ).toBeVisible();
   await expect(
-    page.getByRole("button", { name: "Start process", exact: true }),
+    page.getByRole("button", { name: "Start workflow", exact: true }),
   ).toBeEnabled();
   await page
-    .getByRole("button", { name: "Start process", exact: true })
+    .getByRole("button", { name: "Start workflow", exact: true })
     .click();
   await expect(page.getByTestId("workspace-process-view")).toHaveAttribute(
     "data-run-id",
@@ -324,10 +324,10 @@ test("reconciles a lost start acknowledgement after reload using the original re
     .getByRole("button", { name: "Prepare and check inputs", exact: true })
     .click();
   await expect(
-    page.getByRole("button", { name: "Start process", exact: true }),
+    page.getByRole("button", { name: "Start workflow", exact: true }),
   ).toBeEnabled();
   await page
-    .getByRole("button", { name: "Start process", exact: true })
+    .getByRole("button", { name: "Start workflow", exact: true })
     .click();
   await expect(
     page.getByRole("button", { name: "Reconcile start request", exact: true }),
@@ -338,7 +338,7 @@ test("reconciles a lost start acknowledgement after reload using the original re
     page.getByRole("button", { name: "Reconcile start request", exact: true }),
   ).toBeVisible();
   await expect(
-    page.getByRole("button", { name: "Start process", exact: true }),
+    page.getByRole("button", { name: "Start workflow", exact: true }),
   ).toBeDisabled();
   expect(fixture.starts()).toBe(1);
   await page

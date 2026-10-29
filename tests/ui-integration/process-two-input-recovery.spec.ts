@@ -187,7 +187,7 @@ for (const scenario of ["accepted", "lost", "schema", "stale"] as const) {
       .getByRole("button", { name: "Prepare and check inputs", exact: true })
       .click();
     await page
-      .getByRole("button", { name: "Start process", exact: true })
+      .getByRole("button", { name: "Start workflow", exact: true })
       .click();
     const common = page.getByTestId("common-process-view");
     await expect(
