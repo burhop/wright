@@ -4359,3 +4359,13 @@
   padding: 0 10px;
   font-size: 13px;
 }
+
+/* File destinations are short inspector fields, not a second prompt editor. */
+.workflow-recovery .recovery-task-output-files :is(h3, p) {
+  margin: 0;
+}
+.workflow-recovery--redesign
+  .recovery-authoring-settings__prompt
+  textarea[data-testid="workflow-recovery-task-result"] {
+  min-height: 4.5em;
+}

@@ -1419,3 +1419,13 @@ managed CAD/application exports and image contracts. The independent reviewer
 requires readable output labels, unchanged instructions/connections, additional
 expected files, run/attempt templates, save/reopen and Undo/Redo; mapping alone
 must not imply that a provider's export capability is qualified.
+
+
+Output-file authoring correction is implemented through the shared inspector and
+existing expected-file mapping contract. Missing AI file mappings now block before
+execution and identify the affected step. Independent review corrected multiline
+typing and navigation; actual disposable storage save/reopen, narrow layout,
+Undo/Redo and focused export regressions pass. Evidence:
+`prototypes/desktop-harness/engineering-experience/evidence/output-file-authoring/`.
+The full gate and one broader browser failure remain unresolved; no install or
+engineering qualification is claimed.

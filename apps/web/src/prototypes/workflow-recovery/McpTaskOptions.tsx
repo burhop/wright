@@ -5,6 +5,7 @@ import {
 import { cadModelTypes, mcpServerChoices } from "./mcp-server-blocks";
 import { useEffect, useState } from "react";
 import type { RecoveryBlock, RecoveryWorkflow } from "./model";
+import { TaskOutputFiles } from "./TaskOutputFiles";
 import { CadTaskOptions } from "./CadTaskOptions";
 import { ApplicationTaskOptions } from "./ApplicationTaskOptions";
 import type { RecoveryCommand } from "./command-system";
@@ -285,24 +286,40 @@ export function McpTaskOptions({
           onChange={(e) => config("expected_result", e.target.value)}
         />
       </label>
+      {!block.configuration.cad &&
+        !block.configuration.application_resource &&
+        !block.configuration.image_output && (
+          <TaskOutputFiles
+            block={block}
+            workflow={workflow}
+            readOnly={readOnly}
+            onApply={onApply}
+          />
+        )}
       <details>
         <summary>Additional guidance and limits</summary>
-        {!block.configuration.cad && !block.configuration.image_output && (
-          <label>
-            Files the tools must produce
-            <textarea
-              rows={2}
-              value={String(block.configuration.expected_files ?? "")}
-              readOnly={readOnly}
-              onChange={(e) => config("expected_files", e.target.value)}
-              placeholder="Optional workspace paths, one per line"
-            />
-            <small>
-              Wright checks these files exist and are non-empty before reporting
-              completion.
-            </small>
-          </label>
-        )}
+        {!block.configuration.cad &&
+          !block.configuration.image_output &&
+          !workflow.ports.some(
+            (port) =>
+              block.outputPortIds.includes(port.id) &&
+              port.typeId === "type.file.workspace",
+          ) && (
+            <label>
+              Files the tools must produce
+              <textarea
+                rows={2}
+                value={String(block.configuration.expected_files ?? "")}
+                readOnly={readOnly}
+                onChange={(e) => config("expected_files", e.target.value)}
+                placeholder="Optional workspace paths, one per line"
+              />
+              <small>
+                Wright checks these files exist and are non-empty before
+                reporting completion.
+              </small>
+            </label>
+          )}
         <label>
           Tool guidance
           <textarea

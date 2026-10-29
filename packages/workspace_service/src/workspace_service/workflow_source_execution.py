@@ -824,12 +824,20 @@ def compile_prompt_workflow(source: str) -> PromptWorkflow:
             for port, path in file_ports.items()
         ):
             raise _invalid(f"{title}: map file outputs to declared expected files.")
-        if is_mcp and declared_file_ports and expected_files:
-            if not file_ports and len(declared_file_ports) == len(expected_files) == 1:
+        if (is_mcp and declared_file_ports and expected_files) or (
+            agent_task and declared_file_ports and not cad and not application
+        ):
+            if (
+                is_mcp
+                and not file_ports
+                and len(declared_file_ports) == len(expected_files) == 1
+            ):
                 file_ports = {next(iter(declared_file_ports)): expected_files[0]}
             if declared_file_ports != set(file_ports):
                 raise _invalid(
-                    f"{title}: map each file output to one exact expected file."
+                    f"{title}: map each file output to one exact expected file.",
+                    "Choose a filename for each output in this step’s Output files section.",
+                    block_id=block_id,
                 )
         image_output = settings.get("image_output", "")
         if image_output:

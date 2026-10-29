@@ -127,7 +127,7 @@ function diagnostic(
   return { code, explanation, correction, semanticId, line };
 }
 
-function stableKey(id: string): string {
+export function stableKey(id: string): string {
   const suffix = id.includes(".") ? id.slice(id.indexOf(".") + 1) : id;
   // canonicalId maps each source underscore to one hyphen. Preserve that
   // one-to-one mapping: repeated/trailing underscores are legal source keys
