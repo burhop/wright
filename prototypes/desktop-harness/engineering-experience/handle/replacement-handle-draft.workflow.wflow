@@ -165,13 +165,27 @@ task slice_orientations
   reusable_step: null
 end
 
+task retain_slice_observations
+  name: "Retain the recorded slice evidence"
+  purpose: "Preserve both observed slice operations as an exact file for package inspection."
+  step_type: "work"
+  group: null
+  performed_by: "configured_tool"
+  inputs: [{"description":"Recorded slice responses","item":null,"key":"retention_observations","kind":"engineering_document","name":"Recorded slice responses","quantity":"one","required":true}]
+  outputs: [{"description":"Recorded slice evidence file","item":null,"key":"retained_observations","kind":"workspace_file","name":"Recorded slice evidence file","quantity":"one","required":true},{"description":"Evidence retention receipt","item":null,"key":"retention_receipt","kind":"engineering_document","name":"Evidence retention receipt","quantity":"one","required":true}]
+  instructions: "Retain the connected recorded response unchanged. This file is evidence of observed calls, not an engineering approval. Never overwrite earlier evidence."
+  settings: {"authoring_template":"mcp-tool","mcp_server":"wright-workspace-files","mcp_tool":"wright-workspace-files__write_text_document","mcp_schema_digest":"66c045c726240dd539b71339450e63e3056b4cf2c8d30954d407c027a17b0b12","mcp_arguments":"{\"relativePath\": \"results/{{wright.run_id}}/slice-observations/recorded-responses.json\", \"mediaType\": \"application/json\", \"overwrite\": false}","mcp_arguments_source":"fields","mcp_argument_ports":"{\"retention_observations\": \"content\"}","timeout_seconds":60,"output_format":"json","save_output":true,"output_filename":"results/{{wright.run_id}}/slice-observations/retention-receipt.json","file_policy":"indexed","run_path_template":"wright.run-path/1","expected_files":"results/{{wright.run_id}}/slice-observations/recorded-responses.json","expected_file_ports":{"retained_observations":"results/{{wright.run_id}}/slice-observations/recorded-responses.json"}}
+  tool: null
+  reusable_step: null
+end
+
 task manufacturing
   name: "Inspect alternatives and select the print package"
   purpose: "Compare the requested orientations using repaired geometry and prepare the selected digital print package."
   step_type: work
   group: null
   performed_by: configured_tool
-  inputs: [{"description":"Manufacturing requirements","item":null,"key":"manufacturing_spec","kind":"engineering_document","name":"Manufacturing requirements","quantity":"one","required":true},{"description":"Exact repaired mesh","item":null,"key":"manufacturing_mesh","kind":"workspace_file","name":"Repaired mesh","quantity":"one","required":true},{"description":"Strength checks","item":null,"key":"manufacturing_strength","kind":"engineering_document","name":"Strength checks","quantity":"one","required":true},{"description":"Mesh changes and geometry checks","item":null,"key":"manufacturing_repair_changes","kind":"engineering_document","name":"Mesh changes and geometry checks","quantity":"one","required":true},{"description":"Pads-down slice package","item":null,"key":"manufacturing_pads_package","kind":"workspace_file","name":"Pads-down slice package","quantity":"one","required":true},{"description":"Side-orientation slice package","item":null,"key":"manufacturing_side_package","kind":"workspace_file","name":"Side-orientation slice package","quantity":"one","required":true},{"description":"Actual slice responses","item":null,"key":"manufacturing_slice_responses","kind":"engineering_document","name":"Actual slice responses","quantity":"one","required":true},{"description":"Orientation transforms","item":null,"key":"manufacturing_orientations","kind":"engineering_document","name":"Orientation transforms","quantity":"one","required":true},{"description":"Exact pads-down slice input","item":null,"key":"manufacturing_pads_mesh","kind":"workspace_file","name":"Exact pads-down slice input","quantity":"one","required":true},{"description":"Exact side-orientation slice input","item":null,"key":"manufacturing_side_mesh","kind":"workspace_file","name":"Exact side-orientation slice input","quantity":"one","required":true}]
+  inputs: [{"description":"Manufacturing requirements","item":null,"key":"manufacturing_spec","kind":"engineering_document","name":"Manufacturing requirements","quantity":"one","required":true},{"description":"Exact repaired mesh","item":null,"key":"manufacturing_mesh","kind":"workspace_file","name":"Repaired mesh","quantity":"one","required":true},{"description":"Strength checks","item":null,"key":"manufacturing_strength","kind":"engineering_document","name":"Strength checks","quantity":"one","required":true},{"description":"Mesh changes and geometry checks","item":null,"key":"manufacturing_repair_changes","kind":"engineering_document","name":"Mesh changes and geometry checks","quantity":"one","required":true},{"description":"Pads-down slice package","item":null,"key":"manufacturing_pads_package","kind":"workspace_file","name":"Pads-down slice package","quantity":"one","required":true},{"description":"Side-orientation slice package","item":null,"key":"manufacturing_side_package","kind":"workspace_file","name":"Side-orientation slice package","quantity":"one","required":true},{"description":"Actual slice responses","item":null,"key":"manufacturing_slice_responses","kind":"engineering_document","name":"Actual slice responses","quantity":"one","required":true},{"description":"Orientation transforms","item":null,"key":"manufacturing_orientations","kind":"engineering_document","name":"Orientation transforms","quantity":"one","required":true},{"description":"Exact pads-down slice input","item":null,"key":"manufacturing_pads_mesh","kind":"workspace_file","name":"Exact pads-down slice input","quantity":"one","required":true},{"description":"Exact side-orientation slice input","item":null,"key":"manufacturing_side_mesh","kind":"workspace_file","name":"Exact side-orientation slice input","quantity":"one","required":true},{"description":"Exact recorded slice evidence","item":null,"key":"manufacturing_observation_file","kind":"workspace_file","name":"Exact recorded slice evidence","quantity":"one","required":true}]
   outputs: [{"description":"Slice package","item":null,"key":"manufacturing_package","kind":"workspace_file","name":"Slice package","quantity":"one","required":true},{"description":"Supports and toolpath preview","item":null,"key":"manufacturing_preview","kind":"workspace_file","name":"Supports and toolpath preview","quantity":"one","required":true},{"description":"Manufacturing changes and selected orientation","item":null,"key":"manufacturing_changes","kind":"engineering_document","name":"Manufacturing changes and selected orientation","quantity":"one","required":true}]
   instructions: "Inspect both exact upstream slice packages and their recorded responses against the reviewed specification and pinned profiles. Compare actual support-contact evidence, nominal toolpaths, material usage, duration and manufacturing risks where measured; disclose missing metrics rather than fabricate a comparison. Retain alternatives and explain the selection. Retain the chosen package byte-for-byte with its original producer path and hash, and extract its actual native preview; do not synthesize a substitute image. Carry original CAD, repaired geometry, orientation transforms and repair changes into the selection record for downstream analysis-applicability checks. A changed orientation or geometry requires applicable strength evidence. Do not slice again, silently alter profiles, upload or print. If mandatory checks or evidence are unavailable, report blocked."
   settings: {"qualification_status":"independent_package_inspection_and_selection_binding_required","requested_capability":"Inspect both exact slice packages, compare supports, select and retain the chosen package with lineage"}
@@ -185,7 +199,7 @@ task manufacturing_check
   step_type: work
   group: null
   performed_by: configured_tool
-  inputs: [{"description":"Reviewed specification","item":null,"key":"manufacturing_check_spec","kind":"engineering_document","name":"Reviewed specification","quantity":"one","required":true},{"description":"Analysed handle STEP","item":null,"key":"manufacturing_check_geometry","kind":"workspace_file","name":"Analysed handle STEP","quantity":"one","required":true},{"description":"Source mesh","item":null,"key":"manufacturing_check_source","kind":"workspace_file","name":"Source mesh","quantity":"one","required":true},{"description":"Repaired mesh","item":null,"key":"manufacturing_check_repaired","kind":"workspace_file","name":"Repaired mesh","quantity":"one","required":true},{"description":"Manufacturing changes and orientation","item":null,"key":"manufacturing_check_changes","kind":"engineering_document","name":"Manufacturing changes and orientation","quantity":"one","required":true},{"description":"Analysis basis","item":null,"key":"manufacturing_check_basis","kind":"workspace_file","name":"Analysis basis","quantity":"one","required":true},{"description":"Prior strength checks","item":null,"key":"manufacturing_check_strength","kind":"engineering_document","name":"Prior strength checks","quantity":"one","required":true},{"description":"Selected exact slice package","item":null,"key":"manufacturing_check_package","kind":"workspace_file","name":"Selected exact slice package","quantity":"one","required":true},{"description":"Exact orientation transforms","item":null,"key":"manufacturing_check_orientations","kind":"engineering_document","name":"Exact orientation transforms","quantity":"one","required":true}]
+  inputs: [{"description":"Reviewed specification","item":null,"key":"manufacturing_check_spec","kind":"engineering_document","name":"Reviewed specification","quantity":"one","required":true},{"description":"Analysed handle STEP","item":null,"key":"manufacturing_check_geometry","kind":"workspace_file","name":"Analysed handle STEP","quantity":"one","required":true},{"description":"Source mesh","item":null,"key":"manufacturing_check_source","kind":"workspace_file","name":"Source mesh","quantity":"one","required":true},{"description":"Repaired mesh","item":null,"key":"manufacturing_check_repaired","kind":"workspace_file","name":"Repaired mesh","quantity":"one","required":true},{"description":"Manufacturing changes and orientation","item":null,"key":"manufacturing_check_changes","kind":"engineering_document","name":"Manufacturing changes and orientation","quantity":"one","required":true},{"description":"Analysis basis","item":null,"key":"manufacturing_check_basis","kind":"workspace_file","name":"Analysis basis","quantity":"one","required":true},{"description":"Prior strength checks","item":null,"key":"manufacturing_check_strength","kind":"engineering_document","name":"Prior strength checks","quantity":"one","required":true},{"description":"Selected exact slice package","item":null,"key":"manufacturing_check_package","kind":"workspace_file","name":"Selected exact slice package","quantity":"one","required":true},{"description":"Exact orientation transforms","item":null,"key":"manufacturing_check_orientations","kind":"engineering_document","name":"Exact orientation transforms","quantity":"one","required":true},{"description":"Exact recorded slice evidence","item":null,"key":"manufacturing_check_observation_file","kind":"workspace_file","name":"Exact recorded slice evidence","quantity":"one","required":true}]
   outputs: [{"description":"Final manufacturing and analysis checks","item":null,"key":"manufacturing_check_checks","kind":"engineering_document","name":"Final manufacturing and analysis checks","quantity":"one","required":true}]
   instructions: "Use qualified deterministic checks to compare the final mesh with the reviewed geometry and assess whether the analysis basis covers the selected print orientation. Retain exact before/after identities and measurements. Do not release the package on stale strength evidence. A material, geometry, load-path or orientation change outside the approved basis requires fresh applicable analysis and required reviews. Stop with an actionable reason if the correction/revalidation route is unavailable; never replace a failed or missing check with an AI claim."
   settings: {"qualification_status":"validation_profile_and_revalidation_binding_required"}
@@ -728,5 +742,29 @@ connection inspect_side_mesh
   from: "print_orientations.orient_side"
   to: "manufacturing.manufacturing_side_mesh"
   label: "Exact geometry supplied to slicing"
+  when: null
+end
+
+connection retain_actual_slice_observations
+  type: item
+  from: "slice_orientations.slice_responses"
+  to: "retain_slice_observations.retention_observations"
+  label: "Exact recorded evidence"
+  when: null
+end
+
+connection inspect_retained_slice_observations
+  type: item
+  from: "retain_slice_observations.retained_observations"
+  to: "manufacturing.manufacturing_observation_file"
+  label: "Exact recorded evidence"
+  when: null
+end
+
+connection check_retained_slice_observations
+  type: item
+  from: "retain_slice_observations.retained_observations"
+  to: "manufacturing_check.manufacturing_check_observation_file"
+  label: "Exact recorded evidence"
   when: null
 end

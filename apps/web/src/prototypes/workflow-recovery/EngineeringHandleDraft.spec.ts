@@ -456,3 +456,41 @@ it("preserves runtime hash checks for each connected binary input in bound engin
     );
   }
 });
+
+it("retains slice observations through the existing exact document tool before inspection", () => {
+  const workflow = parseRecoverySourceDocument(source, 1).workflow!;
+  const formatted = formatRecoveryAuthoringSource(workflow).text;
+  const section = formatted.match(
+    /task retain_slice_observations\n([\s\S]*?)\nend/,
+  )![1];
+  const settings = JSON.parse(section.match(/^  settings: (.*)$/m)![1]);
+  expect(settings.mcp_tool).toBe("wright-workspace-files__write_text_document");
+  expect(JSON.parse(settings.mcp_argument_ports)).toEqual({
+    retention_observations: "content",
+  });
+  expect(JSON.parse(settings.mcp_arguments)).toEqual({
+    relativePath:
+      "results/{{wright.run_id}}/slice-observations/recorded-responses.json",
+    mediaType: "application/json",
+    overwrite: false,
+  });
+  expect(settings.expected_file_ports.retained_observations).toBe(
+    JSON.parse(settings.mcp_arguments).relativePath,
+  );
+  const upstream = (target: string) =>
+    workflow.relationships
+      .filter((e) => e.targetId === target)
+      .map((e) => e.sourceId);
+  expect(upstream("port.retention-observations")).toEqual([
+    "port.slice-responses",
+  ]);
+  expect(upstream("port.manufacturing-observation-file")).toEqual([
+    "port.retained-observations",
+  ]);
+  expect(upstream("port.manufacturing-check-observation-file")).toEqual([
+    "port.retained-observations",
+  ]);
+  expect(
+    workflow.blocks.find((b) => b.id === "block.print-review")!.inputPortIds,
+  ).toHaveLength(7);
+});

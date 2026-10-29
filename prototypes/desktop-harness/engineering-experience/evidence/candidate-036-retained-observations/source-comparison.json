@@ -1,0 +1,18 @@
+{
+  "changed_existing_fields": {
+    "task/manufacturing": [
+      "inputs"
+    ],
+    "task/manufacturing_check": [
+      "inputs"
+    ]
+  },
+  "added_sections": [
+    "connection/check_retained_slice_observations",
+    "connection/inspect_retained_slice_observations",
+    "connection/retain_actual_slice_observations",
+    "task/retain_slice_observations"
+  ],
+  "all_other_existing_fields_preserved": true,
+  "execution": false
+}

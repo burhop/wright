@@ -1038,3 +1038,21 @@ mesh/package associations before binding. All 189 affected tests pass; independe
 source re-review found no remaining blocker in this operation. Full workflow
 execution, final validation, coherent installation and Windows acceptance remain
 unverified.
+
+### Exact observed-response file retained in accepted revision 8
+
+The existing deterministic workspace-document tool now receives the slicer's
+recorded response directly through `mcp_argument_ports`, producing a verified
+file for inspection and final validation. No model transcription or new response
+storage mechanism is used. The actual publisher fixture proves exact bytes,
+output attribution and denied-write behavior; 37 affected Python checks and 13
+editor checks pass. Independent source review found no focused blocker.
+
+Actual editor save/reopen accepts revision 8, digest
+`6fb178e5e5ad1ccbf54d8852a17fd4d4c203866e831459ccf758acffb293e92a`.
+Evidence: `prototypes/desktop-harness/engineering-experience/evidence/candidate-036-retained-observations/`.
+All existing settings/reviews remain unchanged; only the two new consumer inputs,
+retention task and three connections were added. Run-path/1 does not authorize
+same-run retry. No engineering run or plugin installation occurred. The next
+binding still needs pinned inspection dependencies and independent final checks;
+full C01–C08, coherent build, real engineering and Windows acceptance remain open.
