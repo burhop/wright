@@ -884,3 +884,16 @@ and read-only Find step verify position and readable viewport entry. Screenshots
 and exact resource identity: `prototypes/desktop-harness/engineering-experience/evidence/dependency-insertion/`.
 This preserves the shared canvas and existing positions; it is not full native
 Windows acceptance or engineering execution.
+
+### Fresh workspace reference upload qualification
+
+The actual compiled workspace UI now stages the original Printed02 concept and
+context into candidate 036. Visible success/search feedback, exact API byte
+readback, independent filesystem hashes and unchanged accepted revision 2 pass.
+The saved image input now resolves to the matching uploaded file; this closes the
+missing-reference gap without changing requirements or history. Evidence:
+`prototypes/desktop-harness/engineering-experience/evidence/candidate-036-reference-inputs/`.
+The initial sandbox connection failure is retained. This is simulated-host upload
+qualification, not Windows delivery, model image consumption or engineering
+execution. CAD sign-in, execution bindings, validators, correction and real
+human review remain open; no additional workflow readiness is inferred.

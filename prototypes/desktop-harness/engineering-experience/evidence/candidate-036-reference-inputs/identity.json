@@ -1,0 +1,18 @@
+{
+  "resource_sha256": "86469620a5ec563923bde8981369aa8aeb3d473feb1387a52838dda6c65ac066",
+  "workflow_revision": 2,
+  "workflow_digest": "5a3c740dc11cd7cad1b7da912010defe901b5ffea96d8ff278a1d45d1e439e51",
+  "inputs": [
+    {
+      "filename": "concept.png",
+      "sha256": "467f9fe327ccaf085c507487c2907503bd2e50bdd055cbcf6bdeff706b705fb0",
+      "bytes": 60521
+    },
+    {
+      "filename": "context.md",
+      "sha256": "2b4ad39c8d07368fa4d0b5bfb257625cbafe5098a0cc106ca80103929cc378ee",
+      "bytes": 2202
+    }
+  ],
+  "originals_unchanged": true
+}

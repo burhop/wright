@@ -1,0 +1,75 @@
+{
+  "status": "PASS",
+  "error": null,
+  "scope": {
+    "workspace_id": "af3b3e57-e686-4262-b458-0e21eaa4998d",
+    "session_id": "desktop-fe8b45c6-0dbe-47e0-8c4d-daa918800d5d",
+    "path": "workflows/replacement-handle.workflow.wflow"
+  },
+  "boundary": "Actual compiled panel upload to isolated installed backend, exact download/readback and unchanged workflow revision; no engineering execution; Windows rendering unverified",
+  "denials": [],
+  "calls": [
+    {
+      "name": "wright_workspace_list",
+      "isError": false
+    },
+    {
+      "name": "wright_workspace_files",
+      "isError": false
+    },
+    {
+      "name": "wright_workflow_read",
+      "isError": false
+    },
+    {
+      "name": "wright_workflow_read",
+      "isError": false
+    },
+    {
+      "name": "wright_workflow_read",
+      "isError": false
+    },
+    {
+      "name": "wright_workspace_file_upload",
+      "isError": false
+    },
+    {
+      "name": "wright_workspace_files",
+      "isError": false
+    },
+    {
+      "name": "wright_workflow_read",
+      "isError": false
+    },
+    {
+      "name": "wright_workflow_read",
+      "isError": false
+    },
+    {
+      "name": "wright_workflow_read",
+      "isError": false
+    },
+    {
+      "name": "wright_workspace_file_upload",
+      "isError": false
+    },
+    {
+      "name": "wright_workspace_files",
+      "isError": false
+    },
+    {
+      "name": "wright_workflow_read",
+      "isError": false
+    },
+    {
+      "name": "wright_workflow_read",
+      "isError": false
+    },
+    {
+      "name": "wright_workflow_read",
+      "isError": false
+    }
+  ],
+  "windows_upload_and_render": "UNVERIFIED",
+  "engineering_execution": false
+}
