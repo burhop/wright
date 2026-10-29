@@ -1,0 +1,13 @@
+{
+  "status": "PASS",
+  "scope": {
+    "workspace_id": "af3b3e57-e686-4262-b458-0e21eaa4998d",
+    "session_id": "desktop-fe8b45c6-0dbe-47e0-8c4d-daa918800d5d",
+    "path": "workflows/disposable-insertion-reviewed.workflow.wflow"
+  },
+  "resource_sha256": "86469620a5ec563923bde8981369aa8aeb3d473feb1387a52838dda6c65ac066",
+  "saves": 1,
+  "storage_revision": 2,
+  "storage_digest": "5a3c740dc11cd7cad1b7da912010defe901b5ffea96d8ff278a1d45d1e439e51",
+  "boundary": "Actual compiled UI and Wright storage; simulated Linux host; no engineering execution or approval; Windows unverified"
+}

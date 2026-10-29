@@ -25,7 +25,7 @@ import {
   validateAuthoringConnections,
 } from "./authoring-objects";
 import {
-  findAuthoringPosition,
+  findInsertedAuthoringPosition,
   hydrateAuthoringLayout,
 } from "./authoring-positioning";
 
@@ -935,8 +935,15 @@ export function textEditCommands(
     }
   }
   const additionLayout = hydrateAuthoringLayout(before, currentLayout);
-  const placementWorkflow = cloneWorkflow(before);
-  for (const block of after.blocks) {
+  const dependencyPositions = hydrateAuthoringLayout(after, {
+    ...additionLayout,
+    positions: {},
+  }).positions;
+  for (const block of [...after.blocks].sort(
+    (a, b) =>
+      dependencyPositions[a.id].x - dependencyPositions[b.id].x ||
+      dependencyPositions[a.id].y - dependencyPositions[b.id].y,
+  )) {
     if (beforeById.has(block.id)) continue;
     const portIds = new Set([...block.inputPortIds, ...block.outputPortIds]);
     const ports = after.ports.filter((port) => portIds.has(port.id));
@@ -952,14 +959,17 @@ export function textEditCommands(
             "Declare every input and output connection point in the new task section.",
         },
       ];
-    const position = findAuthoringPosition(placementWorkflow, additionLayout);
+    const position = findInsertedAuthoringPosition(
+      after,
+      additionLayout,
+      block.id,
+    );
     addedBlocks.push({
       kind: "add_block",
       block: structuredClone(block),
       ports: structuredClone(ports),
       position,
     });
-    placementWorkflow.blocks.push(block);
     additionLayout.positions[block.id] = position;
   }
   const afterArtifacts = new Map(

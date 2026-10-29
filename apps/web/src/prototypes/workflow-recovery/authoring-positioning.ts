@@ -16,6 +16,7 @@ export function findAuthoringPosition(
   workflow: RecoveryWorkflow,
   layout: RecoveryLayout,
   preferred: AuthoringPoint = { x: 380, y: 100 },
+  candidateHeight = 168,
 ): AuthoringPoint {
   const origin = {
     x: Number.isFinite(preferred.x) ? Math.round(preferred.x) : 380,
@@ -53,7 +54,7 @@ export function findAuthoringPosition(
           candidate.x < position.x + 292 &&
           candidate.x + 292 > position.x &&
           candidate.y < position.y + position.height + 32 &&
-          candidate.y + 200 > position.y,
+          candidate.y + candidateHeight + 32 > position.y,
       )
     )
       return candidate;
@@ -62,6 +63,51 @@ export function findAuthoringPosition(
     x: Math.max(origin.x, ...occupied.map((position) => position.x + 320)),
     y: origin.y,
   };
+}
+
+/** Place inserted work near its known inputs without rearranging saved nodes. */
+export function findInsertedAuthoringPosition(
+  workflow: RecoveryWorkflow,
+  layout: RecoveryLayout,
+  blockId: string,
+): AuthoringPoint {
+  const owners = new Map(
+    workflow.ports.map((port) => [port.id, port.ownerBlockId]),
+  );
+  const predecessors = workflow.relationships
+    .filter(
+      (edge) =>
+        edge.kind !== "feedback" &&
+        (owners.get(edge.targetId) ?? edge.targetId) === blockId,
+    )
+    .map((edge) => owners.get(edge.sourceId) ?? edge.sourceId)
+    .filter((id) => id !== blockId)
+    .flatMap((id) => (layout.positions[id] ? [layout.positions[id]] : []));
+  const nearest = predecessors.reduce<AuthoringPoint | undefined>(
+    (rightmost, point) =>
+      !rightmost || point.x > rightmost.x ? point : rightmost,
+    undefined,
+  );
+  const block = workflow.blocks.find((item) => item.id === blockId);
+  return findAuthoringPosition(
+    workflow,
+    layout,
+    nearest
+      ? { x: nearest.x + 340, y: nearest.y }
+      : {
+          x:
+            block && recoveryAuthoringSectionKind(block) === "input" ? 40 : 380,
+          y: 100,
+        },
+    block
+      ? Math.max(
+          168,
+          100 +
+            Math.max(block.inputPortIds.length, block.outputPortIds.length) *
+              28,
+        )
+      : 168,
+  );
 }
 
 /** Initial presentation follows forward dependencies; it grants no execution order. */
@@ -162,14 +208,20 @@ export function hydrateAuthoringLayout(
     layout.viewport.zoom <= 0
   )
     layout.viewport = { x: 0, y: 0, zoom: 1 };
+  const dependencyPositions = initialDependencyPositions(workflow);
   if (Object.keys(layout.positions).length === 0)
-    layout.positions = initialDependencyPositions(workflow);
-  for (const block of workflow.blocks) {
+    layout.positions = dependencyPositions;
+  for (const block of [...workflow.blocks].sort(
+    (a, b) =>
+      dependencyPositions[a.id].x - dependencyPositions[b.id].x ||
+      dependencyPositions[a.id].y - dependencyPositions[b.id].y,
+  )) {
     if (layout.positions[block.id]) continue;
-    layout.positions[block.id] = findAuthoringPosition(workflow, layout, {
-      x: recoveryAuthoringSectionKind(block) === "input" ? 40 : 380,
-      y: 100,
-    });
+    layout.positions[block.id] = findInsertedAuthoringPosition(
+      workflow,
+      layout,
+      block.id,
+    );
   }
   return layout;
 }

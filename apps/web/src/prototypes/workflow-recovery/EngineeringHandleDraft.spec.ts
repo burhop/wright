@@ -291,3 +291,89 @@ it("applies the actual accepted handle refinement without losing review or resul
     )!.inputPortIds,
   ).toHaveLength(7);
 });
+
+it("inserts the repair step beside its inputs and preserves the engineer's saved positions", async () => {
+  const { textEditCommands, applyRecoveryBatch, recoveryCommandBatch } =
+    await import("./command-system");
+  const before = parseRecoverySourceDocument(acceptedHandleSource, 1).workflow!;
+  const after = parseRecoveryAuthoringSource(source, before).workflow!;
+  const layout = hydrateAuthoringLayout(before);
+  layout.positions["block.strength-check"] = { x: 2800, y: 730 };
+  const savedPositions = structuredClone(layout.positions);
+  const commands = textEditCommands(before, after, layout);
+  const result = applyRecoveryBatch(
+    before,
+    layout,
+    recoveryCommandBatch(
+      before.revision,
+      "text",
+      commands as import("./command-system").RecoveryCommand[],
+    ),
+  );
+  expect(result.ok, JSON.stringify(result.diagnostics)).toBe(true);
+  for (const [id, point] of Object.entries(savedPositions))
+    expect(result.layout!.positions[id]).toEqual(point);
+  const inserted = result.layout!.positions["block.mesh-repair"];
+  expect(inserted.x).toBeGreaterThan(savedPositions["block.strength-check"].x);
+  expect(inserted.y).toBeGreaterThanOrEqual(
+    savedPositions["block.strength-check"].y,
+  );
+  const reopened = hydrateAuthoringLayout(result.workflow!, result.layout!);
+  expect(reopened.positions).toEqual(result.layout!.positions);
+});
+
+it("places multiple inserted stages in dependency order even when source sections are reversed", async () => {
+  const { textEditCommands } = await import("./command-system");
+  const after = parseRecoverySourceDocument(source, 1).workflow!;
+  after.blocks.reverse();
+  const before = structuredClone(after);
+  const newIds = new Set(["block.mesh-repair", "block.manufacturing"]);
+  const removedPorts = new Set(
+    before.ports.filter((p) => newIds.has(p.ownerBlockId)).map((p) => p.id),
+  );
+  before.blocks = before.blocks.filter((b) => !newIds.has(b.id));
+  before.ports = before.ports.filter((p) => !removedPorts.has(p.id));
+  before.relationships = before.relationships.filter(
+    (e) =>
+      !removedPorts.has(e.sourceId) &&
+      !removedPorts.has(e.targetId) &&
+      !newIds.has(e.sourceId) &&
+      !newIds.has(e.targetId),
+  );
+  const layout = hydrateAuthoringLayout(before);
+  const commands = textEditCommands(before, after, layout);
+  const additions = commands.filter(
+    (c) => "kind" in c && c.kind === "add_block",
+  ) as Extract<
+    import("./command-system").RecoveryCommand,
+    { kind: "add_block" }
+  >[];
+  expect(additions.map((c) => c.block.id)).toEqual([
+    "block.mesh-repair",
+    "block.manufacturing",
+  ]);
+  expect(additions[1].position.x).toBeGreaterThan(additions[0].position.x);
+  const hydrated = hydrateAuthoringLayout(after, layout);
+  expect(hydrated.positions["block.manufacturing"].x).toBeGreaterThan(
+    hydrated.positions["block.mesh-repair"].x,
+  );
+});
+
+it("reserves the full height of a tall inserted step", async () => {
+  const { findAuthoringPosition } = await import("./authoring-positioning");
+  const workflow = parseRecoverySourceDocument(source, 1).workflow!;
+  const layout = hydrateAuthoringLayout(workflow);
+  layout.positions = { [workflow.blocks[0].id]: { x: 380, y: 400 } };
+  const point = findAuthoringPosition(
+    workflow,
+    layout,
+    { x: 380, y: 100 },
+    380,
+  );
+  const overlaps =
+    point.x < 672 &&
+    point.x + 292 > 380 &&
+    point.y < 600 &&
+    point.y + 412 > 400;
+  expect(overlaps).toBe(false);
+});

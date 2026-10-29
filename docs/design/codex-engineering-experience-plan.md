@@ -872,3 +872,15 @@ repair block appears near the start rather than beside its dependencies. Preserv
 existing user positions while correcting insertion placement in the next UI batch.
 No engineering execution, review, installed-plugin update or Windows acceptance
 is implied. Missing reference upload and execution bindings remain open.
+
+### Reviewed insertion placement correction
+
+New source-authored steps now appear after positioned upstream steps, preserving
+existing coordinates. The independent reviewer caught reversed-order multi-step
+insertions and tall-card collisions; dependency ordering and candidate-height
+clearance now address both, with regressions. Thirty-four focused tests and
+TypeScript checks pass. Actual compiled editor save/reopen on a disposable copy
+and read-only Find step verify position and readable viewport entry. Screenshots
+and exact resource identity: `prototypes/desktop-harness/engineering-experience/evidence/dependency-insertion/`.
+This preserves the shared canvas and existing positions; it is not full native
+Windows acceptance or engineering execution.
