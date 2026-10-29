@@ -1145,3 +1145,15 @@ it cannot be attached unchanged before print review. Preserve stage ordering and
 all requirements when binding remaining geometry/strength/final validation.
 Actual provider execution, full rerun/recovery, Robot regression, coherent runtime
 and Windows qualification remain open. No installed-plugin change occurred.
+
+### Actual revision-10 portable round-trip
+
+Current local bundle service exported the accepted handle and imported a disposable
+copy with exact source/instructions, concept image and pinned inspection archive.
+Only these assets and source/import metadata exist in the target; no runs, accounts
+or approval state transferred. All external bindings require local qualification.
+A separate current-compiler check rejects the still-unbound CAD stage; the bundle's
+constant can_run=false alone was not used as readiness proof. Evidence:
+`prototypes/desktop-harness/engineering-experience/evidence/portable-handle/`.
+This qualifies local service portability for this saved draft, not native UI
+export/import or Windows delivery. C03/C04 full execution remains incomplete.
