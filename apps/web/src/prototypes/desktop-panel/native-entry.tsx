@@ -824,6 +824,11 @@ async function open() {
               draftClient={draftClient}
               call={processCall}
               readEvidence={homeCall}
+              openLink={async (url) => {
+                const result = await app.openLink({ url });
+                if (result.isError)
+                  throw Error("The host could not open this link.");
+              }}
               transferCall={transferCall}
               onOpenTransferred={async (path) => {
                 if (nativeWorkspaceFiles) {

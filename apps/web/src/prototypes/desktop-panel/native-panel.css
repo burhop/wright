@@ -796,3 +796,45 @@
     max-height: calc(100vh - 140px);
   }
 }
+
+.native-editor-connections {
+  width: min(860px, calc(100vw - 24px));
+  max-height: calc(100vh - 24px);
+  padding: 0;
+  color: var(--native-host-fg, #f0f0f0);
+  background: var(--native-host-bg, #202020);
+  border: 1px solid var(--native-host-border, #555);
+  border-radius: 10px;
+}
+.native-editor-connections::backdrop {
+  background: rgb(0 0 0 / 55%);
+}
+.native-editor-connections > header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px;
+  position: sticky;
+  top: 0;
+  background: inherit;
+  z-index: 1;
+}
+.native-editor-connections > .native-home {
+  padding: 12px;
+}
+
+.native-editor-connections > header button {
+  flex-shrink: 0;
+  font: inherit;
+  color: inherit;
+  background: transparent;
+  border: 1px solid var(--native-host-border, #555);
+  border-radius: 5px;
+  padding: 8px 10px;
+  cursor: pointer;
+}
+.native-editor-connections > header button:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}

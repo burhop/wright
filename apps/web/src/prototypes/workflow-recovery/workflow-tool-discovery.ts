@@ -5,8 +5,12 @@ import { listWorkflowMcpTools } from "./mcp-settings";
 export const WorkflowToolDiscovery = createContext<{
   read: typeof listWorkflowMcpTools;
   sessionId?: string;
+  openConnections?: () => void;
 }>({ read: listWorkflowMcpTools });
 export const useWorkflowToolDiscovery = () =>
   useContext(WorkflowToolDiscovery).read;
 export const useWorkflowToolSession = (sessionId?: string) =>
   useContext(WorkflowToolDiscovery).sessionId ?? sessionId;
+
+export const useWorkflowToolManagement = () =>
+  useContext(WorkflowToolDiscovery).openConnections;

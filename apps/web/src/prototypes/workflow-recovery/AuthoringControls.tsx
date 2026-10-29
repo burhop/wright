@@ -1,6 +1,7 @@
 import {
   useWorkflowToolDiscovery,
   useWorkflowToolSession,
+  useWorkflowToolManagement,
 } from "./workflow-tool-discovery";
 import { useEffect, useRef, useState, type RefObject } from "react";
 
@@ -410,6 +411,7 @@ export function AuthoringCreateRail({
   sessionId?: string;
   onCreateServer?: (server: McpServerChoice) => void;
 }) {
+  const openConnections = useWorkflowToolManagement();
   const sessionId = useWorkflowToolSession(hostSessionId);
   const discoverTools = useWorkflowToolDiscovery();
   const [open, setOpen] = useState(false);
@@ -628,9 +630,15 @@ export function AuthoringCreateRail({
                       <span>AI task</span>
                     </button>
                   ))}
-                  <a href="/tool-registry" target="_blank" rel="noreferrer">
-                    Add or enable a server
-                  </a>
+                  {openConnections ? (
+                    <button type="button" onClick={openConnections}>
+                      Add or enable a server
+                    </button>
+                  ) : (
+                    <a href="/tool-registry" target="_blank" rel="noreferrer">
+                      Add or enable a server
+                    </a>
+                  )}
                 </>
               )}
             </section>

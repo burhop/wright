@@ -1321,3 +1321,19 @@ selector/action in the viewport at 1100px and 480px, with no tool execution.
 Evidence: `prototypes/desktop-harness/engineering-experience/evidence/unbound-step-setup/`.
 Actual backend readiness and engineering output compatibility remain unverified;
 this authoring affordance does not satisfy those gates. Nothing installed.
+
+
+Native editor Connections now opens the existing scoped Connections owner in a
+modal, with a visible Back to workflow control. The editor stays mounted and
+return does not reload accepted source. Hermes retains its registry navigation.
+39 focused tests, TypeScript, ESLint, native build and compiled Chromium fixture
+journey pass. Evidence: `prototypes/desktop-harness/engineering-experience/evidence/editor-connections/`.
+No installation or Windows acceptance is claimed. The shared readiness error's
+legacy registry link still needs the same host-aware return path.
+
+The exact source produced by the new unbound CAD setup was separately passed to
+`compile_prompt_workflow`. It advances past CAD and correctly rejects the next
+unconfigured `geometry_check` step with WORKFLOW_NOT_READY. Private receipt:
+`.local-run/experience-review/unbound-backend-01/compiler-result.json`.
+This is not proof of full compilation, correct engineering output mapping or an
+executable handle workflow. All required downstream checks remain intact.

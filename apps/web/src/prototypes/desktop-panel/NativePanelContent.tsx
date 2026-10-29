@@ -1,3 +1,4 @@
+import { NativeEditorConnections } from "./NativeEditorConnections";
 import { WorkflowToolDiscovery } from "../workflow-recovery/workflow-tool-discovery";
 import { createNativeToolDiscovery } from "./native-tool-discovery";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -56,7 +57,9 @@ export function NativePanelContent({
   onAcceptedSource,
   readEvidence,
   onLocationChange,
+  openLink,
 }: {
+  readonly openLink?: (url: string) => Promise<void>;
   readonly initial: WorkspaceWorkflowSourceDocument;
   readonly sourceClient: NativeSourceClient;
   readonly draftClient?: NativeEditorDraftClient;
@@ -77,6 +80,7 @@ export function NativePanelContent({
     document: WorkspaceWorkflowSourceDocument,
   ) => void;
 }) {
+  const [connectionsOpen, setConnectionsOpen] = useState(false);
   const [accepted, setAccepted] = useState(initial);
   const [view, setView] = useState<"editor" | "working">(
     workingViewEnabled
@@ -176,6 +180,7 @@ export function NativePanelContent({
         readEvidence,
       ),
       sessionId,
+      openConnections: () => setConnectionsOpen(true),
     }),
     [initial.workspace_id, sessionId, readEvidence],
   );
@@ -359,6 +364,26 @@ export function NativePanelContent({
   };
   return (
     <div style={{ height: "100%", minHeight: 0 }}>
+      {connectionsOpen && readEvidence && (
+        <NativeEditorConnections
+          workspace={{
+            workspace_id: initial.workspace_id,
+            session_id: sessionId,
+            workspace_name: workspaceName,
+            available: true,
+            reason: null,
+          }}
+          call={readEvidence}
+          openLink={openLink}
+          onClose={() => setConnectionsOpen(false)}
+        />
+      )}
+      {connectionsOpen && !readEvidence && (
+        <p role="status">
+          Connections are unavailable in this editor. Your workflow is kept
+          open.
+        </p>
+      )}
       {notice && <p role="status">{notice}</p>}
       {transferDocument && transfer && onOpenTransferred && (
         <WorkflowBundleDialog

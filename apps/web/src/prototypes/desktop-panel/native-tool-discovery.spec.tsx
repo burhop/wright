@@ -36,11 +36,13 @@ it("uses native scope and keeps tool identity while presenting the server in the
   const fetch = vi.fn();
   vi.stubGlobal("fetch", fetch);
   const onCreateServer = vi.fn();
+  const openConnections = vi.fn();
   render(
     <WorkflowToolDiscovery.Provider
       value={{
         read: createNativeToolDiscovery("workspace", "session", call),
         sessionId: "session",
+        openConnections,
       }}
     >
       <AuthoringCreateRail
@@ -52,6 +54,13 @@ it("uses native scope and keeps tool identity while presenting the server in the
   );
   fireEvent.click(screen.getByRole("button", { name: "Add step" }));
   fireEvent.click(screen.getByRole("button", { name: "MCP servers" }));
+  fireEvent.click(
+    screen.getByRole("button", { name: "Add or enable a server" }),
+  );
+  expect(openConnections).toHaveBeenCalledTimes(1);
+  expect(
+    screen.queryByRole("link", { name: "Add or enable a server" }),
+  ).toBeNull();
   fireEvent.click(
     await screen.findByTestId("workflow-recovery-create-server-cad"),
   );

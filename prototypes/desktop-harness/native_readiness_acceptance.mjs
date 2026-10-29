@@ -56,6 +56,13 @@ const calls = [];
 const respond = (name, args) => {
   calls.push({ name, args });
   if (name === "wright_workflow_read") return document;
+  if (name === "wright_connections_list")
+    return {
+      workspace_id: scope.workspace_id,
+      session_id: scope.session_id,
+      connections: [],
+      next_cursor: null,
+    };
   if (name === "wright_workflow_editor_tools")
     return {
       workspace_id: scope.workspace_id,
@@ -125,6 +132,37 @@ try {
     f.getByTestId("workflow-recovery-create-server-study-cad"),
   ).toBeInViewport();
   await page.screenshot({ path: output + "/tool-discovery.png" });
+  const readsBeforeConnections = calls.filter(
+    (c) => c.name === "wright_workflow_read",
+  ).length;
+  await f
+    .getByRole("button", { name: "Add or enable a server", exact: true })
+    .click();
+  await expect(
+    f.getByRole("dialog", { name: "Workspace connections" }),
+  ).toBeVisible();
+  await page.setViewportSize({ width: 480, height: 900 });
+  await expect(
+    f.getByRole("button", { name: "Back to workflow", exact: true }),
+  ).toBeInViewport();
+  await page.screenshot({ path: output + "/connections-narrow.png" });
+  await f
+    .getByRole("button", { name: "Back to workflow", exact: true })
+    .click();
+  await expect(
+    f.getByRole("dialog", { name: "Workspace connections" }),
+  ).toHaveCount(0);
+  await expect(f.getByTestId("workflow-recovery-save")).toBeVisible();
+  await f.getByRole("button", { name: "Add step", exact: true }).click();
+  await f.getByRole("button", { name: "MCP servers", exact: true }).click();
+  await expect(
+    f.getByTestId("workflow-recovery-create-server-study-cad"),
+  ).toBeVisible();
+  expect(calls.filter((c) => c.name === "wright_workflow_read")).toHaveLength(
+    readsBeforeConnections,
+  );
+  await page.setViewportSize({ width: 1100, height: 900 });
+
   await f.getByRole("button", { name: "Add step", exact: true }).click();
 
   await f.getByRole("button", { name: "Run workflow", exact: true }).click();
@@ -183,6 +221,7 @@ try {
         "wright_workflow_read",
         "wright_editor_drafts_read",
         "wright_workflow_editor_tools",
+        "wright_connections_list",
         "wright_process_ui_read",
       ].includes(c.name),
     ),
