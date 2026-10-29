@@ -1429,3 +1429,19 @@ Undo/Redo and focused export regressions pass. Evidence:
 `prototypes/desktop-harness/engineering-experience/evidence/output-file-authoring/`.
 The full gate and one broader browser failure remain unresolved; no install or
 engineering qualification is claimed.
+
+### Review return and browser recheck — 29 October
+
+The user confirmed the simple workspace-first direction: choose/name a workspace,
+then its files and an explicit handoff to the existing desktop conversation.
+The focused served-workspace review/action suite passed all eight cases across
+two repetitions. It did not reproduce the earlier full-suite editor-load failure;
+that failure remains recorded, not silently classified as resolved.
+
+C06/C08 durable-owner coverage now also reconstructs the process service before
+returning to the first pending review and again after a changed-input full rerun.
+The exact waiting subjects survive, old approvals cannot transfer, no extra model
+call occurs on return, and historical files/run records remain unchanged. All 27
+review-decision tests pass. Decisions and model documents are synthetic. This does
+not establish the combined native UI journey, actual engineering approval, machine
+restart, or Windows acceptance. Evidence: [review-return-recheck.json](../../prototypes/desktop-harness/engineering-experience/evidence/candidate-037-gates/review-return-recheck.json).

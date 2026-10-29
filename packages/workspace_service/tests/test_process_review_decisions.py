@@ -375,8 +375,10 @@ async def test_declared_input_cannot_be_decided_as_an_approval(tmp_path):
 
 
 @pytest.mark.asyncio
+@pytest.mark.parametrize("reopen", [False, True])
 async def test_full_rerun_with_changed_inputs_requires_new_review_and_keeps_old_results(
     tmp_path,
+    reopen,
 ):
     """Synthetic documents/decisions exercise real durable owners, not engineering acceptance."""
     from core.process_interactions import ValueBinding
@@ -384,6 +386,19 @@ async def test_full_rerun_with_changed_inputs_requires_new_review_and_keeps_old_
     case = await waiting_review_case(tmp_path, artifact=True)
     app, reference, first, first_checkpoint, first_digest, calls, generate = case
     try:
+        if reopen:
+            await app.close()
+            app = ProcessInterfaceService(app.workspace)
+            app.workspace.process_interfaces = app
+            case = (app, *case[1:])
+            returned = await app.get_snapshot(
+                review_scope(), reference, run_id=first.run_id
+            )
+            assert returned.context.run_id == first.run_id
+            assert returned.state == "waiting_human"
+            assert returned.interactions[0].checkpoint_id == first_checkpoint
+            assert returned.interactions[0].subject_digest == first_digest
+            assert len(calls) == 1
         await decide(case, actor="integration_test:full-rerun")
         first_record = (tmp_path / first.run_log_path).read_bytes()
         prior_files = {path: path.read_bytes() for path in tmp_path.rglob("*.txt")}
@@ -429,6 +444,20 @@ async def test_full_rerun_with_changed_inputs_requires_new_review_and_keeps_old_
             "workspace", second_review["review_id"], str(tmp_path)
         )
         assert still_pending["state"] == "pending"
+        if reopen:
+            await app.close()
+            app = ProcessInterfaceService(app.workspace)
+            app.workspace.process_interfaces = app
+            returned = await app.get_snapshot(
+                review_scope(), reference, run_id=second.run_id
+            )
+            assert returned.context.run_id == second.run_id
+            assert returned.state == "waiting_human"
+            assert returned.interactions[0].checkpoint_id == second_review["review_id"]
+            assert (
+                returned.interactions[0].subject_digest
+                == second_review["package_digest"]
+            )
         assert len(calls) == 2
         assert (tmp_path / first.run_log_path).read_bytes() == first_record
         assert all(
