@@ -754,3 +754,25 @@ A bounded actual virtual-display probe confirms the stable slicer still omits it
 The WebKit host dependency diagnosis was also rechecked using already-extracted private libraries and the original Playwright binary, without modifying host packages or shared browser cache. With libraries found, the browser aborts with SIGABRT before opening a page on this 64 KiB-page ARM64 host. This confirms an additional host-launch limitation, not a Wright assertion failure or proven kernel root cause. Logs: `.local-run/experience-review/webkit-host-probe/launch.log`. Do not count those 18 browser cases as passed or substitute Chromium for their coverage.
 
 After the separate alpha qualification, all 21 existing manufacturing-package inspection regressions and the strict documentation build pass. The first docs attempt hit the sandbox cache boundary; the authorized host-side command passed. No new shared-runtime implementation, installed-plugin change, push or PR occurred in this increment.
+
+### Candidate backend qualification: route ordering correction
+
+The isolated 0.36 candidate built from `2d2e012a` produced verified wheel/sdist
+artifacts and a compatible 61-package environment. Starting it on fresh storage
+exposed a real installed-package defect: desktop GET routes returned the frontend
+HTML fallback rather than JSON. FastAPI 0.162 retains included routers without a
+route-level `path`; the prototype's path-based sorting missed those entries.
+The correction moves the newly included desktop router entries before the existing
+fallback, without inspecting private FastAPI wrappers or changing authentication.
+
+The focused routing/bridge suite passes (32 tests), and the regression also passes
+inside the exact candidate environment. Actual MCP Home, connection, all 59 tool
+registrations and the exact native resource pass against the built wheel plus the
+recorded preview-server correction. Existing API and frontend routes remain tested.
+The initial sandbox TestClient attempt stalled and was interrupted; the bounded
+host-side tests passed. Private reproduction, package identities and corrected
+protocol evidence are under `.local-run/experience-review/candidate-036/`.
+This is an intermediate qualification, not a coherent final installed build or
+Windows visual acceptance. No credentials were copied, no workflows ran, and the
+installed 0.33 plugin/backend030 and their state remain unchanged. A newly frozen
+candidate must include the correction before deployment.

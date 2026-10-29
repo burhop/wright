@@ -12,6 +12,19 @@ import secrets
 import re
 
 
+def include_desktop_router(app, router):
+    """Register the desktop API before the existing frontend catch-all.
+
+    FastAPI may retain an included router rather than flattening its routes.
+    Move the newly registered entries as a group; do not inspect private route
+    wrappers or depend on each entry exposing a path.
+    """
+    existing_count = len(app.router.routes)
+    app.include_router(router)
+    added_routes = app.router.routes[existing_count:]
+    app.router.routes[:] = added_routes + app.router.routes[:existing_count]
+
+
 class DetachedDesktopConnection:
     async def check_health(self):
         return {
@@ -161,14 +174,7 @@ def main():
         app.state.mcp_authorization_presenter = desktop.oauth.present
         if args.remote_signin_mode == "device_code":
             app.state.mcp_device_authorization_presenter = desktop.oauth.present_device
-        app.include_router(desktop.router())
-        # The normal app already ends with a GET frontend fallback. Newly
-        # included API routes must precede it rather than returning HTML 200.
-        app.router.routes.sort(
-            key=lambda route: (
-                0 if getattr(route, "path", "").startswith("/api/desktop/") else 1
-            )
-        )
+        include_desktop_router(app, desktop.router())
 
     @app.middleware("http")
     async def preview_boundary(request, call_next):
