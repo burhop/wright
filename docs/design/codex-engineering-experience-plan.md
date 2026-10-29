@@ -1171,3 +1171,14 @@ Unconfigured-step readiness guidance now directs the engineer to configure the
 required tool/task and preserve required checks/reviews rather than replace it
 with an AI prompt. 22 compiler tests pass. No execution contract or guard changed,
 and the frozen/installed runtime is unchanged pending coherent rebuild.
+
+### Cumulative repository qualification started
+
+Built a clean-archive ARM64 candidate at 3327dcbf; its pinned image vulnerability
+scan passes. The full gate's history scanner found four empty credential-status
+map digests. Original commit/line classification and a real pinned-scanner
+negative control support exact-fingerprint exceptions only; 15 existing security
+regressions pass. The history scan finished with exactly those four findings
+across 1,709 commits; the corrected cumulative gate remains pending.
+Evidence: `prototypes/desktop-harness/engineering-experience/evidence/repository-gate-qualification/`.
+No installed candidate or engineering acceptance claim changes.

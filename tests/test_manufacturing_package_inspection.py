@@ -597,20 +597,29 @@ def test_selection_retains_exact_support_evidence(compared_alternatives):
     result = compare.retain_selection(selection)
     original = measured["alternatives"]["side"]["inspection"]["support_preview"]
     assert result["original_support_evidence"] == original
-    assert (root / selection["support_output"]).read_bytes() == (root / original["path"]).read_bytes()
+    assert (root / selection["support_output"]).read_bytes() == (
+        root / original["path"]
+    ).read_bytes()
     assert result["retained_support_evidence"]["sha256"] == original["sha256"]
     assert result["engineering_acceptance"] is False
 
 
 @pytest.mark.parametrize("orientation", ["pads_down", "side"])
-def test_changed_support_evidence_blocks_selection_without_writes(compared_alternatives, orientation):
+def test_changed_support_evidence_blocks_selection_without_writes(
+    compared_alternatives, orientation
+):
     root, compare, measured, selection, _ = compared_alternatives
     selection["support_output"] = "outputs/selected-support.json"
     original = measured["alternatives"][orientation]["inspection"]["support_preview"]
     (root / original["path"]).write_text("changed")
     with pytest.raises(ValueError, match="support evidence changed"):
         compare.retain_selection(selection)
-    for name in ("package_output", "preview_output", "selection_output", "support_output"):
+    for name in (
+        "package_output",
+        "preview_output",
+        "selection_output",
+        "support_output",
+    ):
         assert not (root / selection[name]).exists()
 
 
