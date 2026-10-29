@@ -1,0 +1,250 @@
+{
+  "status": "PASS",
+  "scope": "Direct selected offline provider qualification only; no canonical Wright run, review or Windows acceptance",
+  "source_commit": "ceba843c62aa25656bb91973a05469b8e85db7b4",
+  "selected_provider_image": "sha256:c11294f132cade3fb8846d5e85886c7eaf0c68e350c9956cea23acdadaabdd02",
+  "platform": "Linux ARM64",
+  "network": "none",
+  "provider": "rosbag-mcp==0.2.0",
+  "started_at": "2026-10-29T05:23:35.064251+00:00",
+  "finished_at": "2026-10-29T05:24:11.779956+00:00",
+  "raw_evidence_sha256": "72b5fac8caed5e9bb24ac25e77cc994a98387494b5350a08b970aaee0fc5d4bf",
+  "cases": [
+    {
+      "scenario_id": "robot-tracking-diagnosis-01",
+      "position_rmse_m": 0.014113165506822019,
+      "lateral_rmse_m": 0.014113165506822019,
+      "retained_samples": 61,
+      "independent_relative_difference": [
+        0.0,
+        0.0
+      ],
+      "missing_intervals_s": [],
+      "event_differences_s": [
+        0.0
+      ],
+      "operation_sha256": "02713f22fcfff4896ff7f102eba3b5e3a801f13d5d682f6a9a44a5d109277c6d",
+      "outputs": [
+        {
+          "path": "robot-tracking-diagnosis-01/artifacts/analysis/alignment-comparison.png",
+          "sha256": "61dd8edd8cde61e7ee82f0b5aae10d9386dc1d85e5372f9c2b70c1a79aa0f6ac",
+          "bytes": 153005
+        },
+        {
+          "path": "robot-tracking-diagnosis-01/artifacts/analysis/alignment-comparison.svg",
+          "sha256": "9f7c613b02dcf32151c13a000574d702bde27ade95cc2be1b795940fbf6460e7",
+          "bytes": 46903
+        },
+        {
+          "path": "robot-tracking-diagnosis-01/artifacts/analysis/analysis-operation.py",
+          "sha256": "02713f22fcfff4896ff7f102eba3b5e3a801f13d5d682f6a9a44a5d109277c6d",
+          "bytes": 26719
+        },
+        {
+          "path": "robot-tracking-diagnosis-01/artifacts/analysis/plot-guide.md",
+          "sha256": "c10466aff796ff95acee7c46e0d56c7512aeace67a1ffc86882f3aaa21ba9040",
+          "bytes": 2138
+        },
+        {
+          "path": "robot-tracking-diagnosis-01/artifacts/analysis/timeline.csv",
+          "sha256": "0f02c061411ef54b5d35bda3294ad5e14e21e18660dd3fdc4069464695d479a0",
+          "bytes": 3856
+        },
+        {
+          "path": "robot-tracking-diagnosis-01/artifacts/analysis/tracking-metrics.json",
+          "sha256": "5704b706f02e77fd588763f9313d593a6c3872c83daffe9f73da9739202cac7f",
+          "bytes": 1809
+        },
+        {
+          "path": "robot-tracking-diagnosis-01/artifacts/analysis/trajectory-overlay.png",
+          "sha256": "420db1e8174fee77171e975579cc82209455abb3d5df8b520947f7684255c75b",
+          "bytes": 261400
+        },
+        {
+          "path": "robot-tracking-diagnosis-01/artifacts/analysis/trajectory-overlay.svg",
+          "sha256": "e875ccb2d3c126868d4df6c8b2474d873d911ddda3105fce76895e9c14296d29",
+          "bytes": 47119
+        },
+        {
+          "path": "robot-tracking-diagnosis-01/artifacts/converted/conversion-manifest.json",
+          "sha256": "223b6024636afdab940c3fdd8ef278ce31ef3243584197bde89d1dbbe7e348be",
+          "bytes": 2136
+        },
+        {
+          "path": "robot-tracking-diagnosis-01/artifacts/converted/conversion-operation.py",
+          "sha256": "02713f22fcfff4896ff7f102eba3b5e3a801f13d5d682f6a9a44a5d109277c6d",
+          "bytes": 26719
+        },
+        {
+          "path": "robot-tracking-diagnosis-01/artifacts/converted/recording/metadata.yaml",
+          "sha256": "d3d7626b96357368b5d7f72392b37d7ab3540727ddef5ca5b48cca9177b3362f",
+          "bytes": 1978
+        },
+        {
+          "path": "robot-tracking-diagnosis-01/artifacts/converted/recording/recording.db3",
+          "sha256": "4d082a3e225cd13a537b352ec43795113e01ca1a116dcffca128ea76befd562a",
+          "bytes": 98304
+        }
+      ]
+    },
+    {
+      "scenario_id": "robot-tracking-diagnosis-02",
+      "position_rmse_m": 0.10613942977788116,
+      "lateral_rmse_m": 0.006411903944762738,
+      "retained_samples": 61,
+      "independent_relative_difference": [
+        2.6150108092452754e-16,
+        1.082189309709628e-15
+      ],
+      "missing_intervals_s": [],
+      "event_differences_s": [
+        0.0
+      ],
+      "operation_sha256": "02713f22fcfff4896ff7f102eba3b5e3a801f13d5d682f6a9a44a5d109277c6d",
+      "outputs": [
+        {
+          "path": "robot-tracking-diagnosis-02/artifacts/analysis/alignment-comparison.png",
+          "sha256": "3cd34019c9159eda683175f2df1e2d5992cfb49b5cb188c01b0cc24edf0f060a",
+          "bytes": 159730
+        },
+        {
+          "path": "robot-tracking-diagnosis-02/artifacts/analysis/alignment-comparison.svg",
+          "sha256": "daadde8019ec0212038620c36287a68fcf750a9266aee4975e8576197624bbdc",
+          "bytes": 48785
+        },
+        {
+          "path": "robot-tracking-diagnosis-02/artifacts/analysis/analysis-operation.py",
+          "sha256": "02713f22fcfff4896ff7f102eba3b5e3a801f13d5d682f6a9a44a5d109277c6d",
+          "bytes": 26719
+        },
+        {
+          "path": "robot-tracking-diagnosis-02/artifacts/analysis/plot-guide.md",
+          "sha256": "b60be4d02300e17e69ff17514681bbbfe07b8bdc7c445315a17d3a60b1067a6b",
+          "bytes": 2138
+        },
+        {
+          "path": "robot-tracking-diagnosis-02/artifacts/analysis/timeline.csv",
+          "sha256": "7db57efc91982d000c73484bc0416627a3a367acb82fd3c1070a53888a4707e5",
+          "bytes": 5860
+        },
+        {
+          "path": "robot-tracking-diagnosis-02/artifacts/analysis/tracking-metrics.json",
+          "sha256": "e37ba0ca5c442d5c58dd50e6bcf376cb68f75b4b62839aadca5df386b9ab30e6",
+          "bytes": 1847
+        },
+        {
+          "path": "robot-tracking-diagnosis-02/artifacts/analysis/trajectory-overlay.png",
+          "sha256": "711e70b725f8f1ceb2863be5750010e40082451956b5236f02c747b841f92374",
+          "bytes": 272386
+        },
+        {
+          "path": "robot-tracking-diagnosis-02/artifacts/analysis/trajectory-overlay.svg",
+          "sha256": "482b12fccfbc851461e58825dfc0a087f1e9f2a51aa17a70571de2eed2207a7d",
+          "bytes": 47389
+        },
+        {
+          "path": "robot-tracking-diagnosis-02/artifacts/converted/conversion-manifest.json",
+          "sha256": "5ff28d2f8ceec67c76b0229776b3736a9af4a36aece72a8491e3ffa585b14bde",
+          "bytes": 2137
+        },
+        {
+          "path": "robot-tracking-diagnosis-02/artifacts/converted/conversion-operation.py",
+          "sha256": "02713f22fcfff4896ff7f102eba3b5e3a801f13d5d682f6a9a44a5d109277c6d",
+          "bytes": 26719
+        },
+        {
+          "path": "robot-tracking-diagnosis-02/artifacts/converted/recording/metadata.yaml",
+          "sha256": "d3d7626b96357368b5d7f72392b37d7ab3540727ddef5ca5b48cca9177b3362f",
+          "bytes": 1978
+        },
+        {
+          "path": "robot-tracking-diagnosis-02/artifacts/converted/recording/recording.db3",
+          "sha256": "fcda026ac3c79b035f113d79ef495f537838ec6af8a9d55ddd25db73dbdf5ecb",
+          "bytes": 102400
+        }
+      ]
+    },
+    {
+      "scenario_id": "robot-tracking-diagnosis-03",
+      "position_rmse_m": 0.008614542537186748,
+      "lateral_rmse_m": 0.006423582096768288,
+      "retained_samples": 56,
+      "independent_relative_difference": [
+        2.013715143303844e-16,
+        0.0
+      ],
+      "missing_intervals_s": [
+        [
+          13.5,
+          16.5
+        ]
+      ],
+      "event_differences_s": [
+        0.0
+      ],
+      "operation_sha256": "02713f22fcfff4896ff7f102eba3b5e3a801f13d5d682f6a9a44a5d109277c6d",
+      "outputs": [
+        {
+          "path": "robot-tracking-diagnosis-03/artifacts/analysis/alignment-comparison.png",
+          "sha256": "c7f868444f10a5c408a994c2137cf8bffb273a2c23ef60965b8611abbe7cf373",
+          "bytes": 195898
+        },
+        {
+          "path": "robot-tracking-diagnosis-03/artifacts/analysis/alignment-comparison.svg",
+          "sha256": "01fd6e80a89b93ca8f85f3ea0416181faf04c3e26e8656b5656e1f8245be9505",
+          "bytes": 47330
+        },
+        {
+          "path": "robot-tracking-diagnosis-03/artifacts/analysis/analysis-operation.py",
+          "sha256": "02713f22fcfff4896ff7f102eba3b5e3a801f13d5d682f6a9a44a5d109277c6d",
+          "bytes": 26719
+        },
+        {
+          "path": "robot-tracking-diagnosis-03/artifacts/analysis/plot-guide.md",
+          "sha256": "46c3e4e1ea6fffc32d25323e438c391d01294d34584d77233a8e49637b1577bd",
+          "bytes": 2201
+        },
+        {
+          "path": "robot-tracking-diagnosis-03/artifacts/analysis/timeline.csv",
+          "sha256": "ac496e012abac9251f7cd6536840b110271b5035f48182204df5a9f4e86f5bf8",
+          "bytes": 6839
+        },
+        {
+          "path": "robot-tracking-diagnosis-03/artifacts/analysis/tracking-metrics.json",
+          "sha256": "f00adf1332d31cac52ba305150fa7d4ccb8b0a90093ad9f2606f3d6fbb705c13",
+          "bytes": 1862
+        },
+        {
+          "path": "robot-tracking-diagnosis-03/artifacts/analysis/trajectory-overlay.png",
+          "sha256": "0db06cd852c7e6d97a9fcc162eb57dfd1aa46071525ad8bbf151fdfe20413f09",
+          "bytes": 308818
+        },
+        {
+          "path": "robot-tracking-diagnosis-03/artifacts/analysis/trajectory-overlay.svg",
+          "sha256": "97e7e1947d95468f8f69a0cc7f06bd0d161588ea0817366a9b2938bd030fa853",
+          "bytes": 47090
+        },
+        {
+          "path": "robot-tracking-diagnosis-03/artifacts/converted/conversion-manifest.json",
+          "sha256": "d5ec3b76c0239fd273a160ea9658af94fcd05fcbc1b0698eb3267067038d317d",
+          "bytes": 2867
+        },
+        {
+          "path": "robot-tracking-diagnosis-03/artifacts/converted/conversion-operation.py",
+          "sha256": "02713f22fcfff4896ff7f102eba3b5e3a801f13d5d682f6a9a44a5d109277c6d",
+          "bytes": 26719
+        },
+        {
+          "path": "robot-tracking-diagnosis-03/artifacts/converted/recording/metadata.yaml",
+          "sha256": "c0bc2a44876a805443e706b4a990c0e3d07d2b04e86909a7ff5f7cd2578c1d0d",
+          "bytes": 1978
+        },
+        {
+          "path": "robot-tracking-diagnosis-03/artifacts/converted/recording/recording.db3",
+          "sha256": "119ba240e8f76e230324ed457a42bc9fe100692feed4c12cb87520229ba31963",
+          "bytes": 98304
+        }
+      ]
+    }
+  ]
+}

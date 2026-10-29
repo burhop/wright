@@ -1187,3 +1187,23 @@ The corrected full history scan now passes with no findings. Python lint and
 formatting pass. Four test-only regex lint failures were corrected without
 changing assertions; 13 handle regressions, focused lint and complete frontend
 formatting pass. The remainder of the cumulative gate is not yet qualified.
+
+### 29 October: coherent candidate backend and Robot prerequisite
+
+Candidate source `ceba843c62aa25656bb91973a05469b8e85db7b4` is now running only
+in the isolated candidate-036 service. Wheel SHA-256:
+`6a7da589221dd79a9edf6c4caed4313a2dbf3e57da98634a677d630c0154c9d3`.
+Installed module-byte checks, real SQLite pending-navigation HTTP checks and the
+actual stdio bridge → authenticated backend read path passed. The native resource
+matches frozen source; every existing workspace-file hash is unchanged. No
+engineering runs were present or started. Installed plugin 0.33 remains unchanged.
+Evidence: private `candidate-036/runtime-package-ceba843c/` receipts.
+
+The independent offline Robot provider also passed all three original dataset
+probes in a newly pinned network-disabled ARM64 container; see
+`prototypes/desktop-harness/engineering-experience/evidence/robot-provider-current/`.
+This is a prerequisite, not the canonical regression. Next use the original
+Robot diagnosis requirements with fresh scoped gateway bindings, durable run and
+human review; do not inherit protected campaign IDs or automatic approvals.
+Full handle execution, review/rerun/recovery, browser gates, actual Windows
+acceptance and the draft PR remain open. Personal SteveCAD sign-in is pending.
