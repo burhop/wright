@@ -431,6 +431,7 @@ export function NativePanelContent({
             navigation={navigation}
             readOnlyRun={selectedEvidence?.record}
             selectedRunId={run}
+            selectedRunSourceDigest={process.source_digest}
             workspaceName={workspaceName}
             onOpenTransfer={
               transfer && onOpenTransferred ? openTransfer : undefined
@@ -469,6 +470,7 @@ export function NativePanelContent({
                 }}
                 paths={[process.source_path]}
                 initialPath={process.source_path}
+                workingSourceDigest={process.source_digest}
                 titles={
                   process.source_digest === accepted.storage_digest
                     ? {

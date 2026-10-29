@@ -25,6 +25,7 @@ export function NativeWorkflowPanel({
   navigation,
   readOnlyRun,
   selectedRunId,
+  selectedRunSourceDigest,
 }: {
   readonly initial: WorkspaceWorkflowSourceDocument;
   readonly client: NativeSourceClient;
@@ -38,11 +39,16 @@ export function NativeWorkflowPanel({
   readonly navigation?: ProcessNavigationRequest;
   readonly readOnlyRun?: WorkspaceWorkflowRunSummary;
   readonly selectedRunId?: string;
+  readonly selectedRunSourceDigest?: string;
 }) {
   const [document, setDocument] = useState(initial);
   const [unsaved, setUnsaved] = useState(false);
   const [reopen, setReopen] = useState(0);
   const drafts = useNativeEditorDrafts(draftClient, initial, setDocument);
+  const returnsToRun =
+    !!(readOnlyRun || selectedRunId) &&
+    (!selectedRunSourceDigest ||
+      selectedRunSourceDigest === drafts.acceptedDigest);
   const draftChooser = useRef<HTMLDetailsElement>(null);
   const workflowDetails = useRef<HTMLDetailsElement>(null);
   useEffect(() => {
@@ -60,7 +66,7 @@ export function NativeWorkflowPanel({
         </button>
         {onOpenWorkingView && (
           <button type="button" disabled={unsaved} onClick={onOpenWorkingView}>
-            {readOnlyRun || selectedRunId ? "View run" : "Run workflow"}
+            {returnsToRun ? "View run" : "Run workflow"}
           </button>
         )}
       </nav>
@@ -86,9 +92,9 @@ export function NativeWorkflowPanel({
             <dd>{drafts.acceptedRevision}</dd>
           </dl>
           <p className="native-workflow-panel__view-hint">
-            {readOnlyRun
+            {returnsToRun && readOnlyRun
               ? `Inspecting run ${readOnlyRun.run_id ?? "record"} · ${readOnlyRun.status.replaceAll("_", " ")}. Choose View run to return to its outputs.`
-              : selectedRunId
+              : returnsToRun && selectedRunId
                 ? `Viewing the workflow for run ${selectedRunId}. Choose View run to read its progress and outputs.`
                 : "Choose Run workflow to review inputs and check tools before starting. Previous runs are available there too."}
             {unsaved && " Save your changes before switching views."}

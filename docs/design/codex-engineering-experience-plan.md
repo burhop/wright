@@ -1445,3 +1445,24 @@ call occurs on return, and historical files/run records remain unchanged. All 27
 review-decision tests pass. Decisions and model documents are synthetic. This does
 not establish the combined native UI journey, actual engineering approval, machine
 restart, or Windows acceptance. Evidence: [review-return-recheck.json](../../prototypes/desktop-harness/engineering-experience/evidence/candidate-037-gates/review-return-recheck.json).
+
+### Combined native return/revision journey — 29 October
+
+C06/C08 controlled compiled-panel journey now passes: exact waiting review → editor
+→ same review → separate preparation → prior waiting run → apply/save a source
+revision → new preparation → retained historical result. No process mutation was
+sent. Real durable owners remain separately qualified; synthetic transport cannot
+establish real engineering or Windows acceptance.
+
+The single independent reviewer found two navigation gaps, now corrected: waiting
+human interactions offer separate full-run preparation without cancelling their
+run, and known older-source history entries direct users to saved evidence instead
+of an unavailable working view. Browser testing exposed a third gap: after saving
+a changed workflow, View run incorrectly labeled new preparation. The label now
+uses the accepted source identity. Running, external-wait and reconciliation states
+do not gain new-run preparation. Existing backend permissions remain unchanged.
+
+100 affected UI tests, TypeScript and ESLint pass. Compiled-browser evidence and
+three screenshots: [combined-return](../../prototypes/desktop-harness/engineering-experience/evidence/combined-return/README.md).
+Installed 0.33 remains unchanged. Final coherent packaging/gates and actual native
+Windows/full engineering qualification are still open.

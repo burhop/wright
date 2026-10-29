@@ -2393,8 +2393,8 @@ describe("common process request recovery and observer lifetime", () => {
       expect(client.start).not.toHaveBeenCalled();
     },
   );
-  it.each(["completed", "failed", "cancelled"] as const)(
-    "offers visible preparation after %s without starting or resuming",
+  it.each(["completed", "failed", "cancelled", "waiting_human"] as const)(
+    "offers visible preparation for %s without starting or resuming",
     async (state) => {
       const { client, store } = fixture();
       const ended: InteractionSnapshot = {
@@ -2426,6 +2426,32 @@ describe("common process request recovery and observer lifetime", () => {
       expect(prepare).toHaveBeenCalledTimes(1);
       expect(client.start).not.toHaveBeenCalled();
       expect(client.cancel).not.toHaveBeenCalled();
+    },
+  );
+  it.each(["running", "waiting_external", "reconciliation_required"] as const)(
+    "does not offer a replacement run while state is %s",
+    async (state) => {
+      const { client, store } = fixture();
+      const observed: InteractionSnapshot = { ...running, state, actions: [] };
+      vi.mocked(client.follow).mockImplementation(async function* () {
+        yield { type: "snapshot", snapshot: observed };
+      });
+      const prepare = vi.fn();
+      render(
+        <CommonProcessView
+          client={client}
+          sessionId="session"
+          runId="run-one"
+          recoveryStore={store}
+          onPrepareAnother={prepare}
+        />,
+      );
+      await waitFor(() => expect(client.follow).toHaveBeenCalled());
+      expect(
+        screen.queryByRole("button", { name: "Prepare new run" }),
+      ).toBeNull();
+      expect(prepare).not.toHaveBeenCalled();
+      expect(client.start).not.toHaveBeenCalled();
     },
   );
   it("retains preparation controls for a process without initial input fields", async () => {

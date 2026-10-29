@@ -178,3 +178,49 @@ it("reads a historical record without opening the current-source working view", 
     },
   });
 });
+
+// A known historical source is readable, but cannot attach to the current process client.
+it("directs an earlier workflow version to its exact saved evidence", async () => {
+  const call = vi
+    .fn()
+    .mockImplementation(async (tool) =>
+      tool === "wright_workflow_history"
+        ? response()
+        : {
+            content: [],
+            structuredContent: {
+              workspace_id: "w",
+              session_id: "s",
+              workflow_path: path,
+              record: { ...run, source_matches_current: false, results: [] },
+            },
+          },
+    );
+  const onOpen = vi.fn();
+  render(
+    <NativeRecentRuns
+      workspace={workspace}
+      paths={[path]}
+      initialPath={path}
+      call={call}
+      onOpen={onOpen}
+      workingSourceDigest={"b".repeat(64)}
+    />,
+  );
+  await screen.findByText(/Earlier workflow version/);
+  expect(
+    screen.queryByRole("button", { name: "Open working view" }),
+  ).toBeNull();
+  fireEvent.click(screen.getByRole("button", { name: "Read saved evidence" }));
+  await screen.findByText(/The workflow has changed since this run/);
+  expect(call).toHaveBeenCalledWith("wright_recorded_run_read", {
+    request: {
+      workspace_id: "w",
+      session_id: "s",
+      path,
+      run_id: "r",
+      source_digest: run.source_digest,
+    },
+  });
+  expect(onOpen).not.toHaveBeenCalled();
+});

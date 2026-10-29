@@ -1455,39 +1455,46 @@ function CommonProcessController({
             </div>
             {!needsResponse && interactionPanel}
             <div className="wp-row">
-              {activeRun && terminal(snapshot.state) && onPrepareAnother && (
-                <button
-                  type="button"
-                  className="wp-button"
-                  disabled={!!busy || readOnly}
-                  onClick={async () => {
-                    if (operation.current) return;
-                    operation.current = true;
-                    setBusy("new-preparation");
-                    try {
-                      await onPrepareAnother();
-                      if (
-                        recoveryRef.current?.start?.receipt?.run_id ===
-                        activeRun
-                      )
-                        remember(null);
-                    } catch (error) {
-                      if (alive.current) setReason(message(error));
-                    } finally {
-                      operation.current = false;
-                      if (alive.current) setBusy("");
-                    }
-                  }}
-                >
-                  Prepare new run
-                </button>
-              )}
-              {activeRun && terminal(snapshot.state) && onPrepareAnother && (
-                <p className="wp-muted">
-                  Review inputs for a full new run. Previous results remain in
-                  history; required reviews apply again.
-                </p>
-              )}
+              {activeRun &&
+                (terminal(snapshot.state) ||
+                  snapshot.state === "waiting_human") &&
+                onPrepareAnother && (
+                  <button
+                    type="button"
+                    className="wp-button"
+                    disabled={!!busy || readOnly}
+                    onClick={async () => {
+                      if (operation.current) return;
+                      operation.current = true;
+                      setBusy("new-preparation");
+                      try {
+                        await onPrepareAnother();
+                        if (
+                          recoveryRef.current?.start?.receipt?.run_id ===
+                          activeRun
+                        )
+                          remember(null);
+                      } catch (error) {
+                        if (alive.current) setReason(message(error));
+                      } finally {
+                        operation.current = false;
+                        if (alive.current) setBusy("");
+                      }
+                    }}
+                  >
+                    Prepare new run
+                  </button>
+                )}
+              {activeRun &&
+                (terminal(snapshot.state) ||
+                  snapshot.state === "waiting_human") &&
+                onPrepareAnother && (
+                  <p className="wp-muted">
+                    {snapshot.state === "waiting_human"
+                      ? "This run stays waiting in history. Prepare separate inputs for a new run; required reviews apply again."
+                      : "Review inputs for a full new run. Previous results remain in history; required reviews apply again."}
+                  </p>
+                )}
             </div>
             <Section
               title="Results and checks"
