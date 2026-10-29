@@ -1387,3 +1387,13 @@ owners still enforce source digest, block identity, run and evidence scope. Run
 starts remain guarded. 54 desktop-boundary tests pass, including unready navigation,
 execution rejection and foreign-session denial; Ruff passes. Frozen candidate
 restart and actual browser reproduction remain to be rerun before installation.
+
+
+The frozen 99e97530 bridge/backend now passes the original browser reproduction
+with actual MCP/HTTP responses: Open affected step reaches CAD; missing servers
+remain explicit/disabled; no source saves or engineering runs occur. Evidence:
+`prototypes/desktop-harness/engineering-experience/evidence/coherent-readiness-navigation/`.
+Fresh candidate service is port18337/session90411; installed plugin unchanged.
+Screenshot review identifies a direct Connections action missing from the unbound
+inspector message. This is the next focused usability correction, not a reason
+to weaken unavailable-server or execution checks.
