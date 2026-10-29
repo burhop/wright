@@ -928,3 +928,26 @@ starting a runner and retains genuine edited-source mismatch detection. These
 controlled tests cover observation/presentation and authoring, not a new real-tool
 Robot run or Windows acceptance. CAD/validation/manufacturing bindings and bounded
 correction remain required before the complete handle is ready.
+
+### Explicit orientation study in accepted source
+
+The selected slicer exposes one source and an automatic-orientation flag; it does
+not perform the required pads-down versus side comparison. Reuse the existing
+provider stages: separate rigid orientation preparation, two offline slices, then
+independent package inspection/selection. Both actual candidate packages and
+response evidence are graph inputs to selection; final checks and seven review
+subjects remain unchanged. This is visible engineering work, not another executor.
+
+Actual editor save/reopen accepts revision 4, digest
+`7c6ea607dce4ccdc41ac965e80d9ca12bce87eddc233c2d232d5e69da998782d`.
+Eleven authoring regressions pass. Independent section comparison retains every
+existing section except manufacturing, and records the new stages/connections.
+Evidence: `prototypes/desktop-harness/engineering-experience/evidence/candidate-036-orientation-stages/`.
+The passive inspection/selection binding remains explicitly missing. It must use
+actual tool-observation evidence, not assume a model's repeated response proves
+provider success. Existing external-slicing helpers already stage the passive
+inspector and toolpath reader; reuse that ownership. Real orientation slices,
+profile applicability, native previews and full engineering validation remain
+unverified. The independent reviewer is checking the draft structure.
+
+Independent review found missing selected-package evidence at final validation and missing comparison rationale at reporting. Both explicit handoffs are now accepted in revision 5, digest `7a35cfc34a9eb9c008e9a2f34f5778f954498231b1e0a85af6530cd1cfec3c31`, with actual editor save/reopen and unchanged review declarations. Eleven authoring tests pass. The original revision 4 proof is retained alongside the reviewed correction.

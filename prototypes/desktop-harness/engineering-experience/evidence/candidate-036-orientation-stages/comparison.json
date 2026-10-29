@@ -1,0 +1,24 @@
+{
+  "status": "PASS",
+  "unchanged_sections": 57,
+  "changed_existing_sections": [
+    "manufacturing"
+  ],
+  "new_sections": [
+    "orientation_handoff_0",
+    "orientation_handoff_1",
+    "orientation_handoff_10",
+    "orientation_handoff_2",
+    "orientation_handoff_3",
+    "orientation_handoff_4",
+    "orientation_handoff_5",
+    "orientation_handoff_6",
+    "orientation_handoff_7",
+    "orientation_handoff_8",
+    "orientation_handoff_9",
+    "print_orientations",
+    "slice_orientations"
+  ],
+  "reviews_and_final_validation_unchanged": true,
+  "passed_authoring_tests": 11
+}

@@ -377,3 +377,52 @@ it("reserves the full height of a tall inserted step", async () => {
     point.y + 412 > 400;
   expect(overlaps).toBe(false);
 });
+
+it("declares two package inputs for comparison and retains exact final-check/report handoffs", () => {
+  const workflow = parseRecoverySourceDocument(source, 1).workflow!;
+  const upstream = (key: string) => {
+    const target = `port.${key.replace(/_/g, "-")}`;
+    return workflow.relationships
+      .filter((e) => e.targetId === target)
+      .map((e) => e.sourceId);
+  };
+  expect(upstream("orient_mesh")).toEqual(["port.mesh-repair-repaired"]);
+  expect(upstream("slice_pads")).toEqual(["port.orient-pads"]);
+  expect(upstream("slice_side")).toEqual(["port.orient-side"]);
+  expect(upstream("manufacturing_pads_package")).toEqual([
+    "port.slice-pads-package",
+  ]);
+  expect(upstream("manufacturing_side_package")).toEqual([
+    "port.slice-side-package",
+  ]);
+  expect(upstream("manufacturing_slice_responses")).toEqual([
+    "port.slice-responses",
+  ]);
+  expect(upstream("manufacturing_check_package")).toEqual([
+    "port.manufacturing-package",
+  ]);
+  expect(upstream("manufacturing_check_orientations")).toEqual([
+    "port.orient-record",
+  ]);
+  expect(upstream("report_selection")).toEqual(["port.manufacturing-changes"]);
+  expect(upstream("report_slice_responses")).toEqual(["port.slice-responses"]);
+  const formatted = formatRecoveryAuthoringSource(workflow).text;
+  const sliceSection = formatted.match(
+    /task slice_orientations\n([\s\S]*?)\nend/,
+  )![1];
+  const settings = JSON.parse(sliceSection.match(/^  settings: (.*)$/m)![1]);
+  expect(settings.mcp_task_tools).toEqual(["slice_model_file"]);
+  const outputs = settings.expected_file_ports as Record<string, string>;
+  expect(new Set(Object.values(outputs)).size).toBe(2);
+  expect(
+    Object.values(outputs).every((p) =>
+      p.includes("{{wright.producer_attempt}}"),
+    ),
+  ).toBe(true);
+  expect(upstream("print_review_final_checks")).toEqual([
+    "port.manufacturing-check-checks",
+  ]);
+  expect(
+    workflow.blocks.find((b) => b.id === "block.print-review")!.inputPortIds,
+  ).toHaveLength(7);
+});
