@@ -1,0 +1,39 @@
+{
+  "product_source": "7d87cfb44bedc5fabb915d9314d88abb5368cb4a",
+  "test_correction": "60f332d6",
+  "candidate_version": "0.38.0",
+  "installed_live_version": "0.33.0",
+  "wheel_sha256": "19c5347efd2a60b072d81383a3d78f9f0279e52c14ba2b9c2fca90cd3aa9c6d7",
+  "native_resource_sha256": "14da65e88c7fb094255df387a568b460306311758a1b394c7f15af78bf68ca9f",
+  "checks": {
+    "installed_package_and_pending_scope": "PASS",
+    "mcp_bridge_scope_storage_and_readiness": "PASS",
+    "compiled_ui_narrow_readiness_and_connections_return": "PASS",
+    "full_gate": "Initial script failed stale bridge count. Corrected bridge suite passed; remaining Python/Hermes/frontend commands passed. Strict docs correction under recheck.",
+    "supported_browser_retry": "PASS: 161 passed, 5 skipped",
+    "actual_windows": "UNVERIFIED",
+    "complete_engineering_chain": "UNVERIFIED"
+  },
+  "boundaries": [
+    "Fresh isolated storage, matching packaged backend and frozen bridge/UI",
+    "Compiled UI uses simulated Linux host",
+    "No engineering run, process review or physical action",
+    "Live named plugin unchanged"
+  ],
+  "evidence": [
+    "Private candidate-038 evidence retains full logs, failed attempts, exact wheel, source receipts and bridge/browser transactions."
+  ],
+  "gate_counts": {
+    "api": 789,
+    "adapters": 494,
+    "core": 355,
+    "data_vault": 226,
+    "model_registry": 185,
+    "tool_registry": 581,
+    "workspace_service": 2875,
+    "desktop_bridge_after_correction": 385,
+    "remaining_tests": 1633,
+    "hermes_plugin": 13,
+    "frontend": 2166
+  }
+}

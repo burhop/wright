@@ -1444,7 +1444,7 @@ The exact waiting subjects survive, old approvals cannot transfer, no extra mode
 call occurs on return, and historical files/run records remain unchanged. All 27
 review-decision tests pass. Decisions and model documents are synthetic. This does
 not establish the combined native UI journey, actual engineering approval, machine
-restart, or Windows acceptance. Evidence: [review-return-recheck.json](../../prototypes/desktop-harness/engineering-experience/evidence/candidate-037-gates/review-return-recheck.json).
+restart, or Windows acceptance. Evidence: `prototypes/desktop-harness/engineering-experience/evidence/candidate-037-gates/review-return-recheck.json`.
 
 ### Combined native return/revision journey — 29 October
 
@@ -1463,6 +1463,20 @@ uses the accepted source identity. Running, external-wait and reconciliation sta
 do not gain new-run preparation. Existing backend permissions remain unchanged.
 
 100 affected UI tests, TypeScript and ESLint pass. Compiled-browser evidence and
-three screenshots: [combined-return](../../prototypes/desktop-harness/engineering-experience/evidence/combined-return/README.md).
+three screenshots: `prototypes/desktop-harness/engineering-experience/evidence/combined-return/README.md`.
 Installed 0.33 remains unchanged. Final coherent packaging/gates and actual native
 Windows/full engineering qualification are still open.
+
+### Coherent candidate 0.38 qualification — 29 October
+
+Frozen product source `7d87cfb4` now has matching installed packages, actual MCP
+bridge scope/storage/readiness proof, and a compiled 480px readiness/Connections
+return check against fresh isolated storage. Supported browser rerun: 161 passed,
+5 skipped; the first attempt's two network-change failures remain preserved.
+The initial full gate exposed a stale tool-count test (corrected in `60f332d6`)
+and two strict-docs evidence links. All remaining backend/Hermes/frontend commands
+passed; final gate receipt and plugin activation are pending.
+
+Evidence: `prototypes/desktop-harness/engineering-experience/evidence/candidate-038/`.
+Actual Windows acceptance and complete real engineering/review/rerun qualification
+remain open. Installed 0.33 is unchanged.
