@@ -265,3 +265,19 @@
     animation: none;
   }
 }
+
+/* Narrow document panels need readable details, not two competing half views.
+   Closing the existing inspector restores the unchanged canvas selection. */
+@container workflow-editor (max-width: 649px) {
+  .workflow-recovery--redesign .recovery-workbench--inspecting {
+    grid-template-rows: minmax(0, 1fr);
+  }
+  .workflow-recovery--redesign
+    .recovery-workbench--inspecting
+    .recovery-inspector {
+    position: absolute;
+    inset: 0;
+    z-index: 22;
+    border-top: 0;
+  }
+}

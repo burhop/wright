@@ -1117,3 +1117,15 @@ authorized local-network test passed. Full-graph fit remains unreadably small,
 so this establishes editor persistence only. Focused review usability and exact
 support-file retention remain the next qualification work. No engineering run,
 review approval, plugin update or Windows acceptance occurred.
+
+### Review inspector visible-task correction
+
+Independent review found that upstream step names displaced the engineer checklist.
+Actual 480px rendering also gave details only 242px beneath a cropped canvas.
+The shared inspector now collapses upstream names on demand, uses a visible
+Close details control, and reuses its full-area sheet below 650px. The exact
+saved workflow/selection is retained on close. 77 affected component tests and
+compiled read-only 1100px/480px browser checks pass. Evidence:
+`prototypes/desktop-harness/engineering-experience/evidence/review-inspector-usability/`.
+This improves C05 inspection without claiming actual engineering review or Windows
+acceptance. Local resource only; installed plugin unchanged. Full goal remains open.

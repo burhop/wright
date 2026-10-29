@@ -2841,7 +2841,8 @@
 }
 .recovery-inspector__titlebar button {
   flex-shrink: 0;
-  width: 30px;
+  width: auto;
+  padding: 4px 8px;
   min-height: 30px;
   border: 1px solid var(--recovery-line);
   border-radius: 5px;

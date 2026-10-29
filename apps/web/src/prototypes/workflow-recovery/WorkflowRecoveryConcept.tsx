@@ -4979,10 +4979,10 @@ function WorkflowRecoveryReadyConcept({
               <button
                 type="button"
                 data-testid="workflow-recovery-inspector-close"
-                aria-label="Collapse Inspector"
+                aria-label="Close details"
                 onClick={() => setInspectorOpen(false)}
               >
-                ⌄
+                Close details
               </button>
             </div>
             {navigationMessage && (
