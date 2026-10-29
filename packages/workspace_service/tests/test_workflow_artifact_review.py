@@ -393,3 +393,90 @@ def test_concurrent_conflicting_decisions_have_one_winner(tmp_path):
     assert (
         sum(isinstance(value, WorkflowSourceExecutionError) for value in decisions) == 1
     )
+
+
+def test_multi_document_local_review_seals_each_output_without_dispatch(tmp_path):
+    """A report and its supporting facts stay exact subjects of one local review."""
+    from dataclasses import replace
+
+    from packages.workspace_service.tests.test_workflow_external_action_execution import (
+        service as action_service,
+    )
+    from workspace_service.workflow_integration_policy import (
+        LOCAL_REVIEW_BINDING,
+        LOCAL_REVIEW_DESTINATION,
+    )
+    from workspace_service.workflow_source_execution import _parse
+
+    sections = _parse(source())
+    review = next(s["fields"] for s in sections if s["id"] == "review")
+    review["step_type"] = "review"
+    review["inputs"].append(port("review_facts", True))
+    review["outputs"] = []
+    review["settings"] = {
+        "authoring_template": "external-action-approval",
+        "action_kind": "local_review",
+        "approval_binding": LOCAL_REVIEW_BINDING,
+        "approval_destination": LOCAL_REVIEW_DESTINATION,
+        "approval_settings": {"review_task_id": "review"},
+        "approval_action": {"kind": "local_review", "mode": "review_only"},
+    }
+    text = "".join(section(s["kind"], s["id"], **s["fields"]) for s in sections)
+    text += section(
+        "connection",
+        "review_supporting_facts",
+        type="item",
+        **{"from": "extract.extract_out", "to": "review.review_facts"},
+        label="Exact supporting facts",
+        when=None,
+    )
+    digest = hashlib.sha256(text.encode()).hexdigest()
+    plan = replace(compile_prompt_workflow(text), definition_digest=digest)
+    assert len(plan.steps[-1].references) == 2
+    services = action_service(tmp_path)
+    calls = []
+
+    async def generate(prompt, fmt, **kwargs):
+        calls.append(fmt)
+        return '{"revision":"B"}' if fmt == "json" else "<html>RFQ draft</html>"
+
+    async def execute(emit):
+        return await execute_prompt_workflow(
+            service=services,
+            workspace_dir=str(tmp_path),
+            plan=plan,
+            input_values={"context": "Fixture requirements; never send an RFQ"},
+            response_generator=generate,
+            on_event=emit,
+        )
+
+    result = asyncio.run(
+        record_workflow_run(
+            service=services,
+            workspace_id="ws",
+            workspace_dir=str(tmp_path),
+            source_path="workflows/rfq.workflow.wflow",
+            source_digest=digest,
+            execute=execute,
+        )
+    )
+    assert calls == ["json", "html"]
+    assert result["status"] == "awaiting_approval"
+    checkpoint = services.workflow_external_actions.lookup(
+        result["approval"]["checkpoint_id"]
+    )
+    expected = {
+        name: hashlib.sha256((tmp_path / name).read_bytes()).hexdigest()
+        for name in ("facts.json", "draft.html")
+    }
+    assert checkpoint.subject["artifact_digests"] == sorted(expected.values())
+    assert {
+        item["path"]: item["sha256"]
+        for item in checkpoint.continuation["artifact_files"]
+    } == expected
+    assert checkpoint.subject["binding"] == LOCAL_REVIEW_BINDING
+    assert checkpoint.subject["action"] == {
+        "kind": "local_review",
+        "mode": "review_only",
+    }
+    assert checkpoint.continuation["completed_step_ids"] == ["extract", "draft"]

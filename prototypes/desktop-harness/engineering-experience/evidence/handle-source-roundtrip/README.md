@@ -1,0 +1,9 @@
+# Actual handle source save and reopen
+
+The reviewed draft was saved through the compiled editor and Wright source owner in the existing fresh handle workspace. Revision 2 corrected the original editor incompatibility and bound the verified uploaded concept image. Revision 3 added the supported input_text field without changing the original requirements. The editor now visibly reports 2/2 configured inputs. Exact source readback, reload and diagram return pass in a restricted simulated Linux host. The original revision-1 digest remains in the source journal. No engineering workflow was started, resumed or approved.
+
+The legacy text field is retained: the existing source editor rejects key deletion. It is not consumed as the input. Both fields have identical original content. No backend or parser contract was weakened. The editor canonicalizes formatting; the existing backend parser confirmed every parsed field remained equal before accepting that serialization as the exact expected save.
+
+Failed harness attempts are preserved privately. The first revision-2 test used button rather than tab role for Source; save was already confirmed, so a separate read-only reopen followed without repeating the write. Later attempts exposed unsupported key deletion and an over-strict raw-format guard; neither issued an accepted-source save. The final revision-3 check passes including visible input count and reload. Actual Windows acceptance, authoring from chat attachments and engineering execution remain unverified.
+
+Private evidence: .local-run/experience-review/candidate-035/handle-save-01, handle-reopen-01, handle-input-01 through handle-input-04. Public receipt and screenshot identify the exact candidate and source. The screenshot shows the common editor fallback because the simulated host deliberately advertises no native file tabs; this is not a native Windows-tab claim.

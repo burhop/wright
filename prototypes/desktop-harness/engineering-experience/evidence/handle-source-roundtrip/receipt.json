@@ -1,0 +1,18 @@
+{
+  "status": "PASS",
+  "scope": {
+    "workspace_id": "540d9175-cdc7-4816-a1a1-661b8998a0f7",
+    "session_id": "desktop-df149141-a687-445f-9524-25d732a8257e",
+    "path": "workflows/replacement-handle.workflow.wflow"
+  },
+  "resource_sha256": "32b8427efa6d486add8e569cef51633dc372c6d6f51a4de39e053e1b17b00307",
+  "saves": 1,
+  "storage_revision": 3,
+  "storage_digest": "cf5bfa79e1ac2fdf89b086998e82460b099d6932285150ffe604d8912b354571",
+  "boundary": "Actual compiled UI and Wright storage; simulated Linux host; no engineering execution or approval; Windows unverified",
+  "original_revision_digest": "a2c65bdfecdd1574872fc786c352d50fc6fdc98b6c2af7f9ac42df5767aa0b12",
+  "requirements_text_preserved": true,
+  "configured_inputs": "2/2 visible after reopen",
+  "runs_started": 0,
+  "engineering_readiness": "NOT READY: provider and validation bindings remain unqualified"
+}

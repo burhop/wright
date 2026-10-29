@@ -26,7 +26,7 @@ No check is replaced with an AI assertion of success.
   **Replacement handle — desktop engineering qualification**, revision 1.
   Exact identity is in `desktop-draft-receipt.json`. The saved digest matches
   the original local source-store digest. That receipt is historical: the
-  reviewed local draft has since changed and has not replaced desktop revision 1.
+  reviewed draft is now saved as revision 3; original revision 1 remains in history. See the current round-trip evidence below.
 - An editor-open request succeeded, but compiled-editor review subsequently
   found missing required fields and duplicate port identities in that original
   draft. The revised local source fixes both; its parse/save/reopen regression
@@ -36,9 +36,7 @@ No check is replaced with an AI assertion of success.
 
 ## Remaining binding work
 
-1. Stage the original `concept.png` at `inputs/handle/concept.png` through the
-   normal workspace upload route, retaining its rights/provenance. Do not infer
-   a successful image upload from this draft's path.
+1. The original `concept.png` and `context.md` are now uploaded through the actual UI into hash-addressed workspace paths; [exact receipt and qualification limits](../evidence/handle-reference-upload/README.md). Revision 3 binds that exact uploaded concept path and preserves original reference provenance.
 2. Qualify and select the engineering tools. The installed backend currently
    selects no tool for this fresh workspace. SteveCAD is installed globally;
    OASiS and the catalog slicer are not installed here. Catalog presence is not
@@ -65,3 +63,7 @@ places the report before package review. The simulated receipt remains unbound
 and cannot authorize a real printer transfer. All task bindings and independent
 engineering checks still require qualification. The desktop revision-1 receipt
 is preserved as evidence, not rewritten to claim these local changes are live.
+
+## Current desktop revision 3
+
+[Actual UI save/reopen evidence](../evidence/handle-source-roundtrip/README.md) records the exact source digest and visible 2/2 configured inputs. The original requirements are unchanged. Source correction preserved revision 1 and used the existing editor/source owner. Provider bindings and declared human reviews remain outstanding; configured inputs do not imply engineering readiness.
