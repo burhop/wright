@@ -1245,3 +1245,26 @@ Both affected-step labels were updated in the existing user-facing assertions.
 This proves same-revision component recovery only; edited-source input migration
 and the compiled native-panel correction journey remain unverified. Evidence:
 private `gates-20261029/readiness-return-tests-02.log`.
+
+Compiled native readiness navigation now passes in the labeled simulated host:
+exact CAD step/inspector opens, Run workflow returns to preparation, and the
+correction link is visible at 480px. Reproducible probe and screenshots:
+`prototypes/desktop-harness/engineering-experience/evidence/readiness-navigation/`.
+This does not yet prove a saved correction or inputs transferred to a new source
+revision. Independent usability review is requested.
+
+Browser gate 06 finished: **160 passed, 5 skipped, 1 failed**. The failure was the
+old “Open related item” label in the shared diagnostic navigation test. Its
+assertion now uses “Open affected step”; all **4 affected browser journeys pass**
+on a fresh isolated run (browser-07-focused/browser-retry.log). The first focused
+launch stopped before tests because a port was occupied; the retry used separately
+checked ports and left the occupied service alone. A ResizeObserver warning was
+observed. These results are incremental evidence, not a full cumulative gate pass
+or actual Windows acceptance. WebKit's missing host libraries remain explicit.
+
+Independent review of those screenshots found a remaining task failure: the
+affected-step link opens the right inspector, but its actual tool settings are
+below the viewport. Readiness-directed navigation should reveal the existing
+configuration controls; ordinary block inspection should retain its current
+layout. This is the next focused correction. Do not count reaching an inspector
+as completing setup.
