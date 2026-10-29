@@ -1092,3 +1092,28 @@ export. Next connect/freeze the resource, select the separately qualified suppor
 profile through existing configuration ownership, and finish inspection/final
 validation bindings. No new executor, provider, installation or engineering review
 was introduced. Full engineering and native acceptance scope remains open.
+
+### Support connection qualified; inspection draft review
+
+The separately registered support-enabled slicer passed normal Connections
+protocol validation/enablement in isolated candidate 036. Existing connection,
+profiles and accepted revision 8 are preserved. Invocation approval is false.
+Evidence: `prototypes/desktop-harness/engineering-experience/evidence/candidate-036-support-connection/`.
+
+The local source draft binds passive inspection and exact comparison/selection
+handoffs. Independent review caught the model PNG still labeled as support
+verification at its receiving review. Corrected its label and added a separate
+nominal-toolpath file as an eighth subject, retaining all original seven.
+13 actual-source editor tests pass. This is not yet accepted revision 9 or
+execution qualification: exact support retention, final validation, coherent
+runtime and all remaining C01–C08/Windows acceptance still require work.
+
+Revision 9 is now saved/reopened through the actual compiled editor and storage:
+`54eb968bb64c763f68d842223abb6d0434045aacf2abc969323f734787ec0059`.
+The source includes all original seven review subjects plus the explicit nominal
+toolpath subject. The scoped CAS allowed exactly one save; three inputs show
+configured. The first sandboxed test stopped before connection receipts; the
+authorized local-network test passed. Full-graph fit remains unreadably small,
+so this establishes editor persistence only. Focused review usability and exact
+support-file retention remain the next qualification work. No engineering run,
+review approval, plugin update or Windows acceptance occurred.

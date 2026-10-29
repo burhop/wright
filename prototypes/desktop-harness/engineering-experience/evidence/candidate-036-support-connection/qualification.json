@@ -1,0 +1,63 @@
+{
+  "status": "PASS",
+  "scope": {
+    "workspace_id": "af3b3e57-e686-4262-b458-0e21eaa4998d",
+    "session_id": "desktop-fe8b45c6-0dbe-47e0-8c4d-daa918800d5d",
+    "path": "workflows/replacement-handle.workflow.wflow"
+  },
+  "boundary": "Actual panel clicks/import/setup owner on isolated installed backend; no engineering execution or invocation grants; Windows rendering unverified",
+  "calls": [
+    {
+      "name": "wright_connection_validate",
+      "isError": false,
+      "result": {
+        "workspace_id": "af3b3e57-e686-4262-b458-0e21eaa4998d",
+        "session_id": "desktop-fe8b45c6-0dbe-47e0-8c4d-daa918800d5d",
+        "plan_id": "plan-4827edfecd4a94bea15e",
+        "validation": {
+          "evidence_id": "validation-5a032750007243e290b1a7eccaf9e1e8",
+          "capability_id": "import:draft-5d6b66c011b0a1e0ae8b",
+          "server_id": "import:draft-5d6b66c011b0a1e0ae8b",
+          "snapshot_id": "bundled-bb8e97c144c2667095cc",
+          "capability_digest": "f2c7b9910c869706f2fe68844a97e3ad6be86f5aa76aed1757dcfc42c6230679",
+          "observation_id": "machine-c369eb15b26f1d89a6be",
+          "platform_key": "linux_arm64",
+          "architecture": "aarch64",
+          "server_revision": "configuration:6d36087f26e3494e62daabf12f985e7e2f4f5016c0fb7bb4e98858edd0f83f66",
+          "credential_binding_digest": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "state": "passed",
+          "protocol_steps": {
+            "initialize": "passed",
+            "notifications/initialized": "passed",
+            "tools/list": "passed"
+          },
+          "schema_digest": "35ee6df2fd1d911915a3516a7c04b5781a3f0759843479bbbf9404a0298865b5",
+          "tool_count": 11,
+          "read_only_probe": null,
+          "observed_at": "2026-10-29T03:49:01.193698Z",
+          "trace_id": "b884f4e33621c5ba088435605b13dc59",
+          "reason_codes": [],
+          "missing_requirements": []
+        }
+      }
+    },
+    {
+      "name": "wright_connection_enable",
+      "isError": false,
+      "result": {
+        "workspace_id": "af3b3e57-e686-4262-b458-0e21eaa4998d",
+        "session_id": "desktop-fe8b45c6-0dbe-47e0-8c4d-daa918800d5d",
+        "plan_id": "plan-4827edfecd4a94bea15e",
+        "enablement": {
+          "workspace_id": "af3b3e57-e686-4262-b458-0e21eaa4998d",
+          "capability_id": "import:draft-5d6b66c011b0a1e0ae8b",
+          "server_id": "import:draft-5d6b66c011b0a1e0ae8b",
+          "enabled": true,
+          "validation_evidence_id": "validation-5a032750007243e290b1a7eccaf9e1e8",
+          "invocation_approved": false,
+          "message": "Available in this workspace. Individual tool invocation and destructive-action approval remain separate."
+        }
+      }
+    }
+  ]
+}

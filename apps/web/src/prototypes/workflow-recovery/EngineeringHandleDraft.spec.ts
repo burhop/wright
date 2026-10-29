@@ -123,7 +123,7 @@ it("changes an existing handle step into a review while retaining subjects and r
     (b) => b.title === "Review the proposed print package",
   )!;
   expect(review.kind).toBe("approval");
-  expect(review.inputPortIds).toHaveLength(7);
+  expect(review.inputPortIds).toHaveLength(8);
   expect(accepted.workflow.ports).toEqual(before.ports);
   expect(accepted.workflow.relationships).toEqual(before.relationships);
   const reopened = parseRecoverySourceDocument(
@@ -289,7 +289,7 @@ it("applies the actual accepted handle refinement without losing review or resul
     result.workflow!.blocks.find(
       (b) => b.title === "Review the proposed print package",
     )!.inputPortIds,
-  ).toHaveLength(7);
+  ).toHaveLength(8);
 });
 
 it("inserts the repair step beside its inputs and preserves the engineer's saved positions", async () => {
@@ -406,6 +406,18 @@ it("declares two package inputs for comparison and retains exact final-check/rep
   expect(upstream("manufacturing_check_orientations")).toEqual([
     "port.orient-record",
   ]);
+  expect(upstream("print_review_toolpaths")).toEqual([
+    "port.manufacturing-toolpaths",
+  ]);
+  expect(upstream("print_review_preview")).toEqual([
+    "port.manufacturing-preview",
+  ]);
+  expect(upstream("manufacturing_resources")).toEqual([
+    "port.inspection-resources-file",
+  ]);
+  expect(upstream("manufacturing_check_selection")).toEqual([
+    "port.manufacturing-selection-file",
+  ]);
   expect(upstream("report_selection")).toEqual(["port.manufacturing-changes"]);
   expect(upstream("report_slice_responses")).toEqual(["port.slice-responses"]);
   const formatted = formatRecoveryAuthoringSource(workflow).text;
@@ -427,7 +439,7 @@ it("declares two package inputs for comparison and retains exact final-check/rep
   ]);
   expect(
     workflow.blocks.find((b) => b.id === "block.print-review")!.inputPortIds,
-  ).toHaveLength(7);
+  ).toHaveLength(8);
 });
 
 it("preserves runtime hash checks for each connected binary input in bound engineering stages", () => {
@@ -438,6 +450,7 @@ it("preserves runtime hash checks for each connected binary input in bound engin
     "mesh_repair",
     "print_orientations",
     "slice_orientations",
+    "manufacturing",
   ]) {
     const section = formatted.match(
       new RegExp(`task ${id}\\n([\\s\\S]*?)\\nend`),
@@ -492,5 +505,5 @@ it("retains slice observations through the existing exact document tool before i
   ]);
   expect(
     workflow.blocks.find((b) => b.id === "block.print-review")!.inputPortIds,
-  ).toHaveLength(7);
+  ).toHaveLength(8);
 });
