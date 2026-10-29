@@ -1073,3 +1073,22 @@ The PNG is an orientation image, not a support-contact preview. Actual support
 contact evidence and final strength applicability remain required. All historical
 profiles/files, accepted revision 8 and installed plugin are unchanged. Full goal
 scope remains open.
+
+### Portable inspection dependency prepared and stored
+
+Packaged the existing passive modules and exact support-enabled profiles in one
+ordinary ZIP (80,701 bytes), avoiding separate technical-input nodes for each
+implementation file. SHA-256:
+`d6c8710ff13deec734094443569518746010504a7723b1c43ec63654fd427fe5`.
+The actual compiled workspace upload, visible search feedback, API download and
+disk readback pass. Accepted revision 8 is unchanged. The 52-check inspector
+suite includes reproducible snapshot integrity and running the packaged code on
+synthetic observations, with exact selected-byte preservation.
+
+Evidence: `prototypes/desktop-harness/engineering-experience/evidence/candidate-036-inspection-resources/`.
+Binding instructions: `prototypes/desktop-harness/engineering-experience/handle/INSPECTION-RESOURCES.md`.
+This is not yet a connected accepted input or a qualified portable workflow
+export. Next connect/freeze the resource, select the separately qualified support
+profile through existing configuration ownership, and finish inspection/final
+validation bindings. No new executor, provider, installation or engineering review
+was introduced. Full engineering and native acceptance scope remains open.

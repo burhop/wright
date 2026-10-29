@@ -1,0 +1,10 @@
+{
+  "status": "PASS",
+  "denials": [],
+  "scope": {
+    "workspace_id": "af3b3e57-e686-4262-b458-0e21eaa4998d",
+    "session_id": "desktop-fe8b45c6-0dbe-47e0-8c4d-daa918800d5d",
+    "path": "workflows/replacement-handle.workflow.wflow"
+  },
+  "boundary": "Actual compiled panel upload to isolated installed backend, exact download/readback and unchanged workflow revision; no engineering execution; Windows rendering unverified"
+}

@@ -532,3 +532,60 @@ def test_comparison_rejects_unobserved_or_swapped_inputs(compared_alternatives, 
     assert not (root / config["comparison_output"]).exists()
     for alternative in config["alternatives"].values():
         assert not list((root / alternative["output_root"]).iterdir())
+
+
+def test_portable_inspection_resources_execute_existing_reader_and_inspector(
+    compared_alternatives,
+):
+    root, _, _, selection, config = compared_alternatives
+    bundle_path = (
+        REPO
+        / "prototypes/desktop-harness/engineering-experience/handle/inspection-resources-v1.zip"
+    )
+    builder_spec = importlib.util.spec_from_file_location(
+        "handle_resource_builder",
+        bundle_path.with_name("build_inspection_resources.py"),
+    )
+    builder = importlib.util.module_from_spec(builder_spec)
+    builder_spec.loader.exec_module(builder)
+    # A stale code snapshot or changed profile must not silently keep its pin.
+    assert bundle_path.read_bytes() == builder.package()
+    with zipfile.ZipFile(bundle_path) as archive:
+        manifest = json.loads(archive.read("manifest.json"))
+        assert set(archive.namelist()) == set(manifest["files"]) | {"manifest.json"}
+        for name, identity in manifest["files"].items():
+            data = archive.read(name)
+            assert identity == {
+                "sha256": hashlib.sha256(data).hexdigest(),
+                "bytes": len(data),
+            }
+        assert (
+            json.loads(archive.read("profiles/process.json"))["enable_support"] == "1"
+        )
+        modules = {}
+        for name in (
+            "passive_representations",
+            "inspect_manufacturing_package",
+            "compare_handle_slices",
+        ):
+            namespace = {"__name__": name}
+            exec(compile(archive.read(name + ".py"), name + ".py", "exec"), namespace)
+            modules[name] = namespace
+    config["comparison_output"] = "outputs/bundled-comparison.json"
+    for name, alternative in config["alternatives"].items():
+        alternative["output_root"] = f"outputs/bundled-{name}"
+        (root / alternative["output_root"]).mkdir()
+    measured = modules["compare_handle_slices"]["inspect_alternatives"](
+        config,
+        modules["inspect_manufacturing_package"]["run"],
+        modules["passive_representations"]["read_3mf_toolpaths"],
+    )
+    selection.update(
+        comparison=measured["comparison"]["path"],
+        comparison_sha256=measured["comparison"]["sha256"],
+    )
+    result = modules["compare_handle_slices"]["retain_selection"](selection)
+    assert result["engineering_acceptance"] is False
+    assert (root / selection["package_output"]).read_bytes() == (
+        root / "inputs/side.3mf"
+    ).read_bytes()
