@@ -27,3 +27,11 @@ The pinned tool uses a synchronous native subprocess and may overwrite a supplie
 Private qualification inputs/source audit: `.local-run/experience-review/slicer-provider-audit/`. Protocol, native CLI, gateway slicing and nominal toolpath inspection passed. The unchanged mandatory package-PNG check fails because this headless package contains no PNG. Full handle and clean Intel-Linux catalog qualification remain open. Windows and Linux ARM64 remain separate qualification scopes.
 
 The first attempt returned `ok:false` for incompatible default Cool Plate despite a successful MCP envelope. Explicit Textured PEI Plate corrected a fresh attempt. Whole-file motion inspection rejects startup G380; the existing reader accepts explicit unique `;VT0` to `; filament end gcode` nominal boundaries. Preserve that scoped interpretation and do not claim machine simulation. Public receipt: `prototypes/desktop-harness/engineering-experience/evidence/offline-slicer-qualification/`.
+
+## Prerelease preview qualification
+
+The stable 2.4.2 image still lacks a native package PNG, including under Xvfb. A separate official OrcaSlicer **2.5.0-alpha** ARM64 image passed the existing mandatory preview gate on the same synthetic coupon. This is explicitly a prerelease selection for isolated digital qualification, not an installed upgrade or production recommendation. Official asset SHA-256: `b64c705537a80ca0f4a5d0b51fa21d1f789191141f54b7f3599d2f2b9bfad0be`. Tested image: `sha256:ec4229b057a0a4897ce1a614b4cd627a366704a7f8b071965a0ec084d14b60d3`.
+
+Use Docker's `--init` before `xvfb-run -a --server-args=-screen 0 1280x1024x24 /opt/venv/bin/bambu-p1s-mcp`; set `BAMBU_SLICER=/opt/orca-alpha/AppRun` and the exact three profiles. The extracted public application directories initially denied nonroot traversal; correcting their read/execute permissions inside the selected image fixed native startup. Keep the network disabled and printer credentials absent. Native PNG generation is qualified; human manufacturing acceptance is not.
+
+[Upstream thumbnail fix](https://github.com/OrcaSlicer/OrcaSlicer/pull/15745) and [official prerelease](https://github.com/OrcaSlicer/OrcaSlicer/releases/tag/v2.5.0-alpha). The public evidence directory above includes separate stable and alpha receipts and exact failures; do not overwrite one version's qualification with the other.

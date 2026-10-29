@@ -21,3 +21,11 @@ The first slice definitively returned `ok:false` because the default Cool Plate 
 Whole-file toolpath inspection correctly rejected the startup G380 command. The existing reader then consumed the explicit unique `;VT0` → `; filament end gcode` nominal section, which establishes its own coordinate/unit/extrusion modes. Startup/shutdown semantics are excluded, not interpreted. The original PNG gate remains failing; no preview was fabricated and no requirement removed.
 
 See `inspection-report.json` and `profile-receipt.json`. Private exact inputs, package, failed responses, gateway audit, container recipe and reproducible probes remain in `.local-run/experience-review/slicer-provider-audit/`. The complete source package and original failed attempt are preserved. This is a provider prerequisite, not another executor or universal catalog acceptance.
+
+## Separate prerelease qualification
+
+The stable 2.4.2 attempt above remains unchanged. An explicit virtual-display test also produced no PNG. Upstream [PR 15745](https://github.com/OrcaSlicer/OrcaSlicer/pull/15745) fixes the CLI OpenGL context; the official [2.5.0-alpha release](https://github.com/OrcaSlicer/OrcaSlicer/releases/tag/v2.5.0-alpha) contains the thumbnail work and remains a prerelease.
+
+A separate pinned alpha image now passes the same actual gateway slice, exact package-profile assertions, existing passive nominal-path inspection and unchanged embedded-PNG gate. The 50-layer coupon has 2,641 model segments, zero support segments and 36 unclassified segments; no physical or support-quality claim follows. The preview was extracted from the actual package and visually checked as a nonblank cube. It is not generated or inserted by Wright.
+
+See `alpha-runtime-receipt.json`, `alpha-inspection-report.json` and `alpha-package-preview.png`. The original MCP implementation is unchanged. Container init was required for virtual-display startup; extracted public runtime directory permissions were corrected for nonroot execution. Failed attempts and exact package remain retained privately. This qualifies a prerelease prerequisite only. Handle geometry, supports/orientation, strength applicability, workspace enrollment, complete execution and human reviews remain open. No installed plugin, provider or hardware changed.
