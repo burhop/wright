@@ -36,10 +36,11 @@ No check is replaced with an AI assertion of success.
 ## Remaining binding work
 
 1. The original `concept.png` and `context.md` are now uploaded through the actual UI into hash-addressed workspace paths; [exact receipt and qualification limits](../evidence/handle-reference-upload/README.md). Revision 3 binds that exact uploaded concept path and preserves original reference provenance.
-2. Qualify and select the engineering tools. The installed backend currently
-   selects no tool for this fresh workspace. SteveCAD is installed globally;
-   OASiS and the catalog slicer are not installed here. Catalog presence is not
-   capability or permission.
+2. Qualify and select the engineering tools. The separate isolated 036 workspace
+   now has protocol-validated OASiS and offline slicing providers, enabled through
+   Connections. This does not change the older installed workspace or grant tool
+   invocation. SteveCAD sign-in and CAD binding remain outstanding. See
+   [setup evidence](../evidence/candidate-036-provider-setup/README.md).
 3. Bind exact geometry and strength profiles, including meaningful independent
    measurements, applicability and convergence. Qualify the bounded correction
    intervals against those exact outputs. Stage instructions describe the intent;
@@ -72,3 +73,17 @@ is preserved as evidence, not rewritten to claim these local changes are live.
 The local draft now declares the seven-input final package review using Wright’s existing `local_review` / `review_only` binding. All seven inputs and upstream connections remain. The first attempt was **not saved in the desktop workspace**: the normal Source editor correctly rejected changing the step type and managed review declaration as an unsupported structural change. Desktop accepted revision 3 remains unchanged; its pending editor draft is preserved. The attempted UI path and screenshot are retained in `.local-run/experience-review/candidate-035/handle-review-02/`. Use a supported structural authoring path or qualify the missing edit capability; do not bypass the editor’s authority guard or discard review subjects. No workflow was run or approved.
 
 The subsequent narrow editor correction now saves and reopens **revision 4**, retaining every review subject. [Evidence](../evidence/handle-review-authoring/README.md). The paragraph above records the earlier failed attempt; accepted revision 4 is current. No human approval or engineering execution is implied.
+
+## Proposed analysis binding (not yet accepted)
+
+The local source now proposes the isolated OASiS `run_simulation` binding with
+per-run, per-attempt field and analysis-basis outputs. [Exact schema and image](analysis-binding.json)
+record the selected provider. Its instructions require a reviewed material, load,
+support and acceptance basis; missing values stop the work rather than becoming
+assumptions silently accepted by the solver. This is not a strength qualification.
+
+Neither accepted desktop source has been overwritten. Full readiness still rejects
+the unbound CAD stage. Geometry and strength validators, repair/orientation/slicing
+handoffs and bounded correction edges remain to be qualified. A protocol-valid
+slicer alone does not fulfill the manufacturing stage’s repaired-mesh, orientation
+comparison, print-package and preview requirements.

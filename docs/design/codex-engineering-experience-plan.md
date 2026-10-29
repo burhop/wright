@@ -811,3 +811,20 @@ the running candidate wheel. Reproduction, limitations and screenshots are saved
 at `prototypes/desktop-harness/engineering-experience/evidence/candidate-036-provider-setup/`.
 Do not repeat completed setup to repair a test assertion or conflate validation
 with execution, engineering acceptance or native Windows rendering.
+
+### Proposed analysis-stage binding
+
+The local handle definition now proposes the exact isolated OASiS
+`run_simulation` tool and attempt-scoped field/basis artifacts. Its schema and
+image are retained in `prototypes/desktop-harness/engineering-experience/handle/analysis-binding.json`.
+Four existing handle authoring regressions pass, including source save/reopen,
+layout and review-subject preservation. This proves authoring compatibility, not
+solver execution. Full compilation still stops at the unbound CAD task; neither
+accepted workspace source was overwritten. CAD sign-in, independent validators,
+manufacturing handoffs and correction intervals remain open.
+
+The worktree dependency directory was empty; the first test launches failed
+before executing tests. Restoring its lockfile-pinned dependencies with `npm ci
+--ignore-scripts` allowed the existing regression to pass. No dependency versions
+or lockfiles were changed. The install reports eight moderate audit findings;
+no automatic dependency upgrades were applied.
