@@ -1362,3 +1362,12 @@ storage and fixture connection metadata in a simulated Linux host, not Windows.
 Evidence: `prototypes/desktop-harness/engineering-experience/evidence/dirty-connections-storage/`.
 Remaining engineering readiness, output mapping, human review, full real rerun,
 Robot regression limitations, installed candidate, Windows and gates are unchanged.
+
+
+Candidate 0.37 packaging prerequisite passes: fresh shared web assets, wheel and
+sdist, clean installs, exact installed module bytes, scoped pending-work HTTP
+and installed compiler readiness target. Its 60 dependencies are pinned to the
+prior candidate and all 61 packages are compatible. Evidence:
+`prototypes/desktop-harness/engineering-experience/evidence/candidate-037-package/`.
+No service/plugin changed. Coherent bridge/backend activation, full gates,
+engineering and Windows acceptance remain open; this is not a release.
