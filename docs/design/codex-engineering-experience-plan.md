@@ -1352,3 +1352,13 @@ The readiness discovery-error correction now opens the same native Connections
 owner instead of navigating to an unavailable browser registry. Hermes retains
 its registry link. Both host behaviors are tested (18 focused tests pass), with
 TypeScript/native build passing. Independent usability review requested.
+
+
+The independent review's combined dirty-edit journey now passes: change the
+disposable workflow name, open Connections, return without source reload, save
+revision 3, reload and compare exact source. The 480px return control is visible;
+parsed comparison confirms only the title changed. This uses real isolated
+storage and fixture connection metadata in a simulated Linux host, not Windows.
+Evidence: `prototypes/desktop-harness/engineering-experience/evidence/dirty-connections-storage/`.
+Remaining engineering readiness, output mapping, human review, full real rerun,
+Robot regression limitations, installed candidate, Windows and gates are unchanged.
