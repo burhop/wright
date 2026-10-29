@@ -790,3 +790,24 @@ Actual Windows rendering/delivery and complete engineering execution remain open
 The owned fresh candidate is on loopback 18336; it has no copied accounts or tool
 grants. Do not replace the installed plugin until tool setup and the complete
 candidate's required local checks are qualified.
+
+### Actual tool setup and loaded-tool membership correction
+
+Both selected independent providers are now registered, protocol-validated and
+enabled through the actual compiled Connections panel in the isolated 036 handle
+workspace: OASiS (17 discovered tools) and the offline Orca/Bambu provider (11).
+Their containers remain network-disabled and lack printer credentials; no
+engineering tool was invoked. Exact validation receipts explicitly preserve
+`invocation_approved: false`. SteveCAD personal sign-in remains outstanding;
+availability was requested without generating an expiring code prematurely.
+
+Creating a second workspace exposed a shared reporting bug: its loaded-tool
+selection was correctly stored by name, but Connections hid that membership when
+another workspace selected the same provider by ID. The read projection now unions
+both supported identities with workspace deduplication; authority is unchanged.
+Seven capability tests and eleven existing gateway tests pass, and a read-only
+projection over actual candidate storage proves the correction. It is not yet in
+the running candidate wheel. Reproduction, limitations and screenshots are saved
+at `prototypes/desktop-harness/engineering-experience/evidence/candidate-036-provider-setup/`.
+Do not repeat completed setup to repair a test assertion or conflate validation
+with execution, engineering acceptance or native Windows rendering.
