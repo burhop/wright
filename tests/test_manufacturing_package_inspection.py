@@ -389,3 +389,146 @@ def test_supplementary_response_equality_is_type_exact(handoff):
     with pytest.raises(ValueError):
         operation.run(config, read_3mf_toolpaths)
     assert not list((root / "outputs").iterdir())
+
+
+@pytest.fixture
+def compared_alternatives(handoff):
+    """Synthetic packages exercise the real observation and inspection path."""
+    root, original, response = handoff
+    module_spec = importlib.util.spec_from_file_location(
+        "handle_comparison", REPO / "scripts/engineering/compare_handle_slices.py"
+    )
+    comparison_operation = importlib.util.module_from_spec(module_spec)
+    module_spec.loader.exec_module(comparison_operation)
+    alternatives = {}
+    for name, distance in (("pads_down", 5), ("side", 8)):
+        config = {**original}
+        config.update(
+            source_mesh=f"inputs/{name}.stl",
+            slice_package=f"inputs/{name}.3mf",
+            provider_response=f"inputs/{name}-response.json",
+            output_root=f"outputs/{name}",
+        )
+        (root / config["source_mesh"]).write_bytes(f"Synthetic {name} mesh".encode())
+        (root / config["output_root"]).mkdir()
+        with zipfile.ZipFile(root / config["slice_package"], "w") as archive:
+            archive.writestr(
+                config["gcode_entry"],
+                f"G90\nG21\nM83\n;CHANGE_LAYER\n;Z_HEIGHT:0.2\nG1 X0 Y0 Z0.2\n;FEATURE:Support\nG1 X10 Y{distance} E1\n",
+            )
+            archive.writestr(
+                "Metadata/plate_1.png",
+                b"\x89PNG\r\n\x1a\n" + name.encode() + b" fixture only",
+            )
+        actual = {
+            **response,
+            "source": config["source_mesh"],
+            "output": config["slice_package"],
+        }
+        config["expected_response_fields"] = {
+            k: actual[k] for k in ("source", "output", "plate")
+        }
+        observed_response(root, config, actual)
+        alternatives[name] = config
+    config = {
+        "workspace_root": str(root),
+        "alternatives": alternatives,
+        "comparison_output": "outputs/comparison.json",
+    }
+    compared = comparison_operation.inspect_alternatives(
+        config, operation.run, read_3mf_toolpaths
+    )
+    selection = {
+        "workspace_root": str(root),
+        "comparison": compared["comparison"]["path"],
+        "comparison_sha256": compared["comparison"]["sha256"],
+        "selected": "side",
+        "rationale": "Fixture choice only; not an engineering recommendation.",
+        "package_output": "outputs/selected.3mf",
+        "preview_output": "outputs/selected.png",
+        "selection_output": "outputs/selection.json",
+    }
+    return root, comparison_operation, compared, selection, config
+
+
+def test_comparison_retains_actual_observations_and_exact_selected_bytes(
+    compared_alternatives,
+):
+    root, compare, measured, selection, _ = compared_alternatives
+    before = {p: p.read_bytes() for p in root.rglob("*") if p.is_file()}
+    result = compare.retain_selection(selection)
+    assert result["engineering_acceptance"] is False
+    assert result["decision_kind"] == "proposed_selection_not_engineering_approval"
+    for alternative in measured["alternatives"].values():
+        assert alternative["provider_observation"]["call_number"] == 1
+        assert alternative["observed_layer_count"] == 1
+        assert alternative["observed_path_segments"]["support"] > 0
+    assert (root / selection["package_output"]).read_bytes() == (
+        root / "inputs/side.3mf"
+    ).read_bytes()
+    assert (root / selection["preview_output"]).read_bytes() == (
+        root / "outputs/side/slice-preview.png"
+    ).read_bytes()
+    assert all(p.read_bytes() == contents for p, contents in before.items())
+    with pytest.raises(ValueError, match="fresh workspace outputs"):
+        compare.retain_selection(selection)
+
+
+@pytest.mark.parametrize(
+    "path",
+    [
+        "inputs/side.3mf",
+        "inputs/pads_down.3mf",
+        "inputs/pads_down.stl",
+        "outputs/side/slice-preview.png",
+        "outputs/comparison.json",
+    ],
+)
+def test_comparison_drift_blocks_selection_without_publishing(
+    compared_alternatives, path
+):
+    root, compare, _, selection, _ = compared_alternatives
+    with (root / path).open("ab") as stream:
+        stream.write(b"changed")
+    with pytest.raises(ValueError, match="changed"):
+        compare.retain_selection(selection)
+    assert not (root / selection["package_output"]).exists()
+    assert not (root / selection["selection_output"]).exists()
+
+
+@pytest.mark.parametrize("case", ["outside", "alias", "existing", "no-rationale"])
+def test_selection_rejects_invalid_destinations_and_missing_rationale(
+    compared_alternatives, case
+):
+    root, compare, _, selection, _ = compared_alternatives
+    if case == "outside":
+        selection["preview_output"] = "../escape.png"
+    elif case == "alias":
+        selection["preview_output"] = "outputs/../outputs/selected.3mf"
+    elif case == "existing":
+        selection["preview_output"] = "inputs/side.3mf"
+    else:
+        selection["rationale"] = "  "
+    with pytest.raises(ValueError):
+        compare.retain_selection(selection)
+    assert not (root / selection["package_output"]).exists()
+
+
+@pytest.mark.parametrize("change", ["legacy", "source_mesh", "slice_package"])
+def test_comparison_rejects_unobserved_or_swapped_inputs(compared_alternatives, change):
+    root, compare, _, _, config = compared_alternatives
+    config["comparison_output"] = "outputs/another-comparison.json"
+    for name, alternative in config["alternatives"].items():
+        alternative["output_root"] = f"outputs/another-{name}"
+        (root / alternative["output_root"]).mkdir()
+    pads = config["alternatives"]["pads_down"]
+    side = config["alternatives"]["side"]
+    if change == "legacy":
+        pads.pop("provider_observation")
+    else:
+        pads[change], side[change] = side[change], pads[change]
+    with pytest.raises(ValueError):
+        compare.inspect_alternatives(config, operation.run, read_3mf_toolpaths)
+    assert not (root / config["comparison_output"]).exists()
+    for alternative in config["alternatives"].values():
+        assert not list((root / alternative["output_root"]).iterdir())

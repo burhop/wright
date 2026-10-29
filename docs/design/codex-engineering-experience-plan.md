@@ -1020,3 +1020,21 @@ and final independent validation bindings are still required. The isolated wheel
 predates the observation option and must be rebuilt before execution. No plugin,
 account, review, run or historical artifact changed. The full-diagram screenshot
 is an overview/reopen proof, not evidence that every card is readable at fit scale.
+
+### Passive alternative comparison and proposed selection (local, not enabled)
+
+The reference handle operation now reuses the existing passive package inspector
+for both orientations, records their observed toolpaths and native previews,
+and retains a separately proposed selection without modifying package bytes.
+It rechecks both alternatives before selection and preserves engineering
+validation and review as separate authorities. Evidence:
+`prototypes/desktop-harness/engineering-experience/evidence/handle-package-selection/`.
+This is an unbound prerequisite, not handle acceptance or an installed capability.
+Next: pin the operation dependencies through existing workflow inputs, finish the
+independent final checks, then qualify the coherent candidate. The approved
+workspace-first UI direction and full C01–C08 completion criteria are unchanged.
+Focused review corrected missing observed-call enforcement and swapped
+mesh/package associations before binding. All 189 affected tests pass; independent
+source re-review found no remaining blocker in this operation. Full workflow
+execution, final validation, coherent installation and Windows acceptance remain
+unverified.
