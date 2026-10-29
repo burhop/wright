@@ -911,3 +911,20 @@ native container remains running for the isolated candidate, with lifecycle stat
 and exact identities in the evidence. No installed plugin change or Windows
 acceptance is implied. Evidence:
 `prototypes/desktop-harness/engineering-experience/evidence/candidate-036-mesh-setup/`.
+
+### Accepted mesh binding and shared observer regression
+
+The actual editor saved the mesh binding as isolated handle revision 3, digest
+`76edc9fd99aa19edd38da1d68fe20cf07ee2f00fc78167c4a0ea3dff45506d96`,
+then reloaded Source and Diagram. Exact revision/digest guards allowed one save.
+An independent comparison proves mesh_repair.settings is the only changed
+subject; all remaining source bytes, including review subjects, are identical.
+Evidence: `prototypes/desktop-harness/engineering-experience/evidence/candidate-036-mesh-binding-save/`.
+
+Forty existing component checks across EngineeringRunContext,
+WorkflowRunObserverIntegration and EngineeringTemplateSources pass. In particular,
+the existing Robot Tracking Diagnosis test attaches exact recorded results without
+starting a runner and retains genuine edited-source mismatch detection. These
+controlled tests cover observation/presentation and authoring, not a new real-tool
+Robot run or Windows acceptance. CAD/validation/manufacturing bindings and bounded
+correction remain required before the complete handle is ready.

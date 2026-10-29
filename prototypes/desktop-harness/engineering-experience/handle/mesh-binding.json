@@ -1,5 +1,5 @@
 {
-  "status": "local draft binding; accepted candidate revision 2 unchanged",
+  "status": "accepted isolated candidate revision 3; full workflow remains not ready",
   "server_id": "import:draft-92ea6423d17519e26dc7",
   "tools": [
     "execute_blender_code"
@@ -12,9 +12,10 @@
   "network": "none",
   "native_lifecycle": "owned isolated container; must check running state before execution; no automatic replay",
   "remaining": [
-    "actual accepted-source save/reopen",
     "source-mesh engineering execution",
     "independent feature preservation and analysis applicability",
     "bounded correction and human reviews"
-  ]
+  ],
+  "accepted_storage_revision": 3,
+  "accepted_storage_digest": "76edc9fd99aa19edd38da1d68fe20cf07ee2f00fc78167c4a0ea3dff45506d96"
 }
