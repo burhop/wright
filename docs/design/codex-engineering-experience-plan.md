@@ -951,3 +951,16 @@ profile applicability, native previews and full engineering validation remain
 unverified. The independent reviewer is checking the draft structure.
 
 Independent review found missing selected-package evidence at final validation and missing comparison rationale at reporting. Both explicit handoffs are now accepted in revision 5, digest `7a35cfc34a9eb9c008e9a2f34f5778f954498231b1e0a85af6530cd1cfec3c31`, with actual editor save/reopen and unchanged review declarations. Eleven authoring tests pass. The original revision 4 proof is retained alongside the reviewed correction.
+
+### Connected-file identity enforced by existing owner
+
+Analysis, repair, orientation and slicing now declare every binary input through
+existing connected-output file dependencies. The backend verifies actual
+producer/hash/size before dispatch; no path is guessed from a previous attempt.
+Twelve authoring and 33 backend dependency tests pass. Actual source save/reopen
+accepts revision 6, digest `beb64b12acea1e1849cbcfd55f7cc6daa33afa327af2ccbfa47f7f8090c77ba0`. Comparison proves no
+other settings, graph subjects or reviews changed. Evidence:
+`prototypes/desktop-harness/engineering-experience/evidence/candidate-036-file-dependencies/`.
+The separate slice-response provenance gap remains: AI completion summaries are
+not recorded provider responses. Reuse the existing deterministic response
+retention/passive inspection path before binding manufacturing inspection.

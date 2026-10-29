@@ -426,3 +426,30 @@ it("declares two package inputs for comparison and retains exact final-check/rep
     workflow.blocks.find((b) => b.id === "block.print-review")!.inputPortIds,
   ).toHaveLength(7);
 });
+
+it("preserves runtime hash checks for each connected binary input in bound engineering stages", () => {
+  const workflow = parseRecoverySourceDocument(source, 1).workflow!;
+  const formatted = formatRecoveryAuthoringSource(workflow).text;
+  for (const id of [
+    "analysis",
+    "mesh_repair",
+    "print_orientations",
+    "slice_orientations",
+  ]) {
+    const section = formatted.match(
+      new RegExp(`task ${id}\\n([\\s\\S]*?)\\nend`),
+    )![1];
+    const inputs = JSON.parse(section.match(/^  inputs: (.*)$/m)![1]) as {
+      key: string;
+      kind: string;
+    }[];
+    const settings = JSON.parse(section.match(/^  settings: (.*)$/m)![1]);
+    const binary = inputs.filter((p) => p.kind === "workspace_file");
+    expect(binary.length).toBeGreaterThan(0);
+    expect(settings.mcp_file_dependencies).toEqual(
+      Object.fromEntries(
+        binary.map((p) => [p.key, { source: "connected_output" }]),
+      ),
+    );
+  }
+});
