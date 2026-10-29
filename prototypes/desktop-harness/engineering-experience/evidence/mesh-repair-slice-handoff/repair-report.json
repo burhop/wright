@@ -1,0 +1,37 @@
+{
+  "status": "PASS",
+  "scope": "Disposable mesh repair prerequisite; not the handle or a durable workflow run",
+  "input": {
+    "sha256": "ded13b621278fc245503bb95f1c7af60b9bc30410c41056a88c3eca5b6a377a9",
+    "bytes": 734,
+    "triangles": 13,
+    "dimensions": [
+      10.0,
+      8.0,
+      6.0
+    ],
+    "nonmanifold_edges": 3,
+    "volume": 520.0
+  },
+  "output": {
+    "sha256": "95855df2ca135e8211699cb78544f2ea4198a7b5f33fa8ccdf4949ce9baf56ae",
+    "bytes": 684,
+    "triangles": 12,
+    "dimensions": [
+      10.0,
+      8.0,
+      6.0
+    ],
+    "nonmanifold_edges": 0,
+    "volume": 480.0
+  },
+  "source_preserved": true,
+  "importer_removed_duplicate_face": true,
+  "provider_revision": "5f8ddaf6e987c4aa0c3467fcc548838b28f64477",
+  "provider_version": "1.9.1",
+  "mcp_version": "1.30.0",
+  "blender_version": "4.3.2",
+  "image": "sha256:4fa54f2eecd99edbbd1daac1ff6adad2d280013e4bcf606c3b3b0aa27cb3b3af",
+  "physical_operation": false,
+  "engineering_acceptance": false
+}

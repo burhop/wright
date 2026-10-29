@@ -828,3 +828,22 @@ before executing tests. Restoring its lockfile-pinned dependencies with `npm ci
 --ignore-scripts` allowed the existing regression to pass. No dependency versions
 or lockfiles were changed. The install reports eight moderate audit findings;
 no automatic dependency upgrades were applied.
+
+### Actual mesh-repair to slicing boundary
+
+The manufacturing capability audit confirms a single slicer binding cannot
+fulfil the draft's repair/orientation/package promises. The existing Printed02
+example already separates repair and slicing; reuse that ownership instead of
+adding a Wright-owned provider or hiding missing work in a prompt.
+
+A fresh network-disabled Blender qualification repaired a duplicate-face fixture
+through the gateway, preserved its source and dimensions, and exported closed
+geometry. The exact output bytes were then sliced through a second gateway call.
+The actual package passed existing passive profile/toolpath and mandatory native
+PNG checks. The selected native container is stopped; installed settings and
+accepted workflow definitions are unchanged. This is prerequisite evidence, not
+handle execution, orientation comparison or Windows acceptance. Exact identities,
+measurements and native preview are indexed at
+`prototypes/desktop-harness/engineering-experience/evidence/mesh-repair-slice-handoff/README.md`.
+Next bind the two meaningful manufacturing stages and retain independent final
+geometry/analysis applicability checks; CAD sign-in remains separately pending.
