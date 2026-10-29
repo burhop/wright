@@ -628,3 +628,37 @@ def test_remote_signin_mode_rejects_unknown_value_before_writing(tmp_path, monke
             remote_signin_mode="not-supported",
         )
     assert list(tmp_path.iterdir()) == []
+
+
+@pytest.mark.parametrize("operation", ["navigation", "runs"])
+def test_unready_source_can_be_navigated_but_not_executed(boundary, monkeypatch, operation):
+    backend, service, _ = boundary
+    from workspace_service.workflow_source_execution import WorkflowSourceExecutionError
+    compiler = Mock(side_effect=WorkflowSourceExecutionError(
+        "WORKFLOW_NOT_READY", "Configure CAD", "Choose a server", block_id="cad"
+    ))
+    monkeypatch.setattr("workspace_service.workflow_source_execution.compile_prompt_workflow", compiler)
+    call = backend.qualify_digital_source(
+        {"session_id": "session", "path": "workflows/read.workflow.wflow"},
+        operation=f"/api/workspace/process-interfaces/{operation}",
+    )
+    if operation == "navigation":
+        asyncio.run(call)
+        compiler.assert_not_called()
+        service.workflow_sources.read.assert_not_called()
+    else:
+        with pytest.raises(HTTPException) as failure:
+            asyncio.run(call)
+        assert failure.value.status_code == 400
+        assert failure.value.detail["code"] == "WORKFLOW_NOT_READY"
+
+
+def test_navigation_still_requires_desktop_session(boundary):
+    backend, service, _ = boundary
+    service.repository.get_by_session.return_value = None
+    with pytest.raises(HTTPException) as failure:
+        asyncio.run(backend.qualify_digital_source(
+            {"session_id": "missing", "path": "workflows/read.workflow.wflow"},
+            operation="/api/workspace/process-interfaces/navigation",
+        ))
+    assert failure.value.status_code == 403

@@ -1371,3 +1371,19 @@ prior candidate and all 61 packages are compatible. Evidence:
 `prototypes/desktop-harness/engineering-experience/evidence/candidate-037-package/`.
 No service/plugin changed. Coherent bridge/backend activation, full gates,
 engineering and Windows acceptance remain open; this is not a release.
+
+
+The coherent 0.37 candidate revealed a real integration defect omitted by the
+fixture navigation test: the native readiness screen correctly identifies CAD,
+but POST navigation was rejected by the desktop execution guard because the
+same unconfigured workflow could not compile. Private reproduction:
+`.local-run/experience-review/candidate-037/browser-readiness-01/` and
+`navigation-rejection.json`. The earlier bridge proof did not exercise navigation
+and therefore is not a complete UI pass.
+
+The guard now permits only the exact read-only navigation endpoint past execution
+qualification after desktop-session and authority checks. Existing navigation
+owners still enforce source digest, block identity, run and evidence scope. Run
+starts remain guarded. 54 desktop-boundary tests pass, including unready navigation,
+execution rejection and foreign-session denial; Ruff passes. Frozen candidate
+restart and actual browser reproduction remain to be rerun before installation.

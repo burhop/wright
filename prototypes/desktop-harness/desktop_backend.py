@@ -1536,6 +1536,10 @@ class DesktopBackend:
             raise HTTPException(
                 403, "Workspace task execution cannot use integration-test authority"
             )
+        # Navigation only resolves an exact source/run subject through its owner.
+        # Requiring executable source here would prevent correcting an unready step.
+        if operation == "/api/workspace/process-interfaces/navigation":
+            return
         document = await self.service.workflow_sources.read(
             row["local_path"], body.get("path")
         )
