@@ -388,3 +388,17 @@ def test_step_events_capture_actual_prompt_and_written_path(tmp_path):
     ]
     assert events[0]["prompt"] == "Write a short report."
     assert events[-1]["output_path"] == "report.html"
+
+
+def test_unconfigured_engineering_step_stays_blocked_with_preserving_guidance():
+    draft = source(
+        task("check_geometry")
+        .replace('name: "check_geometry"', 'name: "Check geometry"')
+        .replace("performed_by: ai_assisted", "performed_by: configured_tool")
+    )
+    with pytest.raises(WorkflowSourceExecutionError) as error:
+        compile_prompt_workflow(draft)
+    assert error.value.code == "WORKFLOW_NOT_READY"
+    assert "Check geometry" in str(error.value)
+    assert "configure the tool or task it requires" in error.value.correction
+    assert "keep the step and its required checks or reviews" in error.value.correction

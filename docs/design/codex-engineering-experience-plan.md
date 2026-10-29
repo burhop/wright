@@ -1157,3 +1157,17 @@ constant can_run=false alone was not used as readiness proof. Evidence:
 `prototypes/desktop-harness/engineering-experience/evidence/portable-handle/`.
 This qualifies local service portability for this saved draft, not native UI
 export/import or Windows delivery. C03/C04 full execution remains incomplete.
+
+### Fresh CAD readiness observation and actionable guidance
+
+The isolated candidate's actual Connections response reports SteveCAD not
+installed/active/enabled and no local validation. This is not merely expired
+authentication; complete setup is required. credentials_missing=false on an
+uninstalled catalog entry does not prove sign-in. Prior installed-workspace
+qualification remains separate. Evidence:
+`prototypes/desktop-harness/engineering-experience/evidence/candidate-036-cad-readiness/`.
+
+Unconfigured-step readiness guidance now directs the engineer to configure the
+required tool/task and preserve required checks/reviews rather than replace it
+with an AI prompt. 22 compiler tests pass. No execution contract or guard changed,
+and the frozen/installed runtime is unchanged pending coherent rebuild.

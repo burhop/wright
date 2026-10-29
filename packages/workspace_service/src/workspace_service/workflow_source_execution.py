@@ -957,8 +957,10 @@ def compile_prompt_workflow(source: str) -> PromptWorkflow:
             != ("configured_tool" if is_mcp else "ai_assisted")
         ):
             raise _invalid(
-                f"{title} needs a supported execution type.",
-                "Use an AI prompt or an MCP tool block for this run.",
+                f"{title} is not configured to run in this version of Wright.",
+                "Open this step's settings and configure the tool or task it requires. "
+                "If that capability is unavailable, keep the step and its required checks "
+                "or reviews in place; you can still inspect and edit the workflow.",
             )
         tool_name = str(settings.get("mcp_tool", "")) if is_mcp else ""
         if is_mcp and not tool_name:
