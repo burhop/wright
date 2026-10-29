@@ -1,3 +1,4 @@
+import { UnboundTaskSetup } from "./UnboundTaskSetup";
 import { afterEach, expect, it, vi } from "vitest";
 import {
   cleanup,
@@ -83,4 +84,47 @@ it("assigns a server explicitly, undoes/redoes and saves without replacing the s
     executionKind: "ai_capable",
     configuration: { mcp_server: "cad", authoring_template: "mcp-task" },
   });
+});
+
+it("lets an engineer open Connections and refresh an unavailable server without applying a binding", async () => {
+  const parsed = parseRecoverySourceDocument(source, 1);
+  if (!parsed.ok || !parsed.workflow) throw new Error("Invalid fixture");
+  const block = parsed.workflow.blocks.find((b) => b.id === "block.cad")!;
+  const read = vi
+    .fn()
+    .mockRejectedValueOnce(new Error("Disconnected"))
+    .mockResolvedValueOnce([
+      {
+        name: "cad.inspect",
+        server_id: "cad",
+        server_name: "Study CAD",
+        workspace_server: true,
+        tool_name: "inspect",
+        title: "Inspect",
+        description: "",
+        input_schema: {},
+        schema_digest: "a".repeat(64),
+      },
+    ]);
+  const openConnections = vi.fn();
+  const apply = vi.fn();
+  render(
+    <WorkflowToolDiscovery.Provider
+      value={{ read, sessionId: "session", openConnections }}
+    >
+      <UnboundTaskSetup block={block} readOnly={false} onApply={apply} />
+    </WorkflowToolDiscovery.Provider>,
+  );
+  await screen.findByText(/Workspace servers could not be read/);
+  expect(screen.getByLabelText("Engineering server")).toBeDisabled();
+  fireEvent.click(screen.getByRole("button", { name: "Open Connections" }));
+  expect(openConnections).toHaveBeenCalledTimes(1);
+  fireEvent.click(screen.getByRole("button", { name: "Refresh servers" }));
+  await screen.findByRole("option", { name: "Study CAD" });
+  expect(screen.getByLabelText("Engineering server")).toBeEnabled();
+  expect(
+    screen.getByRole("button", { name: "Use AI with this server" }),
+  ).toBeDisabled();
+  expect(apply).not.toHaveBeenCalled();
+  expect(read).toHaveBeenCalledTimes(2);
 });

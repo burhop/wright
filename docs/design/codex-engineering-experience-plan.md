@@ -1397,3 +1397,13 @@ Fresh candidate service is port18337/session90411; installed plugin unchanged.
 Screenshot review identifies a direct Connections action missing from the unbound
 inspector message. This is the next focused usability correction, not a reason
 to weaken unavailable-server or execution checks.
+
+
+The missing-server inspector now provides Open Connections and Refresh servers.
+The actual candidate API/browser roundtrip passes at480px: exact blocked step,
+Connections, same inspector, explicit rediscovery; no source or execution action.
+The focused test also covers unavailable discovery becoming available without an
+automatic binding. Hermes retains Tool Registry navigation. Evidence:
+`prototypes/desktop-harness/engineering-experience/evidence/inspector-connections/`.
+The installed plugin remains unchanged; current frontend must be included in the
+next frozen candidate checkpoint before host acceptance.

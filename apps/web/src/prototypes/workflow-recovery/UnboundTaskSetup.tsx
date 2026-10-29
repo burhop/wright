@@ -3,6 +3,7 @@ import type { RecoveryBlock } from "./model";
 import type { RecoveryCommand } from "./command-system";
 import {
   useWorkflowToolDiscovery,
+  useWorkflowToolManagement,
   useWorkflowToolSession,
 } from "./workflow-tool-discovery";
 import {
@@ -24,6 +25,8 @@ export function UnboundTaskSetup({
 }) {
   const sessionId = useWorkflowToolSession(hostSessionId);
   const read = useWorkflowToolDiscovery();
+  const openConnections = useWorkflowToolManagement();
+  const [refresh, setRefresh] = useState(0);
   const [servers, setServers] = useState<McpServerChoice[]>([]);
   const [selected, setSelected] = useState("");
   const [message, setMessage] = useState("Loading workspace servers…");
@@ -51,13 +54,13 @@ export function UnboundTaskSetup({
       .catch(() => {
         if (active)
           setMessage(
-            "Workspace servers could not be read. Check Connections and reopen this step.",
+            "Workspace servers could not be read. Check Connections, then refresh servers.",
           );
       });
     return () => {
       active = false;
     };
-  }, [sessionId, read]);
+  }, [sessionId, read, refresh]);
   return (
     <section
       aria-label="Configure this step"
@@ -70,6 +73,20 @@ export function UnboundTaskSetup({
         before running.
       </p>
       {message && <p role="status">{message}</p>}
+      <div>
+        {openConnections ? (
+          <button type="button" onClick={openConnections}>
+            Open Connections
+          </button>
+        ) : (
+          <a href="/tool-registry" target="_blank" rel="noreferrer">
+            Open Tool Registry
+          </a>
+        )}
+        <button type="button" onClick={() => setRefresh((value) => value + 1)}>
+          Refresh servers
+        </button>
+      </div>
       <label>
         Engineering server
         <select
