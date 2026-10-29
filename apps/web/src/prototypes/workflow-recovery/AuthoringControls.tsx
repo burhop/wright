@@ -83,6 +83,7 @@ export function AuthoringRunReadiness({
   readonly onRefreshTemplateReadiness?: () => void;
   readonly onSelect: (id: string) => void;
 }) {
+  const openConnections = useWorkflowToolManagement();
   const sessionId = useWorkflowToolSession(hostSessionId);
   const discoverTools = useWorkflowToolDiscovery();
   const inputs = authoringReadiness(workflow);
@@ -293,8 +294,14 @@ export function AuthoringRunReadiness({
             ))}
             {mcpCheckError && (
               <span>
-                {mcpCheckError} Owner: Wright environment · Next: check the{" "}
-                <a href="/tool-registry">Tool Registry</a>.
+                {mcpCheckError}{" "}
+                {openConnections ? (
+                  <button type="button" onClick={openConnections}>
+                    Check workspace connections
+                  </button>
+                ) : (
+                  <a href="/tool-registry">Check Tool Registry</a>
+                )}
               </span>
             )}
             <button

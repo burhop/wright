@@ -1337,3 +1337,18 @@ unconfigured `geometry_check` step with WORKFLOW_NOT_READY. Private receipt:
 `.local-run/experience-review/unbound-backend-01/compiler-result.json`.
 This is not proof of full compilation, correct engineering output mapping or an
 executable handle workflow. All required downstream checks remain intact.
+
+
+The unbound CAD setup now has actual storage save/reopen proof in a disposable
+workspace: canvas setup → save revision 2 → full page reload → exact source
+comparison. All other sections and CAD ports/dependencies/outputs remain intact;
+the instruction body is preserved as the AI task prompt. Current backend compiler
+code correctly identifies the next unconfigured geometry_check. Tool metadata
+was explicitly fixture-only; the storage service is frozen ceba843c, so this does
+not claim a coherent installed build or real CAD readiness. Evidence:
+`prototypes/desktop-harness/engineering-experience/evidence/unbound-storage/`.
+
+The readiness discovery-error correction now opens the same native Connections
+owner instead of navigating to an unavailable browser registry. Hermes retains
+its registry link. Both host behaviors are tested (18 focused tests pass), with
+TypeScript/native build passing. Independent usability review requested.
