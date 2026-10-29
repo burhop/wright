@@ -101,3 +101,11 @@ case 03 retained its missing interval. Source, result hashes and limits are in
 `prototypes/desktop-harness/engineering-experience/evidence/robot-provider-current/`.
 This is provider evidence only: current Wright gateway registration, canonical
 workflow execution/review and Windows acceptance are still unverified.
+
+The fresh Robot regression workspace subsequently completed normal command
+preview, setup-plan approval/application, protocol validation and workspace
+enablement for the pinned ROSBag server and existing offline operations. ROSBag
+advertised 31 tools. Invocation approval remains false; no canonical run started.
+The current example's separate AgentCAD corrective stage still has the ARM64
+prerequisite limitation described in its guide. Exact scoped setup identities are
+in `prototypes/desktop-harness/engineering-experience/evidence/robot-provider-current/workspace-setup-receipt.json`.

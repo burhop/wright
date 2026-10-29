@@ -1207,3 +1207,12 @@ Robot diagnosis requirements with fresh scoped gateway bindings, durable run and
 human review; do not inherit protected campaign IDs or automatic approvals.
 Full handle execution, review/rerun/recovery, browser gates, actual Windows
 acceptance and the draft PR remain open. Personal SteveCAD sign-in is pending.
+
+Robot follow-up: normal setup owners registered, protocol-validated and enabled
+the isolated bag/operations connections in a fresh workspace; no invocation or
+engineering review was granted. Inspection of the current example/validator found
+additional corrective CAD, CalculiX and commissioning requirements. Retain those
+requirements. A fresh AgentCAD 0.6.0 resolver dry-run confirms the documented
+Linux ARM64 OpenCascade-wheel limitation. This blocks that dependent stage, not
+shared UI/gate work; do not count the older diagnosis-only chain as full regression.
+Receipt: `prototypes/desktop-harness/engineering-experience/evidence/robot-provider-current/workspace-setup-receipt.json`.
