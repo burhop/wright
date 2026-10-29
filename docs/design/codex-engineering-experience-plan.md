@@ -1216,3 +1216,23 @@ requirements. A fresh AgentCAD 0.6.0 resolver dry-run confirms the documented
 Linux ARM64 OpenCascade-wheel limitation. This blocks that dependent stage, not
 shared UI/gate work; do not count the older diagnosis-only chain as full regression.
 Receipt: `prototypes/desktop-harness/engineering-experience/evidence/robot-provider-current/workspace-setup-receipt.json`.
+
+### Readiness corrections retain an exact step destination
+
+Independent task review identified readiness instructions that said “open this
+step” without a link. Unsupported-step and missing-MCP-tool compiler errors now
+carry their exact block identity through preparation, readiness and start errors.
+The existing scoped navigation owner still validates source revision and block
+membership; the shared notice labels the action **Open affected step**. No new
+navigation contract, executor or permission grant was added. Inputs retain their
+frozen digest. Connections navigation is not included in this focused correction.
+
+Verification: 60 existing preparation/input/compiler tests, 3 focused navigation
+checks (including start rejection and stale-source denial), 5 action-contract
+classification tests and 108 UI-kit tests pass; TypeScript and native bundle build
+pass. The sandbox regression attempt was explicitly interrupted at exit130 after
+stalled output; its host rerun passed. Independent source review found no contract
+blocker. Actual compiled-panel focus/return and Windows acceptance remain open.
+The 166-test live browser run is still active under private gate evidence
+`gates-20261029/browser-06/`; WebKit is not passed because its binary cannot load
+required host libraries. No installed plugin update occurred.

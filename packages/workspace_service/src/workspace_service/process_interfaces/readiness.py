@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from datetime import datetime
 
-from core.process_interactions import Readiness
+from core.process_interactions import NavigationTarget, Readiness
 
 from ..workflow_mcp_execution import WorkflowMcpRuntime
 from ..workflow_run_preparation import prepare_authorized_workflow_run
@@ -93,7 +93,14 @@ async def qualify_inputs(
             }
             else "CAPABILITY_UNAVAILABLE"
         )
-        reason = ProcessInterfaceError(code, str(error), error.correction).reason
+        reason = ProcessInterfaceError(
+            code,
+            str(error),
+            error.correction,
+            navigation=NavigationTarget(kind="block", block_id=error.block_id)
+            if error.block_id
+            else None,
+        ).reason
     else:
         expirations = [
             binding.stale_after

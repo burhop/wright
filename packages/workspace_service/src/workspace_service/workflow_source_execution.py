@@ -27,10 +27,13 @@ from .workflow_references import WorkflowReference, allows_binary_file_reference
 class WorkflowSourceExecutionError(RuntimeError):
     """A correction-oriented error returned for a source-run request."""
 
-    def __init__(self, code: str, message: str, correction: str) -> None:
+    def __init__(
+        self, code: str, message: str, correction: str, *, block_id: str | None = None
+    ) -> None:
         super().__init__(message)
         self.code = code
         self.correction = correction
+        self.block_id = block_id
 
 
 _SECTION = re.compile(r"(workflow|item|input|task|group|connection) ([a-z][a-z0-9_]*)$")
@@ -279,8 +282,12 @@ class PromptWorkflow:
 def _invalid(
     message: str,
     correction: str = "Correct the highlighted workflow settings and save before running.",
+    *,
+    block_id: str | None = None,
 ):
-    return _error("WORKFLOW_NOT_READY", message, correction)
+    return WorkflowSourceExecutionError(
+        "WORKFLOW_NOT_READY", message, correction, block_id=block_id
+    )
 
 
 def _safe_path(value: object) -> str:
@@ -961,10 +968,11 @@ def compile_prompt_workflow(source: str) -> PromptWorkflow:
                 "Open this step's settings and configure the tool or task it requires. "
                 "If that capability is unavailable, keep the step and its required checks "
                 "or reviews in place; you can still inspect and edit the workflow.",
+                block_id=block_id,
             )
         tool_name = str(settings.get("mcp_tool", "")) if is_mcp else ""
         if is_mcp and not tool_name:
-            raise _invalid(f"{title}: choose an available MCP tool.")
+            raise _invalid(f"{title}: choose an available MCP tool.", block_id=block_id)
         fmt = settings.get("output_format", "json" if is_mcp else "text")
         policy = settings.get("file_policy", "indexed")
         mode = settings.get("prompt_source", "inline")

@@ -293,6 +293,21 @@ describe("public kit presentation and authority", () => {
     fireEvent.click(screen.getByRole("button", { name: "Start process" }));
     expect(onAction).toHaveBeenCalledTimes(1);
   });
+  it("offers exact step navigation for a readiness correction", () => {
+    const onNavigate = vi.fn();
+    const target = { kind: "block" as const, block_id: "check_geometry" };
+    render(
+      <ReasonNotice
+        reason={{ ...reason, navigation: target }}
+        onNavigate={onNavigate}
+      />,
+    );
+    fireEvent.click(screen.getByRole("button", { name: "Open affected step" }));
+    expect(onNavigate).toHaveBeenCalledExactlyOnceWith(target);
+    expect(
+      screen.queryByRole("button", { name: "Open related item" }),
+    ).not.toBeInTheDocument();
+  });
   it("shows missing readiness and declared later dependency distinctions", () => {
     render(
       <ReadinessPanel
