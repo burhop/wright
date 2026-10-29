@@ -1,0 +1,12 @@
+{
+  "image": "sha256:ec4229b057a0a4897ce1a614b4cd627a366704a7f8b071965a0ec084d14b60d3",
+  "provider": "bambu-p1s-mcp 0.1.0",
+  "provider_source": "7b50d0288fb7b91af8af422b96c4df4db0f1110c",
+  "native_runtime": "OrcaSlicer 2.5.0-alpha ARM64",
+  "original_candidate_process_sha256": "8580f608ce201aa0b14da2226d43d787d00a45be8e32d7cde9d261b7032acede",
+  "new_process_sha256": "39f151071ae067740cb57cb5d4aa530b1193201fe79ab41c4ff0283d00900131",
+  "original_candidate_unchanged": true,
+  "installed_plugin_changed": false,
+  "human_engineering_acceptance": false,
+  "actual_windows": "UNVERIFIED"
+}

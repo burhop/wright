@@ -1056,3 +1056,20 @@ retention task and three connections were added. Run-path/1 does not authorize
 same-run retry. No engineering run or plugin installation occurred. The next
 binding still needs pinned inspection dependencies and independent final checks;
 full C01–C08, coherent build, real engineering and Windows acceptance remain open.
+
+### Support-profile readiness defect found before inspection binding
+
+Dependency preparation found candidate 036's retained coupon profile still had
+support generation disabled. Preserved it and qualified a separate copy with
+only `enable_support=1` changed through the existing gateway/pinned alpha slicer.
+The actual upright/side synthetic overhang packages contain 14,042/0 nominal
+support segments, real native PNGs and the specified PETG/P1S settings. Evidence:
+`prototypes/desktop-harness/engineering-experience/evidence/support-profile-qualification/`.
+
+This resolves provider capability uncertainty, not handle readiness: candidate
+registration still selects the old profile. Next bind/freeze the new profile and
+inspection resources explicitly; do not silently change live selected settings.
+The PNG is an orientation image, not a support-contact preview. Actual support
+contact evidence and final strength applicability remain required. All historical
+profiles/files, accepted revision 8 and installed plugin are unchanged. Full goal
+scope remains open.

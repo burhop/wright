@@ -35,3 +35,20 @@ The stable 2.4.2 image still lacks a native package PNG, including under Xvfb. A
 Use Docker's `--init` before `xvfb-run -a --server-args=-screen 0 1280x1024x24 /opt/venv/bin/bambu-p1s-mcp`; set `BAMBU_SLICER=/opt/orca-alpha/AppRun` and the exact three profiles. The extracted public application directories initially denied nonroot traversal; correcting their read/execute permissions inside the selected image fixed native startup. Keep the network disabled and printer credentials absent. Native PNG generation is qualified; human manufacturing acceptance is not.
 
 [Upstream thumbnail fix](https://github.com/OrcaSlicer/OrcaSlicer/pull/15745) and [official prerelease](https://github.com/OrcaSlicer/OrcaSlicer/releases/tag/v2.5.0-alpha). The public evidence directory above includes separate stable and alpha receipts and exact failures; do not overwrite one version's qualification with the other.
+
+## Support generation — two-orientation digital check
+
+A fresh support-enabled copy of the coupon process profile has now been qualified
+with the same pinned alpha image through Wright's gateway. A synthetic L-shaped
+overhang produced 14,042 nominal support segments upright and zero laid on its
+side. Both packages retained the required PETG/P1S settings and native PNGs.
+The original candidate profile remains unchanged with supports disabled: it must
+not be used to claim the handle's support comparison is ready. Select/freeze the
+new profile explicitly before that workflow runs.
+
+Evidence and exact profile bytes:
+`prototypes/desktop-harness/engineering-experience/evidence/support-profile-qualification/`.
+The PNG depicts the model orientation, not generated supports; the passive
+nominal-path SVG depicts one actual layer. Contact areas, strength applicability,
+support removal and real handle acceptance remain unverified. No physical action
+or catalog-wide compatibility claim follows from this isolated ARM64 check.
