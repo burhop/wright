@@ -964,3 +964,23 @@ other settings, graph subjects or reviews changed. Evidence:
 The separate slice-response provenance gap remains: AI completion summaries are
 not recorded provider responses. Reuse the existing deterministic response
 retention/passive inspection path before binding manufacturing inspection.
+
+### Actual MCP response handoff — narrow shared gap
+
+Local source now supports an explicit `mcp_response_source: tool_observations`
+setting on plain JSON MCP tasks. It reuses canonical recorded calls, bounded
+redacted result projection, and existing saved/connected output ownership.
+Model summaries stay separately labeled; they cannot impersonate the provider
+response. Default behavior and prior accepted source remain unchanged.
+Evidence and qualification:
+`prototypes/desktop-harness/engineering-experience/evidence/tool-observation-output/`.
+This is an enabling contract, not a completed manufacturing binding: the passive
+inspector must check envelope completeness and exact observed paths/results before
+we enable it in a new visible handle revision. Candidate 036 revision 6, runtime
+and installed plugin remain unchanged. Full C01–C08 scope remains open.
+
+Focused review resolved duplicate-JSON redaction and supplementary-warning
+completeness defects before enablement. Final affected suite: 170 passed; Ruff
+and diff checks pass. The independent reviewer found no remaining blocker in
+this narrow contract. Actual provider qualification and Windows acceptance are
+still separate and unverified.

@@ -1,0 +1,20 @@
+............F........................................................... [ 42%]
+........................................................................ [ 84%]
+...........................                                              [100%]
+=================================== FAILURES ===================================
+____________ test_response_setting_changes_accepted_source_identity ____________
+
+    def test_response_setting_changes_accepted_source_identity():
+>       assert (
+            plan().definition_digest != plan(mcp_response_source="model").definition_digest
+        )
+E       AssertionError: assert '' != ''
+E        +  where '' = PromptWorkflow(title='Test workflow', steps=(PromptStep(id='inspect', title='inspect', prompt='Write a short report.',...'policy': {'assumption_policy': 'document_reasonable', 'protected_requirements': []}, 'layers': []}, review_only=False).definition_digest
+E        +    where PromptWorkflow(title='Test workflow', steps=(PromptStep(id='inspect', title='inspect', prompt='Write a short report.',...'policy': {'assumption_policy': 'document_reasonable', 'protected_requirements': []}, 'layers': []}, review_only=False) = plan()
+E        +  and   '' = PromptWorkflow(title='Test workflow', steps=(PromptStep(id='inspect', title='inspect', prompt='Write a short report.',...'policy': {'assumption_policy': 'document_reasonable', 'protected_requirements': []}, 'layers': []}, review_only=False).definition_digest
+E        +    where PromptWorkflow(title='Test workflow', steps=(PromptStep(id='inspect', title='inspect', prompt='Write a short report.',...'policy': {'assumption_policy': 'document_reasonable', 'protected_requirements': []}, 'layers': []}, review_only=False) = plan(mcp_response_source='model')
+
+packages/workspace_service/tests/test_workflow_tool_observations.py:185: AssertionError
+=========================== short test summary info ============================
+FAILED packages/workspace_service/tests/test_workflow_tool_observations.py::test_response_setting_changes_accepted_source_identity
+1 failed, 170 passed in 2.56s

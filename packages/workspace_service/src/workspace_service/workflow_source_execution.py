@@ -197,6 +197,7 @@ class PromptStep:
     mcp_reconciliation_contracts: dict = field(default_factory=dict)
     mcp_context_budget_bytes: int | None = None
     mcp_completion_policy: str = "tool_evidence_required"
+    mcp_response_source: str = "model"
 
 
 def _bind_expected_file_ports(step: PromptStep, produced_files: list[dict]) -> None:
@@ -974,6 +975,25 @@ def compile_prompt_workflow(source: str) -> PromptWorkflow:
             raise _invalid(
                 f"{title}: choose a valid response format, prompt source and file policy."
             )
+        response_source = settings.get("mcp_response_source", "model")
+        if not isinstance(response_source, str) or response_source not in {
+            "model",
+            "tool_observations",
+        }:
+            raise _invalid(f"{title}: choose a supported MCP response source.")
+        if response_source == "tool_observations" and (
+            not agent_task
+            or fmt != "json"
+            or cad
+            or application
+            or design_check
+            or image_output
+            or mcp_image_outputs
+            or completion_policy != "tool_evidence_required"
+        ):
+            raise _invalid(
+                f"{title}: tool observations require a plain JSON MCP task with required tool evidence."
+            )
         if "save_output" in settings and not isinstance(settings["save_output"], bool):
             raise _invalid(f"{title}: save_output must be true or false.")
         prompt = fields.get("prompt", "")
@@ -1189,6 +1209,7 @@ def compile_prompt_workflow(source: str) -> PromptWorkflow:
                 mcp_reconciliation_contracts=mcp_reconciliation_contracts,
                 mcp_context_budget_bytes=context_budget,
                 mcp_completion_policy=completion_policy,
+                mcp_response_source=response_source,
             )
         )
     from .workflow_design_check import validate_rework
@@ -3052,6 +3073,13 @@ async def execute_prompt_workflow(
                                 else {}
                             ),
                         )
+                        if step.mcp_response_source == "tool_observations":
+                            from .workflow_tool_observations import (
+                                response_from_observations,
+                            )
+
+                            model_task_response = response
+                            response = response_from_observations(step.server_id, calls)
                         if step.mcp_image_outputs:
                             from .workflow_mcp_image_outputs import (
                                 publish_image_outputs,
@@ -3282,6 +3310,13 @@ async def execute_prompt_workflow(
                 "prompt": prompt,
                 "response": response,
             }
+            if step.mcp_response_source == "tool_observations":
+                record["model_summary"] = {
+                    "sha256": hashlib.sha256(model_task_response.encode()).hexdigest(),
+                    "bytes": len(model_task_response.encode()),
+                    "body": "not retained in tool-observation output",
+                }
+                record["response_source"] = "tool_observations"
             if step.id in assumptions_by_step:
                 record["assumptions"] = assumptions_by_step[step.id]
             if step.id in instructions_by_step:
