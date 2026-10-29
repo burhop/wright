@@ -1,0 +1,20 @@
+[
+  {
+    "case": "unmapped",
+    "compiled": true,
+    "expected_files": [],
+    "expected_file_ports": {}
+  },
+  {
+    "case": "mapped",
+    "compiled": true,
+    "expected_files": [
+      "model.step",
+      "mesh.stl"
+    ],
+    "expected_file_ports": {
+      "model": "model.step",
+      "mesh": "mesh.stl"
+    }
+  }
+]

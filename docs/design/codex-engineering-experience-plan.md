@@ -1407,3 +1407,15 @@ automatic binding. Hermes retains Tool Registry navigation. Evidence:
 `prototypes/desktop-harness/engineering-experience/evidence/inspector-connections/`.
 The installed plugin remains unchanged; current frontend must be included in the
 next frozen candidate checkpoint before host acceptance.
+
+
+Output-file authoring audit: the current compiler accepts a plain AI MCP task
+with declared workspace-file outputs but no expected-file mappings. The offline
+reproduction is retained at
+`prototypes/desktop-harness/engineering-experience/evidence/unbound-storage/output-mapping-readiness.json`.
+This is a readiness gap, not engineering success. Next correction must pair the
+compact inspector output-file fields with existing compiler validation, preserving
+managed CAD/application exports and image contracts. The independent reviewer
+requires readable output labels, unchanged instructions/connections, additional
+expected files, run/attempt templates, save/reopen and Undo/Redo; mapping alone
+must not imply that a provider's export capability is qualified.
