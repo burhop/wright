@@ -19,13 +19,18 @@ The full gate first stopped at an obsolete tool count. The two additions are
 app-only, read-only pending-work and editor discovery tools; the corrected complete
 bridge suite passes. Remaining Python, Hermes-plugin and frontend suites pass.
 Strict docs then found two out-of-tree evidence links, corrected to repository
-paths. A final gate receipt is still required before delivery.
+paths. The final full gate passed at `7324e9c3`; its log hash and explicit browser
+limitation are retained in `qualification.json`.
 
 `qualification.json` records counts and identities. `readiness-480.png` shows the
 actual bounded UI check. Full private evidence is under
 `.local-run/experience-review/candidate-038/` in the feature worktree.
 
-The live plugin remains 0.33. Actual Windows display/download/chat return, the full
+The named live plugin is now 0.38. Its installed bytes match the qualified
+package, and the settings diff changes only its marketplace source. Existing
+services/state remain preserved. This conversation still reported the old 0.33
+binding after installation; the brief actual-host check is pending.
+`installed-plugin-instructions.md` preserves the exact installed skill. Actual Windows display/download/chat return, the full
 replacement-handle engineering chain with human reviews and rerun, and the full
 Robot Tracking Diagnosis chain remain unqualified. These are completion gaps,
 not implied successes from automated UI checks.

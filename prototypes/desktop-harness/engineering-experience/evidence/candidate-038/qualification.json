@@ -2,17 +2,18 @@
   "product_source": "7d87cfb44bedc5fabb915d9314d88abb5368cb4a",
   "test_correction": "60f332d6",
   "candidate_version": "0.38.0",
-  "installed_live_version": "0.33.0",
+  "installed_live_version": "0.38.0",
   "wheel_sha256": "19c5347efd2a60b072d81383a3d78f9f0279e52c14ba2b9c2fca90cd3aa9c6d7",
   "native_resource_sha256": "14da65e88c7fb094255df387a568b460306311758a1b394c7f15af78bf68ca9f",
   "checks": {
     "installed_package_and_pending_scope": "PASS",
     "mcp_bridge_scope_storage_and_readiness": "PASS",
     "compiled_ui_narrow_readiness_and_connections_return": "PASS",
-    "full_gate": "Initial script failed stale bridge count. Corrected bridge suite passed; remaining Python/Hermes/frontend commands passed. Strict docs correction under recheck.",
+    "full_gate": "PASS at 7324e9c3745b564a4394fd9885911909ca7dfb19",
     "supported_browser_retry": "PASS: 161 passed, 5 skipped",
     "actual_windows": "UNVERIFIED",
-    "complete_engineering_chain": "UNVERIFIED"
+    "complete_engineering_chain": "UNVERIFIED",
+    "actual_current_chat": "Still bound to preserved 0.33 connection at last observation; skill listing alone does not prove reload"
   },
   "boundaries": [
     "Fresh isolated storage, matching packaged backend and frozen bridge/UI",
@@ -35,5 +36,37 @@
     "remaining_tests": 1633,
     "hermes_plugin": 13,
     "frontend": 2166
+  },
+  "full_gate": {
+    "gate": "scripts/check-dev-merge.sh",
+    "run_id": "candidate-038-full-gate-03",
+    "head": "7324e9c3745b564a4394fd9885911909ca7dfb19",
+    "head_after": "7324e9c3745b564a4394fd9885911909ca7dfb19",
+    "exit_code": 0,
+    "log_sha256": "c42dcbfc2d25d0522f5f68e3914f7e33728b598a985f1b09e06e2b89a4dda0ed",
+    "environment": {
+      "WRIGHT_GATE_DOCKER_IMAGE": "wright-desktop-gate:7d87cfb4",
+      "SKIP_PLAYWRIGHT": "1"
+    },
+    "browser_limitation": "WebKit required host ABI libraries unavailable; supported projects independently passed 161, skipped 5",
+    "supported_browser_log_sha256": "77f4101355d7833f01c8a3985cab1e9698c912ee159d59ea42004a0ebd2315d0"
+  },
+  "installed_package_verification": {
+    "version": "0.38.0",
+    "installed_path": "/home/burhop/.codex/plugins/cache/wright-desktop-gb10-prototype/wright-desktop-gb10-prototype/0.38.0",
+    "changed_settings_paths": [
+      "marketplaces.wright-desktop-gb10-prototype.source"
+    ],
+    "files": {
+      ".mcp.json": "bbf0a6718c67e8ffcbaec46413888ad3adcfad3bd2a33118947c9a881204c42e",
+      ".codex-plugin/plugin.json": "a5bbf89b95b105ec1f94962a70e9fd67b4724ae43b899b2f92b43deb905d427b",
+      "skills/wright-workflows/SKILL.md": "eb14d1bf44d87b40aa4c4be8fd702ea29d9d79ff98b83569200db255dc973236"
+    },
+    "windows_rendering": "UNVERIFIED",
+    "old_services_stopped": false,
+    "user_data_migrated": false,
+    "current_chat_connection": "Matches preserved 0.33 presentation binding, not candidate 0.38 binding",
+    "current_chat_reloaded": false,
+    "actual_windows": "UNVERIFIED; brief user handoff check pending"
   }
 }

@@ -1480,3 +1480,13 @@ passed; final gate receipt and plugin activation are pending.
 Evidence: `prototypes/desktop-harness/engineering-experience/evidence/candidate-038/`.
 Actual Windows acceptance and complete real engineering/review/rerun qualification
 remain open. Installed 0.33 is unchanged.
+
+Final delivery gate: `scripts/check-dev-merge.sh` passed at `7324e9c3`. Supported
+browser matrix passed separately (161 passed, 5 skipped); WebKit lacks required
+host libraries. The rebuilt wheel is byte-identical to the installed candidate.
+Only `wright-desktop-gb10-prototype` is updated to 0.38, with exact cached-byte
+verification and a settings diff limited to its marketplace source. Existing
+services and data are preserved. This conversation still reported the old 0.33
+connection, so actual Windows workspace → New workflow → Plan in Codex chat
+acceptance remains pending. Pre-push gate/draft PR and the previously recorded
+full engineering/review/provider gaps remain open.
