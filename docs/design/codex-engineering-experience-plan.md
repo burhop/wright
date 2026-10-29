@@ -1236,3 +1236,12 @@ blocker. Actual compiled-panel focus/return and Windows acceptance remain open.
 The 166-test live browser run is still active under private gate evidence
 `gates-20261029/browser-06/`; WebKit is not passed because its binary cannot load
 required host libraries. No installed plugin update occurred.
+
+Readiness return follow-up: the two shared working-view/native routing suites
+pass **84 tests**. The blocked-input test now explicitly leaves and reopens the
+view, checks recovery through the exact prepared snapshot, preserves a supplied
+false value, and asserts no additional preparation, readiness request or start.
+Both affected-step labels were updated in the existing user-facing assertions.
+This proves same-revision component recovery only; edited-source input migration
+and the compiled native-panel correction journey remain unverified. Evidence:
+private `gates-20261029/readiness-return-tests-02.log`.

@@ -746,7 +746,7 @@ describe("common process preparation and authority", () => {
       screen.queryByRole("button", { name: "Submit response" }),
     ).toBeNull();
     expect(screen.queryByRole("combobox")).toBeNull();
-    fireEvent.click(screen.getByRole("button", { name: "Open related item" }));
+    fireEvent.click(screen.getByRole("button", { name: "Open affected step" }));
     await waitFor(() =>
       expect(client.navigate).toHaveBeenCalledWith({
         kind: "block",
@@ -1277,7 +1277,7 @@ describe("common process preparation and authority", () => {
           }
         : withFalse,
     );
-    render(
+    const mounted = render(
       <CommonProcessView
         client={client}
         sessionId="session"
@@ -1298,13 +1298,33 @@ describe("common process preparation and authority", () => {
       screen.getByRole("button", { name: "Start workflow" }),
     ).toBeDisabled();
     expect(client.start).not.toHaveBeenCalled();
-    fireEvent.click(screen.getByRole("button", { name: "Open related item" }));
+    fireEvent.click(screen.getByRole("button", { name: "Open affected step" }));
     await waitFor(() =>
       expect(client.navigate).toHaveBeenCalledWith({
         kind: "block",
         block_id: "destination",
       }),
     );
+    // Returning without a source change restores the exact prepared inputs;
+    // navigation must not silently start or prepare another run.
+    mounted.unmount();
+    render(
+      <CommonProcessView
+        client={client}
+        sessionId="session"
+        recoveryStore={store}
+        canNavigate
+      />,
+    );
+    await screen.findByText("A later step needs a destination.");
+    expect(
+      screen.getByLabelText("Cooling enabled (required)"),
+    ).not.toBeChecked();
+    expect(client.getSnapshot).toHaveBeenLastCalledWith(
+      expect.objectContaining({ inputSnapshotId: input.snapshot_id }),
+    );
+    expect(client.setInputs).toHaveBeenCalledTimes(1);
+    expect(client.checkReadiness).toHaveBeenCalledTimes(1);
     expect(client.start).not.toHaveBeenCalled();
   });
   it("shows a capability blocker once by default and keeps Start reasons inspectable", async () => {
