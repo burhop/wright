@@ -1268,3 +1268,28 @@ below the viewport. Readiness-directed navigation should reveal the existing
 configuration controls; ordinary block inspection should retain its current
 layout. This is the next focused correction. Do not count reaching an inspector
 as completing setup.
+
+### Native editor tool-discovery gap (29 October)
+
+Source inspection revised the previous scrolling diagnosis. The unconfigured
+CAD draft has no `mcp-tool`/`mcp-task` authoring template, so its inspector has
+generic parameters rather than a tool picker. Moreover NativeWorkflowPanel does
+not supply the workspace session to the shared editor, whose existing tool
+readers use same-origin HTTP. Merely scrolling or exposing parameters would not
+complete setup. The fixture's “choose a tool in settings” instruction is therefore
+not yet an actionable correction for this draft.
+
+The next correction reuses the existing workspace gateway discovery endpoint
+and shared authoring controls through an explicit native read adapter. A local,
+app-only `wright_workflow_editor_tools` bridge now checks workspace/session scope
+and returns only the existing advertised authoring metadata. It never enables,
+validates or invokes tools and does not retry errors. All 16 native-source-tool
+tests pass, including scope denial and malformed metadata. This bridge is not
+yet connected to the frontend or installed. Evidence: private
+`gates-20261029/editor-tool-discovery.log`.
+
+Remaining work for this slice: inject that reader into the shared editor without
+changing Hermes HTTP discovery; preserve meaningful server names and exact
+schema identities; provide an explicit, reviewed way to configure an unbound
+step without silently replacing its ports/dependencies; qualify save, readiness
+recheck and return. Do not claim an inspector link solves these missing actions.

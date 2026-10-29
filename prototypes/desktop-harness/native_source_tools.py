@@ -16,6 +16,11 @@ from core.process_validation import Contract, Digest, Identifier, canonical_dige
 from core.workflow_bundle import BundleInspection, WorkflowBundle
 
 
+class EditorToolsRequest(Contract):
+    workspace_id: Identifier
+    session_id: Identifier
+
+
 class ExportRequest(Contract):
     workspace_id: Identifier
     session_id: Identifier
@@ -60,6 +65,69 @@ class WrightRequestRejected(ValueError):
 
 
 def register_native_source_tools(mcp, client):
+    @mcp.tool(
+        annotations=ToolAnnotations(
+            readOnlyHint=True,
+            destructiveHint=False,
+            idempotentHint=True,
+            openWorldHint=False,
+        ),
+        structured_output=True,
+        meta={"ui": {"visibility": ["app"]}},
+    )
+    async def wright_workflow_editor_tools(
+        request: EditorToolsRequest,
+    ) -> dict[str, Any]:
+        """Read scoped authoring choices from the existing gateway; grant no execution."""
+        await client.scope(request.workspace_id, request.session_id)
+        result = await client.call(
+            "GET",
+            "/api/workspace/workflow-sources/tools",
+            params={"session_id": request.session_id},
+        )
+        tools = result.get("tools")
+        if not isinstance(tools, list) or len(tools) > 4096:
+            raise ValueError("Wright returned an invalid workflow tool list")
+        fields = {
+            "name",
+            "server_id",
+            "tool_name",
+            "title",
+            "description",
+            "input_schema",
+            "output_schema",
+            "schema_digest",
+        }
+        for tool in tools:
+            if (
+                not isinstance(tool, dict)
+                or set(tool) - fields
+                or any(
+                    not isinstance(tool.get(key), str)
+                    for key in (
+                        "name",
+                        "server_id",
+                        "tool_name",
+                        "title",
+                        "description",
+                    )
+                )
+                or not isinstance(tool.get("input_schema"), dict)
+                or not isinstance(tool.get("schema_digest"), str)
+                or len(tool["schema_digest"]) != 64
+                or any(c not in "0123456789abcdef" for c in tool["schema_digest"])
+                or (
+                    tool.get("output_schema") is not None
+                    and not isinstance(tool["output_schema"], dict)
+                )
+            ):
+                raise ValueError("Wright returned invalid workflow tool metadata")
+        return {
+            "workspace_id": request.workspace_id,
+            "session_id": request.session_id,
+            "tools": tools,
+        }
+
     @mcp.tool(
         annotations=ToolAnnotations(
             readOnlyHint=True,

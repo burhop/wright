@@ -25,3 +25,9 @@ node prototypes/desktop-harness/native_readiness_acceptance.mjs /tmp/wright-read
 
 The destination must not exist. `report.json` records the native resource hash
 and exact read/navigation calls. Screenshots contain fixture information only.
+
+Follow-up source audit: the generic unconfigured CAD step in this fixture has
+no tool-selection control at all, not merely one below the viewport. The native
+editor also lacks the shared editor's scoped tool-discovery injection. The
+fixture's instruction to choose a tool in settings is not an accepted correction
+journey; this evidence proves locating the step only. See the current plan.
