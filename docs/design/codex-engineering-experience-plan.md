@@ -897,3 +897,17 @@ The initial sandbox connection failure is retained. This is simulated-host uploa
 qualification, not Windows delivery, model image consumption or engineering
 execution. CAD sign-in, execution bindings, validators, correction and real
 human review remain open; no additional workflow readiness is inferred.
+
+### Mesh provider registered through actual Connections
+
+Candidate 036 now has the independently qualified mesh provider registered,
+protocol-validated (28 tools) and workspace-enabled through the compiled UI.
+Invocation approval remains false. The local handle draft binds only
+execute_blender_code, retains source geometry, writes attempt-specific mesh/report
+outputs and requires downstream independent checks. Ten existing handle authoring
+regressions pass. Accepted workspace revision 2 remains unchanged; a source
+save/reopen and full execution proof are still required. The owned network-disabled
+native container remains running for the isolated candidate, with lifecycle state
+and exact identities in the evidence. No installed plugin change or Windows
+acceptance is implied. Evidence:
+`prototypes/desktop-harness/engineering-experience/evidence/candidate-036-mesh-setup/`.

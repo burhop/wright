@@ -1,0 +1,20 @@
+{
+  "status": "local draft binding; accepted candidate revision 2 unchanged",
+  "server_id": "import:draft-92ea6423d17519e26dc7",
+  "tools": [
+    "execute_blender_code"
+  ],
+  "source_sha256": "1c14522a9da2e6ed22a200aea67c89299fd71f97278abaad4c33ea863fa7c862",
+  "provider_source": "5f8ddaf6e987c4aa0c3467fcc548838b28f64477",
+  "provider_image": "sha256:4fa54f2eecd99edbbd1daac1ff6adad2d280013e4bcf606c3b3b0aa27cb3b3af",
+  "container": "wright-candidate036-mesh",
+  "mount": "fresh candidate036 handle workspace at /workspace; bootstrap readonly",
+  "network": "none",
+  "native_lifecycle": "owned isolated container; must check running state before execution; no automatic replay",
+  "remaining": [
+    "actual accepted-source save/reopen",
+    "source-mesh engineering execution",
+    "independent feature preservation and analysis applicability",
+    "bounded correction and human reviews"
+  ]
+}
