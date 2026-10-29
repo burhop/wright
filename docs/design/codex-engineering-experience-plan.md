@@ -1129,3 +1129,19 @@ compiled read-only 1100px/480px browser checks pass. Evidence:
 `prototypes/desktop-harness/engineering-experience/evidence/review-inspector-usability/`.
 This improves C05 inspection without claiming actual engineering review or Windows
 acceptance. Local resource only; installed plugin unchanged. Full goal remains open.
+
+### Exact selected nominal-support handoff qualified
+
+The existing passive selection operation now retains support evidence directly;
+no model-authored copy substitutes for that operation. Both alternatives' evidence
+must still match before publishing. 56 inspection tests, 13 editor tests and
+focused independent review pass. Version 1 remains immutable. Uploaded version 2
+is explicitly selected by saved/reopened revision 10, digest
+`2df39411860cb285e7dcdea2f2d41f5fea1ebde5fbd0f96d8980d8e450dc8f49`.
+Evidence: `prototypes/desktop-harness/engineering-experience/evidence/selected-support-retention/`.
+
+Readiness audit confirms the full Printed02 profile includes post-transfer checks;
+it cannot be attached unchanged before print review. Preserve stage ordering and
+all requirements when binding remaining geometry/strength/final validation.
+Actual provider execution, full rerun/recovery, Robot regression, coherent runtime
+and Windows qualification remain open. No installed-plugin change occurred.

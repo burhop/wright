@@ -156,15 +156,29 @@ def retain_selection(config):
         if _sha(data) != reference["sha256"]:
             raise ValueError("An inspected file changed before selection")
         contents[role] = data
+    support_reference = None
+    if "support_output" in config:
+        # Preserve both alternatives' nominal evidence before publishing a choice.
+        for alternative in comparison["alternatives"].values():
+            reference = alternative["inspection"]["support_preview"]
+            data = _read(root, reference["path"])
+            if _sha(data) != reference["sha256"]:
+                raise ValueError("Inspected support evidence changed before selection")
+        support_reference = selected["inspection"]["support_preview"]
+        contents["support"] = _read(root, support_reference["path"])
+        if _sha(contents["support"]) != support_reference["sha256"]:
+            raise ValueError("Inspected support evidence changed before selection")
     destinations = [
         config[k] for k in ("package_output", "preview_output", "selection_output")
     ]
+    if support_reference is not None:
+        destinations.append(config["support_output"])
     resolved = [(root / value).resolve() for value in destinations]
-    if len(set(resolved)) != 3 or any(
+    if len(set(resolved)) != len(destinations) or any(
         p.exists() or not p.is_relative_to(root) or not p.parent.is_dir()
         for p in resolved
     ):
-        raise ValueError("Selection requires three distinct fresh workspace outputs")
+        raise ValueError("Selection requires distinct fresh workspace outputs")
     package = _publish(root, config["package_output"], contents["package"])
     preview = _publish(root, config["preview_output"], contents["native_preview"])
     result = {
@@ -178,6 +192,11 @@ def retain_selection(config):
         "native_preview": preview,
         "engineering_acceptance": False,
     }
+    if support_reference is not None:
+        result["original_support_evidence"] = support_reference
+        result["retained_support_evidence"] = _publish(
+            root, config["support_output"], contents["support"]
+        )
     result_raw = json.dumps(result, sort_keys=True, allow_nan=False).encode()
     return {
         **result,

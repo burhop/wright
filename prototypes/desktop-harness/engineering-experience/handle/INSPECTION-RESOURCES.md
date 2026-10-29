@@ -35,3 +35,18 @@ Remaining binding work:
 This does not establish workflow export/import, provider-side execution, actual
 handle acceptance, or Windows delivery. See the story/status plan and
 `../evidence/candidate-036-inspection-resources/`.
+
+## Version 2 candidate
+
+`inspection-resources-v2.zip` adds optional exact nominal-support retention to
+`retain_selection`: supply `support_output` alongside the existing output paths.
+Both alternatives' support evidence must still match their inspection receipts
+before any selected output is written. The selection record retains the original
+and copied support identities. A proposed choice is still not engineering approval.
+
+SHA-256 `88cca1f2aecee63de6b8951d62a5b6ac15f8a7fcb96f828b3b190a7aaf357b4c`,
+81,795 bytes. Version 1 remains unchanged for accepted revision 9. The builder
+now reproduces version 2; historical versions are immutable, not rebuilt in place.
+56 focused tests pass, including changed evidence for either orientation and
+output-path alias denial before publication. New-version upload and deliberate
+source revision are separate qualification steps.
