@@ -395,6 +395,8 @@ it("declares two package inputs for comparison and retains exact final-check/rep
   expect(upstream("manufacturing_side_package")).toEqual([
     "port.slice-side-package",
   ]);
+  expect(upstream("manufacturing_pads_mesh")).toEqual(["port.orient-pads"]);
+  expect(upstream("manufacturing_side_mesh")).toEqual(["port.orient-side"]);
   expect(upstream("manufacturing_slice_responses")).toEqual([
     "port.slice-responses",
   ]);
@@ -412,6 +414,7 @@ it("declares two package inputs for comparison and retains exact final-check/rep
   )![1];
   const settings = JSON.parse(sliceSection.match(/^  settings: (.*)$/m)![1]);
   expect(settings.mcp_task_tools).toEqual(["slice_model_file"]);
+  expect(settings.mcp_response_source).toBe("tool_observations");
   const outputs = settings.expected_file_ports as Record<string, string>;
   expect(new Set(Object.values(outputs)).size).toBe(2);
   expect(

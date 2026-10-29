@@ -1004,3 +1004,19 @@ must supply the accepted current schema, exact response/file dependencies, both
 orientation inputs and selection criteria; it must preserve original package
 lineage and human reviews. Full handle, real Robot regression, Windows acceptance,
 coherent candidate and delivery gates remain required.
+
+### Accepted recorded-response and oriented-mesh handoffs
+
+Actual editor save/reopen accepts isolated handle revision 7, digest
+`d6093ba3ee2156ba2bdb05ebc0d0584e406db096d3773566e572492f8d512b37`.
+The slicer selects recorded observations; inspection now receives both exact
+oriented meshes as well as their packages. Twelve authoring checks pass.
+Independent source comparison proves only those settings/inputs and two added
+connections changed. Evidence:
+`prototypes/desktop-harness/engineering-experience/evidence/candidate-036-observation-handoff/`.
+
+This remains accepted authoring, not run readiness: passive inspection/selection
+and final independent validation bindings are still required. The isolated wheel
+predates the observation option and must be rebuilt before execution. No plugin,
+account, review, run or historical artifact changed. The full-diagram screenshot
+is an overview/reopen proof, not evidence that every card is readable at fit scale.

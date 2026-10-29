@@ -1,0 +1,17 @@
+{
+  "changed_sections": [
+    "task manufacturing",
+    "task slice_orientations"
+  ],
+  "added_sections": [
+    "connection inspect_pads_mesh",
+    "connection inspect_side_mesh"
+  ],
+  "removed_sections": [],
+  "other_source_fields_unchanged": true,
+  "before_revision": 6,
+  "before_digest": "beb64b12acea1e1849cbcfd55f7cc6daa33afa327af2ccbfa47f7f8090c77ba0",
+  "after_revision": 7,
+  "after_digest": "d6093ba3ee2156ba2bdb05ebc0d0584e406db096d3773566e572492f8d512b37",
+  "engineering_run_started": false
+}
