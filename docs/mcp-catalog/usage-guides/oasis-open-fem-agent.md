@@ -166,7 +166,7 @@ read-only: one official MCP client call and one actual Wright gateway call with
 an isolated fixture catalog/workspace. Gmsh produced identical 934-node,
 2,872-tetrahedron volume meshes. Independent ASCII parsing checked connectivity,
 finite coordinates, positive volumes and input/output digests. See the
-[recorded prerequisite](../../../prototypes/desktop-harness/engineering-experience/evidence/cad-mesh-qualification/README.md).
+[recorded prerequisite](https://github.com/burhop/wright/blob/16e1eb5440a5b8ddb3535d237547180c80c341ea/prototypes/desktop-harness/engineering-experience/evidence/cad-mesh-qualification/README.md).
 
 This qualifies CAD-derived meshing in that environment, not strength analysis,
 live provider enrollment, complete handle execution, Windows or clean x64 catalog
@@ -176,6 +176,6 @@ approval was supplied. Existing CAD and historical run evidence were unchanged.
 
 ### CAD-derived structural fields (28 October follow-on)
 
-Fresh gateway job `80f2f335` used the same selected environment and retained mesh for synthetic 1 N and 2 N linear-elastic cases. Independent recorded-field checks passed force balance, supports, energy, pointwise load scaling and Wright structural-reader compatibility. Exact requests, field archive and offline checker are in [structural qualification](../../../prototypes/desktop-harness/engineering-experience/evidence/cad-structural-qualification/README.md).
+Fresh gateway job `80f2f335` used the same selected environment and retained mesh for synthetic 1 N and 2 N linear-elastic cases. Independent recorded-field checks passed force balance, supports, energy, pointwise load scaling and Wright structural-reader compatibility. Exact requests, field archive and offline checker are in [structural qualification](https://github.com/burhop/wright/blob/16e1eb5440a5b8ddb3535d237547180c80c341ea/prototypes/desktop-harness/engineering-experience/evidence/cad-structural-qualification/README.md).
 
 This does not qualify mesh convergence, an approved material/support model, handle strength or complete workflow execution. OASiS retained `trustworthy_result:false` and no critic approval. No live enrollment or CAD changes occurred.

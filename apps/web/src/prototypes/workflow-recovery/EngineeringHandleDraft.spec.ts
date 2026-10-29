@@ -78,3 +78,86 @@ it("keeps cyclic or disconnected drafts inspectable and preserves their connecti
   ).toBe(workflow.blocks.length);
   expect(JSON.stringify(workflow)).toBe(before);
 });
+
+it("changes an existing handle step into a review while retaining subjects and revision history", async () => {
+  const {
+    textEditCommands,
+    applyRecoveryBatch,
+    recoveryCommandBatch,
+    acceptRecoveryResult,
+  } = await import("./command-system");
+  const oldSource = source.replace(
+    /task print_review\n[\s\S]*?\nend/,
+    (section) =>
+      section
+        .replace("step_type: review", "step_type: work")
+        .replace(
+          / {2}settings: .*/,
+          '  settings: {"authoring_template":"manual-review"}',
+        ),
+  );
+  const before = parseRecoverySourceDocument(oldSource, 3).workflow!;
+  const parsed = parseRecoveryAuthoringSource(source, before);
+  expect(parsed.ok, JSON.stringify(parsed.diagnostics)).toBe(true);
+  const commands = textEditCommands(before, parsed.workflow!);
+  expect(
+    commands.some(
+      (command) => "kind" in command && command.kind === "set_block_kind",
+    ),
+  ).toBe(true);
+  const layout = hydrateAuthoringLayout(before);
+  const result = applyRecoveryBatch(
+    before,
+    layout,
+    recoveryCommandBatch(
+      before.revision,
+      "text",
+      commands as import("./command-system").RecoveryCommand[],
+    ),
+  );
+  expect(result.ok, JSON.stringify(result.diagnostics)).toBe(true);
+  const accepted = acceptRecoveryResult(before, layout, result)!;
+  expect(accepted.workflow.revision).toBe(4);
+  const review = accepted.workflow.blocks.find(
+    (b) => b.title === "Review the proposed print package",
+  )!;
+  expect(review.kind).toBe("approval");
+  expect(review.inputPortIds).toHaveLength(7);
+  expect(accepted.workflow.ports).toEqual(before.ports);
+  expect(accepted.workflow.relationships).toEqual(before.relationships);
+  const reopened = parseRecoverySourceDocument(
+    formatRecoveryAuthoringSource(accepted.workflow).text,
+    4,
+  );
+  expect(reopened.ok).toBe(true);
+  expect(
+    reopened.workflow!.blocks.find((b) => b.id === review.id)?.configuration,
+  ).toEqual(review.configuration);
+  const undo = applyRecoveryBatch(
+    accepted.workflow,
+    accepted.layout,
+    recoveryCommandBatch(4, "history", [
+      { kind: "restore_snapshot", direction: "undo", workflow: before, layout },
+    ]),
+  );
+  expect(undo.ok).toBe(true);
+  expect(undo.workflow!.blocks.find((b) => b.id === review.id)?.kind).toBe(
+    "work",
+  );
+  const redo = applyRecoveryBatch(
+    undo.workflow!,
+    undo.layout!,
+    recoveryCommandBatch(undo.workflow!.revision, "history", [
+      {
+        kind: "restore_snapshot",
+        direction: "redo",
+        workflow: accepted.workflow,
+        layout: accepted.layout,
+      },
+    ]),
+  );
+  expect(redo.ok).toBe(true);
+  expect(
+    redo.workflow!.blocks.find((b) => b.id === review.id)?.inputPortIds,
+  ).toEqual(review.inputPortIds);
+});

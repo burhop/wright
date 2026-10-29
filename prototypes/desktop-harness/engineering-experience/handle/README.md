@@ -13,8 +13,7 @@ transfer or simulated success is performed.
 The graph connects the specification and its review to CAD, exact geometry
 checking, strength analysis and checking, repair/orientation/slicing, print-package
 a final manufacturing-applicability check, a readable report before print-package
-review, and an explicitly simulated receipt stage. Review blocks use Wright's existing durable
-manual review mechanism. Order edges express dependency, not approval authority.
+review, and an explicitly simulated receipt stage. The specification uses Wright's durable manual review. The local final-package draft uses its existing multi-artifact local-review declaration. Order edges express dependency, not approval authority.
 No check is replaced with an AI assertion of success.
 
 ## Current evidence
@@ -26,7 +25,7 @@ No check is replaced with an AI assertion of success.
   **Replacement handle — desktop engineering qualification**, revision 1.
   Exact identity is in `desktop-draft-receipt.json`. The saved digest matches
   the original local source-store digest. That receipt is historical: the
-  reviewed draft is now saved as revision 3; original revision 1 remains in history. See the current round-trip evidence below.
+  reviewed draft was saved as revision 3 and is now at revision 4; original revision 1 remains in history. See the current round-trip evidence below.
 - An editor-open request succeeded, but compiled-editor review subsequently
   found missing required fields and duplicate port identities in that original
   draft. The revised local source fixes both; its parse/save/reopen regression
@@ -64,6 +63,12 @@ and cannot authorize a real printer transfer. All task bindings and independent
 engineering checks still require qualification. The desktop revision-1 receipt
 is preserved as evidence, not rewritten to claim these local changes are live.
 
-## Current desktop revision 3
+## Desktop revision 3 input qualification
 
 [Actual UI save/reopen evidence](../evidence/handle-source-roundtrip/README.md) records the exact source digest and visible 2/2 configured inputs. The original requirements are unchanged. Source correction preserved revision 1 and used the existing editor/source owner. Provider bindings and declared human reviews remain outstanding; configured inputs do not imply engineering readiness.
+
+## Final-review authoring attempt and correction
+
+The local draft now declares the seven-input final package review using Wright’s existing `local_review` / `review_only` binding. All seven inputs and upstream connections remain. The first attempt was **not saved in the desktop workspace**: the normal Source editor correctly rejected changing the step type and managed review declaration as an unsupported structural change. Desktop accepted revision 3 remains unchanged; its pending editor draft is preserved. The attempted UI path and screenshot are retained in `.local-run/experience-review/candidate-035/handle-review-02/`. Use a supported structural authoring path or qualify the missing edit capability; do not bypass the editor’s authority guard or discard review subjects. No workflow was run or approved.
+
+The subsequent narrow editor correction now saves and reopens **revision 4**, retaining every review subject. [Evidence](../evidence/handle-review-authoring/README.md). The paragraph above records the earlier failed attempt; accepted revision 4 is current. No human approval or engineering execution is implied.

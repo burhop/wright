@@ -43,6 +43,7 @@ export type RecoveryCommand =
     }
   | { kind: "set_phase_name"; phaseId: string; name: string }
   | { kind: "set_block_title"; blockId: string; title: string }
+  | { kind: "set_block_kind"; blockId: string; value: RecoveryBlock["kind"] }
   | {
       kind: "set_block_definition";
       blockId: string;
@@ -236,6 +237,16 @@ function applyCommand(
     if (!command.title.trim())
       throw new Error(`WFR-COMMAND-TITLE-INVALID:${command.blockId}`);
     block(workflow, command.blockId).title = command.title.trim();
+    return;
+  }
+  if (command.kind === "set_block_kind") {
+    const target = block(workflow, command.blockId);
+    if (
+      recoveryAuthoringSectionKind(target) !== "task" ||
+      !["work", "approval", "decision", "component"].includes(command.value)
+    )
+      throw new Error(`WFR-COMMAND-STEP-TYPE-INVALID:${command.blockId}`);
+    target.kind = command.value;
     return;
   }
   if (command.kind === "set_block_definition") {
@@ -803,6 +814,15 @@ export function textEditCommands(
       deletedBlocks.push({ kind: "delete_block", blockId: current.id });
       continue;
     }
+    if (
+      current.kind !== edited.kind &&
+      recoveryAuthoringSectionKind(current) === "task"
+    )
+      edits.push({
+        kind: "set_block_kind",
+        blockId: current.id,
+        value: edited.kind,
+      });
     if (current.title !== edited.title)
       edits.push({
         kind: "set_block_title",

@@ -154,13 +154,13 @@ end
 task print_review
   name: "Review the proposed print package"
   purpose: "Review the proposed print package. Preserve the exact current requirements and evidence."
-  step_type: work
+  step_type: review
   group: null
   performed_by: engineer
   inputs: [{"description":"Exact 3MF","item":null,"key":"print_review_package","kind":"workspace_file","name":"Exact 3MF","quantity":"one","required":true},{"description":"Supports and toolpaths","item":null,"key":"print_review_preview","kind":"workspace_file","name":"Supports and toolpaths","quantity":"one","required":true},{"description":"Strength checks","item":null,"key":"print_review_strength","kind":"engineering_document","name":"Strength checks","quantity":"one","required":true},{"description":"Engineering report","item":null,"key":"print_review_report","kind":"engineering_document","name":"Engineering report","quantity":"one","required":true},{"description":"Reviewed specification","item":null,"key":"print_review_spec","kind":"engineering_document","name":"Reviewed specification","quantity":"one","required":true},{"description":"Geometry checks","item":null,"key":"print_review_geometry","kind":"engineering_document","name":"Geometry checks","quantity":"one","required":true},{"description":"Final manufacturing and analysis checks","item":null,"key":"print_review_final_checks","kind":"engineering_document","name":"Final manufacturing and analysis checks","quantity":"one","required":true}]
   outputs: []
   instructions: "Read the engineering report, reviewed specification, exact geometry checks, final analysis applicability and support/toolpath previews before deciding on this exact 3MF. Failed, stale or missing evidence must be resolved before approval. Requesting changes records the decision; it does not automatically edit or rerun this workflow. Qualification stops before any physical operation. A separately qualified digital simulator may produce only a clearly simulated transfer receipt after this review."
-  settings: {"authoring_template":"manual-review"}
+  settings: {"action_kind":"local_review","approval_action":{"kind":"local_review","mode":"review_only"},"approval_binding":{"schema":"f11ab6c48e47a727cdfc1cd8efefb6f21cf08483c801e0e2cc882a825d96a338","server":"wright","tool":"review_artifacts"},"approval_destination":{"id":"workspace","kind":"local_review"},"approval_settings":{"review_task_id":"print_review"},"authoring_template":"external-action-approval"}
   tool: null
   reusable_step: null
 end

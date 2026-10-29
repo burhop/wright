@@ -2899,7 +2899,7 @@ the successful 62-second automatic CAD export-to-three-render handoff.
 
 ### OASiS ARM64 native meshing composition, 28 October 2026
 
-The [isolated composition and receipt](../../prototypes/desktop-harness/engineering-experience/evidence/cad-mesh-qualification/README.md)
+The [isolated composition and receipt](https://github.com/burhop/wright/blob/16e1eb5440a5b8ddb3535d237547180c80c341ea/prototypes/desktop-harness/engineering-experience/evidence/cad-mesh-qualification/README.md)
 records the actual ARM64 Python installation and both pinned input images. The
 historical native-FEA Dockerfile's Python path is installation-specific. Copy the
 selected environment plus its uv-managed Python tree; use the discovered
