@@ -847,3 +847,10 @@ measurements and native preview are indexed at
 `prototypes/desktop-harness/engineering-experience/evidence/mesh-repair-slice-handoff/README.md`.
 Next bind the two meaningful manufacturing stages and retain independent final
 geometry/analysis applicability checks; CAD sign-in remains separately pending.
+
+The local handle draft now implements that two-stage manufacturing separation.
+Five authoring tests pass, including repaired-artifact lineage into slicing and
+final validation, retained original CAD evidence, seven review subjects and
+save/reopen/Undo/Redo. Accepted desktop revisions remain unchanged. Tool-specific
+bindings and actual orientation comparison are still open; the graph change
+does not convert prerequisite evidence into engineering readiness.

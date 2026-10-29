@@ -123,16 +123,30 @@ task strength_check
   reusable_step: null
 end
 
-task manufacturing
-  name: "Repair mesh, compare orientations and prepare slicing"
-  purpose: "Repair mesh, compare orientations and prepare slicing. Preserve the exact current requirements and evidence."
+task mesh_repair
+  name: "Repair and check the source mesh"
+  purpose: "Preserve the CAD mesh, repair printable topology, and document changes before slicing."
   step_type: work
   group: null
   performed_by: configured_tool
-  inputs: [{"description":"Manufacturing requirements","item":null,"key":"manufacturing_spec","kind":"engineering_document","name":"Manufacturing requirements","quantity":"one","required":true},{"description":"Source mesh","item":null,"key":"manufacturing_mesh","kind":"workspace_file","name":"Source mesh","quantity":"one","required":true},{"description":"Strength checks","item":null,"key":"manufacturing_strength","kind":"engineering_document","name":"Strength checks","quantity":"one","required":true}]
-  outputs: [{"description":"Repaired mesh","item":null,"key":"manufacturing_repaired","kind":"workspace_file","name":"Repaired mesh","quantity":"one","required":true},{"description":"Slice package","item":null,"key":"manufacturing_package","kind":"workspace_file","name":"Slice package","quantity":"one","required":true},{"description":"Supports and toolpath preview","item":null,"key":"manufacturing_preview","kind":"workspace_file","name":"Supports and toolpath preview","quantity":"one","required":true},{"description":"Manufacturing changes and selected orientation","item":null,"key":"manufacturing_changes","kind":"engineering_document","name":"Manufacturing changes and selected orientation","quantity":"one","required":true}]
-  instructions: "Use qualified repair and slicing tools on the current reviewed specification. Preserve the source mesh. Compare its requested orientations and retain support-contact evidence, repaired geometry checks, exact machine/material/process profile identities and the resulting 3MF. Do not substitute original defaults for reviewed changed requirements. Record every geometry or print-orientation change and pass the records to the downstream applicability check. No upload or printer operation."
-  settings: {"qualification_status":"binding_required","requested_capability":"Mesh repair, orientation study and digital slicing"}
+  inputs: [{"description":"Manufacturing requirements","item":null,"key":"mesh_repair_spec","kind":"engineering_document","name":"Manufacturing requirements","quantity":"one","required":true},{"description":"Source mesh","item":null,"key":"mesh_repair_mesh","kind":"workspace_file","name":"Source mesh","quantity":"one","required":true},{"description":"Strength checks","item":null,"key":"mesh_repair_strength","kind":"engineering_document","name":"Strength checks","quantity":"one","required":true}]
+  outputs: [{"description":"Repaired mesh","item":null,"key":"mesh_repair_repaired","kind":"workspace_file","name":"Repaired mesh","quantity":"one","required":true},{"description":"Mesh changes and geometry checks","item":null,"key":"mesh_repair_changes","kind":"engineering_document","name":"Mesh changes and geometry checks","quantity":"one","required":true}]
+  instructions: "Use the qualified independent mesh-repair provider on the exact upstream source mesh. Preserve that source. Record before/after dimensions, topology, feature preservation, triangle count and every geometry change with units. Do not erase required holes, recesses, blends or contact faces to make repair pass. Retain a closed printable mesh and the repair report. Fail clearly if repair would violate the reviewed specification. Preparation here grants no strength acceptance or printer permission."
+  settings: {"qualification_status":"handle_repair_binding_required","requested_capability":"Independent mesh repair and measurement"}
+  tool: null
+  reusable_step: null
+end
+
+task manufacturing
+  name: "Compare print orientations and prepare the print package"
+  purpose: "Compare the requested orientations using repaired geometry and prepare the selected digital print package."
+  step_type: work
+  group: null
+  performed_by: configured_tool
+  inputs: [{"description":"Manufacturing requirements","item":null,"key":"manufacturing_spec","kind":"engineering_document","name":"Manufacturing requirements","quantity":"one","required":true},{"description":"Exact repaired mesh","item":null,"key":"manufacturing_mesh","kind":"workspace_file","name":"Repaired mesh","quantity":"one","required":true},{"description":"Strength checks","item":null,"key":"manufacturing_strength","kind":"engineering_document","name":"Strength checks","quantity":"one","required":true},{"description":"Mesh changes and geometry checks","item":null,"key":"manufacturing_repair_changes","kind":"engineering_document","name":"Mesh changes and geometry checks","quantity":"one","required":true}]
+  outputs: [{"description":"Slice package","item":null,"key":"manufacturing_package","kind":"workspace_file","name":"Slice package","quantity":"one","required":true},{"description":"Supports and toolpath preview","item":null,"key":"manufacturing_preview","kind":"workspace_file","name":"Supports and toolpath preview","quantity":"one","required":true},{"description":"Manufacturing changes and selected orientation","item":null,"key":"manufacturing_changes","kind":"engineering_document","name":"Manufacturing changes and selected orientation","quantity":"one","required":true}]
+  instructions: "Use qualified offline slicing tools on the exact repaired mesh and current reviewed specification. Compare every requested orientation using actual slice results and support-contact evidence; retain the alternatives, selected orientation, machine/material/process profile identities, emitted 3MF and native preview. Carry the upstream repair report and exact source/repaired identities into the manufacturing changes record for the downstream applicability check. Do not substitute original defaults for reviewed changed requirements. Do not change geometry silently, fabricate a preview or claim a comparison from a single orientation. No upload or printer operation."
+  settings: {"qualification_status":"orientation_study_and_slice_binding_required","requested_capability":"Offline orientation comparison, slicing and package inspection"}
   tool: null
   reusable_step: null
 end
@@ -308,7 +322,7 @@ end
 connection data_14
   type: item
   from: "cad.cad_mesh"
-  to: "manufacturing.manufacturing_mesh"
+  to: "mesh_repair.mesh_repair_mesh"
   label: "Required engineering evidence"
   when: null
 end
@@ -419,7 +433,7 @@ end
 
 connection final_repaired
   type: item
-  from: "manufacturing.manufacturing_repaired"
+  from: "mesh_repair.mesh_repair_repaired"
   to: "manufacturing_check.manufacturing_check_repaired"
   label: "Required engineering evidence"
   when: null
@@ -518,5 +532,37 @@ connection reviewed_package
   from: print_review
   to: simulated_receipt
   label: "Continue after the declared package review"
+  when: null
+end
+
+connection repair_spec
+  type: item
+  from: "specification.specification_spec"
+  to: "mesh_repair.mesh_repair_spec"
+  label: "Required engineering evidence"
+  when: null
+end
+
+connection repair_strength
+  type: item
+  from: "strength_check.strength_check_checks"
+  to: "mesh_repair.mesh_repair_strength"
+  label: "Required engineering evidence"
+  when: null
+end
+
+connection repaired_slice_input
+  type: item
+  from: "mesh_repair.mesh_repair_repaired"
+  to: "manufacturing.manufacturing_mesh"
+  label: "Required engineering evidence"
+  when: null
+end
+
+connection repair_changes_to_slice
+  type: item
+  from: "mesh_repair.mesh_repair_changes"
+  to: "manufacturing.manufacturing_repair_changes"
+  label: "Required engineering evidence"
   when: null
 end

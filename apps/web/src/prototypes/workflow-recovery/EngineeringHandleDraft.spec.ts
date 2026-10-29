@@ -161,3 +161,20 @@ it("changes an existing handle step into a review while retaining subjects and r
     redo.workflow!.blocks.find((b) => b.id === review.id)?.inputPortIds,
   ).toEqual(review.inputPortIds);
 });
+
+// Manufacturing must retain a real artifact handoff, not two disconnected tasks.
+it("carries the repaired mesh into slicing and final checks while retaining the original CAD evidence", () => {
+  const workflow = parseRecoverySourceDocument(source, 1).workflow!;
+  const port = (key: string) => workflow.ports.find((p) => p.id === `port.${key.replace(/_/g, "-")}`)!;
+  const upstream = (key: string) => workflow.relationships
+    .filter((edge) => edge.targetId === port(key).id)
+    .map((edge) => workflow.ports.find((p) => p.id === edge.sourceId)?.id.replace(/^port\./, "").replace(/-/g, "_"));
+  expect(upstream("mesh_repair_mesh")).toEqual(["cad_mesh"]);
+  expect(upstream("manufacturing_mesh")).toEqual(["mesh_repair_repaired"]);
+  expect(upstream("manufacturing_repair_changes")).toEqual(["mesh_repair_changes"]);
+  expect(upstream("manufacturing_check_source")).toEqual(["cad_mesh"]);
+  expect(upstream("manufacturing_check_repaired")).toEqual(["mesh_repair_repaired"]);
+  expect(upstream("manufacturing_check_changes")).toEqual(["manufacturing_changes"]);
+  expect(upstream("print_review_package")).toEqual(["manufacturing_package"]);
+  expect(upstream("print_review_final_checks")).toEqual(["manufacturing_check_checks"]);
+});

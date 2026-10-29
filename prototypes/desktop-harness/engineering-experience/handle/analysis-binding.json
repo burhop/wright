@@ -37,7 +37,7 @@
   },
   "schema_sha256": "2ce453761de318023b7ca77b56737c9e4421b6e95f364e5076dde5552ae95329",
   "selected_image": "sha256:9d8dbbde565bc8208a8cce03491b198b36105a1b5ceb556e82f5bdf17fa59ac4",
-  "source_sha256": "a2ff73e13c0d30bab91e9012f4114cc73e1c85901293cb8e1629109035968963",
+  "source_sha256": "bc9306fe76f92baebe95932ad94757dfb25d6da3fe7ed212640e6d1dbc66125f",
   "scope": "Local proposed workflow revision only. Not saved over either accepted desktop source; no engineering execution or review.",
   "remaining": [
     "CAD authentication and binding",

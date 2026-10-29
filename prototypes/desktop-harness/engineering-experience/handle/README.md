@@ -87,3 +87,23 @@ the unbound CAD stage. Geometry and strength validators, repair/orientation/slic
 handoffs and bounded correction edges remain to be qualified. A protocol-valid
 slicer alone does not fulfill the manufacturing stage’s repaired-mesh, orientation
 comparison, print-package and preview requirements.
+
+## Separate manufacturing owners
+
+The local draft now separates mesh repair/checking from orientation comparison
+and slicing. The source CAD mesh feeds repair and remains independently available
+to final validation. The repaired mesh feeds slicing and final validation; its
+repair report also feeds the slicing-stage change record. Package review retains
+all seven subjects. No accepted desktop revision has changed.
+
+Five authoring tests pass, including the exact upstream artifact paths, retained
+source/check subjects, source round trip and review Undo/Redo. The initial test
+command used the wrong working directory and Vite denied the raw source import;
+the application-directory command runs the existing configuration unchanged. An
+initial new assertion used a nonexistent port key property; it now checks the
+parsed canonical identities. Neither failure required weakening product behavior.
+
+The [real repair-to-slicer prerequisite](../evidence/mesh-repair-slice-handoff/README.md)
+supports this separation. It does not qualify handle repair, the two-orientation
+comparison, native preview extraction as a workflow output, or final analysis
+applicability. Those remain explicit binding/qualification work.
