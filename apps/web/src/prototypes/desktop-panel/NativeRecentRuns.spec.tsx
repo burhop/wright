@@ -181,21 +181,19 @@ it("reads a historical record without opening the current-source working view", 
 
 // A known historical source is readable, but cannot attach to the current process client.
 it("directs an earlier workflow version to its exact saved evidence", async () => {
-  const call = vi
-    .fn()
-    .mockImplementation(async (tool) =>
-      tool === "wright_workflow_history"
-        ? response()
-        : {
-            content: [],
-            structuredContent: {
-              workspace_id: "w",
-              session_id: "s",
-              workflow_path: path,
-              record: { ...run, source_matches_current: false, results: [] },
-            },
+  const call = vi.fn().mockImplementation(async (tool) =>
+    tool === "wright_workflow_history"
+      ? response()
+      : {
+          content: [],
+          structuredContent: {
+            workspace_id: "w",
+            session_id: "s",
+            workflow_path: path,
+            record: { ...run, source_matches_current: false, results: [] },
           },
-    );
+        },
+  );
   const onOpen = vi.fn();
   render(
     <NativeRecentRuns
