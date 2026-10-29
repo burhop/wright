@@ -1,0 +1,19 @@
+{
+  "status": "PASS",
+  "prototype_commit": "0ecf3acc5c8649b1aa18ef0033779baf4880ecf4",
+  "scope": {
+    "workspace_id": "af3b3e57-e686-4262-b458-0e21eaa4998d",
+    "session_id": "desktop-fe8b45c6-0dbe-47e0-8c4d-daa918800d5d"
+  },
+  "path": "workflows/replacement-handle.workflow.wflow",
+  "source_digest": "985013cf4b6b0818099008345915c00345b93084b560018016a5a83de8b34b52",
+  "storage_revision": 1,
+  "workspace_create": true,
+  "workflow_save_read": true,
+  "new_connection_reopen": true,
+  "editor_open_payload": true,
+  "engineering_execution": false,
+  "inputs_uploaded": false,
+  "windows_visual": "UNVERIFIED",
+  "installed_plugin_changed": false
+}

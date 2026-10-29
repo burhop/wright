@@ -776,3 +776,17 @@ This is an intermediate qualification, not a coherent final installed build or
 Windows visual acceptance. No credentials were copied, no workflows ran, and the
 installed 0.33 plugin/backend030 and their state remain unchanged. A newly frozen
 candidate must include the correction before deployment.
+
+The corrected prototype is frozen at `0ecf3acc` and has now passed an actual
+isolated workspace-create → handle-draft-save → disconnect → reconnect → exact
+source-reopen check against the built runtime. The handle's source digest remains
+`985013cf4b6b0818099008345915c00345b93084b560018016a5a83de8b34b52`;
+its new disposable workspace has its own revision 1 and no engineering runs.
+Compiled Home/editor rendering against that storage passes at 1100/480 px in a
+simulated host, including exact Source/Diagram round trip. Evidence and inspected
+screenshots: `prototypes/desktop-harness/engineering-experience/evidence/candidate-036-installed-runtime/`.
+A narrow file-kind label wraps awkwardly; include it in the next coherent UI batch.
+Actual Windows rendering/delivery and complete engineering execution remain open.
+The owned fresh candidate is on loopback 18336; it has no copied accounts or tool
+grants. Do not replace the installed plugin until tool setup and the complete
+candidate's required local checks are qualified.
