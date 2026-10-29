@@ -55,6 +55,7 @@ export type RecoveryCommand =
       key: string;
       value: string | number | boolean;
     }
+  | { kind: "remove_block_configuration"; blockId: string; key: string }
   | {
       kind: "set_block_object_configuration";
       blockId: string;
@@ -71,6 +72,12 @@ export type RecoveryCommand =
       portId: string;
       required: boolean;
       cardinality: RecoveryPort["cardinality"];
+    }
+  | {
+      kind: "set_port_definition";
+      portId: string;
+      name: string;
+      description: string;
     }
   | { kind: "set_port_type"; portId: string; typeId: string }
   | { kind: "delete_port"; portId: string }
@@ -275,6 +282,21 @@ function applyCommand(
     block(workflow, command.blockId).configuration[command.key] = command.value;
     return;
   }
+  if (command.kind === "remove_block_configuration") {
+    const target = block(workflow, command.blockId);
+    const value = target.configuration[command.key];
+    if (
+      command.key.startsWith("__wright_") ||
+      !Object.hasOwn(target.configuration, command.key) ||
+      !["string", "number", "boolean"].includes(typeof value)
+    ) {
+      throw new Error(
+        `WFR-COMMAND-CONFIGURATION-REMOVE-INVALID:${command.blockId}`,
+      );
+    }
+    delete target.configuration[command.key];
+    return;
+  }
   if (command.kind === "set_block_object_configuration") {
     const target = block(workflow, command.blockId);
     if (
@@ -333,6 +355,19 @@ function applyCommand(
       owner.outputPortIds = owner.outputPortIds.filter((id) => id !== port.id);
       workflow.ports = workflow.ports.filter((item) => item.id !== port.id);
     }
+    return;
+  }
+  if (command.kind === "set_port_definition") {
+    const port = workflow.ports.find((item) => item.id === command.portId);
+    if (
+      !port ||
+      typeof command.name !== "string" ||
+      !command.name.trim() ||
+      typeof command.description !== "string"
+    )
+      throw new Error(`WFR-COMMAND-PORT-DEFINITION-INVALID:${command.portId}`);
+    port.name = command.name.trim();
+    port.description = command.description.trim();
     return;
   }
   if (command.kind === "set_port_contract") {
@@ -760,6 +795,7 @@ export function textEditCommands(
   const disconnects: RecoveryCommand[] = [];
   const relationshipUpdates: RecoveryCommand[] = [];
   const deletedBlocks: RecoveryCommand[] = [];
+  const deletedPorts: RecoveryCommand[] = [];
   const addedBlocks: RecoveryCommand[] = [];
   const connections: RecoveryCommand[] = [];
   const metadataPatch: Partial<
@@ -863,6 +899,20 @@ export function textEditCommands(
         });
         continue;
       }
+      if (
+        edited.configuration[key] === undefined &&
+        !key.startsWith("__wright_") &&
+        ["string", "number", "boolean"].includes(
+          typeof current.configuration[key],
+        )
+      ) {
+        edits.push({
+          kind: "remove_block_configuration",
+          blockId: current.id,
+          key,
+        });
+        continue;
+      }
       if (edited.configuration[key] === undefined)
         return [
           {
@@ -955,6 +1005,10 @@ export function textEditCommands(
     const edited = afterPorts.get(current.id);
     if (!edited) {
       if (deletedBlockIds.has(current.ownerBlockId)) continue;
+      if (!current.artifactContractId) {
+        deletedPorts.push({ kind: "delete_port", portId: current.id });
+        continue;
+      }
       return [
         {
           code: "WFR-TEXT-STRUCTURE-UNSUPPORTED",
@@ -967,6 +1021,16 @@ export function textEditCommands(
         },
       ];
     }
+    if (
+      current.name !== edited.name ||
+      current.description !== edited.description
+    )
+      edits.push({
+        kind: "set_port_definition",
+        portId: current.id,
+        name: edited.name,
+        description: edited.description,
+      });
     if (
       current.required !== edited.required ||
       current.cardinality !== edited.cardinality
@@ -1048,6 +1112,7 @@ export function textEditCommands(
     ...deletedBlocks,
     ...addedBlocks,
     ...edits,
+    ...deletedPorts,
     ...connections,
   ];
   const candidate = cloneWorkflow(before);

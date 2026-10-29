@@ -107,3 +107,12 @@ The [real repair-to-slicer prerequisite](../evidence/mesh-repair-slice-handoff/R
 supports this separation. It does not qualify handle repair, the two-orientation
 comparison, native preview extraction as a workflow output, or final analysis
 applicability. Those remain explicit binding/qualification work.
+
+## Isolated candidate revision 2
+
+The proposals described above are now saved through the corrected compiled editor
+in the separate 036 workspace as revision 2. The older installed workspace is
+unchanged. [Actual structural refinement evidence](../evidence/handle-structural-refinement/README.md)
+includes exact saved digest, source equivalence and the remaining insertion-layout
+problem. Eighty-nine affected authoring/command/output-contract tests and TypeScript
+checking pass. Engineering readiness and actual Windows acceptance remain open.

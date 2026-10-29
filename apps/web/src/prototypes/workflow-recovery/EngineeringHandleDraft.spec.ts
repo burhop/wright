@@ -1,3 +1,4 @@
+import acceptedHandleSource from "./fixtures/handle-before-manufacturing-split.wflow?raw";
 import { hydrateAuthoringLayout } from "./authoring-positioning";
 import source from "../../../../../prototypes/desktop-harness/engineering-experience/handle/replacement-handle-draft.workflow.wflow?raw";
 import { expect, it } from "vitest";
@@ -165,16 +166,128 @@ it("changes an existing handle step into a review while retaining subjects and r
 // Manufacturing must retain a real artifact handoff, not two disconnected tasks.
 it("carries the repaired mesh into slicing and final checks while retaining the original CAD evidence", () => {
   const workflow = parseRecoverySourceDocument(source, 1).workflow!;
-  const port = (key: string) => workflow.ports.find((p) => p.id === `port.${key.replace(/_/g, "-")}`)!;
-  const upstream = (key: string) => workflow.relationships
-    .filter((edge) => edge.targetId === port(key).id)
-    .map((edge) => workflow.ports.find((p) => p.id === edge.sourceId)?.id.replace(/^port\./, "").replace(/-/g, "_"));
+  const port = (key: string) =>
+    workflow.ports.find((p) => p.id === `port.${key.replace(/_/g, "-")}`)!;
+  const upstream = (key: string) =>
+    workflow.relationships
+      .filter((edge) => edge.targetId === port(key).id)
+      .map((edge) =>
+        workflow.ports
+          .find((p) => p.id === edge.sourceId)
+          ?.id.replace(/^port\./, "")
+          .replace(/-/g, "_"),
+      );
   expect(upstream("mesh_repair_mesh")).toEqual(["cad_mesh"]);
   expect(upstream("manufacturing_mesh")).toEqual(["mesh_repair_repaired"]);
-  expect(upstream("manufacturing_repair_changes")).toEqual(["mesh_repair_changes"]);
+  expect(upstream("manufacturing_repair_changes")).toEqual([
+    "mesh_repair_changes",
+  ]);
   expect(upstream("manufacturing_check_source")).toEqual(["cad_mesh"]);
-  expect(upstream("manufacturing_check_repaired")).toEqual(["mesh_repair_repaired"]);
-  expect(upstream("manufacturing_check_changes")).toEqual(["manufacturing_changes"]);
+  expect(upstream("manufacturing_check_repaired")).toEqual([
+    "mesh_repair_repaired",
+  ]);
+  expect(upstream("manufacturing_check_changes")).toEqual([
+    "manufacturing_changes",
+  ]);
   expect(upstream("print_review_package")).toEqual(["manufacturing_package"]);
-  expect(upstream("print_review_final_checks")).toEqual(["manufacturing_check_checks"]);
+  expect(upstream("print_review_final_checks")).toEqual([
+    "manufacturing_check_checks",
+  ]);
+});
+
+it("applies removal of obsolete tool settings as a reversible edit without removing managed review data", async () => {
+  const { textEditCommands, applyRecoveryBatch, recoveryCommandBatch } =
+    await import("./command-system");
+  const after = parseRecoverySourceDocument(source, 1).workflow!;
+  const before = structuredClone(after);
+  const analysis = before.blocks.find(
+    (b) => b.configuration.authoring_template === "mcp-task",
+  )!;
+  analysis.configuration.qualification_status = "binding_required";
+  analysis.configuration.requested_capability = "Strength analysis";
+  const layout = hydrateAuthoringLayout(before);
+  const commands = textEditCommands(before, after);
+  expect(
+    commands.filter(
+      (c) => "kind" in c && c.kind === "remove_block_configuration",
+    ),
+  ).toHaveLength(2);
+  const result = applyRecoveryBatch(
+    before,
+    layout,
+    recoveryCommandBatch(
+      before.revision,
+      "text",
+      commands as import("./command-system").RecoveryCommand[],
+    ),
+  );
+  expect(result.ok, JSON.stringify(result.diagnostics)).toBe(true);
+  expect(
+    result.workflow!.blocks.find((b) => b.id === analysis.id)!.configuration,
+  ).toEqual(after.blocks.find((b) => b.id === analysis.id)!.configuration);
+  expect(result.workflow!.relationships).toEqual(before.relationships);
+  expect(analysis.configuration.qualification_status).toBe("binding_required");
+  const undo = applyRecoveryBatch(
+    result.workflow!,
+    result.layout!,
+    recoveryCommandBatch(result.workflow!.revision, "history", [
+      { kind: "restore_snapshot", direction: "undo", workflow: before, layout },
+    ]),
+  );
+  expect(undo.ok).toBe(true);
+  expect(
+    undo.workflow!.blocks.find((b) => b.id === analysis.id)!.configuration
+      .qualification_status,
+  ).toBe("binding_required");
+  const review = before.blocks.find(
+    (b) => b.title === "Review the proposed print package",
+  )!;
+  const guarded = applyRecoveryBatch(
+    before,
+    layout,
+    recoveryCommandBatch(before.revision, "text", [
+      {
+        kind: "remove_block_configuration",
+        blockId: review.id,
+        key: "__wright_authoring_approval_objects",
+      },
+    ]),
+  );
+  expect(guarded.ok).toBe(false);
+  expect(guarded.diagnostics[0].code).toBe(
+    "WFR-COMMAND-CONFIGURATION-REMOVE-INVALID",
+  );
+});
+
+it("applies the actual accepted handle refinement without losing review or result connections", async () => {
+  const { textEditCommands, applyRecoveryBatch, recoveryCommandBatch } =
+    await import("./command-system");
+  const before = parseRecoverySourceDocument(acceptedHandleSource, 1).workflow!;
+  const parsed = parseRecoveryAuthoringSource(source, before);
+  expect(parsed.ok, JSON.stringify(parsed.diagnostics)).toBe(true);
+  const layout = hydrateAuthoringLayout(before);
+  const commands = textEditCommands(before, parsed.workflow!, layout);
+  expect(
+    commands.every((c) => "kind" in c),
+    JSON.stringify(commands),
+  ).toBe(true);
+  const result = applyRecoveryBatch(
+    before,
+    layout,
+    recoveryCommandBatch(
+      before.revision,
+      "text",
+      commands as import("./command-system").RecoveryCommand[],
+    ),
+  );
+  expect(result.ok, JSON.stringify(result.diagnostics)).toBe(true);
+  expect(result.workflow!.ports).toHaveLength(parsed.workflow!.ports.length);
+  expect(result.workflow!.relationships).toEqual(
+    parsed.workflow!.relationships,
+  );
+  expect(
+    result.workflow!.blocks.find(
+      (b) => b.title === "Review the proposed print package",
+    )!.inputPortIds,
+  ).toHaveLength(7);
 });

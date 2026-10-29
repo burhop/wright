@@ -854,3 +854,21 @@ final validation, retained original CAD evidence, seven review subjects and
 save/reopen/Undo/Redo. Accepted desktop revisions remain unchanged. Tool-specific
 bindings and actual orientation comparison are still open; the graph change
 does not convert prerequisite evidence into engineering readiness.
+
+### Structural refinement through the actual editor
+
+The isolated handle is now saved at revision 2, digest
+`5a3c740dc11cd7cad1b7da912010defe901b5ffea96d8ff278a1d45d1e439e51`.
+Actual source editing exposed shared command gaps for removing obsolete scalar
+settings and connection points, and renaming a remaining input. These are now
+atomic reversible commands with existing managed-data, connected-port, output
+and artifact guards retained. A regression starts from the actual accepted
+source rather than merely round-tripping the new source.
+
+Compiled UI save/read/reopen and independent semantic comparison of all 64
+sections pass. Evidence: `prototypes/desktop-harness/engineering-experience/evidence/handle-structural-refinement/`.
+The screenshot exposes a separate new-step placement problem: the inserted
+repair block appears near the start rather than beside its dependencies. Preserve
+existing user positions while correcting insertion placement in the next UI batch.
+No engineering execution, review, installed-plugin update or Windows acceptance
+is implied. Missing reference upload and execution bindings remain open.
