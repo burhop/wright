@@ -72,6 +72,16 @@ it("keeps source identity and transfer accessible on demand, with keyboard retur
   expect(screen.getByText("Workflow details")).toHaveFocus();
 });
 
+it("provides a pointer return from details even when its summary is obscured", () => {
+  const { onOpenWorkingView, onOpenTransfer } = setup();
+  fireEvent.click(screen.getByText("Workflow details"));
+  fireEvent.click(screen.getByRole("button", { name: "Close details" }));
+  expect(screen.getByText(initial.path)).not.toBeVisible();
+  expect(screen.getByText("Workflow details")).toHaveFocus();
+  expect(onOpenWorkingView).not.toHaveBeenCalled();
+  expect(onOpenTransfer).not.toHaveBeenCalled();
+});
+
 it("retains edit guards when transfer is behind a disclosure", () => {
   const { onOpenWorkingView, onOpenTransfer } = setup({
     transferDisabled: true,

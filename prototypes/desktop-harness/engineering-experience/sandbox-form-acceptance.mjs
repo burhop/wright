@@ -106,10 +106,12 @@ const server = createServer(async (req, res) => {
       JSON.stringify({ content: [], structuredContent: respond(name, args) }),
     );
   } catch (e) {
+    console.error("Fixture request failed", e);
+    res.setHeader("Content-Type", "application/json");
     res.end(
       JSON.stringify({
         isError: true,
-        content: [{ type: "text", text: String(e) }],
+        content: [{ type: "text", text: "Fixture request failed; inspect the local test log." }],
       }),
     );
   }

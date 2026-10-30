@@ -135,3 +135,12 @@ artifacts/process-interfaces/083/20261003-run-path-authority-fields-verified/** 
 artifacts/process-interfaces/083/20261003-validator-run-identity-verified/** -text -whitespace
 artifacts/process-interfaces/083/20261003-heat-repeat-and-saved-ui-verified/** -text -whitespace
 artifacts/process-interfaces/083/20261003-run-receipts-and-printed-paths-verified/** -text -whitespace
+
+# Desktop handle source and the exact inputs of its pinned portable resource ZIP.
+# Preserve accepted bytes across Windows autocrlf checkouts; do not regenerate pins.
+prototypes/desktop-harness/engineering-experience/handle/replacement-handle-draft.workflow.wflow text eol=lf
+apps/web/src/prototypes/workflow-recovery/fixtures/handle-before-manufacturing-split.wflow text eol=lf
+packages/workspace_service/src/workspace_service/process_interfaces/representations.py text eol=lf
+scripts/engineering/inspect_manufacturing_package.py text eol=lf
+scripts/engineering/compare_handle_slices.py text eol=lf
+prototypes/desktop-harness/engineering-experience/evidence/support-profile-qualification/profiles/*.json text eol=lf

@@ -1866,16 +1866,31 @@ describe("bounded representation views", () => {
     expect(screen.queryByRole("img")).not.toBeInTheDocument();
     unmount();
   });
-  it.each(["image/svg+xml", "text/html", "application/octet-stream"])(
-    "does not read or inline %s as an image",
-    (type) => {
-      const blob = new Blob(["<svg onload='bad()'/>"], { type });
-      const read = vi.spyOn(blob, "arrayBuffer");
-      render(<ImageThumbnail blob={blob} title="Unsupported" />);
-      expect(screen.queryByRole("img")).not.toBeInTheDocument();
-      expect(read).not.toHaveBeenCalled();
+  it.each(["image/png", "image/jpeg", "image/webp", "image/gif"])(
+    "uses a fixed %s data URL with byte-exact base64 payload",
+    async (type) => {
+      const bytes = new Uint8Array([0, 34, 60, 62, 127, 255]);
+      render(
+        <ImageThumbnail blob={new Blob([bytes], { type })} title="Raster" />,
+      );
+      expect(await screen.findByAltText("Raster")).toHaveAttribute(
+        "src",
+        `data:${type};base64,${btoa(String.fromCharCode(...bytes))}`,
+      );
     },
   );
+  it.each([
+    "image/svg+xml",
+    "text/html",
+    "application/octet-stream",
+    'image/png;onerror="bad()"',
+  ])("does not read or inline %s as an image", (type) => {
+    const blob = new Blob(["<svg onload='bad()'/>"], { type });
+    const read = vi.spyOn(blob, "arrayBuffer");
+    render(<ImageThumbnail blob={blob} title="Unsupported" />);
+    expect(screen.queryByRole("img")).not.toBeInTheDocument();
+    expect(read).not.toHaveBeenCalled();
+  });
   it("rejects oversized raster previews before reading and reports read/decode failures", async () => {
     const oversized = new Blob([new Uint8Array(32 * 1024 * 1024 + 1)], {
       type: "image/png",

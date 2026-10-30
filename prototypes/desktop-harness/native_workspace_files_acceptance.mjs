@@ -194,8 +194,13 @@ const server = createServer(async (req, res) => {
     }
     const match = /^\/view\/(home|[0-9]+)$/.exec(req.url);
     if (req.method === "GET" && match) {
-      const id = match[1],
-        doc = id === "home" ? null : documents[Number(id)];
+      const id = match[1] === "home" ? "home" : Number(match[1]);
+      if (id !== "home" && (!Number.isSafeInteger(id) || id < 0 || id >= documents.length)) {
+        res.writeHead(404);
+        res.end();
+        return;
+      }
+      const doc = id === "home" ? null : documents[id];
       res.writeHead(200, { "Content-Type": "text/html;charset=utf-8" });
       if (doc?.viewer === "image") {
         res.end(

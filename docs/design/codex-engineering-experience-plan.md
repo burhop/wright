@@ -1490,3 +1490,48 @@ services and data are preserved. This conversation still reported the old 0.33
 connection, so actual Windows workspace → New workflow → Plan in Codex chat
 acceptance remains pending. Pre-push gate/draft PR and the previously recorded
 full engineering/review/provider gaps remain open.
+
+### Draft PR and actual-host regression — 30 October
+
+Draft PR #174 publishes `c9f2bf0f`; full local and pre-push gates passed. First CI
+cycle is terminal: Windows frontend/backend and CodeQL failed; other reported
+jobs passed (deployment intentionally skipped). No merge is authorized. Preserve
+all findings before the one consolidated correction push.
+
+Windows failures concern portable handle byte identity: checkout line endings
+and ZIP creator metadata. Local correction preserves the accepted archive and
+source hashes, fixes platform-independent packaging and pins exact inputs to LF.
+Native Windows rerun remains required. CodeQL findings are under review and have
+not been waived.
+
+The installed 0.38 backend was restarted using the same state. This conversation
+subsequently exposed its tools and returned the exact 0.38 connection binding.
+The user then observed workflow files opening as raw text. Direct editor opening
+is only a workaround, not file-handler acceptance. Current official SDK examples
+still allow dotted file extensions; do not assume the leading dot is the cause.
+Native file selection remains FAIL pending direct host qualification.
+
+Compiled-panel portable import/reopen/export passed with actual isolated storage
+and exact revision-10 source/reference bytes. Download required a simulated host
+with downloads enabled; Windows delivery remains unverified. Attempts preserving
+collision/no-overwrite and denied-download behavior are retained. A 480px return
+screenshot shows Workflow details dominating the editor; include it in the next
+consolidated usability correction. Private evidence:
+`.local-run/experience-review/candidate-038/portable-panel-receipt.json` and
+`.local-run/experience-review/pr174-ci/` in the feature worktree.
+
+CodeQL correction review: six findings in candidate-owned paths are addressed
+locally with fixed raster data-URL prefixes, private fixture-error logging and
+bounded numeric viewer IDs before interpolation. No rule is suppressed. Two
+older alerts reference unchanged source and remain separately classified. The
+independent reviewer found no actionable defect in these corrections. All 113
+shared UI-kit tests pass, including exact bytes for all four supported raster
+formats and hostile MIME rejection. CodeQL rerun, built-candidate qualification
+and actual Windows results remain pending; no new plugin installation or push.
+
+The consolidated candidate also adds an explicit Close details control inside the
+workflow-details overlay, returning keyboard focus without process actions. This
+addresses the observed narrow-panel return problem without replacing the editor.
+Focused shared viewer/editor checks pass (120 tests), TypeScript passes, and the
+native resource rebuilds without external assets. The installed 0.38 resource
+is unchanged; compiled narrow-panel visual and normal gate checks remain pending.

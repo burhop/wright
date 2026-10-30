@@ -83,6 +83,15 @@ export function NativeWorkflowPanel({
       >
         <summary>Workflow details</summary>
         <div className="native-workflow-details__content">
+          <button
+            type="button"
+            onClick={() => {
+              if (workflowDetails.current) workflowDetails.current.open = false;
+              workflowDetails.current?.querySelector("summary")?.focus();
+            }}
+          >
+            Close details
+          </button>
           <dl>
             <dt>Workspace</dt>
             <dd>{workspaceName}</dd>

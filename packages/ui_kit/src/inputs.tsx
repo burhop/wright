@@ -504,7 +504,22 @@ export function ImageThumbnail({ blob, title, onReady }: { blob: Blob; title: st
       let binary = "";
       for (let offset = 0; offset < bytes.length; offset += 8192)
         binary += String.fromCharCode(...bytes.subarray(offset, offset + 8192));
-      setStored({ blob, url: `data:${blob.type};base64,${btoa(binary)}` });
+      const encoded = btoa(binary);
+      // Construct only fixed raster URL schemes; MIME text never becomes markup.
+      switch (blob.type) {
+        case "image/png":
+          setStored({ blob, url: "data:image/png;base64," + encoded });
+          break;
+        case "image/jpeg":
+          setStored({ blob, url: "data:image/jpeg;base64," + encoded });
+          break;
+        case "image/webp":
+          setStored({ blob, url: "data:image/webp;base64," + encoded });
+          break;
+        case "image/gif":
+          setStored({ blob, url: "data:image/gif;base64," + encoded });
+          break;
+      }
     }).catch(() => {
       if (active) setFailed(blob);
     });

@@ -535,7 +535,7 @@ def test_comparison_rejects_unobserved_or_swapped_inputs(compared_alternatives, 
 
 
 def test_portable_inspection_resources_execute_existing_reader_and_inspector(
-    compared_alternatives,
+    compared_alternatives, monkeypatch,
 ):
     root, _, _, selection, config = compared_alternatives
     bundle_path = (
@@ -550,6 +550,18 @@ def test_portable_inspection_resources_execute_existing_reader_and_inspector(
     builder_spec.loader.exec_module(builder)
     # A stale code snapshot or changed profile must not silently keep its pin.
     assert bundle_path.read_bytes() == builder.package()
+    # Windows defaults ZipInfo to DOS metadata. The portable archive must still
+    # reproduce the accepted bytes without changing any source/asset pin.
+    original_zip_info = zipfile.ZipInfo
+
+    class WindowsZipInfo(original_zip_info):
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+            self.create_system = 0
+
+    with monkeypatch.context() as patch:
+        patch.setattr(builder.zipfile, "ZipInfo", WindowsZipInfo)
+        assert bundle_path.read_bytes() == builder.package()
     with zipfile.ZipFile(bundle_path) as archive:
         manifest = json.loads(archive.read("manifest.json"))
         assert set(archive.namelist()) == set(manifest["files"]) | {"manifest.json"}
