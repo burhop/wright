@@ -416,32 +416,60 @@ describe("OnboardingWizard", () => {
     await waitFor(() => expect(trigger).toHaveFocus());
     trigger.remove();
   });
-});
-it("uses a simplified setup entry when a listed MCP server is selected", () => {
-  render(
-    <OnboardingWizard
-      isOpen
-      initialCapabilityId="fixture-mcp"
-      onClose={vi.fn()}
-    />,
-  );
 
-  expect(
-    screen.getByRole("heading", {
-      name: "Install MCP server",
-    }),
-  ).toBeVisible();
-  expect(screen.queryByLabelText("Source")).not.toBeInTheDocument();
-  expect(screen.getByTestId("onboarding-selected-server")).toHaveTextContent(
-    "fixture-mcp",
-  );
-  expect(screen.queryByTestId("onboarding-scope")).not.toBeInTheDocument();
-  expect(
-    screen.getByRole("button", { name: "Review install plan" }),
-  ).toBeEnabled();
-  expect(
-    screen.queryByText(
-      "I reviewed and completed any publisher requirements shown for this server.",
-    ),
-  ).not.toBeInTheDocument();
+  it("uses a simplified setup entry when a listed MCP server is selected", () => {
+    render(
+      <OnboardingWizard
+        isOpen
+        initialCapabilityId="fixture-mcp"
+        onClose={vi.fn()}
+      />,
+    );
+
+    expect(
+      screen.getByRole("heading", {
+        name: "Install MCP server",
+      }),
+    ).toBeVisible();
+    expect(screen.queryByLabelText("Source")).not.toBeInTheDocument();
+    expect(screen.getByTestId("onboarding-selected-server")).toHaveTextContent(
+      "fixture-mcp",
+    );
+    expect(screen.queryByTestId("onboarding-scope")).not.toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Review install plan" }),
+    ).toBeEnabled();
+    expect(
+      screen.queryByText(
+        "I reviewed and completed any publisher requirements shown for this server.",
+      ),
+    ).not.toBeInTheDocument();
+  });
+
+  it("never invents publisher completion and requires an explicit new plan", async () => {
+    const user = userEvent.setup();
+    vi.mocked(mcpService.createInstallPlan)
+      .mockResolvedValueOnce({ ...plan, state: "blocked", blocking_reasons: [{
+        code: "external_license_incomplete", message: "Publisher requirements incomplete.",
+        recovery: "Complete independently.",
+      }] })
+      .mockResolvedValueOnce({ ...plan, plan_id: "new-plan", plan_digest: "c".repeat(64) });
+    render(<OnboardingWizard isOpen initialCapabilityId="hosted-provider" onClose={vi.fn()} />);
+    await user.click(screen.getByRole("button", { name: "Review install plan" }));
+    expect(await screen.findByRole("alert")).toHaveTextContent("Publisher requirements incomplete");
+    expect(mcpService.createInstallPlan).toHaveBeenNthCalledWith(1, expect.objectContaining({
+      capability_id: "hosted-provider", independently_completed_license: false,
+    }));
+    const record = screen.getByRole("button", { name: "Create a new plan with my recorded completion" });
+    expect(record).toBeDisabled();
+    expect(mcpService.approveInstallPlan).not.toHaveBeenCalled();
+    await user.click(screen.getByRole("checkbox", { name: /I have independently completed/ }));
+    await user.click(record);
+    await screen.findByRole("button", { name: "Continue to installation" });
+    expect(mcpService.createInstallPlan).toHaveBeenNthCalledWith(2, expect.objectContaining({
+      capability_id: "hosted-provider", independently_completed_license: true,
+    }));
+    expect(mcpService.approveInstallPlan).not.toHaveBeenCalled();
+  });
+
 });

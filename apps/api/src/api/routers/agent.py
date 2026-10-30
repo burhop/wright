@@ -1,4 +1,5 @@
 import asyncio
+from dataclasses import asdict
 from contextlib import suppress
 import json
 import os
@@ -11,11 +12,11 @@ from typing import Optional, List, AsyncIterator
 import httpx
 from fastapi import APIRouter, Depends, Request, HTTPException, status, Query
 from fastapi.responses import StreamingResponse
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 import structlog
 from opentelemetry import trace
 from core.tracing import traced
-from api.config import DATABASE_PATH, api_mcp_autostart_enabled
+from api.config import DATABASE_PATH, HERMES_API_BASE_URL, api_mcp_autostart_enabled
 
 from agent_adapters import (
     BaseAgentEngine,
@@ -27,7 +28,9 @@ from agent_adapters import (
     official_hermes_cli_path,
     resolve_agent_api_settings,
 )
+from agent_adapters.hermes_config import hermes_gateway_start_command
 from workspace_service import WorkspaceInvalidRequestError, WorkspaceService
+from workspace_service.agent_sync import GatewayRefreshNotObserved
 from workspace_service.adapters.runtime import (
     get_active_gateway_session,
     get_workspace_by_session,
@@ -99,9 +102,28 @@ def _restart_hermes_gateway_process() -> None:
         )
         return
 
-    executable = shutil.which("hermes") or official_hermes_cli_path()
+    executable = official_hermes_cli_path() or shutil.which("hermes")
     if not executable:
         raise RuntimeError("Hermes CLI was not found; gateway binding cannot refresh")
+    if hermes_gateway_start_command(HERMES_API_BASE_URL) is not None:
+        # Native users may run a foreground gateway without a system service.
+        # Hermes's own CLI retains profile scoping and its supervision guard.
+        # Readiness and replacement identity are checked by the existing owner.
+        log_dir = Path(os.environ.get("HERMES_HOME", str(Path.home() / ".hermes"))) / "logs"
+        log_dir.mkdir(parents=True, exist_ok=True)
+        with (log_dir / "wright-gateway-reconnect.log").open("ab") as log:
+            subprocess.Popen(
+                [executable, "gateway", "run", "--replace"],
+                stdin=subprocess.DEVNULL,
+                stdout=log,
+                stderr=subprocess.STDOUT,
+                start_new_session=os.name != "nt",
+                creationflags=(
+                    getattr(subprocess, "CREATE_NO_WINDOW", 0)
+                    | getattr(subprocess, "DETACHED_PROCESS", 0)
+                ) if os.name == "nt" else 0,
+            )
+        return
     _run_gateway_restart_command(
         [executable, "gateway", "restart"], "Hermes gateway restart"
     )
@@ -692,12 +714,27 @@ def _build_model_options_response(payload: dict) -> HermesModelOptionsResponse:
     )
 
 
+class ChatToolEvidence(BaseModel):
+    session_id: str
+    call_id: str
+    tool_name: str
+    arguments: dict | str | None = None
+    request_message_id: Optional[str] = None
+    response_message_id: Optional[str] = None
+    response: Optional[str] = None
+    display_response: Optional[str] = None
+    timestamp: int = 0
+    source: str
+    record_note: Optional[str] = None
+
+
 class ChatHistoryMessage(BaseModel):
     id: str
     role: str
     content: str
     timestamp: int
     trace_id: Optional[str] = None
+    tool_evidence: List[ChatToolEvidence] = Field(default_factory=list)
 
 
 class ChatHistoryResponse(BaseModel):
@@ -785,6 +822,10 @@ async def get_session_history(
                     content=m.content,
                     timestamp=m.timestamp,
                     trace_id=m.trace_id,
+                    tool_evidence=[
+                        ChatToolEvidence(**asdict(record))
+                        for record in getattr(m, "tool_evidence", ())
+                    ],
                 )
                 for m in messages
             ],
@@ -995,10 +1036,38 @@ async def chat(
         and getattr(sync_manager, "active_agent", "") == "hermes"
     ):
         try:
+            runtime_identity = getattr(engine, "gateway_runtime_identity", None)
+            if not callable(runtime_identity):
+                raise RuntimeError(
+                    "The configured Hermes adapter cannot confirm gateway replacement. "
+                    "Check the installed Hermes API compatibility before reconnecting tools."
+                )
+            if hermes_gateway_start_command(HERMES_API_BASE_URL) is not None:
+                replacement_idle = getattr(engine, "gateway_replacement_is_idle", None)
+                if not callable(replacement_idle) or not await replacement_idle():
+                    raise RuntimeError(
+                        "Hermes is still working, or its work state is unavailable. "
+                        "Let existing requests finish, then send your message again. "
+                        "No gateway was replaced and no message was sent to the model."
+                    )
             await sync_manager.refresh_gateway_if_needed(
                 lambda: asyncio.to_thread(_restart_hermes_gateway_process),
                 wait_ready=lambda: _wait_for_hermes_gateway(engine),
+                runtime_identity=runtime_identity,
             )
+        except GatewayRefreshNotObserved as exc:
+            log.warning("workspace_gateway_refresh_not_observed")
+            raise HTTPException(
+                status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+                detail=(
+                    "Wright saved this workspace's tool connection, but Hermes has "
+                    "not restarted to load it. Restart your existing Hermes gateway "
+                    "using its normal controls. If you started it in a terminal, "
+                    "press Ctrl+C there and run the same profile-specific "
+                    "`hermes gateway run` command again. Then return here and resend "
+                    "your message. No message was sent to the model."
+                ),
+            ) from exc
         except Exception as exc:
             log.exception("workspace_gateway_rebind_failed", error=str(exc))
             raise HTTPException(

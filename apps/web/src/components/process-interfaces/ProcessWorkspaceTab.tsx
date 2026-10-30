@@ -262,6 +262,7 @@ export function ProcessWorkspaceTab({
           runId={tab.processView.run_id}
           onRunAttached={attached}
           onPrepareAnother={prepareAnother}
+          onOpenDefinition={onOpenDefinition ? () => onOpenDefinition(process) : undefined}
           onUpload={upload}
           canReadRepresentations
           canNavigate={!!onNavigate}

@@ -11,6 +11,35 @@ const mocks = vi.hoisted(() => ({
   update: vi.fn(),
   files: vi.fn(),
   history: vi.fn(),
+  templates: vi.fn(),
+  setup: vi.fn(),
+}));
+
+vi.mock("../../prototypes/workflow-recovery/PrintedHandleSetupDialog", () => ({
+  PrintedHandleSetupDialog: (props: {
+    document: import("../../services/workspace-service").WorkspaceWorkflowSourceDocument;
+    onAccepted: (
+      document: import("../../services/workspace-service").WorkspaceWorkflowSourceDocument,
+    ) => void;
+  }) => {
+    mocks.setup(props);
+    return (
+      <button
+        data-testid="fixture-accept-setup"
+        onClick={() =>
+          props.onAccepted({
+            ...props.document,
+            source: "prepared exact source",
+            storage_digest: "c".repeat(64),
+            storage_revision: props.document.storage_revision + 1,
+            definition_revision: props.document.definition_revision + 1,
+          })
+        }
+      >
+        Accept setup fixture
+      </button>
+    );
+  },
 }));
 
 vi.mock("../../services/workflow-source-copy", () => ({
@@ -44,6 +73,7 @@ vi.mock("../../services/workspace-service", async (importOriginal) => {
       updateWorkspaceWorkflowSource: mocks.update,
       getWorkspaceWorkflowInputFiles: mocks.files,
       getWorkspaceWorkflowReviews: vi.fn().mockResolvedValue([]),
+      getEngineeringWorkflowTemplates: mocks.templates,
     },
   };
 });
@@ -244,6 +274,96 @@ describe("workspace workflow page", () => {
     mocks.copy.mockReset();
     mocks.update.mockReset();
     mocks.files.mockReset();
+    mocks.templates.mockReset().mockResolvedValue([]);
+    mocks.setup.mockReset();
+  });
+
+  it("opens example exploration without replacing the current source or clearing edits", async () => {
+    mocks.get.mockResolvedValue(document);
+    const onOpenWorkflow = vi.fn();
+    renderPage({ onOpenWorkflow });
+    await screen.findByTestId("fixture-edit");
+    await userEvent.click(screen.getByTestId("fixture-edit"));
+    await userEvent.click(screen.getByTestId("workflow-explore-example"));
+
+    expect(
+      await screen.findByRole("dialog", {
+        name: "Start from an engineering workflow",
+      }),
+    ).toBeVisible();
+    await waitFor(() => expect(mocks.templates).toHaveBeenCalledTimes(1));
+    await userEvent.click(screen.getByTestId("workflow-template-cancel"));
+    expect(screen.getByTestId("workflow-editor-fixture")).toHaveAttribute(
+      "data-current-source",
+      document.source,
+    );
+    expect(
+      screen.getByRole("button", { name: "Export / import workflow" }),
+    ).toBeDisabled();
+    expect(mocks.create).not.toHaveBeenCalled();
+    expect(mocks.update).not.toHaveBeenCalled();
+    expect(onOpenWorkflow).not.toHaveBeenCalled();
+    expect(mocks.setup).not.toHaveBeenCalled();
+  });
+
+  it("opens handle setup only on request, protects dirty edits, and returns the accepted revision to the same editor without starting", async () => {
+    mocks.get.mockResolvedValue(document);
+    mocks.readiness.mockResolvedValue({
+      state: "setup_required",
+      template_id: "replacement-drawer-handle",
+    });
+    const onOpenProcess = vi.fn();
+    renderPage({ onOpenProcess });
+    const setup = await screen.findByTestId("workflow-handle-setup-open");
+    expect(mocks.setup).not.toHaveBeenCalled();
+    await userEvent.click(screen.getByTestId("fixture-edit"));
+    expect(setup).toBeDisabled();
+    expect(setup).toHaveAttribute(
+      "title",
+      "Setup requires an unchanged starter. Preserve your edits or create a fresh starter.",
+    );
+    await userEvent.click(setup);
+    expect(mocks.setup).not.toHaveBeenCalled();
+    await userEvent.click(screen.getByTestId("fixture-clean"));
+    await userEvent.click(setup);
+    expect(mocks.setup.mock.calls.at(-1)?.[0].document).toEqual(document);
+    await userEvent.click(screen.getByTestId("fixture-accept-setup"));
+    expect(screen.queryByTestId("fixture-accept-setup")).toBeNull();
+    expect(screen.getByTestId("workflow-editor-fixture")).toHaveAttribute(
+      "data-current-source",
+      "prepared exact source",
+    );
+    expect(screen.getByTestId("workflow-editor-fixture")).toHaveAttribute(
+      "data-path",
+      document.path,
+    );
+    expect(screen.getByTestId("workflow-editor-fixture")).toHaveAttribute(
+      "data-storage-digest",
+      "c".repeat(64),
+    );
+    expect(screen.getByText(/^Prepared revision saved\./)).toBeVisible();
+    expect(onOpenProcess).not.toHaveBeenCalled();
+    expect(mocks.update).not.toHaveBeenCalled();
+    await waitFor(() => expect(mocks.readiness).toHaveBeenCalledTimes(2));
+  });
+
+  it("keeps revised handle processes on ordinary readiness without offering starter replacement", async () => {
+    mocks.get.mockResolvedValue(document);
+    mocks.readiness.mockResolvedValue({
+      state: "revised",
+      template_id: "replacement-drawer-handle",
+    });
+    const onOpenProcess = vi.fn();
+    renderPage({ onOpenProcess });
+    await waitFor(() => expect(mocks.readiness).toHaveBeenCalledTimes(1));
+    expect(screen.queryByTestId("workflow-handle-setup-open")).toBeNull();
+    await userEvent.click(screen.getByTestId("workflow-working-view-open"));
+    expect(onOpenProcess).toHaveBeenCalledExactlyOnceWith({
+      workspace_id: document.workspace_id,
+      source_path: document.path,
+      source_digest: document.storage_digest,
+    });
+    expect(mocks.setup).not.toHaveBeenCalled();
   });
 
   it("reports edit and clean state to the workspace with the exact tab path", async () => {

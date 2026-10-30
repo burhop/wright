@@ -30,7 +30,7 @@ launcher in the user's Startup folder. The workstation setup uses
 | [`check-public-alpha-leaks.py`](#check-public-alpha-leakspy) | Python | Scans tracked text files for obvious public-alpha secret leaks | Python 3, Git |
 | [`security-scan.sh`](#security-scansh-and-security-scanps1) / [`security-scan.ps1`](#security-scansh-and-security-scanps1) | Bash / PowerShell | Runs public-alpha, Gitleaks, and TruffleHog secret scans | Python 3, Docker |
 | [`docker-smoke-test.sh`](#docker-smoke-testsh) | Bash | Validates Docker build, Hermes dependencies, permissions, and self-healing behaviors | Docker, Python 3 |
-| `reconcile_hermes_pip_check.py` | Python | Accepts only the three exact Hermes 0.19 security-version conflicts from raw `uv pip check` output | Python 3 |
+| `reconcile_hermes_pip_check.py` | Python | Accepts only the four exact Hermes 0.19 security-version metadata conflicts from raw `uv pip check`; vulnerability policy remains independently blocking | Python 3 |
 | [`test-hermes-plugin-install.sh`](#hermes-plugin-lifecycle-scripts) / [`test-hermes-plugin-uninstall.sh`](#hermes-plugin-lifecycle-scripts) / [`test-hermes-plugin-update.sh`](#hermes-plugin-lifecycle-scripts) | Bash | Validates Hermes plugin install, uninstall, and update paths in Docker | Docker |
 | [`production-update.sh`](#production-updatesh) | Bash | Guards operator-run production updates against stale, dirty, or unverified commits | Git, Docker, optional `gh` CLI |
 | [`fetch_ci_failures.py`](#fetch_ci_failurespy) | Python | Retrieves logs of failed GitHub Action runs to a local markdown file | Python 3, `gh` CLI |
@@ -306,8 +306,9 @@ Runs a local verification suite against a production Docker build to ensure envi
 * **Key Checks**:
   1. Builds the Docker image locally as `wright:test`.
   2. Asserts that the container user runs as the non-root `agent` user by default.
-  3. Runs raw `uv pip check`; only the exact Hermes 0.19 cryptography/Pillow/PyJWT
-     security overrides are reconciled, and every other conflict fails.
+  3. Runs raw `uv pip check`; only the four exact Hermes 0.19 Certifi/cryptography/Pillow/PyJWT
+     security-version metadata conflicts are reconciled, and every other conflict fails.
+     This does not exempt any vulnerability from the independently blocking scan policy.
   4. Verifies that the `/container-manifest.md` is present and has read-only `444` permissions.
   5. Verifies that `/entrypoint.sh` is present and executable.
   6. Validates setup-pending behavior (warns and continues if no LLM provider is configured, succeeds when one is provided).

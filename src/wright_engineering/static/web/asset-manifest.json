@@ -1,29 +1,29 @@
 {
   "files": [
     {
-      "path": "assets/index-BbR4zc74.js",
-      "sha256": "91bdb9f3278b32388d6cd42d1c093eba74a64bbc2f41da6000219edc61992644",
-      "size": 2604095
+      "path": "assets/NativeProcessPage-CmEwHlwO.js",
+      "sha256": "05bb5c351ce6e1c0afadb32ce3402b2eda4f352c9c63c909333a838b1c10cd00",
+      "size": 53803
     },
     {
-      "path": "assets/index-DKFa6jxr.css",
-      "sha256": "9d5319ff33c660042913d216d419e9a94914130eb811455893d1473dbdb87d59",
-      "size": 166863
+      "path": "assets/index-D0yT7Dvh.js",
+      "sha256": "af078a5bc1bfda3cbba5414fd44d4eb289b249a09ae97bc34dd93662d717b46c",
+      "size": 2656063
     },
     {
-      "path": "assets/NativeProcessPage-C_xVIoPq.js",
-      "sha256": "0c2852cee483cec2b35a5c020c220f0c2437ee7b6c048ac8a7c09891ba3a670d",
-      "size": 53813
+      "path": "assets/index-DfntLdt_.css",
+      "sha256": "9998655541ce80f2d46a5467ee77817dac8aa7fc73baac6b7edff0892a36c158",
+      "size": 168836
     },
     {
-      "path": "assets/plotly.min-dkCWgMZq.js",
-      "sha256": "caec8938c038746eff0681cdd6b9649fbad06633bc06c70a1454511563fcce2c",
-      "size": 4603574
+      "path": "assets/plotly.min-Cb-kuE61.js",
+      "sha256": "fed870ef00d07c0edf247ac690001e3c9027eb0fbced3c00a7e20e57f6dcae8c",
+      "size": 4599473
     },
     {
-      "path": "assets/rolldown-runtime-Dd_uD5pT.js",
-      "sha256": "c5f0356f5d0918a3137e4e811fd18950efe8ac8f6bf84d1d4da7811c477a24d8",
-      "size": 1106
+      "path": "assets/rolldown-runtime-COiEfhsA.js",
+      "sha256": "174e7e98105b02138bee9b4c62dfc8a01980db395f9e6c916db999c091115562",
+      "size": 1116
     },
     {
       "path": "favicon.svg",
@@ -37,8 +37,8 @@
     },
     {
       "path": "index.html",
-      "sha256": "dae8d3cd3663d251ccef1ac9ec5f7816704d2b3c12ed2f870942adbd55a68cb6",
-      "size": 1074
+      "sha256": "47e66cd2293a14c480b94c506249bb8465bf53c9bf83d627eeb2c038f8d6be60",
+      "size": 1073
     },
     {
       "path": "recovery-concept/manufacturability-report.html",
@@ -47,8 +47,8 @@
     },
     {
       "path": "recovery-concept/mounting-bracket.step",
-      "sha256": "b253b9e9dcf26ef8c44f932d9198c92dc0831abf80660f0727a7a701bc5afe74",
-      "size": 696
+      "sha256": "bf316fa511f5e6a3312f03cb5b36184d91109185730defc41542b8805884be83",
+      "size": 684
     },
     {
       "path": "recovery-concept/mounting-bracket.svg",
@@ -72,7 +72,7 @@
     },
     {
       "path": "third-party-licenses-web.txt",
-      "sha256": "90a9deab8522ae905a3096bd376cdf5df4a246f9f6e03a294fc7e22c663a74d6",
+      "sha256": "2c7ae0f46822d88d10b5f30fdf50f81c8888bcba2d8bcab257083ec500d4eba9",
       "size": 236029
     },
     {

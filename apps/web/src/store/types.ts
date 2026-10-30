@@ -6,12 +6,27 @@ export interface NavigationSection {
   order: number;
 }
 
+export interface ToolCallEvidence {
+  session_id: string;
+  call_id: string;
+  tool_name: string;
+  arguments: Record<string, unknown> | string | null;
+  request_message_id: string | null;
+  response_message_id: string | null;
+  response: string | null;
+  display_response: string | null;
+  timestamp: number;
+  source: string;
+  record_note: string | null;
+}
+
 export interface ChatMessage {
   id: string;
   role: "user" | "assistant";
   content: string;
   timestamp: number;
   traceId: string | null;
+  toolEvidence?: ToolCallEvidence[];
 }
 
 export interface ChatSession {

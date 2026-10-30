@@ -1,0 +1,73 @@
+{
+  "schema_version": 1,
+  "purpose": "Two working examples saved for later UI regression execution; no suite run",
+  "workflow": {
+    "path": "saved-workflow.wflow",
+    "sha256": "6061d9f637f35b6bcd4cb752a32c344f6d17f27f09503c9749eb9c8c69d71708",
+    "blocks": 4
+  },
+  "prerequisites": [
+    "Wright browser UI and its supported image-generation model connection",
+    "Authorized SteveCAD MCP connection with workspace tool access; discover current contracts",
+    "A prepared workspace. Credentials and grants are not included in this fixture."
+  ],
+  "cases": [
+    {
+      "id": "cube-titanium-table",
+      "inputs": {
+        "shape_description": "Create a cube",
+        "rendering_description": "Render it as titanium on a table"
+      },
+      "expected_visual_result": "A cube with titanium-like metallic appearance on a table."
+    },
+    {
+      "id": "cylinder-ice-space",
+      "inputs": {
+        "shape_description": "Create a cylinder",
+        "rendering_description": "Render it as ice floating in space"
+      },
+      "expected_visual_result": "An ice-like cylinder floating against a space scene."
+    }
+  ],
+  "sequence": [
+    "cube-titanium-table",
+    "cylinder-ice-space",
+    "cube-titanium-table"
+  ],
+  "acceptance": [
+    "Use the same saved workflow; change only the two text inputs through normal Wright UI.",
+    "Create actual CAD geometry through the connected provider and publish its actual captured image.",
+    "The native image-generation request must contain that same capture as an image reference, alongside the supplied rendering description.",
+    "Open the actual capture and final image in Wright for each case, including a separate repeat execution.",
+    "No customer code, terminal, hidden APIs, configuration repair, developer coaching or intervening workflow correction.",
+    "Retain all attempts and continuous customer timing; record developer effort separately."
+  ],
+  "comparison_policy": "Use semantic and provenance checks, not byte-identical generative image comparisons. Images are artistic visualizations, not dimensional or physical-material acceptance.",
+  "qualification_scope": "Prepared UI use/reuse, three successful executions, not clean installation or fresh natural-language workflow creation. Full laboratory records retained locally.",
+  "baseline_files": [
+    {
+      "name": "run-1-cad.png",
+      "sha256": "448b7bab54e38a677d2438575f2e79881c9d13dfdaa23f8103b5edb61c12ac7c"
+    },
+    {
+      "name": "run-1-render.png",
+      "sha256": "aa49d8fa8d8e63791b2682aa09b7dc5bcae4651a994cd4a664ef50437895f8b7"
+    },
+    {
+      "name": "run-2-cad.png",
+      "sha256": "d120674f274848e07229f0d31608c2b172ba171e6d0a6a30e146ffce698b144f"
+    },
+    {
+      "name": "run-2-render.png",
+      "sha256": "b91650553fa16d9db9200d159cb2275fe90ab8ef6738dff2e6eecb87883b896c"
+    },
+    {
+      "name": "run-3-cad.png",
+      "sha256": "448b7bab54e38a677d2438575f2e79881c9d13dfdaa23f8103b5edb61c12ac7c"
+    },
+    {
+      "name": "run-3-render.png",
+      "sha256": "595f50e5714e90db5f0f1f1501201c130dbec679acdd3b9bcc539fedf0ccd767"
+    }
+  ]
+}

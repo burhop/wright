@@ -468,3 +468,83 @@ original durable workflow review. It resolves the sampled numerical evidence
 gap without changing CAD; it does not prove continuous collision freedom,
 physical fit or hardware stack completion. Never relax a declared clearance or
 invent intended contacts to make a measured interference disappear.
+
+## Desktop block workflow — 19 October 2026 (20 October UTC)
+
+In **SteveCAD desktop demo**, the Wright desktop adapter created document
+`48b3d987-173d-4f5e-a684-7d7864ca29ff`, revision 1, full build
+`5353ac34-e923-4dd0-83e9-85e3ae5caafc`. The actual generate/read observations
+report one solid, extents `[0,0,0,2000,4000,8000]` mm, volume
+64,000,000,000 mm³ (64 m³), and one box feature with status `ok`.
+This is the requested 2 m × 4 m × 8 m digital block.
+
+A copied `mcp_context_budget_bytes` setting was rejected by the desktop adapter
+before any tool work. A new saved workflow removed that optional setting while
+preserving the adapter, provider and engineering requirements. Its durable run
+`44d47530fc4b4aa8be61c0cb07435b3d` completed creation but failed during inspection:
+`MODEL_UNAVAILABLE: Desktop image parts require the exact inline image contract`.
+The preceding call was `inspect_model(document_id=..., view=null, checks=[])`.
+Do not assume that this argument combination suppresses image output. The exact
+inline-image failure requires Wright-boundary diagnosis; it is not established
+as a SteveCAD provider defect.
+
+The run has its saved creation receipt; no completed inspection report or
+delivered isometric preview is established. Recover against the retained
+document/revision/build after diagnosing image transport, without repeating
+creation. No report was submitted and no human/physical acceptance is claimed.
+[Exact requests, observations, run identities and failure evidence](../../../artifacts/stevecad-demonstrations/desktop-block-20261020/run-evidence.json)
+are retained separately from the earlier native and container qualifications.
+
+Follow-up log inspection found that the provider's inspection **succeeded** before
+the desktop handoff failed. It returned the same document/revision/build, measured
+2000 × 4000 × 8000 mm, one solid, and an 800 × 640 PNG (7380 bytes). The recorder
+retains its hash and dimensions, not its image bytes. The failed workflow still
+has no completed inspection report or delivered preview.
+
+The configured installed 0.17.0 packages reproduce the fault offline: the shared
+MCP image producer includes `image_url.detail="high"`, while the desktop adapter
+and core request validator accept only the nested `url` key. This establishes a
+Wright image-contract mismatch; no SteveCAD defect or live fix is claimed.
+The [coding-agent handoff](../../../artifacts/stevecad-demonstrations/desktop-block-20261020/DEVELOPER-HANDOFF.txt)
+indexes all source versions, full durable logs, native observations, exact package
+snapshots, checksums and the offline reproduction. Recover against the existing
+CAD identity rather than rerunning creation.
+
+### Desktop image recovery — experimental 0.18
+
+The shared inline-image contract correction is installed locally at source
+`ee9f5313`. A separate inspection-only workflow completed using just
+`read_design` and `inspect_model(document_id=..., view="isometric", checks=[])`.
+It confirmed the same revision1/full build, recovered the actual800×640 PNG
+through Wright's declared output port and public pending-image tool, and retained
+the original2m×4m×8m measurements. No creation, edit, regeneration or export was
+performed. Both original failed runs and all125previous workspace files remain
+byte-identical. The recovered PNG matches the historical observation's SHA256.
+
+[Correction, exact installed build and recovery evidence](../../../artifacts/stevecad-demonstrations/desktop-block-20261020/correction-018/CORRECTION-HANDOFF.txt)
+keep transport qualification separate from engineering acceptance. The old chat's
+closed transport required a new public SDK connection; actual Windows native
+panel/download acceptance of 0.18 remains pending. Full/push gates and all PR164
+checks passed; integrated to dev `40b6270e`, with installed product files verified
+identical to merged dev. Unsupported context budgets are now rejected
+in readiness and Start rather than silently dropped.
+
+## First-contact connection and sign-in recovery
+
+For hosted setup, authorization and the observed browser issues, read the
+[current recovery checklist](stevecad-mcp-first-contact.md#current-recovery-checklist--28-october-2026)
+and [setup recipe](../mcp-server-setup-recipes.md#stevecad-steve-cad--11-october-2026).
+SteveCAD needs a remote MCP connection and account approval; no local CAD app.
+Existing desktop device-code support is reused in local native candidate111
+with explicit `WRIGHT_MCP_OAUTH_FLOW=device_code`. Real human approval,29provider
+tools and an actual read-only Wright gateway call are verified inVM106; see the
+[connection evidence](../../../artifacts/first-contact/synthetic-beta-003/operator-retries/hosted-signin-107/NATIVE-CONNECTED-112.md).
+No Google password, account recovery or PC SSH tunnel is needed for that route.
+This is private-candidate operator qualification, not a release or completed
+first-hour engineering demonstration. Keep browser, device, native and customer
+observations distinct and preserve the failed first attempt.
+
+
+### 30 October 2026: broad documentation and Wright context duplication
+
+The retained handle run e00a4197 failed while reading `api_reference(name="steve")`. The response had matching structured JSON and textual JSON; Wright counted both against its context limit. This is a Wright context-projection defect, not an established provider defect. Source correction `8f631dac` removes an exact duplicate only from model input while retaining the full response as evidence. Installed engineering recovery is pending. Continue discovering precise API classes/methods rather than assuming a broad query is needed. Evidence: `artifacts/first-contact/synthetic-beta-003/operator-retries/intent-review-152/context-projection-157.json`.

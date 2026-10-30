@@ -4,6 +4,11 @@ and `docs/architecture/workflow-platform-refactoring-plan.md`. Apply V1-V7.
 Start from the general engineering user journey and shared platform mechanisms;
 a reference prototype's vendor difficulties do not determine the product roadmap.
 
+For first-contact product and delivery planning, consult
+`docs/design/first-contact-delivery-brief.md`. It records discussion context and
+proposals, not approved implementation scope; accepted feature records and the
+existing architecture and quality gates retain authority.
+
 Preserve two complementary experiences on one accepted process and durable run:
 the flowchart/blocks/source/inspectors for building and inspecting, and an optional
 working UI for inputs, results, questions, decisions, and progress. Process UIs
@@ -76,16 +81,22 @@ Keep this guidance outside the managed Spec Kit section during context refresh.
 <!-- SPECKIT START -->
 For additional context about technologies to be used, project structure,
 shell commands, and other important information, read the current plan
-at specs/083-process-working-interfaces/plan.md
+at specs/084-first-contact-experience/plan.md
 
-Feature 083 implements the complete common and AI-created working-interface
-experience on the existing accepted process and durable source runtime. Read its
-implementation-goal.md, tasks.md, contracts and acceptance-cases.md. The user
-submitted the saved goal and approved local implementation/testing through M0-M5
-without routine intermediate lifecycle approvals. Real process reviews and
-external effects retain their separate authority. The user authorized feature-branch push and PR integration to `dev` on
-10 October 2026, subject to the repository gates. No production release is
-authorized. Keep progress/evidence current and preserve existing dirty work.
+Feature 084 implements one complete native-Hermes first-contact journey for the
+existing Printed02 replacement drawer handle and one measured quality-cost
+reduction. Read its spec.md, plan.md, tasks.md, progress.md and implementation-goal.md.
+The user submitted the goal on 23 October 2026 and approved T001–T020 local
+implementation, isolated digital testing, required local checks and focused
+commits without routine intermediate lifecycle approvals. No push, merge,
+publication, physical operation, customer pilot or production release is
+authorized. Keep the checklist/evidence current and preserve existing dirty work.
+
+Reuse Feature 083's process interaction/client/kit/runtime foundations and retain
+its implementation evidence and contracts. Its earlier feature-specific push/merge
+authority does not extend to 084. Real process reviews and external effects retain
+their separate authority. The Pi-versus-Astra superiority requirement remains
+open follow-on product work; 084 completion does not establish that claim.
 
 Reuse Feature 082's validator/rework/result contracts; its per-subject checks
 remain authority and its implementation evidence is retained. The earlier 081

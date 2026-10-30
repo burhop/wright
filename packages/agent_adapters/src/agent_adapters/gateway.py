@@ -74,9 +74,13 @@ class WrightGatewayProfile:
     protocol: str = WRIGHT_GATEWAY_PROTOCOL
     workspace_context_filename: str | None = None
     supports_tool_list_changed: bool = True
+    environment: dict[str, str] | None = None
 
     def mcp_server_config(self) -> dict:
-        return {"command": self.command, "args": list(self.args)}
+        result = {"command": self.command, "args": list(self.args)}
+        if self.environment:
+            result["env"] = dict(self.environment)
+        return result
 
     def terminal_config(self) -> dict:
         return {"cwd": self.terminal_cwd}

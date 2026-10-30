@@ -18,6 +18,7 @@ import {
   promptFormat,
   promptSourceCandidates,
   RESPONSE_FORMATS,
+  savedResponsePublication,
   sourceKey,
   type ResponseFormat,
 } from "./prompt-settings";
@@ -49,6 +50,7 @@ export function PromptBlockEditor({
   const ResponseOptions = cad ? "details" : "div";
   const final = isFinalPrompt(block, workflow) && !cad && !image;
   const saving = final || block.configuration.save_output === true;
+  const publication = savedResponsePublication(block);
   const promptPort = workflow.ports.find(
     (port) =>
       port.ownerBlockId === block.id &&
@@ -373,7 +375,7 @@ export function PromptBlockEditor({
                 type="checkbox"
                 data-testid="workflow-recovery-save-response"
                 checked={saving}
-                disabled={readOnly || final}
+                disabled={readOnly || final || !!publication}
                 onChange={(event) =>
                   config("save_output", event.target.checked)
                 }
@@ -383,6 +385,13 @@ export function PromptBlockEditor({
             {final && (
               <small data-testid="workflow-recovery-terminal-save">
                 Saved automatically because this is a final step.
+              </small>
+            )}
+            {publication && (
+              <small data-testid="workflow-recovery-response-publication">
+                Saved response file output:{" "}
+                <code>{publication.port ?? "not configured"}</code>. Edit the
+                file output and save policy together in Source.
               </small>
             )}
             {saving && (
@@ -404,19 +413,26 @@ export function PromptBlockEditor({
                   <select
                     data-testid="workflow-recovery-file-policy"
                     value={String(block.configuration.file_policy ?? "indexed")}
-                    disabled={readOnly}
+                    disabled={readOnly || !!publication}
                     onChange={(event) =>
                       config("file_policy", event.target.value)
                     }
                   >
                     <option value="indexed">Create an indexed file</option>
                     <option value="overwrite">Overwrite existing file</option>
+                    {publication?.publishing && (
+                      <option value={publication.policy}>
+                        {publication.label}
+                      </option>
+                    )}
                   </select>
                 </label>
                 <small>
-                  {block.configuration.file_policy === "overwrite"
-                    ? "Replace the file after the response passes validation."
-                    : `${promptFilename(block)} → ${promptFilename(block).replace(/(\.[^/.]+)$/, "-001$1")}`}
+                  {publication
+                    ? "The saved response becomes a file input for downstream work. Wright checks the output binding and run path before execution."
+                    : block.configuration.file_policy === "overwrite"
+                      ? "Replace the file after the response passes validation."
+                      : `${promptFilename(block)} → ${promptFilename(block).replace(/(\.[^/.]+)$/, "-001$1")}`}
                 </small>
               </>
             )}

@@ -288,9 +288,13 @@ async function httpFailure(
   try {
     const value = (await jsonBody(response)) as {
       detail?: { reason?: unknown };
+      details?: { reason?: unknown };
     };
-    if (value && typeof value === "object" && value.detail?.reason)
-      reason = assertContract("Reason", value.detail.reason);
+    if (value && typeof value === "object") {
+      // The API's shared HTTP handler normalizes route detail into details.
+      const supplied = value.details?.reason ?? value.detail?.reason;
+      if (supplied) reason = assertContract("Reason", supplied);
+    }
   } catch {
     /* No arbitrary raw error payload is shown as user-facing text. */
   }

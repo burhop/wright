@@ -21,6 +21,7 @@ class DiagnosticScopeRequest(BaseModel):
 
     session_id: str | None = Field(default=None, max_length=128)
     scenario_run_id: str | None = Field(default=None, max_length=128)
+    source_run_id: str | None = Field(default=None, max_length=128)
 
 
 class DiagnosticPreviewRequest(BaseModel):

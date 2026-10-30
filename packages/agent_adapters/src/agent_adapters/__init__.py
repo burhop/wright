@@ -10,6 +10,7 @@ from .base import (
     AgentChatRequest,
     AgentSessionInfo,
     AgentChatMessage,
+    AgentToolCallEvidence,
 )
 from .hermes import HermesAdapter
 from .openclaw import OpenClawStubEngine

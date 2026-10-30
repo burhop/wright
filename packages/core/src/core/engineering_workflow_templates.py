@@ -81,6 +81,75 @@ class TemplateReadiness:
             )
 
 
+def validate_template_exploration(value: object) -> dict[str, Any]:
+    """Validate packaged explanation/provenance, never execution readiness."""
+    required = {
+        "preview_kind",
+        "preview_caption",
+        "outcome_status",
+        "outcome_summary",
+        "stages",
+        "limitations",
+    }
+    error = EngineeringWorkflowTemplateError(
+        "template_exploration_invalid", "Template exploration metadata is invalid"
+    )
+    if not isinstance(value, Mapping) or not required <= value.keys():
+        raise error
+    if set(value) - required - {"recorded_result"}:
+        raise error
+    if (
+        not isinstance(value["preview_kind"], str)
+        or value["preview_kind"]
+        not in {"supplied_sketch", "workflow_illustration", "recorded_result"}
+        or not isinstance(value["outcome_status"], str)
+        or value["outcome_status"] not in {"pending", "recorded"}
+    ):
+        raise error
+    for key in ("preview_caption", "outcome_summary"):
+        if not isinstance(value[key], str) or not value[key].strip():
+            raise error
+    stages = value["stages"]
+    fields = {"title", "tool", "contribution", "input", "output"}
+    if not isinstance(stages, (tuple, list)) or not stages:
+        raise error
+    for stage in stages:
+        if not isinstance(stage, Mapping) or set(stage) != fields:
+            raise error
+        if any(not isinstance(v, str) or not v.strip() for v in stage.values()):
+            raise error
+    limits = value["limitations"]
+    if not isinstance(limits, (tuple, list)) or any(
+        not isinstance(v, str) or not v.strip() for v in limits
+    ):
+        raise error
+    recorded = value.get("recorded_result")
+    if value["outcome_status"] == "recorded":
+        if not isinstance(recorded, Mapping) or set(recorded) != {
+            "run_id",
+            "source_digest",
+            "artifact_digest",
+            "evidence_reference",
+            "scope",
+        }:
+            raise error
+        if any(not isinstance(v, str) or not v.strip() for v in recorded.values()):
+            raise error
+        if any(
+            not _DIGEST.fullmatch(recorded[k])
+            for k in ("source_digest", "artifact_digest")
+        ):
+            raise error
+    elif "recorded_result" in value or value["preview_kind"] == "recorded_result":
+        raise error
+    return {
+        **value,
+        "stages": [dict(stage) for stage in stages],
+        "limitations": list(limits),
+        **({"recorded_result": dict(recorded)} if recorded is not None else {}),
+    }
+
+
 @dataclass(frozen=True, slots=True)
 class EngineeringWorkflowTemplate:
     template_id: str
@@ -103,8 +172,11 @@ class EngineeringWorkflowTemplate:
     definition_status: TemplateDefinitionStatus
     rights: Mapping[str, Any]
     readiness: TemplateReadiness
+    exploration: Mapping[str, Any] | None = None
 
     def __post_init__(self) -> None:
+        if self.exploration is not None:
+            validate_template_exploration(self.exploration)
         if not _SLUG.fullmatch(self.template_id):
             raise EngineeringWorkflowTemplateError(
                 "template_id_invalid", "Template identity is invalid"
@@ -146,6 +218,11 @@ class EngineeringWorkflowTemplate:
             "requested_inputs": list(self.requested_inputs),
             "expected_outputs": list(self.expected_outputs),
             "external_effects": list(self.external_effects),
+            **(
+                {"exploration": validate_template_exploration(self.exploration)}
+                if self.exploration is not None
+                else {}
+            ),
             "source_digest": self.source_digest,
             "readiness": {
                 "state": self.readiness.state,

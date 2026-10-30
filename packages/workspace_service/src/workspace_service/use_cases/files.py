@@ -12,6 +12,12 @@ from ..executor import BoundedExecutor
 from ..adapters.filesystem import LocalWorkspaceFiles
 
 BINARY_EXTENSIONS = {
+    ".fcstd",
+    ".fcstd1",
+    ".blend",
+    ".blend1",
+    ".glb",
+    ".zip",
     ".stl",
     ".obj",
     ".step",

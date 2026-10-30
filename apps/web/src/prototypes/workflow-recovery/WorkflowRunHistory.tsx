@@ -66,6 +66,7 @@ export function WorkflowRunHistory({
     failed: "Failed",
     cancelled: "Cancelled",
     interrupted: "Interrupted",
+    reconciliation_required: "Operation status unconfirmed",
     unknown: "Status needs checking",
   };
   return (
@@ -93,7 +94,11 @@ export function WorkflowRunHistory({
           {runs.map((run) => (
             <details
               key={run.path}
-              open={run.status === "interrupted" || run.status === "unknown"}
+              open={
+                run.status === "interrupted" ||
+                run.status === "unknown" ||
+                run.status === "reconciliation_required"
+              }
             >
               <summary>
                 {(run.status === "awaiting_approval" ||
@@ -104,7 +109,9 @@ export function WorkflowRunHistory({
                   "Status needs checking"}{" "}
                 · {new Date(run.started_at).toLocaleString()}
               </summary>
-              {(run.status === "interrupted" || run.status === "unknown") && (
+              {(run.status === "interrupted" ||
+                run.status === "unknown" ||
+                run.status === "reconciliation_required") && (
                 <p>
                   The execution host did not record completion. A submitted
                   application operation may still be running. Check its status

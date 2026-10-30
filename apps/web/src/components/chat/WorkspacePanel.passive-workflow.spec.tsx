@@ -1,9 +1,23 @@
-import { StrictMode } from "react";
-import { render, screen, waitFor } from "@testing-library/react";
+import { StrictMode, useState } from "react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import type { OpenWorkspaceToolSetup } from "../../services/workspace-tool-setup";
+import thermalSource from "../../../../../packages/workspace_service/src/workspace_service/engineering_workflow_templates/templates/heat-spreader-sizing.workflow.wflow?raw";
+import { providerSetupGuides } from "../../services/provider-setup-guides";
 import { MemoryRouter } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { WorkspacePanel } from "./WorkspacePanel";
 import { ViewerPanelProvider } from "../../store/viewer";
+
+// Read the real existing template, without expanding browser-wide Node types.
+const thermalCrypto = await vi.importActual<{
+  createHash: (algorithm: string) => {
+    update: (text: string) => { digest: (encoding: "hex") => string };
+  };
+}>("node:crypto");
+const thermalDigest = thermalCrypto
+  .createHash("sha256")
+  .update(thermalSource)
+  .digest("hex");
 
 const mocks = vi.hoisted(() => ({
   create: vi.fn(),
@@ -53,19 +67,44 @@ vi.mock("../../services/workspace-service", async (importOriginal) => ({
   },
 }));
 vi.mock("../pages/WorkflowRecoveryPage", () => ({
-  WorkflowRecoveryPage: (props: {
+  WorkflowRecoveryPage: function TestAuthoringView(props: {
     workflowFilePath: string;
     workspaceId: string;
     createIfMissing: boolean;
-  }) => (
-    <div
-      data-testid="mounted-authoring-view"
-      data-workspace={props.workspaceId}
-      data-create={String(props.createIfMissing)}
-    >
-      {props.workflowFilePath}
-    </div>
-  ),
+    onConfigureTools?: OpenWorkspaceToolSetup;
+  }) {
+    const [returned, setReturned] = useState(false);
+    return (
+      <div
+        data-testid="mounted-authoring-view"
+        data-workspace={props.workspaceId}
+        data-create={String(props.createIfMissing)}
+      >
+        {props.workflowFilePath}
+        <button
+          onClick={() =>
+            void props
+              .onConfigureTools?.({
+                workspaceId: props.workspaceId,
+                sessionId: "session-one",
+                sourcePath: props.workflowFilePath,
+                sourceDigest: thermalDigest,
+                title: "Configure thermal analysis",
+                purpose: "Evaluate the existing heat-spreader workflow.",
+                requirements: [
+                  "An independent analysis capability is required.",
+                ],
+                guideText: providerSetupGuides.oasis,
+              })
+              .then(() => setReturned(true))
+          }
+        >
+          Configure test capability
+        </button>
+        {returned && <p>Returned to exact thermal setup</p>}
+      </div>
+    );
+  },
 }));
 vi.mock("./MessageComposer", () => ({ default: () => null }));
 vi.mock("./ChatTranscript", () => ({ default: () => null }));
@@ -86,6 +125,36 @@ describe("ordinary workspace passive workflow links", () => {
     localStorage.clear();
     mocks.create.mockClear();
     mocks.models.mockResolvedValue({ groups: [], current_value: "" });
+  });
+  it("uses the same workspace handoff for a different thermal process without creating or executing it", async () => {
+    open(
+      "?workflow=canonical&workflowPath=workflows%2Fheat-spreader.workflow.wflow",
+    );
+    fireEvent.click(
+      await screen.findByRole("button", { name: "Configure test capability" }),
+    );
+    const help = await screen.findByRole("region", {
+      name: "Configure thermal analysis",
+    });
+    expect(help).toHaveTextContent(
+      "Evaluate the existing heat-spreader workflow",
+    );
+    expect(help).toHaveTextContent("/workflows/heat-spreader.workflow.wflow");
+    expect(
+      screen.getByRole("link", { name: "Open Tool Registry (new tab)" }),
+    ).toHaveAttribute("href", "/tool-registry");
+    fireEvent.click(
+      screen.getByRole("button", { name: "Return to job setup" }),
+    );
+    await screen.findByText("Returned to exact thermal setup");
+    expect(
+      screen.queryByRole("region", { name: "Configure thermal analysis" }),
+    ).toBeNull();
+    expect(screen.getByTestId("mounted-authoring-view")).toHaveTextContent(
+      "/workflows/heat-spreader.workflow.wflow",
+    );
+    expect(mocks.create).not.toHaveBeenCalled();
+    expect(mocks.chat.sendMessage).not.toHaveBeenCalled();
   });
   it("reattaches the exact authoring tab after StrictMode repeats its workspace reset", async () => {
     open(

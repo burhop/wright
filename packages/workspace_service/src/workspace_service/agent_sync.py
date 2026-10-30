@@ -12,6 +12,10 @@ from .adapters.runtime import get_workspace_by_session
 logger = get_logger(__name__)
 
 
+class GatewayRefreshNotObserved(RuntimeError):
+    """A successful lifecycle command did not establish a new agent process."""
+
+
 class AgentSyncManager:
     """Persist active agent selection and synchronize explicit workspace context."""
 
@@ -27,7 +31,9 @@ class AgentSyncManager:
         self._gateway_refresh_error: str | None = None
         self._gateway_refresh_lock = asyncio.Lock()
         self._gateway_binding_revision = 0
+        self._gateway_refresh_workspace_id: str | None = None
         self._gateway_restarted_revision: int | None = None
+        self._gateway_runtime_before_refresh: tuple[int, str] | None = None
         self._active_agent = "hermes"
         self._load_active_agent()
 
@@ -58,9 +64,11 @@ class AgentSyncManager:
 
         if self._active_agent == "hermes" and self._workspace_sync is not None:
             restart_required = bool(self._workspace_sync(session_id, self.db_path))
+            self._gateway_refresh_workspace_id = str(workspace["workspace_id"])
             if restart_required:
                 self._gateway_refresh_error = None
                 self._gateway_binding_revision += 1
+                self._gateway_runtime_before_refresh = None
             self._gateway_restart_required = (
                 restart_required or self._gateway_restart_required
             )
@@ -77,6 +85,11 @@ class AgentSyncManager:
         self._gateway_restart_required = False
         self._gateway_refresh_error = None
         self._gateway_restarted_revision = None
+        self._gateway_runtime_before_refresh = None
+
+    @property
+    def gateway_refresh_workspace_id(self) -> str | None:
+        return self._gateway_refresh_workspace_id
 
     @property
     def gateway_refresh_in_progress(self) -> bool:
@@ -90,11 +103,37 @@ class AgentSyncManager:
     def gateway_refresh_error(self) -> str | None:
         return self._gateway_refresh_error
 
+    async def observe_gateway_before_refresh(
+        self,
+        workspace_id: str,
+        runtime_identity: Callable[[], Awaitable[str]],
+    ) -> bool:
+        """Retain the pending revision's baseline before offering manual recovery."""
+        async with self._gateway_refresh_lock:
+            if (
+                not self._gateway_restart_required
+                or self._gateway_refresh_workspace_id != workspace_id
+            ):
+                return False
+            revision = self._gateway_binding_revision
+            before = self._gateway_runtime_before_refresh
+            if before is not None and before[0] == revision:
+                return True
+            observed = await runtime_identity()
+            if (
+                revision != self._gateway_binding_revision
+                or self._gateway_refresh_workspace_id != workspace_id
+            ):
+                return False
+            self._gateway_runtime_before_refresh = (revision, observed)
+            return True
+
     async def refresh_gateway_if_needed(
         self,
         refresh: Callable[[], Awaitable[None]],
         *,
         wait_ready: Callable[[], Awaitable[None]] | None = None,
+        runtime_identity: Callable[[], Awaitable[str]] | None = None,
     ) -> bool:
         """Serialize refresh; a readiness timeout must not repeat a proven restart."""
         async with self._gateway_refresh_lock:
@@ -103,11 +142,42 @@ class AgentSyncManager:
             revision = self._gateway_binding_revision
             self._gateway_refresh_in_progress = True
             try:
-                if wait_ready is None or self._gateway_restarted_revision != revision:
+                replacement_observed = False
+                if runtime_identity is not None:
+                    before = self._gateway_runtime_before_refresh
+                    current = await runtime_identity()
+                    if before is None or before[0] != revision:
+                        before = (revision, current)
+                        self._gateway_runtime_before_refresh = before
+                    else:
+                        replacement_observed = current != before[1]
+                if replacement_observed:
+                    self._gateway_restarted_revision = revision
+                if self._gateway_restarted_revision != revision:
                     await refresh()
                     self._gateway_restarted_revision = revision
                 if wait_ready is not None:
                     await wait_ready()
+                if runtime_identity is not None:
+                    # A detached native launch can briefly leave the old healthy
+                    # process serving. Observe the same issued replacement; do
+                    # not issue another restart during its startup window.
+                    deadline = asyncio.get_running_loop().time() + 120.0
+                    while True:
+                        try:
+                            observed = await asyncio.wait_for(
+                                runtime_identity(), timeout=5.0
+                            )
+                        except Exception:
+                            observed = before[1]
+                        if observed != before[1]:
+                            break
+                        remaining = deadline - asyncio.get_running_loop().time()
+                        if remaining <= 0:
+                            raise GatewayRefreshNotObserved(
+                                "Agent gateway process replacement was not observed"
+                            )
+                        await asyncio.sleep(min(0.25, remaining))
                 if revision != self._gateway_binding_revision:
                     raise RuntimeError(
                         "Workspace binding changed during gateway refresh"

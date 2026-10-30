@@ -29,7 +29,7 @@ def _invalid(message):
 
     return source_invalid(
         message,
-        "Use explicit run-path declarations; file correction requires version 2 with run and producer-attempt directories. Keep other inputs literal.",
+        "For wright.run-path/1, give every saved response and expected file a complete {{wright.run_id}} directory, for example deliverables/{{wright.run_id}}/model.step. Map provider file ports with expected_file_ports. Use version 2 only for explicitly configured automatic create-new file correction; do not switch versions to repair a missing run directory. Keep other inputs literal.",
     )
 
 

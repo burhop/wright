@@ -20,7 +20,7 @@ logger = get_logger(__name__)
 class McpEngine:
     """Manager class coordinating the lifecycle, database status, and JSON-RPC dispatch of active MCP servers."""
 
-    def __init__(self, db_path: str, *, operation_timeout: float = 30.0):
+    def __init__(self, db_path: str, *, operation_timeout: float = 30.0, device_authorization_presenter=None):
         if operation_timeout <= 0:
             raise ValueError("operation_timeout must be positive")
         self.db_path = db_path
@@ -28,6 +28,7 @@ class McpEngine:
         self._lifecycle_adapter = DatabaseLifecycleAdapter(
             db_path,
             operation_timeout=operation_timeout,
+            device_authorization_presenter=device_authorization_presenter,
         )
         self.lifecycle = McpLifecycleCoordinator(
             self._lifecycle_adapter.build_runner,
@@ -258,6 +259,7 @@ class McpEngine:
             runner = SseRunner(
                 server.command,
                 server_id=server_id,
+                device_authorization_presenter=self._lifecycle_adapter.device_authorization_presenter,
                 operation_timeout=self._lifecycle_adapter.operation_timeout,
             )
         elif server.type == "webmcp":

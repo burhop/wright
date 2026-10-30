@@ -54,6 +54,7 @@ class GatewayPolicy:
             return GatewayPolicyDecision(
                 False,
                 "approval_required",
-                "Workspace approval required: " + ", ".join(missing),
+                "Workspace approval required: " + ", ".join(missing)
+                + ". This policy check did not create a pending approval request.",
             )
         return GatewayPolicyDecision(True, "policy_allowed", "Tool call allowed")

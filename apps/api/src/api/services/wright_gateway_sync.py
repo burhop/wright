@@ -10,14 +10,19 @@ import structlog
 import yaml
 
 from agent_adapters.config_merge import atomic_merge_yaml
+from agent_adapters.hermes_config import hermes_gateway_start_command
+from api.config import HERMES_API_BASE_URL
 from agent_adapters.gateway import WrightGatewayProfile
 from agent_adapters.hermes_gateway import (
+    WORKSPACE_TOOLS_REVISION_ENV,
     hermes_config_paths,
+    hermes_workspace_tools_revision,
     hermes_wright_gateway_profile,
 )
 from workspace_service.adapters.runtime import (
     get_active_gateway_session,
     get_workspace_by_session,
+    get_workspace_enabled_tools,
     set_active_gateway_session,
 )
 from tool_registry import McpServer
@@ -69,11 +74,18 @@ def write_gateway_profile_config(
                     if isinstance(existing_gateway, dict)
                     else {}
                 )
+                profile_config = profile.mcp_server_config()
+                if profile_config.get("env"):
+                    existing_env = preserved_gateway.get("env")
+                    profile_config["env"] = {
+                        **(existing_env if isinstance(existing_env, dict) else {}),
+                        **profile_config["env"],
+                    }
                 config["mcp_servers"] = {
                     **servers,
                     profile.server_name: {
                         **preserved_gateway,
-                        **profile.mcp_server_config(),
+                        **profile_config,
                     },
                 }
                 terminal = config.get("terminal")
@@ -125,6 +137,59 @@ def _configured_gateway_binding(config_path: str) -> tuple[str, str] | None:
     except (OSError, ValueError, IndexError, TypeError, AttributeError, yaml.YAMLError):
         return None
     return None
+
+
+def workspace_gateway_status(
+    workspace: dict,
+    db_path: str,
+    sync_manager,
+    config_paths: list[str],
+) -> dict[str, str] | None:
+    """Read-only readiness advice; configuration never proves model callability."""
+    if getattr(sync_manager, "active_agent", None) != "hermes":
+        return None
+    workspace_id = str(workspace["workspace_id"])
+    pending = getattr(
+        sync_manager, "gateway_refresh_workspace_id", None
+    ) == workspace_id and (
+        sync_manager.gateway_refresh_pending
+        or sync_manager.gateway_refresh_in_progress
+        or sync_manager.gateway_refresh_error is not None
+    )
+    expected = hermes_workspace_tools_revision(
+        get_workspace_enabled_tools(db_path, workspace["session_id"]) or []
+    )
+    for path in config_paths:
+        try:
+            if not Path(path).exists():
+                continue
+            binding = _configured_gateway_binding(path)
+            if binding is None or binding[1] != workspace_id:
+                break
+            config = yaml.safe_load(Path(path).read_text(encoding="utf-8")) or {}
+            revision = (
+                config.get("mcp_servers", {})
+                .get("wrightgateway", {})
+                .get("env", {})
+                .get(WORKSPACE_TOOLS_REVISION_ENV)
+            )
+        except (OSError, AttributeError, TypeError, yaml.YAMLError):
+            break
+        if pending or revision != expected:
+            return {
+                "status": "refresh_required",
+                "message": (
+                    "Restart Hermes to load this workspace's selected tools. "
+                    "In its gateway terminal, press Ctrl+C and run the same "
+                    "profile-specific command again; then send your request."
+                ),
+                **(hermes_gateway_start_command(HERMES_API_BASE_URL) or {}),
+            }
+        return None
+    return {
+        "status": "mismatch",
+        "message": "Open this workspace to connect its selected tools through Hermes.",
+    }
 
 
 def _gateway_binding_session(
@@ -241,6 +306,7 @@ def sync_workspace_tools_to_wright_gateway(
             session_id=binding_session_id,
             workspace_id=str(workspace["workspace_id"]),
             terminal_cwd=workspace_path,
+            workspace_tools=get_workspace_enabled_tools(db_path, binding_session_id),
         )
         set_active_gateway_session(db_path, binding_session_id)
 

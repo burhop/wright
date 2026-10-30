@@ -54,6 +54,7 @@ def test_instance_atomically_creates_source_layout_and_hidden_provenance(tmp_pat
     assert origin["template_id"] == "printed-replacement-part"
     assert origin["workflow_id"] == instance.workflow_id
     assert origin["template_source_digest"] == instance.template_source_digest
+    assert origin["instantiated_source_digest"] == document.storage_digest
     input_root = tmp_path / "inputs" / instance.workflow_id.removeprefix("workflow.")
     assert (input_root / "replacement-knob-source.svg").is_file()
     assert (input_root / "rights.json").is_file()

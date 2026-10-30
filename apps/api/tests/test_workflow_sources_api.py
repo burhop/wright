@@ -703,3 +703,92 @@ def test_workflow_source_readiness_distinguishes_hand_authored_and_missing(
     assert hand_authored.json()["state"] == "not_template"
     assert missing.status_code == 404
     assert missing.json()["error_code"] == "workflow_source_not_found"
+
+
+@pytest.mark.parametrize(
+    ("revision", "initial_identity", "expected_state"),
+    [
+        (1, "current", "setup_required"),
+        (2, "different", "revised"),
+        (1, "different", "setup_required"),
+        (3, "current", "setup_required"),
+        (2, "legacy", "setup_required"),
+        (2, "invalid", "setup_required"),
+    ],
+)
+def test_source_template_revision_classification_preserves_provenance_without_run_qualification(
+    sync_client, revision, initial_identity, expected_state
+):
+    from unittest.mock import AsyncMock, Mock
+
+    service = _Service()
+    document = _document("workflow bracket\nend\n", revision, revision)
+    service.workflow_sources.current = document
+    origin = {
+        "template_id": "replacement-drawer-handle",
+        "template_version": "1.0.0",
+        "template_source_digest": "c" * 64,
+        "template_layout_digest": "d" * 64,
+    }
+    if initial_identity != "legacy":
+        origin["instantiated_source_digest"] = (
+            document.storage_digest
+            if initial_identity == "current"
+            else "x" * 64
+            if initial_identity == "invalid"
+            else "a" * 64
+        )
+    original_origin = dict(origin)
+    service.workflow_sources.read_template_origin = AsyncMock(return_value=origin)
+    catalog_readiness = Mock(
+        return_value={
+            "state": "setup_required",
+            "definition_valid": True,
+            "configured": False,
+            "qualified": False,
+            "available": False,
+            "verified_run": False,
+            "blocking_reasons": ["Qualify the required tools."],
+        }
+    )
+    service.engineering_workflow_templates = SimpleNamespace(
+        readiness=catalog_readiness
+    )
+    app.dependency_overrides[get_workspace_service] = lambda: service
+    try:
+        response = sync_client.get(
+            "/api/workspace/workflow-sources/readiness",
+            params={"session_id": "session-1", "path": SOURCE_PATH},
+        )
+    finally:
+        app.dependency_overrides.pop(get_workspace_service, None)
+    assert response.status_code == 200
+    result = response.json()
+    assert result["state"] == expected_state
+    assert result["template_id"] == origin["template_id"]
+    assert result["template_version"] == origin["template_version"]
+    assert result["source_digest"] == origin["template_source_digest"]
+    assert result["layout_digest"] == origin["template_layout_digest"]
+    assert result["accepted_source_digest"] == document.storage_digest
+    assert result["definition_revision"] == revision
+    assert origin == original_origin
+    if expected_state == "revised":
+        catalog_readiness.assert_not_called()
+        assert all(
+            result[key] is None
+            for key in (
+                "definition_valid",
+                "configured",
+                "qualified",
+                "available",
+                "verified_run",
+            )
+        )
+        assert "current inputs, tools, model and authority" in result["message"]
+        assert result["blocking_reasons"] == []
+    else:
+        catalog_readiness.assert_called_once_with(
+            origin["template_id"], origin["template_version"]
+        )
+        assert result["qualified"] is False
+        assert result["blocking_reasons"] == ["Qualify the required tools."]

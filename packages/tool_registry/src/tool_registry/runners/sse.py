@@ -3,6 +3,8 @@ import json
 import logging
 import hashlib
 import webbrowser
+from functools import partial
+from collections.abc import Awaitable, Callable
 from typing import List, Dict, Any, Optional
 from urllib.parse import parse_qs, urljoin, urlsplit
 
@@ -15,6 +17,7 @@ from mcp.shared.auth import (
     OAuthToken,
 )
 from core.redaction import redact_mapping, redact_text
+from .device_oauth import DeviceCodeAuth
 from .base import BaseRunner, ProgressCallback
 from .protocol import ChildProtocolState, NotificationHandler
 from ..secrets import read_secrets, write_secrets
@@ -23,11 +26,19 @@ logger = logging.getLogger(__name__)
 _OAUTH_CALLBACK_TIMEOUT = 300.0
 
 
+class _OAuthBrowserUnavailable(RuntimeError):
+    """Authorization cannot proceed when its browser could not be opened."""
+
+
 class _WrightOAuthTokenStorage:
     """Persist MCP OAuth state in Wright's server-scoped secret bundle."""
 
-    def __init__(self, server_id: str) -> None:
+    def __init__(self, server_id: str, *, device_code: bool = False) -> None:
         self.server_id = server_id
+        self.token_key = "MCP_OAUTH_DEVICE_TOKEN" if device_code else "MCP_OAUTH_TOKEN"
+        self.client_key = (
+            "MCP_OAUTH_DEVICE_CLIENT" if device_code else "MCP_OAUTH_CLIENT"
+        )
 
     def _read_model(self, key: str, model_type):
         raw = read_secrets(self.server_id).get(key)
@@ -47,7 +58,7 @@ class _WrightOAuthTokenStorage:
     def clear_oauth_state(self) -> None:
         credentials = read_secrets(self.server_id)
         changed = False
-        for key in ("MCP_OAUTH_TOKEN", "MCP_OAUTH_CLIENT"):
+        for key in (self.token_key, self.client_key):
             if key in credentials:
                 del credentials[key]
                 changed = True
@@ -55,16 +66,16 @@ class _WrightOAuthTokenStorage:
             write_secrets(self.server_id, credentials)
 
     async def get_tokens(self) -> OAuthToken | None:
-        return self._read_model("MCP_OAUTH_TOKEN", OAuthToken)
+        return self._read_model(self.token_key, OAuthToken)
 
     async def set_tokens(self, tokens: OAuthToken) -> None:
-        self._write_model("MCP_OAUTH_TOKEN", tokens)
+        self._write_model(self.token_key, tokens)
 
     async def get_client_info(self) -> OAuthClientInformationFull | None:
-        return self._read_model("MCP_OAUTH_CLIENT", OAuthClientInformationFull)
+        return self._read_model(self.client_key, OAuthClientInformationFull)
 
     async def set_client_info(self, client_info: OAuthClientInformationFull) -> None:
-        self._write_model("MCP_OAUTH_CLIENT", client_info)
+        self._write_model(self.client_key, client_info)
 
 
 class _OAuthCallbackServer:
@@ -89,12 +100,17 @@ class _OAuthCallbackServer:
     async def open_authorization_url(self, url: str) -> None:
         try:
             opened = webbrowser.open(url, new=2)
-            if not opened:
-                logger.warning("Could not open the MCP OAuth authorization page")
         except Exception as error:
             logger.warning(
                 "Could not open the MCP OAuth authorization page: %s",
                 redact_text(error),
+            )
+            opened = False
+        if not opened:
+            raise _OAuthBrowserUnavailable(
+                "Could not open the MCP sign-in page. Start Wright from your "
+                "desktop session with a working browser, then retry the connection. "
+                "The server is not authenticated."
             )
 
     async def wait_for_callback(self) -> tuple[str, str | None]:
@@ -226,6 +242,7 @@ class SseRunner(BaseRunner):
         server_id: str | None = None,
         oauth_enabled: bool = True,
         operation_timeout: float = 60.0,
+        device_authorization_presenter: Callable[[str, dict | None], Awaitable[None]] | None = None,
     ):
         if operation_timeout <= 0:
             raise ValueError("operation_timeout must be positive")
@@ -234,6 +251,7 @@ class SseRunner(BaseRunner):
             server_id or "remote-" + hashlib.sha256(sse_url.encode()).hexdigest()[:32]
         )
         self.oauth_enabled = oauth_enabled
+        self.device_authorization_presenter = device_authorization_presenter
         self.operation_timeout = operation_timeout
         self.startup_timeout = _OAUTH_CALLBACK_TIMEOUT + 30.0 if oauth_enabled else None
         self.client: Optional[httpx.AsyncClient] = None
@@ -293,7 +311,14 @@ class SseRunner(BaseRunner):
                 "Cache-Control": "no-cache",
             }
             auth = None
-            if self.oauth_enabled:
+            if self.oauth_enabled and self.device_authorization_presenter is not None:
+                auth = DeviceCodeAuth(
+                    self.sse_url,
+                    _WrightOAuthTokenStorage(self.server_id, device_code=True),
+                    partial(self.device_authorization_presenter, self.server_id),
+                    timeout=_OAUTH_CALLBACK_TIMEOUT,
+                )
+            elif self.oauth_enabled:
                 self._oauth_callback = _OAuthCallbackServer()
                 oauth_storage = _WrightOAuthTokenStorage(self.server_id)
                 stored_client = await oauth_storage.get_client_info()
@@ -326,7 +351,8 @@ class SseRunner(BaseRunner):
             self.client = httpx.AsyncClient(
                 timeout=self.operation_timeout,
                 headers=headers,
-                follow_redirects=True,
+                follow_redirects=self.device_authorization_presenter is None,
+                max_redirects=316 if self.device_authorization_presenter else 20,
                 auth=auth,
             )
 
@@ -380,11 +406,24 @@ class SseRunner(BaseRunner):
                         self._probe_response = resp_data
                         self._message_endpoint = self.sse_url
                         logger.info("Detected Streamable HTTP support")
+            except _OAuthBrowserUnavailable:
+                # A missing browser is not evidence of a legacy SSE provider.
+                # Preserve the actionable error instead of waiting for an
+                # impossible callback or retrying another transport.
+                await self._stop_locked()
+                raise
             except Exception as e:
+                if self.device_authorization_presenter is not None:
+                    await self._stop_locked()
+                    raise
                 logger.debug(
                     "Streamable HTTP probe failed; falling back to legacy SSE: %s",
                     redact_text(e),
                 )
+
+            if self.device_authorization_presenter is not None and not self._is_streamable_http:
+                await self._stop_locked()
+                raise RuntimeError("Device sign-in requires a Streamable HTTP endpoint")
 
             # Start reading task
             self._read_task = asyncio.create_task(self._connect_and_read())

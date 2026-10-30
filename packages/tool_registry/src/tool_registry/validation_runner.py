@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import time
 import hashlib
+import json
 import uuid
 from collections.abc import Callable, Mapping
 from datetime import UTC, datetime
@@ -36,6 +37,15 @@ class ValidationCancelled(RuntimeError):
 
 def _digest(value: Any) -> str:
     return hashlib.sha256(canonical_json(value)).hexdigest()
+
+
+def _mcp_digest(value: Any) -> str:
+    # MCP schemas and probe values permit finite fractional JSON numbers.
+    # Signed catalog metadata has a separate, intentionally stricter contract.
+    encoded = json.dumps(
+        value, sort_keys=True, separators=(",", ":"), ensure_ascii=False, allow_nan=False
+    ).encode("utf-8")
+    return hashlib.sha256(encoded).hexdigest()
 
 
 def _cancelled(cancel_requested: Callable[[], bool] | None) -> None:
@@ -109,7 +119,7 @@ async def run_capability_validation(
                 for tool in tools
                 if isinstance(tool, Mapping)
             ]
-            schema_digest = _digest(normalized_tools)
+            schema_digest = _mcp_digest(normalized_tools)
             tool_count = len(normalized_tools)
             steps["tools/list"] = "passed"
             if read_only_probe:
@@ -119,8 +129,8 @@ async def run_capability_validation(
                 result = await client.call_tool(probe_name, arguments)
                 probe_evidence = {
                     "name": probe_name,
-                    "argument_digest": _digest(arguments),
-                    "result_digest": _digest(result),
+                    "argument_digest": _mcp_digest(arguments),
+                    "result_digest": _mcp_digest(result),
                     "status": "passed",
                     "limitation": str(
                         read_only_probe.get(

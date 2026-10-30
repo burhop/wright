@@ -171,7 +171,24 @@ def test_docker_smoke_strictly_reconciles_hermes_security_overrides() -> None:
     smoke = read_text("scripts/docker-smoke-test.sh")
 
     assert '"cryptography==50.0.0"' in dockerfile
-    assert '"pillow==12.3.0"' in dockerfile
+    assert '"pillow==13.0.0"' in dockerfile
+    assert '"certifi==2026.10.19"' in dockerfile
+    assert "aiohttp==3.14.4" in dockerfile
+    for fixed_package in (
+        "curl=8.14.1-2+deb13u7",
+        "libcurl4t64=8.14.1-2+deb13u7",
+        "libexpat1=2.9.0-1~deb13u1",
+    ):
+        assert dockerfile.count(fixed_package) == 2
+    assert (
+        'cp -a /tmp/pip-security-overrides/certifi "${pip_vendor}/certifi"'
+        in dockerfile
+    )
+    assert "assert s.count(old)==4" in dockerfile
+    assert "'pip._vendor.certifi'" in dockerfile
+    assert "certifi.__version__=='2026.10.19'" in dockerfile
+    assert "Path(certifi.where()).read_bytes()" in dockerfile
+    assert "pkg:pypi/certifi@2026.10.19" in dockerfile
     assert '"msgpack==1.2.1"' in dockerfile
     assert '"tornado==6.5.9"' in dockerfile
     assert (

@@ -1,0 +1,15 @@
+#cloud-config
+# Fresh access for a restored Hermes-only baseline. No package installation,
+# software updates, application settings, model credentials or customer tasks.
+# The public key supports controller preparation before observed customer use.
+# It grants no access to the controller's own private key or host filesystem.
+users:
+  - name: customer
+    ssh_authorized_keys:
+      - "@@SSH_PUBLIC_KEY@@"
+ssh_pwauth: false
+disable_root: true
+ssh_deletekeys: true
+ssh_genkeytypes: [ed25519, rsa, ecdsa]
+package_update: false
+package_upgrade: false

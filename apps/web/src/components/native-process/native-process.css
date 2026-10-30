@@ -43,7 +43,8 @@
 .native-process select,
 .native-process textarea,
 .native-process button,
-.native-dialog button {
+.native-dialog button,
+.native-workflow-dialog button {
   font: inherit;
   color: var(--color-primary);
   background: var(--color-surface);
@@ -69,7 +70,8 @@
   border-color: var(--color-secondary);
 }
 .native-process button:disabled,
-.native-dialog button:disabled {
+.native-dialog button:disabled,
+.native-workflow-dialog button:disabled {
   opacity: 0.55;
   cursor: default;
 }
@@ -279,16 +281,22 @@
   border-radius: var(--radius-lg);
   width: min(100%, 560px);
 }
-.native-dialog button {
+.native-dialog button,
+.native-workflow-dialog button {
   margin: var(--space-sm);
   cursor: pointer;
 }
-.native-dialog button:focus-visible {
+.native-dialog button:focus-visible,
+.native-workflow-dialog button:focus-visible {
   outline: 2px solid var(--color-accent, #33baf0);
   outline-offset: 2px;
 }
-.native-dialog button:hover {
+.native-dialog button:hover,
+.native-workflow-dialog button:hover {
   border-color: var(--color-accent, #33baf0);
+}
+.native-workflow-dialog::backdrop {
+  background: color-mix(in srgb, var(--color-neutral) 80%, transparent);
 }
 .native-runs {
   margin-block: var(--space-xl);

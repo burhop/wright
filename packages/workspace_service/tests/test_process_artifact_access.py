@@ -80,8 +80,9 @@ async def test_omitted_canonical_result_is_reported_as_unavailable_not_unrelated
 
 
 @pytest.mark.asyncio
+@pytest.mark.parametrize("long_path", [False, True])
 async def test_prior_attempt_file_requires_exact_history_identity_and_unchanged_bytes(
-    tmp_path, monkeypatch
+    tmp_path, monkeypatch, long_path
 ):
     from .test_workflow_revision_history import revision_events
     from workspace_service.workflow_run_record import _previous_result_rows
@@ -91,6 +92,10 @@ async def test_prior_attempt_file_requires_exact_history_identity_and_unchanged_
         history = _previous_result_rows({"run_id": "run-1", "events": events})
         row = history[0]["result"]
         rep = row["representations"][0]
+        if long_path:
+            rep["location"] = (
+                "thermal/" + "/".join(["temperature-comparison" * 3] * 3) + "/field.csv"
+            )
         path = tmp_path / rep["location"]
         path.parent.mkdir(parents=True)
         path.write_bytes(b"failed geometry")
@@ -109,6 +114,20 @@ async def test_prior_attempt_file_requires_exact_history_identity_and_unchanged_
             scope(*CAPABILITIES), c.process, reference, run_id="run-1"
         )
         assert observed.content == b"failed geometry"
+        for foreign_scope, foreign_process, foreign_run in (
+            (scope(*CAPABILITIES), c.process, "foreign-run"),
+            (
+                scope(*CAPABILITIES),
+                c.process.model_copy(update={"source_digest": "c" * 64}),
+                "run-1",
+            ),
+            (replace(scope(*CAPABILITIES), workspace_id="foreign"), c.process, "run-1"),
+        ):
+            with pytest.raises(ProcessInterfaceError) as denied:
+                await c.app.artifacts.read(
+                    foreign_scope, foreign_process, reference, run_id=foreign_run
+                )
+            assert denied.value.reason.code == "SCOPE_DENIED"
         for candidate in (
             reference.model_copy(
                 update={"result_id": history[0]["original_result_id"]}

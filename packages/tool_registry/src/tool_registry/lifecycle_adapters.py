@@ -108,11 +108,12 @@ class MockRunner(BaseRunner):
 
 
 class DatabaseLifecycleAdapter:
-    def __init__(self, db_path: str, *, operation_timeout: float = 30.0) -> None:
+    def __init__(self, db_path: str, *, operation_timeout: float = 30.0, device_authorization_presenter=None) -> None:
         if operation_timeout <= 0:
             raise ValueError("operation_timeout must be positive")
         self.db_path = db_path
         self.operation_timeout = operation_timeout
+        self.device_authorization_presenter = device_authorization_presenter
 
     def build_runner(
         self,
@@ -188,6 +189,7 @@ class DatabaseLifecycleAdapter:
                 server.command,
                 ui_enabled=os.getenv("WRIGHT_SURFACES_MCP_APPS_ENABLED") == "1",
                 server_id=server_id,
+                device_authorization_presenter=self.device_authorization_presenter,
                 operation_timeout=self.operation_timeout,
             )
         raise ValueError(f"Unsupported coordinated server type: {server.type}")

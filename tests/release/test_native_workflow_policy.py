@@ -66,8 +66,10 @@ def test_production_release_keeps_native_docker_docs_and_release_terminal() -> N
 def test_ordinary_python_and_windows_workflows_include_native_contracts() -> None:
     python = (ROOT / ".github/workflows/python-quality.yml").read_text(encoding="utf-8")
     windows = (ROOT / ".github/workflows/test-windows.yml").read_text(encoding="utf-8")
-    assert "tests/native_runtime" in python
-    assert "test_native_workflow_policy.py" in python
+    # The whole release root includes this policy; a second named-file run is
+    # unnecessary when the same context already enforces release/native coverage.
+    assert "tests/release tests/native_runtime" in python
+    assert "--cov-fail-under=85" in python
     assert "tests/native_runtime" in windows
 
 

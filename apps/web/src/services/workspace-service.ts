@@ -77,6 +77,7 @@ export type WorkspaceWorkflowSourceReadinessState =
   | "not_template"
   | "reference"
   | "setup_required"
+  | "revised"
   | "ready"
   | "verified"
   | "unavailable";
@@ -87,6 +88,15 @@ export interface WorkspaceWorkflowSourceReadiness {
   template_version: string | null;
   source_digest: string | null;
   layout_digest: string | null;
+  accepted_source_digest?: string | null;
+  definition_revision?: number | null;
+  execution_diagnostic?: {
+    code: string;
+    message: string;
+    correction: string;
+    block_id?: string | null;
+  } | null;
+  starter_unchanged?: boolean | null;
   definition_valid: boolean | null;
   configured: boolean | null;
   qualified: boolean | null;
@@ -134,6 +144,28 @@ export interface EngineeringWorkflowTemplate {
   external_effects: string[];
   source_digest: string;
   readiness: EngineeringTemplateReadiness;
+  exploration?: {
+    preview_kind:
+      "supplied_sketch" | "workflow_illustration" | "recorded_result";
+    preview_caption: string;
+    outcome_status: "pending" | "recorded";
+    outcome_summary: string;
+    stages: Array<{
+      title: string;
+      tool: string;
+      contribution: string;
+      input: string;
+      output: string;
+    }>;
+    limitations: string[];
+    recorded_result?: {
+      run_id: string;
+      source_digest: string;
+      artifact_digest: string;
+      evidence_reference: string;
+      scope: string;
+    };
+  };
 }
 
 export interface EngineeringWorkflowTemplateDetail extends EngineeringWorkflowTemplate {
@@ -269,6 +301,7 @@ export interface WorkspaceWorkflowRunSummary {
     | "failed"
     | "cancelled"
     | "interrupted"
+    | "reconciliation_required"
     | "unknown";
   started_at: string;
   completed_at?: string;
@@ -932,6 +965,37 @@ export interface EngineeringScenarioComparison {
 export interface SupportDiagnosticScope {
   session_id?: string;
   scenario_run_id?: string;
+  source_run_id?: string;
+}
+
+export interface SourceRunDiagnostic {
+  run_id: string;
+  source_digest: string;
+  record_digest: string;
+  recorded_status: string;
+  started_at?: string;
+  ended_at?: string;
+  event_count: number;
+  events: Array<{
+    sequence: number;
+    kind:
+      | "run_started"
+      | "run_resumed"
+      | "run_completed"
+      | "step_started"
+      | "step_completed"
+      | "step_diagnostic"
+      | "design_revision"
+      | "validation_exhausted"
+      | "cancellation_requested";
+    step_id?: string;
+    at?: string;
+    start_sequence?: number;
+    elapsed_ms?: number;
+    reason?: string;
+  }>;
+  events_truncated: boolean;
+  metadata_omitted: boolean;
 }
 
 export interface SupportDiagnosticSnapshot {
@@ -942,6 +1006,7 @@ export interface SupportDiagnosticSnapshot {
   workspace_id: string;
   principal_digest: string;
   scope: SupportDiagnosticScope;
+  source_run?: SourceRunDiagnostic;
   summary: {
     status: "healthy" | "degraded" | "blocked" | "failed";
     reason: string;
@@ -1258,7 +1323,15 @@ export class WorkspaceService {
     if (
       result.catalog_version !== "1.0.0" ||
       !Array.isArray(result.templates) ||
-      result.templates.length !== 10
+      result.templates.length === 0 ||
+      result.templates.some(
+        (template) =>
+          !template ||
+          typeof template.template_id !== "string" ||
+          !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(template.template_id),
+      ) ||
+      new Set(result.templates.map((template) => template.template_id)).size !==
+        result.templates.length
     )
       throw new Error(
         "Wright returned an invalid engineering template catalog.",
@@ -2518,6 +2591,9 @@ export class WorkspaceService {
           message = "Local state changed. Create a fresh preview.";
         } else if (code === "DIAGNOSTIC_SCOPE_FORBIDDEN") {
           message = "This diagnostic scope is unavailable.";
+        } else if (code === "DIAGNOSTIC_SOURCE_EVIDENCE_UNAVAILABLE") {
+          message =
+            "The saved run evidence could not be verified. Inspect the run details before creating another preview.";
         }
       } catch {
         // Preserve the stable, non-sensitive fallback.
@@ -2714,6 +2790,15 @@ export class WorkspaceService {
     if (contentType && contentType.includes("application/json")) {
       const data = await response.json();
       return data.content;
+    }
+    if (
+      contentType &&
+      !contentType.startsWith("text/") &&
+      !contentType.includes("xml")
+    ) {
+      throw new Error(
+        "This file needs its compatible application. Download the native file instead of opening it as text.",
+      );
     }
     return response.text();
   }
@@ -3577,6 +3662,8 @@ export class WorkspaceService {
   async getMcpStatus(sessionId: string): Promise<{
     status: string;
     message: string;
+    restart_command?: string | null;
+    restart_command_shell?: "posix" | "powershell" | null;
     running_mcps?: {
       name: string;
       status: string;
@@ -3595,6 +3682,8 @@ export class WorkspaceService {
   async getWorkspaceMcpStatus(workspaceId: string): Promise<{
     status: string;
     message: string;
+    restart_command?: string | null;
+    restart_command_shell?: "posix" | "powershell" | null;
     running_mcps?: {
       name: string;
       status: string;

@@ -16,6 +16,7 @@ from pathlib import Path
 from typing import Any
 
 from core.logging import get_logger
+from core.process_interactions import StartReceipt
 from core.tracing import traced
 from .support_diagnostics import (
     CatalogSnapshotDiagnostic,
@@ -32,6 +33,7 @@ from .support_diagnostics import (
     StateInventory,
     StorageDiagnostic,
     SupportDiagnosticSnapshot,
+    SourceRunDiagnostic,
     build_snapshot,
     canonical_json_bytes,
     digest_value,
@@ -141,6 +143,7 @@ class _ExportGrant:
     expires_at: datetime
     filename: str
     content: bytes
+    scope: DiagnosticScope
     state: str = "previewed"
 
 
@@ -195,6 +198,16 @@ class SupportDiagnosticService:
 
     def _scope_allowed(self, workspace_id: str, scope: DiagnosticScope) -> bool:
         with self._readonly_connection(self.database_path) as connection:
+            if scope.source_run_id:
+                if "process_start_receipts" not in self._existing_tables(connection):
+                    return False
+                return (
+                    connection.execute(
+                        "SELECT 1 FROM process_start_receipts WHERE workspace_id=? AND run_id=?",
+                        (workspace_id, scope.source_run_id),
+                    ).fetchone()
+                    is not None
+                )
             if scope.session_id:
                 session = connection.execute(
                     """
@@ -225,6 +238,57 @@ class SupportDiagnosticService:
                 if run is None:
                     return False
         return True
+
+    def _source_run(
+        self, workspace_id: str, scope: DiagnosticScope
+    ) -> SourceRunDiagnostic | None:
+        if not scope.source_run_id:
+            return None
+        from .support_source_diagnostics import source_run_diagnostic
+
+        try:
+            with self._readonly_connection(self.database_path) as connection:
+                row = connection.execute(
+                    """SELECT receipts.payload_json, receipts.source_path, workspaces.local_path
+                       FROM process_start_receipts AS receipts
+                       JOIN engineering_workspaces AS workspaces
+                         ON workspaces.workspace_id = receipts.workspace_id
+                       WHERE receipts.workspace_id=? AND receipts.run_id=?""",
+                    (workspace_id, scope.source_run_id),
+                ).fetchone()
+            if row is None:
+                raise ValueError("No retained start receipt")
+            receipt = StartReceipt.model_validate_json(row["payload_json"])
+            if (
+                receipt.process.workspace_id != workspace_id
+                or receipt.run_id != scope.source_run_id
+                or receipt.process.source_path != row["source_path"]
+            ):
+                raise ValueError("The retained receipt has a different scope")
+            return source_run_diagnostic(str(row["local_path"]), receipt)
+        except (OSError, ValueError, KeyError, TypeError, sqlite3.Error):
+            raise SupportDiagnosticError(
+                "DIAGNOSTIC_SOURCE_EVIDENCE_UNAVAILABLE"
+            ) from None
+
+    @staticmethod
+    def _state_digest(
+        inventory: StateInventory, source_run: SourceRunDiagnostic | None
+    ):
+        return digest_value(
+            canonical_json_bytes(
+                {
+                    "inventory": inventory.digests["program_material"],
+                    "source_run": {
+                        "run_id": source_run.run_id,
+                        "source_digest": source_run.source_digest,
+                        "record_digest": source_run.record_digest,
+                    }
+                    if source_run
+                    else None,
+                }
+            )
+        )
 
     @staticmethod
     def _existing_tables(connection: sqlite3.Connection) -> set[str]:
@@ -379,6 +443,8 @@ class SupportDiagnosticService:
     def _failures(
         self, workspace_id: str, scope: DiagnosticScope
     ) -> tuple[DiagnosticFailure, ...]:
+        if scope.source_run_id:
+            return ()  # Rivet scenario rows cannot describe a source run.
         clauses = [
             "workspace_id = ?",
             "state IN ('blocked','failed','cancelled','error')",
@@ -497,8 +563,30 @@ class SupportDiagnosticService:
         now = self._now()
         expires_at = now + self._preview_ttl
         inventory = self._inventory(workspace_id)
+        source_run = self._source_run(workspace_id, resolved_scope)
         failures = self._failures(workspace_id, resolved_scope)
+        if source_run and source_run.recorded_status in {
+            "failed",
+            "cancelled",
+            "interrupted",
+            "unknown",
+            "reconciliation_required",
+            "external_action_outcome_unknown",
+        }:
+            failures = (
+                DiagnosticFailure(
+                    stage="source-run",
+                    provider_kind="runtime",
+                    reason=f"SOURCE_RUN_{source_run.recorded_status.upper()}",
+                    cleanup=CleanupState.UNKNOWN,
+                    recovery="INSPECT_BEFORE_RETRY",
+                ),
+            )
         providers = self._providers(inventory, failures)
+        if source_run:
+            providers = tuple(
+                provider for provider in providers if provider.kind != "rivet"
+            )
         categories = (
             DiagnosticCategory(
                 name="program-state",
@@ -537,6 +625,19 @@ class SupportDiagnosticService:
                 reason="PRIVATE_PATHS_FORBIDDEN",
             ),
         )
+        if source_run:
+            categories += (
+                DiagnosticCategory(
+                    name="source-run-timing",
+                    disposition=DiagnosticDisposition.TRUNCATED
+                    if source_run.events_truncated
+                    else DiagnosticDisposition.INCLUDED,
+                    item_count=len(source_run.events),
+                    reason="LATEST_100_EVENTS"
+                    if source_run.events_truncated
+                    else "RECORDED_TIMESTAMPS_ONLY",
+                ),
+            )
         snapshot_id = self._token_factory(18)
         confirmation_token = self._token_factory(32)
         principal_digest = self._private_digest(principal_id)
@@ -549,16 +650,23 @@ class SupportDiagnosticService:
                 "workspace_id": workspace_id,
                 "principal_digest": principal_digest,
                 "scope": resolved_scope,
+                "source_run": source_run,
                 "summary": DiagnosticSummary(
                     status=(
                         DiagnosticStatus.DEGRADED
                         if failures
                         else DiagnosticStatus.HEALTHY
                     ),
-                    reason="FAILURES_RECORDED" if failures else "READY",
+                    reason="FAILURES_RECORDED"
+                    if failures
+                    else "RECORDED_EVIDENCE_AVAILABLE"
+                    if source_run
+                    else "READY",
                     next_action=(
                         "INSPECT_RECOVERY"
                         if failures
+                        else "INSPECT_RECORDED_EVIDENCE"
+                        if source_run
                         else "CONTINUE_ENGINEERING_JOURNEY"
                     ),
                 ),
@@ -584,11 +692,12 @@ class SupportDiagnosticService:
             principal_digest=principal_digest,
             workspace_id=workspace_id,
             scope_digest=scope_digest,
-            state_digest=inventory.digests["program_material"],
+            state_digest=self._state_digest(inventory, source_run),
             snapshot_digest=snapshot.snapshot_digest,
             expires_at=expires_at,
             filename=filename,
             content=content,
+            scope=resolved_scope,
         )
         with self._lock:
             self._expire_locked(now)
@@ -635,11 +744,17 @@ class SupportDiagnosticService:
             )
             if grant.state != "previewed" or not all(comparisons):
                 raise SupportDiagnosticError("DIAGNOSTIC_EXPORT_DENIED")
-        current_state_digest = (
-            self._inventory(workspace_id).digests["program_material"]
-            if self._workspace_exists(workspace_id)
-            else ""
-        )
+        try:
+            current_state_digest = (
+                self._state_digest(
+                    self._inventory(workspace_id),
+                    self._source_run(workspace_id, grant.scope),
+                )
+                if self._workspace_exists(workspace_id)
+                else ""
+            )
+        except SupportDiagnosticError:
+            current_state_digest = ""  # Missing/changed evidence invalidates the grant.
         with self._lock:
             self._expire_locked(self._now())
             grant = self._grants.get(token_digest)

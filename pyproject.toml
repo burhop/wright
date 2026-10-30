@@ -29,23 +29,25 @@ engineering-models = [
     "numpy>=1.26,<3",
 ]
 runtime = [
+    "uv>=0.9,<1",
+    "certifi>=2026.10.19",
     "cryptography>=45,<51",
     "fastapi>=0.115,<1",
     "uvicorn[standard]>=0.30,<1",
     "passlib[bcrypt]>=1.7,<2",
     "structlog>=24.1,<27",
-    "opentelemetry-api>=1.25,<2",
-    "opentelemetry-sdk>=1.25,<2",
-    "opentelemetry-exporter-otlp>=1.25,<2",
+    "opentelemetry-api>=1.45.1,<2",
+    "opentelemetry-sdk>=1.45.1,<2",
+    "opentelemetry-exporter-otlp>=1.45.1,<2",
     "pydantic>=2.7,<3",
     "httpx>=0.28,<1",
     "httpx-sse>=0.4,<1",
     "PyYAML>=6,<7",
-    "mcp>=1.27.2,<2",
+    "mcp>=1.30.0,<2",
     "jsonschema>=4.26,<5",
     "python-multipart>=0.0.32,<1",
     "pypdfium2>=5,<6",
-    "pillow>=12,<13",
+    "pillow>=13,<14",
 ]
 workspace-surfaces-test = [
     "build>=1.2,<2",
@@ -152,6 +154,26 @@ packages = [
 ]
 
 [tool.hatch.build.targets.wheel.force-include]
+"examples/process-interfaces/definition.py" = "workspace_service/engineering_workflow_templates/setup_resources/definition.py"
+"examples/process-interfaces/printed-replacement-part/prepare.py" = "workspace_service/engineering_workflow_templates/setup_resources/printed-replacement-part/prepare.py"
+"examples/process-interfaces/printed-replacement-part/provider_inputs.py" = "workspace_service/engineering_workflow_templates/setup_resources/printed-replacement-part/provider_inputs.py"
+"examples/process-interfaces/printed-replacement-part/retained_source.py" = "workspace_service/engineering_workflow_templates/setup_resources/printed-replacement-part/retained_source.py"
+"examples/process-interfaces/printed-replacement-part/repair_gate.py" = "workspace_service/engineering_workflow_templates/setup_resources/printed-replacement-part/repair_gate.py"
+"examples/process-interfaces/printed-replacement-part/native_inspection.py" = "workspace_service/engineering_workflow_templates/setup_resources/printed-replacement-part/native_inspection.py"
+"examples/process-interfaces/printed-replacement-part/orientation_stages.py" = "workspace_service/engineering_workflow_templates/setup_resources/printed-replacement-part/orientation_stages.py"
+"examples/process-interfaces/printed-replacement-part/scenario_inputs.py" = "workspace_service/engineering_workflow_templates/setup_resources/printed-replacement-part/scenario_inputs.py"
+"examples/process-interfaces/printed-replacement-part/orca_binding.py" = "workspace_service/engineering_workflow_templates/setup_resources/printed-replacement-part/orca_binding.py"
+"examples/process-interfaces/printed-replacement-part/orca_stages.py" = "workspace_service/engineering_workflow_templates/setup_resources/printed-replacement-part/orca_stages.py"
+"examples/process-interfaces/printed-replacement-part/run_disclosure.py" = "workspace_service/engineering_workflow_templates/setup_resources/printed-replacement-part/run_disclosure.py"
+"examples/process-interfaces/printed-replacement-part/orca-preparation.py" = "workspace_service/engineering_workflow_templates/setup_resources/printed-replacement-part/orca-preparation.py"
+"examples/process-interfaces/printed-replacement-part/run-disclosure-template.md" = "workspace_service/engineering_workflow_templates/setup_resources/printed-replacement-part/run-disclosure-template.md"
+"examples/process-interfaces/printed-replacement-part/scenarios/printed-replacement-part-02.json" = "workspace_service/engineering_workflow_templates/setup_resources/printed-replacement-part/scenarios/printed-replacement-part-02.json"
+"examples/process-interfaces/printed-replacement-part/scenarios/printed-replacement-part-02.instructions.json" = "workspace_service/engineering_workflow_templates/setup_resources/printed-replacement-part/scenarios/printed-replacement-part-02.instructions.json"
+"examples/process-interfaces/printed-replacement-part/scenarios/printed-replacement-part-02.orca-instructions.json" = "workspace_service/engineering_workflow_templates/setup_resources/printed-replacement-part/scenarios/printed-replacement-part-02.orca-instructions.json"
+"examples/process-interfaces/printed-replacement-part/handle-geometry/basis.json" = "workspace_service/engineering_workflow_templates/setup_resources/printed-replacement-part/handle-geometry/basis.json"
+"examples/process-interfaces/printed-replacement-part/handle-geometry/construction.json" = "workspace_service/engineering_workflow_templates/setup_resources/printed-replacement-part/handle-geometry/construction.json"
+"examples/process-interfaces/printed-replacement-part/handle-geometry/repair.json" = "workspace_service/engineering_workflow_templates/setup_resources/printed-replacement-part/handle-geometry/repair.json"
+"examples/process-interfaces/printed-replacement-part/handle-geometry/setup-contract.json" = "workspace_service/engineering_workflow_templates/setup_resources/printed-replacement-part/handle-geometry/setup-contract.json"
 "packages/process_client/src" = "workspace_service/process_interfaces/resources/public/process_client/src"
 "packages/process_client/package.json" = "workspace_service/process_interfaces/resources/public/process_client/package.json"
 "packages/process_client/README.md" = "workspace_service/process_interfaces/resources/public/process_client/README.md"
@@ -179,6 +201,26 @@ artifacts = [
 # package links first, then suppress the real directories as already visited.
 # Direct roots also avoid traversing unrelated local caches and worktrees.
 only-include = [
+    "examples/process-interfaces/definition.py",
+    "examples/process-interfaces/printed-replacement-part/prepare.py",
+    "examples/process-interfaces/printed-replacement-part/provider_inputs.py",
+    "examples/process-interfaces/printed-replacement-part/retained_source.py",
+    "examples/process-interfaces/printed-replacement-part/repair_gate.py",
+    "examples/process-interfaces/printed-replacement-part/native_inspection.py",
+    "examples/process-interfaces/printed-replacement-part/orientation_stages.py",
+    "examples/process-interfaces/printed-replacement-part/scenario_inputs.py",
+    "examples/process-interfaces/printed-replacement-part/orca_binding.py",
+    "examples/process-interfaces/printed-replacement-part/orca_stages.py",
+    "examples/process-interfaces/printed-replacement-part/run_disclosure.py",
+    "examples/process-interfaces/printed-replacement-part/orca-preparation.py",
+    "examples/process-interfaces/printed-replacement-part/run-disclosure-template.md",
+    "examples/process-interfaces/printed-replacement-part/scenarios/printed-replacement-part-02.json",
+    "examples/process-interfaces/printed-replacement-part/scenarios/printed-replacement-part-02.instructions.json",
+    "examples/process-interfaces/printed-replacement-part/scenarios/printed-replacement-part-02.orca-instructions.json",
+    "examples/process-interfaces/printed-replacement-part/handle-geometry/basis.json",
+    "examples/process-interfaces/printed-replacement-part/handle-geometry/construction.json",
+    "examples/process-interfaces/printed-replacement-part/handle-geometry/repair.json",
+    "examples/process-interfaces/printed-replacement-part/handle-geometry/setup-contract.json",
     "src/wright",
     "src/wright_engineering",
     "apps/api/src/api",

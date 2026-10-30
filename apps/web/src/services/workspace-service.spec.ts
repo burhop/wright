@@ -44,18 +44,35 @@ describe("engineering workflow templates", () => {
     },
   };
 
-  it("loads exactly ten ordered catalog entries without workspace mutation", async () => {
-    const templates = Array.from({ length: 10 }, (_, index) => ({
-      ...template,
-      template_id: `template-${index}`,
-    }));
+  it.each([10, 11])(
+    "loads %i ordered catalog entries without workspace mutation",
+    async (count) => {
+      const templates = Array.from({ length: count }, (_, index) => ({
+        ...template,
+        template_id: `template-${index}`,
+      }));
+      mocks.fetch.mockResolvedValue(
+        response({ catalog_version: "1.0.0", templates }),
+      );
+      await expect(
+        workspaceService.getEngineeringWorkflowTemplates(),
+      ).resolves.toEqual(templates);
+      expect(mocks.fetch.mock.calls[0][1]).toEqual({ cache: "no-store" });
+    },
+  );
+
+  it.each([
+    [],
+    [template, template],
+    [{ ...template, template_id: "" }],
+    [null],
+  ])("rejects empty or ambiguous catalog identities", async (...entries) => {
     mocks.fetch.mockResolvedValue(
-      response({ catalog_version: "1.0.0", templates }),
+      response({ catalog_version: "1.0.0", templates: entries }),
     );
     await expect(
       workspaceService.getEngineeringWorkflowTemplates(),
-    ).resolves.toEqual(templates);
-    expect(mocks.fetch.mock.calls[0][1]).toEqual({ cache: "no-store" });
+    ).rejects.toThrow("invalid engineering template catalog");
   });
 
   it("binds instance creation to version, preview digest, path, and request id", async () => {
@@ -1014,6 +1031,29 @@ describe("support diagnostic workspace client", () => {
     await expect(
       workspaceService.previewSupportDiagnostics("workspace-1"),
     ).rejects.toThrow("Local state changed. Create a fresh preview.");
+  });
+
+  it("sends distinct source scope and keeps unavailable evidence errors private", async () => {
+    mocks.fetch.mockResolvedValueOnce(
+      response(
+        {
+          detail: {
+            code: "DIAGNOSTIC_SOURCE_EVIDENCE_UNAVAILABLE",
+            message: "private source path and raw failure",
+          },
+        },
+        400,
+      ),
+    );
+    await expect(
+      workspaceService.previewSupportDiagnostics("workspace-1", {
+        source_run_id: "source-run",
+      }),
+    ).rejects.toThrow("The saved run evidence could not be verified");
+    expect(JSON.parse(String(mocks.fetch.mock.calls[0]?.[1]?.body))).toEqual({
+      workspace_id: "workspace-1",
+      scope: { source_run_id: "source-run" },
+    });
   });
 });
 

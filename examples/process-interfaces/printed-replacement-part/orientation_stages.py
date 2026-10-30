@@ -11,7 +11,13 @@ from pathlib import Path
 from core.process_validation import ValidationProfile
 
 
-def add(parent, definition, bindings, create, construction):
+def add(parent, definition, bindings, create, construction, *, scenario=None, repaired=None):
+    is_handle = scenario is not None
+    if is_handle and (scenario["scenario_id"] != "printed-replacement-part-02" or repaired is None):
+        raise ValueError("Declare the exact handle scenario and repaired producer")
+    candidates = ("pads_down", "side") if is_handle else ("socket_down", "socket_up")
+    profile_prefix = "drawer-handle" if is_handle else "focus-wheel"
+    mount = bindings["inspection_workspace"].rstrip("/")
     if "source_mesh" not in construction["outputs"]:
         raise ValueError(
             "Orientation comparison requires the current native mesh producer"
@@ -23,8 +29,8 @@ def add(parent, definition, bindings, create, construction):
     first_section = len(flow.sections)
     repo = definition.REPO
     ws = flow.workspace
-    source_ref = create["id"] + ".source_mesh"
-    source_rel = parent.output + "/" + construction["outputs"]["source_mesh"]
+    source_ref = repaired["id"] + ".repaired_mesh" if is_handle else create["id"] + ".source_mesh"
+    source_rel = parent.output + "/" + ("repaired_mesh.stl" if is_handle else construction["outputs"]["source_mesh"])
     basis = """# Focus-wheel orientation study basis
 
     Compare socket-down and socket-up from the same current-run native STL, in mm.
@@ -46,6 +52,9 @@ def add(parent, definition, bindings, create, construction):
     physical tests under the retained inspection plan. Geometry-only contact and
     downward-area screens do not establish adhesion or support requirements.
     """
+    if is_handle:
+        instruction_path = Path(__file__).with_name("scenarios") / scenario["instructions"]
+        basis = json.loads(instruction_path.read_bytes())["orientation_basis"]
     basis_ref = flow.input_bytes(
         "orientation-basis.md",
         basis.encode(),
@@ -56,6 +65,8 @@ def add(parent, definition, bindings, create, construction):
         repo
         / "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/01-observatory-focus-wheel"
     )
+    if is_handle:
+        context_dir = (repo / scenario["inputs"][0]["path"]).parent
     original_refs = {
         name: flow.input_bytes(
             "original-" + name,
@@ -87,6 +98,8 @@ def add(parent, definition, bindings, create, construction):
         "inspect_manufacturing_package.py": repo
         / "scripts/engineering/inspect_manufacturing_package.py",
     }
+    if is_handle:
+        assets["orientation-study.py"] = Path(__file__).with_name("handle-orientation-study.py")
     asset_refs = {
         name: flow.input_bytes(
             name, path.read_bytes(), kind="workspace_file", original=str(path)
@@ -94,7 +107,7 @@ def add(parent, definition, bindings, create, construction):
         for name, path in assets.items()
     }
     config = {
-        "workspace_root": "/workspace",
+        "workspace_root": mount,
         "source_mesh": source_rel,
         "output_root": flow.output,
         "profile_sha256": profile_hashes,
@@ -107,7 +120,7 @@ def add(parent, definition, bindings, create, construction):
     }
 
     def load_asset(name, namespace):
-        return f"raw=Path({('/workspace/' + flow.input_root + '/' + name)!r}).read_bytes()\nassert hashlib.sha256(raw).hexdigest()=={definition.sha(assets[name].read_bytes())!r}\n{namespace}={{'__name__':'accepted_study'}}\nexec(compile(raw,{name!r},'exec'),{namespace})\n"
+        return f"raw=Path({(mount + '/' + flow.input_root + '/' + name)!r}).read_bytes()\nassert hashlib.sha256(raw).hexdigest()=={definition.sha(assets[name].read_bytes())!r}\n{namespace}={{'__name__':'accepted_study'}}\nexec(compile(raw,{name!r},'exec'),{namespace})\n"
 
     def python_stage(identity, title, code, outputs, dependencies):
         stage = flow.stage(identity, title)
@@ -140,18 +153,17 @@ def add(parent, definition, bindings, create, construction):
         return stage
 
     prefix = "import hashlib\nfrom pathlib import Path\n"
-    config_code = f"config={config!r}\nconfig['source_sha256']=hashlib.sha256(Path({('/workspace/' + source_rel)!r}).read_bytes()).hexdigest()\n"
+    config_code = f"config={config!r}\nconfig['source_sha256']=hashlib.sha256(Path({(mount + '/' + source_rel)!r}).read_bytes()).hexdigest()\n"
     mesh = python_stage(
         "orient_geometry",
-        "Orient the exact wheel in two build directions",
+        "Orient the exact repaired handle in two build directions" if is_handle else "Orient the exact wheel in two build directions",
         prefix
         + load_asset("orientation-study.py", "study")
         + config_code
         + "print(study['prepare'](config))\n",
         {
             "source_mesh": "source_mesh.stl",
-            "socket_down_mesh": "socket_down/oriented.stl",
-            "socket_up_mesh": "socket_up/oriented.stl",
+            **{name + "_mesh": name + "/oriented.stl" for name in candidates},
             "geometry": "orientation-geometry.json",
         },
         {
@@ -167,7 +179,7 @@ def add(parent, definition, bindings, create, construction):
     original = json.loads(
         (
             repo
-            / "packages/workspace_service/src/workspace_service/process_validation/profiles/printed-replacement-part-01.json"
+            / (scenario["baseline_profile"]["path"] if is_handle else "packages/workspace_service/src/workspace_service/process_validation/profiles/printed-replacement-part-01.json")
         ).read_bytes()
     )
     original_ref = flow.input_bytes(
@@ -179,14 +191,18 @@ def add(parent, definition, bindings, create, construction):
         item for item in original["checks"] if item["subject_role"] == "repaired_mesh"
     ]
     assert len(mesh_checks) == 5
+    if is_handle:
+        # Full original model-axis checks still bind the unchanged repaired mesh.
+        # Side candidates have a different build frame; inspect rigidity separately.
+        mesh_checks = [item for item in mesh_checks if item["id"] == "repaired-mesh-integrity"]
     ids = {i for check in mesh_checks for i in check["requirement_ids"]}
     mesh_profile = ValidationProfile.model_validate(
         {
-            "id": "focus-wheel-orientation-mesh-gate",
+            "id": profile_prefix + "-orientation-mesh-gate",
             "version": "1",
             "baseline": {
                 **original["baseline"],
-                "id": "focus-wheel-orientation-mesh-basis",
+                "id": profile_prefix + "-orientation-mesh-basis",
                 "requirements": [
                     r for r in original["baseline"]["requirements"] if r["id"] in ids
                 ],
@@ -228,7 +244,7 @@ def add(parent, definition, bindings, create, construction):
         return stage, ref
 
     readers = {}
-    for name in ("socket_down", "socket_up"):
+    for name in candidates:
         gate, _ = validator(
             "validate_" + name,
             "Check " + name.replace("_", " ") + " mesh before slicing",
@@ -317,7 +333,7 @@ def add(parent, definition, bindings, create, construction):
             retain, {"response": flow.output + "/" + name + "/provider-response.json"}
         )
         cfg = {
-            "workspace_root": "/workspace",
+            "workspace_root": mount,
             "source_mesh": flow.output + "/" + name + "/oriented.stl",
             "slice_package": flow.output + "/" + name + "/package.gcode.3mf",
             "provider_response": flow.output + "/" + name + "/provider-response.json",
@@ -327,13 +343,13 @@ def add(parent, definition, bindings, create, construction):
                 for role in profiles
             },
             "gcode_entry": "Metadata/plate_1.gcode",
-            "nominal_layer_section": bindings["nominal_layer_section"],
+            "nominal_layer_section": bindings.get("nominal_layer_section"),
             "success_field": "ok",
             "expected_response_fields": {
                 key: args[key] for key in ("source", "output", "plate")
             },
             "success_contract": bindings["slice_success_contract"],
-            "operation_label": "actual_local_bambu_slice",
+            "operation_label": next(check["parameters"]["expected_operation"] for check in original["checks"] if check["id"] == "slice-lineage"),
         }
         code = (
             prefix
@@ -458,20 +474,23 @@ def add(parent, definition, bindings, create, construction):
             0.00001,
         )
         check(name + "-area", "/cases/" + name + "/area_relative_error", "lte", 0.00001)
-        checks.append(
-            {
-                "id": name + "-height",
-                "version": "1",
-                "requirement_ids": ["ORIENTATION-DIGITAL-CORRESPONDENCE"],
-                "subject_role": "comparison",
-                "reader": "structured",
-                "selector": "/cases/" + name + "/height_mm",
-                "constraint": {"operator": "within", "target": 18, "tolerance": 0.0001},
-                "unit": "mm",
-                "evidence_method": "structured_value",
-                "parameters": {},
-            }
-        )
+        if is_handle:
+            check(name + "-frame-span", "/cases/" + name + "/frame_span_error_mm", "lte", 0.0001)
+        else:
+            checks.append(
+                {
+                    "id": name + "-height",
+                    "version": "1",
+                    "requirement_ids": ["ORIENTATION-DIGITAL-CORRESPONDENCE"],
+                    "subject_role": "comparison",
+                    "reader": "structured",
+                    "selector": "/cases/" + name + "/height_mm",
+                    "constraint": {"operator": "within", "target": 18, "tolerance": 0.0001},
+                    "unit": "mm",
+                    "evidence_method": "structured_value",
+                    "parameters": {},
+                }
+            )
         check(
             name + "-classification",
             "/cases/" + name + "/classification_known",
@@ -481,10 +500,10 @@ def add(parent, definition, bindings, create, construction):
         check(name + "-layers", "/cases/" + name + "/layer_count", "gte", 1)
     profile = ValidationProfile.model_validate(
         {
-            "id": "focus-wheel-orientation-correspondence",
+            "id": profile_prefix + "-orientation-correspondence",
             "version": "1",
             "baseline": {
-                "id": "focus-wheel-orientation-basis",
+                "id": profile_prefix + "-orientation-basis",
                 "version": "1",
                 "requirements": [
                     {

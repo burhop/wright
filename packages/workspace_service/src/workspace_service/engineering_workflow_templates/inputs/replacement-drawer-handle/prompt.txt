@@ -1,0 +1,3 @@
+Please replace the broken handle on our small parts drawer. The two screw centers are exactly 96 mm apart. I drew the front and side views in concept.svg and listed the screw details in context.md. Make a smooth arched bow with room for a gloved hand; I would like the top edge to have a shallow thumb recess, not a sharp industrial block.
+
+Please keep both mounting pads flat on the drawer, use clearance holes for the existing M4 through bolts, and do not invent threaded plastic bosses. Build the mesh, repair it, add supports as needed, and slice for a P1S with a 0.4 mm nozzle using the declared PETG profile. Save the files and a clearly simulated transfer receipt. Treat this as a prototype, not a tested lifting handle.

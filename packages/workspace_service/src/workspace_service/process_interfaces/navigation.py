@@ -2,13 +2,17 @@
 
 from __future__ import annotations
 
+import asyncio
 import hashlib
+from pathlib import PurePosixPath
 
 from core.process_interactions import NavigationResolution, NavigationTarget
 from core.tracing import traced
 
 from ..workflow_source_execution import _parse
+from ..errors import WorkspaceTimeoutError
 from .errors import ProcessInterfaceError
+from .artifacts import assessment_content_matches
 from .owners import recorded_run_facts
 from .projection import project_output, project_previous_output
 
@@ -116,22 +120,76 @@ class ProcessNavigation:
                 raise _denied()
             representation = representations[0]
         elif target.kind == "assessment":
-            # The validator's recorded JSON is an ordinary canonical result.
-            # Locate it by exact content identity, never an invented filename.
+            # Find the immutable assessment in byte-pinned recorded JSON files.
+            # A ledger reload can reorder dictionaries; its serialization is not
+            # the original file's byte identity. Never invent a filename or SHA.
             report = next(
                 report
                 for report in facts.reports
                 if report.assessment.id == target.assessment_id
             )
-            digest = hashlib.sha256(
+            legacy_digest = hashlib.sha256(
                 report.assessment.model_dump_json(indent=2).encode("utf-8")
             ).hexdigest()
-            representations = [
+            evidence_files = {
+                (
+                    result.id,
+                    result.provenance.output_port.removeprefix("diagnostic:"),
+                )
+                for result in facts.run.results
+                + tuple(row[2] for row in facts.run.previous_results)
+                if result.artifact_role in {"diagnostic", "verification"}
+                and result.provenance.output_port.startswith("diagnostic:")
+            }
+            # Preserve legacy exact-byte candidates from any output role. The
+            # formatting-independent path applies to explicitly recorded diagnostic
+            # evidence, not arbitrary JSON deliverables or guessed filenames.
+            candidates = [
                 ref
                 for candidate in outputs
                 for ref in candidate.representations
-                if ref.sha256 == digest
+                if ref.sha256 == legacy_digest
+                or (
+                    PurePosixPath(ref.artifact_ref).suffix.lower() == ".json"
+                    and (candidate.result_id, ref.artifact_ref) in evidence_files
+                )
             ]
+            representations = []
+            remaining = app.limits.maximum_representation_bytes
+            if len(candidates) > app.limits.maximum_diagnostics:
+                raise ProcessInterfaceError(
+                    "CAPABILITY_UNAVAILABLE",
+                    "The recorded assessment candidates exceed the supported read bound.",
+                    "Inspect the canonical validation result for this run.",
+                )
+            try:
+                async with asyncio.timeout(app.limits.representation_timeout_seconds):
+                    for ref in candidates:
+                        if remaining <= 0:
+                            raise TimeoutError("Assessment candidate byte bound")
+                        artifact = await app.artifacts.read(
+                            scope,
+                            process,
+                            ref,
+                            run_id=target.run_id,
+                            _maximum_bytes=min(remaining, 16 * 1024 * 1024),
+                        )
+                        remaining -= len(artifact.content)
+                        matches = await app.workspace.executor.run(
+                            "process.assessment.identify",
+                            lambda: assessment_content_matches(
+                                artifact.content, report.assessment
+                            ),
+                            timeout_seconds=app.limits.representation_timeout_seconds,
+                        )
+                        if matches:
+                            representations.append(ref)
+            except (TimeoutError, WorkspaceTimeoutError) as error:
+                raise ProcessInterfaceError(
+                    "CAPABILITY_UNAVAILABLE",
+                    "The recorded assessment candidates exceed the supported read bound.",
+                    "Inspect the canonical validation result for this run.",
+                ) from error
             if len(representations) == 1:
                 representation = representations[0]
             else:

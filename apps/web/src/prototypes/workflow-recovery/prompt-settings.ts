@@ -37,6 +37,23 @@ export const RESPONSE_FORMATS = {
   json: ".json",
 } as const;
 export type ResponseFormat = keyof typeof RESPONSE_FORMATS;
+/** Display source-authored publication without inventing or changing its binding. */
+export function savedResponsePublication(block: RecoveryBlock) {
+  const policy = String(block.configuration.file_policy ?? "indexed");
+  const namedPort = block.configuration.saved_response_file_port;
+  const publishing =
+    policy === "publish_indexed" || policy === "publish_overwrite";
+  if (!publishing && namedPort === undefined) return null;
+  return {
+    policy,
+    label:
+      policy === "publish_overwrite"
+        ? "Publish at this run's configured path"
+        : "Publish an indexed response file",
+    publishing,
+    port: typeof namedPort === "string" && namedPort ? namedPort : null,
+  };
+}
 export const sourceKey = (id: string) =>
   id
     .slice(id.indexOf(".") + 1)

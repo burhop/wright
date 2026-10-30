@@ -36,6 +36,7 @@ import type { EditorTab } from "../../store/viewer";
 import { workspaceSurfacesEnabled } from "../../services/surfaces/feature-flags";
 import { workflowRecoveryEnabled } from "../../config/workflow-recovery";
 import { WorkflowRecoveryPage } from "../pages/WorkflowRecoveryPage";
+import { WorkspaceWorkflowDialog } from "./WorkspaceWorkflowDialog";
 import { NativeConfirmDialog } from "../native-process/NativeConfirmDialog";
 import "../native-process/native-process.css";
 import { SurfaceWorkspace } from "../surfaces/SurfaceWorkspace";
@@ -71,6 +72,12 @@ import {
   processWorkspaceTabFromQuery,
 } from "../../services/process-workspace-tabs";
 import { ProcessWorkspaceTab } from "../process-interfaces/ProcessWorkspaceTab";
+import { WorkspaceToolSetupHelp } from "../workspace/WorkspaceToolSetupHelp";
+import type {
+  OpenWorkspaceToolSetup,
+  WorkspaceToolSetupRequest,
+} from "../../services/workspace-tool-setup";
+import "../workspace/workspace-tool-setup.css";
 
 import { blankWorkflowSource } from "../../services/blank-workflow";
 
@@ -118,6 +125,11 @@ function findFileInTree(
     }
   }
   return null;
+}
+
+function findFilesNamed(node: WorkspaceNode, name: string): WorkspaceNode[] {
+  if (node.type === "file") return node.name === name ? [node] : [];
+  return (node.children ?? []).flatMap((child) => findFilesNamed(child, name));
 }
 
 interface WorkspacePanelProps {
@@ -469,6 +481,87 @@ export function WorkspacePanel({
     resetViewer,
   } = useViewerPanel();
 
+  const [toolSetupRequest, setToolSetupRequest] =
+    useState<WorkspaceToolSetupRequest | null>(null);
+  const pendingToolSetup = useRef<{
+    resolve: () => void;
+    reject: (reason: Error) => void;
+  } | null>(null);
+  useEffect(
+    () => () => {
+      pendingToolSetup.current?.reject(
+        new Error(
+          "The workspace or session changed. Reopen setup for the current job.",
+        ),
+      );
+      pendingToolSetup.current = null;
+    },
+    [_workspaceId, workspaceFileSessionId],
+  );
+  useEffect(() => {
+    if (
+      toolSetupRequest &&
+      !openTabs.some(
+        (tab) =>
+          normalizeEditorTabPath(tab.path) ===
+          normalizeEditorTabPath(toolSetupRequest.sourcePath),
+      )
+    ) {
+      pendingToolSetup.current?.reject(
+        new Error(
+          "The requesting job was closed. Reopen its setup to continue.",
+        ),
+      );
+      pendingToolSetup.current = null;
+      setToolSetupRequest(null);
+    }
+  }, [openTabs, toolSetupRequest]);
+  const openToolSetup: OpenWorkspaceToolSetup = (request) => {
+    if (surfaceChromeHidden) {
+      return Promise.reject(
+        new Error(
+          "MCP Tools is unavailable in this workspace layout. Widen the workspace or leave focus mode, then retry. Your setup selections are kept and the bundled provider guide remains available.",
+        ),
+      );
+    }
+    if (
+      request.workspaceId !== _workspaceId ||
+      request.sessionId !== workspaceFileSessionId ||
+      normalizeEditorTabPath(request.sourcePath) !== activeTabPath
+    ) {
+      return Promise.reject(
+        new Error(
+          "MCP Tools could not be opened for this job. Return to its workspace and retry; provider help remains available.",
+        ),
+      );
+    }
+    pendingToolSetup.current?.reject(
+      new Error(
+        "Another setup request replaced this view. Reopen this job's setup.",
+      ),
+    );
+    setActiveSidebar("marketplace");
+    setIsSidebarCollapsed(false);
+    setCompactSidebarOpen(true);
+    setToolSetupRequest(request);
+    return new Promise<void>((resolve, reject) => {
+      pendingToolSetup.current = { resolve, reject };
+    });
+  };
+  const returnToToolSetup = () => {
+    if (
+      !toolSetupRequest ||
+      toolSetupRequest.workspaceId !== _workspaceId ||
+      toolSetupRequest.sessionId !== workspaceFileSessionId
+    )
+      return;
+    setActiveTabPath(normalizeEditorTabPath(toolSetupRequest.sourcePath));
+    setCompactSidebarOpen(false);
+    pendingToolSetup.current?.resolve();
+    pendingToolSetup.current = null;
+    setToolSetupRequest(null);
+  };
+
   const [pendingWorkflowClose, setPendingWorkflowClose] = useState<
     string | null
   >(null);
@@ -637,6 +730,21 @@ export function WorkspacePanel({
   const surfaceChromeHidden =
     surfacesEnabled &&
     (surfaceLayout.mode === "focus" || surfaceLayout.mode === "narrow");
+  useEffect(() => {
+    if (!surfaceChromeHidden || !pendingToolSetup.current) return;
+    if (surfaceLayout.mode === "narrow") {
+      // Restore the requesting editor pane before reopening its modal. The
+      // narrow layout otherwise defaults to Chat and hides the retained job.
+      surfaceLayoutDispatch({ type: "select_narrow_pane", pane: "surface" });
+    }
+    pendingToolSetup.current.reject(
+      new Error(
+        "The workspace layout changed and MCP Tools is hidden. Your setup selections are kept. Widen the workspace or leave focus mode to retry, or read the bundled provider guide.",
+      ),
+    );
+    pendingToolSetup.current = null;
+    setToolSetupRequest(null);
+  }, [surfaceChromeHidden, surfaceLayout.mode, surfaceLayoutDispatch]);
   const surfaceFocusManager = useMemo(() => new SurfaceFocusManager(), []);
 
   const enterSurfaceFocus = () => {
@@ -1419,9 +1527,52 @@ export function WorkspacePanel({
   };
 
   // Click file in Tree → Open Tab
-  const handleFileClick = async (path: string) => {
+  const handleFileClick = async (path: string, resolveFilename = false) => {
     if (!activeSessionId) return;
     setCompactSidebarOpen(false);
+
+    // Chat can link a bare filename while the artifact lives in a results folder.
+    // Resolve only an unambiguous filename in this workspace; explicit paths keep
+    // their existing meaning and the backend still owns file access.
+    const requestedName = path.split("/").pop() || path;
+    const scope = restoreScope.current;
+    if (resolveFilename && workspaceFileSessionId && /^\/?[^/]+$/.test(path)) {
+      try {
+        const tree = await workspaceService.getWorkspaceFiles(
+          workspaceFileSessionId,
+        );
+        if (
+          restoreScope.current !== scope ||
+          !containerRef.current?.isConnected
+        )
+          return;
+        setWorkspaceRoot(tree);
+        const matches = findFilesNamed(tree, requestedName);
+        if (matches.length !== 1) {
+          setActiveSidebar("files");
+          setCompactSidebarOpen(true);
+          setError(
+            matches.length
+              ? `Several files are named ${requestedName}. Choose the intended file in Files.`
+              : `${requestedName} was not found in this workspace. Check Files or ask for the full result path.`,
+          );
+          return;
+        }
+        path = matches[0]!.path;
+      } catch (err: unknown) {
+        if (
+          restoreScope.current !== scope ||
+          !containerRef.current?.isConnected
+        )
+          return;
+        setError(
+          err instanceof Error
+            ? err.message
+            : `Could not locate ${requestedName}.`,
+        );
+        return;
+      }
+    }
 
     if (
       recoveryWorkflowEnabled &&
@@ -1607,6 +1758,7 @@ export function WorkspacePanel({
     }
 
     if (remainingTabs.length === 0) {
+      if (surfaceLayout.wideMode === "focus") exitSurfaceFocus();
       setIsInspectorOpen(false);
       setIsUnresponsive(false);
       setActiveDiffFile(null);
@@ -1976,9 +2128,28 @@ export function WorkspacePanel({
   ]);
 
   const creatingWorkflowRef = useRef(false);
+  const [workflowPickerScope, setWorkflowPickerScope] = useState<string | null>(
+    null,
+  );
+  const currentWorkflowPickerScope = `${_workspaceId}\u0000${workspaceFileSessionId}`;
+  useEffect(() => {
+    setWorkflowPickerScope(null);
+  }, [currentWorkflowPickerScope]);
+  const listWorkspaceWorkflows = useCallback(async () => {
+    if (!_workspaceId || !workspaceFileSessionId)
+      throw new Error("Open a workspace before choosing a workflow.");
+    const files = await workspaceService.getWorkspaceWorkflowInputFiles(
+      workspaceFileSessionId,
+      _workspaceId,
+    );
+    return files
+      .filter((file) => isWorkspaceWorkflowTab(file.path))
+      .sort((left, right) => left.name.localeCompare(right.name));
+  }, [_workspaceId, workspaceFileSessionId]);
   const createWorkspaceWorkflow = useCallback(async () => {
     if (!_workspaceId || !workspaceFileSessionId || creatingWorkflowRef.current)
-      return;
+      throw new Error("A workspace workflow cannot be created right now.");
+    const scope = restoreScope.current;
     creatingWorkflowRef.current = true;
     try {
       const path = `workflows/untitled-workflow-${crypto.randomUUID().slice(0, 12)}.workflow.wflow`;
@@ -1989,11 +2160,13 @@ export function WorkspacePanel({
       );
       if (created.workspace_id !== _workspaceId || created.path !== path)
         throw new Error("The new workflow belongs to a different workspace.");
+      if (restoreScope.current !== scope || !containerRef.current?.isConnected)
+        return;
       setError(null);
       selectWorkspaceWorkflow(path);
       setIsSidebarCollapsed(true);
     } catch (error) {
-      setError(
+      throw new Error(
         error instanceof Error
           ? `Could not create a workflow: ${error.message}`
           : "Could not create a workflow. Existing files were kept.",
@@ -2386,7 +2559,7 @@ export function WorkspacePanel({
           onSelectSidebar={handleActivityBarClick}
           onOpenWorkflows={() => {
             setCompactSidebarOpen(false);
-            void createWorkspaceWorkflow();
+            setWorkflowPickerScope(currentWorkflowPickerScope);
           }}
           workflowsEnabled={recoveryWorkflowEnabled}
         />
@@ -2419,6 +2592,14 @@ export function WorkspacePanel({
             >
               MCP Tools Selector
             </div>
+            {toolSetupRequest &&
+              toolSetupRequest.workspaceId === _workspaceId &&
+              toolSetupRequest.sessionId === workspaceFileSessionId && (
+                <WorkspaceToolSetupHelp
+                  request={toolSetupRequest}
+                  onReturn={returnToToolSetup}
+                />
+              )}
             <div
               style={{ flex: 1, overflowY: "auto", padding: "var(--space-md)" }}
             >
@@ -3428,6 +3609,7 @@ export function WorkspacePanel({
                   onUnsavedChange={setTabDirty}
                   onSavingChange={setTabSaving}
                   onOpenProcess={openProcessView}
+                  onConfigureTools={openToolSetup}
                   createIfMissing={tab.createIfMissing}
                   navigation={
                     processNavigation?.resolution.process.workspace_id ===
@@ -3677,6 +3859,15 @@ export function WorkspacePanel({
                 Click any file in the left sidebar explorer to open a viewer or
                 code editor tab.
               </div>
+              {surfaceLayout.wideMode === "focus" && (
+                <button
+                  type="button"
+                  className="recovery-button recovery-button--secondary"
+                  onClick={exitSurfaceFocus}
+                >
+                  Restore workspace layout
+                </button>
+              )}
             </div>
           ) : null}
         </div>
@@ -4102,6 +4293,16 @@ export function WorkspacePanel({
             ◀
           </button>
         )}
+      {workflowPickerScope === currentWorkflowPickerScope && (
+        <WorkspaceWorkflowDialog
+          key={currentWorkflowPickerScope}
+          workspaceName={workspaceInfo?.workspace_name || "Workspace"}
+          loadWorkflows={listWorkspaceWorkflows}
+          onOpen={selectWorkspaceWorkflow}
+          onNew={createWorkspaceWorkflow}
+          onClose={() => setWorkflowPickerScope(null)}
+        />
+      )}
       {pendingWorkflowTab && (
         <NativeConfirmDialog
           title="Unsaved workflow changes"

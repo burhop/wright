@@ -10,6 +10,12 @@ specs/081-engineering-workflow-templates/dataset-campaign/modelica-selected-kit.
 specs/081-engineering-workflow-templates/content-validation/acceptance-cases.md -text -whitespace
 # Source packs retain the exact mixed LF/CRLF bytes in the qualified inventory.
 tests/datasets/engineering-workflows/scenarios/** -text -whitespace
+# The first-contact starter copies the original source-pack bytes and hashes.
+packages/workspace_service/src/workspace_service/engineering_workflow_templates/inputs/replacement-drawer-handle/** -text -whitespace
+packages/workspace_service/src/workspace_service/engineering_workflow_templates/previews/replacement-drawer-handle.svg -text -whitespace
+# Retain raw local test evidence, including pytest's captured failure whitespace.
+artifacts/first-contact/084/*.xml -text -whitespace
+artifacts/first-contact/084/**/error-context.md -text -whitespace
 examples/process-interfaces/sheet-metal-wall-dock/shelf-depth-revision-r5.md text eol=lf
 
 # Read-only native regression fixtures retain the original captured bytes.
@@ -134,3 +140,83 @@ artifacts/process-interfaces/083/20261003-run-path-authority-fields-verified/** 
 artifacts/process-interfaces/083/20261003-validator-run-identity-verified/** -text -whitespace
 artifacts/process-interfaces/083/20261003-heat-repeat-and-saved-ui-verified/** -text -whitespace
 artifacts/process-interfaces/083/20261003-run-receipts-and-printed-paths-verified/** -text -whitespace
+tests/datasets/process-validation/orca-2.4.2-standard3mf/** -text -whitespace
+# Qualification manifests bind captured bytes across checkout platforms.
+artifacts/first-contact/084/provider-readiness/** -text
+artifacts/first-contact/084/provider-readiness/**/*.log -text -whitespace
+artifacts/first-contact/084/provider-readiness/*.log -text -whitespace
+# Exact provider qualification outputs retain native profile/G-code whitespace.
+artifacts/first-contact/084/provider-readiness/mcp-viability-001-output/** -text -whitespace
+artifacts/first-contact/084/provider-readiness/standard3mf-001-output/** -text -whitespace
+artifacts/first-contact/084/provider-readiness/viability-003-output/** -text -whitespace
+artifacts/first-contact/084/provider-readiness/orca-tree-support-contract.txt -text -whitespace
+
+# Raw native diagnostic logs retain their captured whitespace.
+artifacts/first-contact/084/provider-readiness/freecad-native-001/native-log.txt -text -whitespace
+
+# Exact native CAD outputs include exporter whitespace; preserve captured bytes.
+artifacts/first-contact/084/provider-readiness/freecad-*/outputs/** -text -whitespace
+artifacts/first-contact/084/native-candidate-00[456]-build/frontend-build.log -text -whitespace
+# The retained raw diff binds the exact homogeneous-C1 proposal change.
+artifacts/first-contact/084/provider-readiness/freecad-exact-grip-qualification-003/retained-proposal-delta.patch -text -whitespace
+# Raw native Blender exception logs contain timestamp-only blank lines.
+artifacts/first-contact/084/provider-readiness/blender-canonical-repair-001/native-log-since-call.txt -text -whitespace
+
+# Captured accepted-source profiles retain their original CRLF bytes.
+artifacts/first-contact/084/native-handle-solid-001/authoring/filament-profile.json -text -whitespace
+artifacts/first-contact/084/native-handle-solid-001/authoring/machine-profile.json -text -whitespace
+artifacts/first-contact/084/native-handle-visible-basis-016/authoring/filament-profile.json -text -whitespace
+artifacts/first-contact/084/native-handle-visible-basis-016/authoring/machine-profile.json -text -whitespace
+
+# New exact run/capture manifests bind original captured bytes.
+artifacts/first-contact/084/native-handle-visible-basis-016/** -text
+artifacts/first-contact/084/native-handle-visible-basis-016/first-slice-failure/** -text -whitespace
+artifacts/first-contact/084/native-handle-geometry-017/** -text
+artifacts/first-contact/084/native-handle-geometry-018/** -text
+
+# Exact source8 setup inputs retain original CRLF profile bytes.
+artifacts/first-contact/084/native-handle-final-019/** -text
+artifacts/first-contact/084/native-handle-final-019/authoring/filament-profile.json -text -whitespace
+artifacts/first-contact/084/native-handle-final-019/authoring/machine-profile.json -text -whitespace
+# Exact native output profiles/code/log bytes are evidence, not edited source.
+artifacts/first-contact/084/native-handle-final-019/run-evidence/** -text -whitespace
+# Retained Vitest output includes its original terminal blank line.
+artifacts/first-contact/084/provider-readiness/file-locator-fix-001/frontend.log -text -whitespace
+# Exact correction source, profiles and browser proof retain captured bytes.
+artifacts/first-contact/084/native-handle-correction-020/** -text
+artifacts/first-contact/084/native-handle-correction-020/authoring/filament-profile.json -text -whitespace
+artifacts/first-contact/084/native-handle-correction-020/authoring/machine-profile.json -text -whitespace
+artifacts/first-contact/084/native-handle-correction-020/**/source8-to-proposed-source9.diff -text -whitespace
+artifacts/first-contact/084/native-handle-walkthrough-021/** -text
+artifacts/first-contact/084/recorded-handle-outcome-022/** -text
+artifacts/first-contact/084/recorded-handle-outcome-022/recorded-result.promoted.patch -text -whitespace
+artifacts/first-contact/084/recorded-handle-outcome-022/owning-tests-001.xml -text -whitespace
+# Preserve the actual completed-evidence navigation regression and its failed attempts.
+artifacts/first-contact/084/provider-readiness/assessment-link-fix-001/** -text
+artifacts/first-contact/084/provider-readiness/assessment-link-fix-001/*.xml -text -whitespace
+# Installed capture/build manifests bind the original bytes, including failed attempts.
+artifacts/first-contact/084/native-candidate-01[234]-build/** -text
+artifacts/first-contact/084/native-candidate-01[234]-build/*.log -text -whitespace
+artifacts/first-contact/084/native-final-workspace-023/** -text
+artifacts/first-contact/084/native-final-workspace-023/setup*/capture-001.mjs -text -whitespace
+artifacts/first-contact/084/native-assessment-navigation-02[45]/** -text
+artifacts/first-contact/084/provider-readiness/assessment-serialization-fix-002/** -text
+artifacts/first-contact/084/provider-readiness/assessment-serialization-fix-002/*.xml -text -whitespace
+artifacts/first-contact/084/final-guide-review-026/** -text
+artifacts/first-contact/084/native-assessment-readable-027/** -text
+artifacts/first-contact/084/dependency-security-003/** -text
+artifacts/first-contact/084/dependency-security-003/*.log -text -whitespace
+artifacts/first-contact/084/final-acceptance-review-028/** -text
+artifacts/first-contact/084/native-candidate-015-build/** -text
+artifacts/first-contact/084/native-candidate-015-build/*.log -text -whitespace
+artifacts/first-contact/084/native-security-workspace-029/** -text
+artifacts/first-contact/084/native-security-workspace-029/setup/capture-001.mjs -text -whitespace
+artifacts/first-contact/084/native-security-assessment-030/** -text
+artifacts/first-contact/084/native15-acceptance-review-031/** -text
+artifacts/first-contact/084/native-candidate-016-build/** -text
+artifacts/first-contact/084/native-candidate-016-build/**/*.log -text -whitespace
+artifacts/first-contact/084/native-candidate-016-build/*.log -text -whitespace
+artifacts/first-contact/084/local-qualification-032/** -text -whitespace
+artifacts/first-contact/084/runnable-browser-033/** -text -whitespace
+artifacts/first-contact/084/final-preservation-034/** -text -whitespace
+artifacts/first-contact/084/final-document-review-035/** -text -whitespace

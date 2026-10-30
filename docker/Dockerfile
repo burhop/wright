@@ -58,9 +58,11 @@ ENV HERMES_HOME=/home/agent/.hermes
 RUN apt-get update && apt-get install -y --no-install-recommends \
     bsdutils \
     ca-certificates \
-    curl \
+    curl=8.14.1-2+deb13u7 \
     git \
     libblkid1 \
+    libcurl4t64=8.14.1-2+deb13u7 \
+    libexpat1=2.9.0-1~deb13u1 \
     liblastlog2-2 \
     libmount1 \
     libpcre2-8-0=10.46-1~deb13u3 \
@@ -79,17 +81,21 @@ COPY --from=ghcr.io/astral-sh/uv:0.9.26@sha256:9a23023be68b2ed09750ae636228e903a
 RUN uv pip install --system "msgpack==1.2.1" "setuptools==84.0.0" && \
     rm -rf /root/.cache/uv
 
-# pip 26.2.1 vendors vulnerable msgpack/urllib3 and a deprecated setuptools
+# pip 26.2.1 vendors vulnerable certifi/msgpack/urllib3 and a deprecated setuptools
 # pkg_resources compatibility module. The supported pip CLI does not use that
 # module, so replace the affected libraries, remove it, and update its inventory together.
+# Certifi resource anchors must use pip's vendored namespace after relocation.
 RUN set -eux; \
     pip_vendor=/usr/local/lib/python3.13/site-packages/pip/_vendor; \
     mkdir -p /tmp/pip-security-overrides; \
-    uv pip install --target /tmp/pip-security-overrides "msgpack==1.2.1" "urllib3==2.8.0"; \
-    rm -rf "${pip_vendor}/msgpack" "${pip_vendor}/urllib3" "${pip_vendor}/pkg_resources"; \
+    uv pip install --target /tmp/pip-security-overrides "certifi==2026.10.19" "msgpack==1.2.1" "urllib3==2.8.0"; \
+    rm -rf "${pip_vendor}/certifi" "${pip_vendor}/msgpack" "${pip_vendor}/urllib3" "${pip_vendor}/pkg_resources"; \
+    cp -a /tmp/pip-security-overrides/certifi "${pip_vendor}/certifi"; \
+    python -c "from pathlib import Path; p=Path('/usr/local/lib/python3.13/site-packages/pip/_vendor/certifi/core.py'); s=p.read_text(); old=chr(34)+'certifi'+chr(34); assert s.count(old)==4; p.write_text(s.replace(old, chr(34)+'pip._vendor.certifi'+chr(34)))"; \
     cp -a /tmp/pip-security-overrides/msgpack "${pip_vendor}/msgpack"; \
     cp -a /tmp/pip-security-overrides/urllib3 "${pip_vendor}/urllib3"; \
     sed -i \
+      -e "s/certifi==2026.6.17/certifi==2026.10.19/" \
       -e "s/msgpack==1.1.2/msgpack==1.2.1/" \
       -e "s/urllib3==2.7.0/urllib3==2.8.0/" \
       -e "s/setuptools==70.3.0/setuptools==78.1.1/" \
@@ -99,11 +105,13 @@ RUN set -eux; \
       -e "s/urllib3@2.7.0/urllib3@2.8.0/g" \
       -e "s/setuptools@70.3.0/setuptools@78.1.1/g" \
       "${pip_vendor}/bom.cdx.json"; \
+    python -c "import json; from pathlib import Path; p=Path('/usr/local/lib/python3.13/site-packages/pip/_vendor/bom.cdx.json'); d=json.loads(p.read_text()); old='pkg:pypi/certifi@2026.6.17'; new='pkg:pypi/certifi@2026.10.19'; matches=[c for c in d['components'] if c.get('name')=='certifi']; assert len(matches)==1 and matches[0]['version']=='2026.6.17'; matches[0].update(version='2026.10.19', purl=new, **{'bom-ref':new}); p.write_text(json.dumps(d, indent=2).replace(old, new)+'\n')"; \
+    python -c "from pathlib import Path; from pip._vendor import certifi; root=Path('/usr/local/lib/python3.13/site-packages/pip/_vendor'); assert certifi.__version__=='2026.10.19'; assert Path(certifi.where()).read_bytes()==Path('/tmp/pip-security-overrides/certifi/cacert.pem').read_bytes(); assert 'certifi==2026.10.19' in (root/'vendor.txt').read_text(); assert '2026.6.17' not in (root/'bom.cdx.json').read_text()"; \
     rm -rf /tmp/pip-security-overrides /root/.cache/uv
 
 RUN uv venv /opt/hermes/.venv --python /usr/local/bin/python3.13 && \
     uv pip install --python /opt/hermes/.venv/bin/python \
-        hermes-agent==0.19.0 aiohttp==3.14.3 && \
+        hermes-agent==0.19.0 aiohttp==3.14.4 && \
     mkdir -p /opt/hermes/bin && \
     ln -s /opt/hermes/.venv/bin/hermes /opt/hermes/bin/hermes && \
     rm -rf /root/.cache/uv
@@ -143,9 +151,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     bsdutils \
     bzip2 \
     ca-certificates \
-    curl \
+    curl=8.14.1-2+deb13u7 \
     gzip \
     libblkid1 \
+    libcurl4t64=8.14.1-2+deb13u7 \
+    libexpat1=2.9.0-1~deb13u1 \
     liblastlog2-2 \
     libmount1 \
     libpcre2-8-0=10.46-1~deb13u3 \
@@ -200,14 +210,15 @@ RUN set -eux; \
     rm -f /tmp/micromamba.tar.bz2
 
 # Keep the inherited Hermes runtime patched for public-alpha image scans.
-# Hermes 0.19.0 exactly pins older cryptography, Pillow and PyJWT releases. Wright
+# Hermes 0.19.0 exactly pins older Certifi, cryptography, Pillow and PyJWT releases. Wright
 # installs the security-fixed releases below and the exact-image smoke gate
-# runs `uv pip check`, accepting only those three version-specific metadata
+# runs `uv pip check`, accepting only those four version-specific metadata
 # conflicts through scripts/reconcile_hermes_pip_check.py. Trivy remains
 # independently blocking for all non-exempt fixable High/Critical findings.
 RUN uv pip install --python /opt/hermes/.venv/bin/python \
+        "certifi==2026.10.19" \
         "cryptography==50.0.0" \
-        "pillow==12.3.0" \
+        "pillow==13.0.0" \
         "pyasn1==0.6.4" \
         "python-multipart==0.0.32" \
         "starlette==1.3.1" \
@@ -246,6 +257,34 @@ COPY --chown=agent:agent apps/api/ apps/api/
 COPY --chown=agent:agent hermes-plugin-wright/ hermes-plugin-wright/
 COPY --chown=agent:agent README.md README.md
 COPY --chown=agent:agent src/ src/
+# Canonical installed setup resources are force-included by both Python package
+# builds. Copy their closed source inventory before installing the workspace.
+COPY --chown=agent:agent examples/process-interfaces/definition.py examples/process-interfaces/definition.py
+COPY --chown=agent:agent \
+    examples/process-interfaces/printed-replacement-part/prepare.py \
+    examples/process-interfaces/printed-replacement-part/provider_inputs.py \
+    examples/process-interfaces/printed-replacement-part/retained_source.py \
+    examples/process-interfaces/printed-replacement-part/repair_gate.py \
+    examples/process-interfaces/printed-replacement-part/native_inspection.py \
+    examples/process-interfaces/printed-replacement-part/orientation_stages.py \
+    examples/process-interfaces/printed-replacement-part/scenario_inputs.py \
+    examples/process-interfaces/printed-replacement-part/orca_binding.py \
+    examples/process-interfaces/printed-replacement-part/orca_stages.py \
+    examples/process-interfaces/printed-replacement-part/run_disclosure.py \
+    examples/process-interfaces/printed-replacement-part/orca-preparation.py \
+    examples/process-interfaces/printed-replacement-part/run-disclosure-template.md \
+    examples/process-interfaces/printed-replacement-part/
+COPY --chown=agent:agent \
+    examples/process-interfaces/printed-replacement-part/scenarios/printed-replacement-part-02.json \
+    examples/process-interfaces/printed-replacement-part/scenarios/printed-replacement-part-02.instructions.json \
+    examples/process-interfaces/printed-replacement-part/scenarios/printed-replacement-part-02.orca-instructions.json \
+    examples/process-interfaces/printed-replacement-part/scenarios/
+COPY --chown=agent:agent \
+    examples/process-interfaces/printed-replacement-part/handle-geometry/basis.json \
+    examples/process-interfaces/printed-replacement-part/handle-geometry/construction.json \
+    examples/process-interfaces/printed-replacement-part/handle-geometry/repair.json \
+    examples/process-interfaces/printed-replacement-part/handle-geometry/setup-contract.json \
+    examples/process-interfaces/printed-replacement-part/handle-geometry/
 COPY --chown=agent:agent integrations/rivet/editor/ integrations/rivet/editor/
 COPY --chown=agent:agent integrations/rivet/runner/ integrations/rivet/runner/
 

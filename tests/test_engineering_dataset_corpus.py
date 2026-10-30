@@ -1,4 +1,4 @@
-"""The committed corpus must contain 10 × 3 complete human input packs."""
+"""The committed campaign preserves 10 × 3 complete human input packs."""
 
 import json
 import re
@@ -13,17 +13,19 @@ MANIFESTS = sorted((DEFAULT_INPUTS / "scenarios").glob("*/*/scenario.json"))
 CONFIG = json.loads((DEFAULT_INPUTS / "campaign.json").read_text())
 
 
-def test_corpus_has_exact_three_scenarios_for_each_current_template():
+def test_corpus_has_exact_three_scenarios_for_each_campaign_template():
     import yaml
 
     catalog = yaml.safe_load((TEMPLATES.parent / "catalog.yaml").read_text())
     catalog_ids = {entry["id"] for entry in catalog["templates"]}
-    assert len(catalog_ids) == 10
-    assert set(CONFIG["template_ids"]) == catalog_ids
+    campaign_ids = set(CONFIG["template_ids"])
+    assert len(campaign_ids) == len(CONFIG["template_ids"]) == 10
+    # New catalog starters do not regenerate this accepted thirty-case campaign.
+    assert campaign_ids <= catalog_ids
     data = [json.loads(path.read_text(encoding="utf-8-sig")) for path in MANIFESTS]
     assert len(data) == CONFIG["target"] == 30
     assert len({row["scenario_id"] for row in data}) == 30
-    assert Counter(row["template_id"] for row in data) == {key: 3 for key in catalog_ids}
+    assert Counter(row["template_id"] for row in data) == {key: 3 for key in campaign_ids}
     assert CONFIG["content_validation_enabled"] is False
     assert CONFIG["approval_mode"] == "auto"
 

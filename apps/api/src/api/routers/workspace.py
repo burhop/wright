@@ -36,6 +36,12 @@ from agent_adapters.report_generation import (
 from agent_adapters.hermes_gateway import hermes_config_paths
 from core.tracing import traced
 from core.engineering_workflow_templates import EngineeringWorkflowTemplateError
+from workspace_service.handle_setup import (
+    PrintedHandleSetup,
+    SetupScope,
+    SetupProposalRequest,
+    SetupAcceptRequest,
+)
 from api.config import (
     DATABASE_PATH,
     api_mcp_autostart_enabled,
@@ -46,6 +52,7 @@ from api.config import (
     rivet_workflows_enabled,
 )
 from api.routers.agent import get_agent_engine
+from api.services.wright_gateway_sync import workspace_gateway_status
 from api.composition import surface_application, workspace_service
 from workspace_service import (
     WorkspaceConflictError,
@@ -1045,7 +1052,7 @@ async def read_workflow_source_readiness_endpoint(
     path: str = Query(..., min_length=1, max_length=256),
     service: WorkspaceService = Depends(get_workspace_service),
 ):
-    """Return the same template qualification state used by the run gate.
+    """Project saved-source compilation and lineage without preparing a run.
 
     A hand-authored workflow is deliberately reported as ``not_template``;
     the editor must not imply that an absent catalog provenance record is a
@@ -1055,12 +1062,24 @@ async def read_workflow_source_readiness_endpoint(
     scope = _workflow_source_scope(session_id, service)
     response.headers["Cache-Control"] = "no-store"
     try:
-        await service.workflow_sources.read(scope.workspace_dir, path)
+        document = await service.workflow_sources.read(scope.workspace_dir, path)
+        from workspace_service.workflow_source_execution import source_execution_diagnostic
+
+        diagnostic = await service.executor.run(
+            "workspace.workflow_sources.execution_diagnostic",
+            lambda: source_execution_diagnostic(document.source),
+            timeout_seconds=30.0,
+        )
+        source_status = {
+            "accepted_source_digest": document.storage_digest,
+            "definition_revision": document.definition_revision,
+            "execution_diagnostic": diagnostic,
+        }
         origin = await service.workflow_sources.read_template_origin(
             scope.workspace_dir, path
         )
         if origin is None:
-            return WorkflowSourceReadinessResponse(state="not_template")
+            return WorkflowSourceReadinessResponse(state="not_template", **source_status)
         template_id = origin.get("template_id")
         template_version = origin.get("template_version")
         source_digest = origin.get("template_source_digest")
@@ -1069,16 +1088,41 @@ async def read_workflow_source_readiness_endpoint(
             return WorkflowSourceReadinessResponse(
                 state="unavailable",
                 message="The saved template provenance is incomplete.",
+                **source_status,
+            )
+        from workspace_service.workflow_run_preparation import (
+            has_revised_template_source,
+        )
+
+        provenance = {
+            "template_id": template_id,
+            "template_version": template_version,
+            "source_digest": source_digest if isinstance(source_digest, str) else None,
+            "layout_digest": layout_digest if isinstance(layout_digest, str) else None,
+            "starter_unchanged": (
+                origin["instantiated_source_digest"] == document.storage_digest
+                if isinstance(origin.get("instantiated_source_digest"), str)
+                else None
+            ),
+            **source_status,
+        }
+        if has_revised_template_source(origin, document):
+            return WorkflowSourceReadinessResponse(
+                state="revised",
+                **provenance,
+                message=(
+                    "This accepted revision has changed from the supplied starter. "
+                    "Check its current inputs, tools, model and authority in the working "
+                    "view before starting. The original template's qualification does "
+                    "not qualify this revision."
+                ),
             )
         readiness = service.engineering_workflow_templates.readiness(
             template_id, template_version
         )
         return WorkflowSourceReadinessResponse(
             state=readiness["state"],
-            template_id=template_id,
-            template_version=template_version,
-            source_digest=source_digest if isinstance(source_digest, str) else None,
-            layout_digest=layout_digest if isinstance(layout_digest, str) else None,
+            **provenance,
             definition_valid=readiness.get("definition_valid"),
             configured=readiness.get("configured"),
             qualified=readiness.get("qualified"),
@@ -1758,6 +1802,88 @@ async def run_workflow_source_endpoint(
         raise HTTPException(status_code=status_code, detail=info) from error
     except (OSError, ValueError) as error:
         raise HTTPException(status_code=422, detail=detail(error)) from error
+
+
+async def _handle_setup_call(operation, body, request, response, service):
+    from workspace_service.workflow_mcp_execution import WorkflowMcpRuntime
+
+    scope = _workflow_source_scope(body.session_id, service)
+    runtime = WorkflowMcpRuntime(
+        request.app.state.gateway_service,
+        workspace_id=scope.workspace_id,
+        session_id=body.session_id,
+    )
+    response.headers["Cache-Control"] = "no-store"
+    try:
+        setup = PrintedHandleSetup(service.workflow_sources, service.executor)
+        value = await getattr(setup, operation)(
+            scope.workspace_id, scope.workspace_dir, body, runtime.available()
+        )
+        return (
+            _workflow_source_response(scope.workspace_id, value)
+            if operation == "accept"
+            else value
+        )
+    except WorkflowSourceStorageError as error:
+        if error.code == "handle_setup_conflict":
+            raise HTTPException(
+                409, detail={"code": error.code, "message": str(error)}
+            ) from error
+        raise _workflow_source_http_error(error) from error
+    except WorkflowSourceExecutionError as error:
+        raise HTTPException(
+            422,
+            detail={
+                "code": error.code,
+                "message": str(error),
+                "correction": error.correction,
+            },
+        ) from error
+    except (ValueError, OSError) as error:
+        raise HTTPException(
+            422, detail={"code": "handle_setup_invalid", "message": str(error)}
+        ) from error
+    finally:
+        await runtime.close()
+
+
+@router.post("/workflow-source-templates/replacement-drawer-handle/setup/options")
+@traced("workspace.handle_setup.options")
+async def handle_setup_options(
+    body: SetupScope,
+    request: Request,
+    response: Response,
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    return await _handle_setup_call("options", body, request, response, service)
+
+
+@router.post(
+    "/workflow-source-templates/replacement-drawer-handle/setup/proposals",
+    status_code=201,
+)
+@traced("workspace.handle_setup.proposal")
+async def handle_setup_proposal(
+    body: SetupProposalRequest,
+    request: Request,
+    response: Response,
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    return await _handle_setup_call("propose", body, request, response, service)
+
+
+@router.post(
+    "/workflow-source-templates/replacement-drawer-handle/setup/accept",
+    response_model=WorkflowSourceResponse,
+)
+@traced("workspace.handle_setup.accept")
+async def handle_setup_accept(
+    body: SetupAcceptRequest,
+    request: Request,
+    response: Response,
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    return await _handle_setup_call("accept", body, request, response, service)
 
 
 @router.get(
@@ -4093,6 +4219,9 @@ async def toggle_workspace_tool_endpoint(
         state = service.set_workspace_tool_enabled(
             body.session_id, body.server_id, body.is_enabled
         )
+        sync_manager = getattr(request.app.state, "agent_sync_manager", None)
+        if sync_manager is not None:
+            sync_manager.sync_workspace_tools(state.session_id)
     except WorkspaceServiceError as error:
         raise _workspace_service_http_exception(error)
 
@@ -4117,11 +4246,47 @@ async def _workspace_mcp_status_response(
         mcp_engine=mcp_engine,
         config_paths=hermes_config_paths(),
     )
+    if request is not None and result["status"] == "configured":
+        sync_manager = getattr(request.app.state, "agent_sync_manager", None)
+        advice = workspace_gateway_status(
+            workspace,
+            service.db_path,
+            sync_manager,
+            hermes_config_paths(),
+        )
+        if advice is not None and advice["status"] == "refresh_required":
+            try:
+                engine = get_agent_engine(request)
+                runtime_identity = getattr(engine, "gateway_runtime_identity", None)
+                if not callable(runtime_identity):
+                    raise RuntimeError("Gateway runtime observation is unavailable")
+                observed = await sync_manager.observe_gateway_before_refresh(
+                    str(workspace_id), runtime_identity
+                )
+                if not observed:
+                    advice = {
+                        "status": "warning",
+                        "message": "Connection status changed. Reopen this workspace before restarting Hermes.",
+                    }
+            except Exception as error:
+                logger.warning(
+                    "workspace_gateway_observation_unavailable",
+                    workspace_id=workspace_id,
+                    error_type=type(error).__name__,
+                )
+                advice = {
+                    "status": "warning",
+                    "message": "Cannot check the Hermes connection. Check its gateway and Model Setup before reconnecting tools.",
+                }
+        if advice is not None:
+            result = {**result, **advice}
     return WorkspaceMcpStatusResponse(
         workspace_id=workspace_id,
         status=result["status"],
         message=result["message"],
         running_mcps=[RunningMcpInfo(**item) for item in result["running_mcps"]],
+        restart_command=result.get("restart_command"),
+        restart_command_shell=result.get("restart_command_shell"),
     )
 
 
@@ -4309,12 +4474,16 @@ async def get_workspace_tools_by_id_endpoint(
 async def toggle_workspace_tool_by_id_endpoint(
     workspace_id: str,
     body: WorkspaceToolToggleByIdRequest,
+    request: Request,
     service: WorkspaceService = Depends(get_workspace_service),
 ):
     try:
         state = service.set_workspace_tool_enabled_by_workspace(
             workspace_id, body.server_id, body.is_enabled
         )
+        sync_manager = getattr(request.app.state, "agent_sync_manager", None)
+        if sync_manager is not None:
+            sync_manager.sync_workspace_tools(state.session_id)
     except WorkspaceServiceError as error:
         raise _workspace_service_http_exception(error)
     return WorkspaceToolToggleByIdResponse(

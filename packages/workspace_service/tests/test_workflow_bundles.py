@@ -81,6 +81,58 @@ def test_two_workspace_import_preserves_exact_instructions_and_no_authority(case
     assert not inspect(case, exported["bundle"]).can_import
 
 
+def test_handle_starter_bundle_preserves_all_supplied_dependencies_without_run_authority(
+    case,
+):
+    from agent_adapters.workflow_instructions import load_default_workflow_instructions
+    from workspace_service.engineering_workflow_templates import (
+        EngineeringWorkflowTemplateCatalog,
+    )
+
+    catalog = EngineeringWorkflowTemplateCatalog()
+    template = catalog.get("replacement-drawer-handle").template
+    instance = catalog.fresh_instance(
+        template.template_id,
+        version=template.version,
+        expected_source_digest=template.source_digest,
+    )
+    reference_paths = []
+    for name, content in instance.seed_files:
+        relative = f"inputs/{instance.workflow_id.removeprefix('workflow.')}/{name}"
+        target = case.origin / relative
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_bytes(content)
+        reference_paths.append(relative)
+    text = materialize_new_workflow_instructions(
+        instance.source, load_default_workflow_instructions()
+    )
+    exported = export(
+        case, text, mode="bundle", selected_reference_paths=reference_paths
+    )
+    dependencies = exported["bundle"]["dependencies"]
+    assert {d["identity"] for d in dependencies if d["category"] == "reference"} == set(
+        reference_paths
+    )
+    assert all(
+        d["disposition"] == "embedded"
+        for d in dependencies
+        if d["category"] == "reference"
+    )
+    report = inspect(case, exported["bundle"])
+    assert report.can_import and not report.can_run
+    asyncio.run(
+        case.service.apply(
+            str(case.target),
+            exported["bundle"],
+            "workflows/imported.workflow.wflow",
+            exported["bundle_digest"],
+        )
+    )
+    for path in reference_paths:
+        assert (case.target / path).read_bytes() == (case.origin / path).read_bytes()
+    assert not (case.target / ".wright" / "workflow-runs").exists()
+
+
 def test_action_intent_snapshot_and_manifest_contract_survive_transfer_without_default_lookup(
     case,
 ):

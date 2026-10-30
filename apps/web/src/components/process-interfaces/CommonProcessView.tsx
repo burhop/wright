@@ -8,6 +8,7 @@ import {
   type InputSnapshot,
   type InteractionSnapshot,
   type NavigationTarget,
+  type OutputRef,
   type ProcessClient,
   type Readiness,
   type Reason,
@@ -42,6 +43,7 @@ import {
   type ProcessViewRecoveryStore,
   type ProcessViewMutation,
 } from "../../services/process-view-recovery";
+import { SupportDiagnosticsPanel } from "../support/SupportDiagnosticsPanel";
 
 export interface CommonProcessViewProps {
   readonly client: ProcessClient;
@@ -59,11 +61,27 @@ export interface CommonProcessViewProps {
   readonly canNavigate?: boolean;
   readonly onRunAttached?: (runId: string, receipt?: StartReceipt) => void;
   readonly onPrepareAnother?: () => void;
+  readonly onOpenDefinition?: () => void;
   readonly navigation?: ProcessNavigationRequest;
 }
 
 const terminal = (state: InteractionSnapshot["state"]) =>
   ["completed", "failed", "cancelled"].includes(state);
+// Presentation only. The scoped reader still decides whether exact bytes have
+// a supported preview; file types never imply engineering acceptance.
+function resultDisplayOrder(output: OutputRef): number {
+  return Math.min(3, ...(output.representations ?? []).map((reference) => {
+    const extension = reference.artifact_ref.split(".").at(-1)?.toLowerCase();
+    if (["md", "markdown", "pdf", "csv", "txt"].includes(extension ?? "")) return 0;
+    if (["png", "jpg", "jpeg", "webp", "gif", "svg"].includes(extension ?? "")) return 1;
+    if (["stl", "step", "stp", "iges", "igs", "fcstd", "3mf", "obj", "glb", "gltf"].includes(extension ?? "")) return 2;
+    return 3;
+  }));
+}
+function primaryResult(output: OutputRef): boolean {
+  // Never bury linked assessments or outputs lacking a file representation.
+  return resultDisplayOrder(output) < 3 || !!output.assessments?.length || !output.representations?.length;
+}
 const clientIdentities = new WeakMap<ProcessClient, number>();
 let nextClientIdentity = 0;
 function clientIdentity(client: ProcessClient): number {
@@ -163,6 +181,7 @@ function CommonProcessController({
   canNavigate = false,
   onRunAttached,
   onPrepareAnother,
+  onOpenDefinition,
   navigation,
 }: CommonProcessViewProps) {
   const store = useMemo(
@@ -792,6 +811,10 @@ function CommonProcessController({
               .resultId === target.result_id
           : element.dataset.resultId === target.result_id),
     );
+    // Exact evidence navigation must also reveal a result in a collapsed group.
+    for (let parent = destination?.parentElement; parent; parent = parent.parentElement) {
+      if (parent instanceof HTMLDetailsElement) parent.open = true;
+    }
     destination?.focus();
     destination?.scrollIntoView?.({ block: "nearest" });
     if (
@@ -1137,6 +1160,12 @@ function CommonProcessController({
     </div>
   );
 
+  const currentOutputs = (snapshot?.outputs ?? [])
+    .filter((output) => output.role !== "previous_attempt")
+    .sort((a, b) => resultDisplayOrder(a) - resultDisplayOrder(b));
+  const primaryOutputs = currentOutputs.filter(primaryResult);
+  const technicalOutputs = currentOutputs.filter((output) => !primaryResult(output));
+
   return (
     <ProcessUI theme={theme} className="common-process-view">
       <div data-testid="common-process-view" ref={workingRoot}>
@@ -1181,6 +1210,15 @@ function CommonProcessController({
             onNavigate={navigate}
           />
         )}
+        {onOpenDefinition &&
+          [reason, navigationReason].some((item) => item?.code === "SOURCE_CHANGED") && (
+            <div className="wp-row">
+              <button type="button" className="wp-button" onClick={onOpenDefinition}>
+                Open workflow editor
+              </button>
+              <p>Reload the saved workflow there, then prepare its current version. Existing runs and reviews stay with their original version.</p>
+            </div>
+          )}
         {busy === "start" && (
           <p role="status">Sending the prepared run to Wright…</p>
         )}
@@ -1312,8 +1350,9 @@ function CommonProcessController({
                 />
                 {activeRun && !following && !terminal(snapshot.state) && (
                   <p className="wp-muted">
-                    Live updates are not attached. Refresh to reconcile the
-                    saved run.
+                    {snapshot.state === "waiting_human"
+                      ? "This saved run is waiting for a review or response. Live updates are not attached; refresh after the reviewer responds to see the next permitted action."
+                      : "Live updates are not attached. Refresh to reconcile the saved run."}
                   </p>
                 )}
                 {activeRun && (
@@ -1330,6 +1369,14 @@ function CommonProcessController({
                       <summary>Run identity</summary>
                       <code>{activeRun}</code>
                     </details>
+                    <details>
+                      <summary>Diagnose this run</summary>
+                      <SupportDiagnosticsPanel
+                        workspaceId={client.process.workspace_id}
+                        sourceRunId={activeRun}
+                        onNavigate={navigate}
+                      />
+                    </details>
                   </>
                 )}
                 {(snapshot.actions ?? [])
@@ -1343,7 +1390,8 @@ function CommonProcessController({
                       compactReasons={
                         action.operation === "cancel" &&
                         (snapshot.state === "completed" ||
-                          snapshot.state === "cancelled")
+                          snapshot.state === "cancelled" ||
+                          snapshot.state === "waiting_human")
                       }
                       onAction={
                         action.operation === "cancel" && !busy
@@ -1379,11 +1427,8 @@ function CommonProcessController({
             {!needsResponse && interactionPanel}
             <Section
               title="Results and checks"
-              description="Inspect the exact output revisions and their linked assessments."
             >
-              {(snapshot.outputs ?? [])
-                .filter((output) => output.role !== "previous_attempt")
-                .map((output) => (
+              {primaryOutputs.map((output) => (
                   <ResultCard
                     key={output.result_id}
                     output={output}
@@ -1391,9 +1436,23 @@ function CommonProcessController({
                     onOpen={openRepresentation}
                   />
                 ))}
-              {!snapshot.outputs?.some(
-                (output) => output.role !== "previous_attempt",
-              ) && (
+              {!!technicalOutputs.length && (
+                <details className="wp-technical-results">
+                  <summary>Technical files ({technicalOutputs.length})</summary>
+                  {technicalOutputs.map((output) => (
+                    <ResultCard
+                      key={output.result_id}
+                      output={output}
+                      onNavigate={navigate}
+                      onOpen={openRepresentation}
+                    />
+                  ))}
+                </details>
+              )}
+              {!primaryOutputs.length && !!technicalOutputs.length && (
+                <p className="wp-muted">Only technical files are available on this page. Open them above to inspect the saved data.</p>
+              )}
+              {!currentOutputs.length && (
                 <p className="wp-muted">
                   No outputs are recorded on this page yet.
                 </p>

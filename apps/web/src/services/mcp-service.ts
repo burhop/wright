@@ -789,6 +789,13 @@ export class McpService {
     );
   }
 
+  async readDeviceSignIn(serverId: string): Promise<{
+    presentation: string;
+    device: { verification_uri: string; verification_uri_complete?: string | null; user_code: string; expires_in: number } | null;
+  }> {
+    return this.catalogRequest(`/api/mcp/servers/${encodeURIComponent(serverId)}/signin`);
+  }
+
   async runCapabilityValidation(
     serverId: string,
   ): Promise<CapabilityValidationEvidence> {

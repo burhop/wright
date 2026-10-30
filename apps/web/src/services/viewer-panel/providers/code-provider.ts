@@ -92,6 +92,7 @@ export class CodeProvider implements ViewerProvider<CodeDocument> {
   ): Promise<void> {
     const container = panel.container;
     container.innerHTML = "";
+    const isPlainText = document.uri.toLowerCase().endsWith(".txt");
 
     const editorWrapper = window.document.createElement("div");
     editorWrapper.style.display = "flex";
@@ -120,6 +121,18 @@ export class CodeProvider implements ViewerProvider<CodeDocument> {
     controls.style.display = "flex";
     controls.style.alignItems = "center";
     controls.style.gap = "var(--space-md, 12px)";
+
+    const wrapLabel = window.document.createElement("label");
+    const wrapInput = window.document.createElement("input");
+    if (isPlainText) {
+      wrapLabel.style.display = "inline-flex";
+      wrapLabel.style.alignItems = "center";
+      wrapLabel.style.gap = "4px";
+      wrapInput.type = "checkbox";
+      wrapInput.checked = true;
+      wrapLabel.append(wrapInput, "Wrap lines");
+      controls.appendChild(wrapLabel);
+    }
 
     const statusText = window.document.createElement("span");
     statusText.style.opacity = "0.6";
@@ -229,6 +242,21 @@ export class CodeProvider implements ViewerProvider<CodeDocument> {
     textarea.style.height = "100%";
     textarea.style.boxSizing = "border-box";
     textarea.setAttribute("data-testid", "code-editor-textarea");
+
+    if (isPlainText) {
+      // Prose uses the real textarea's layout rather than the code overlay.
+      // Visual wrapping must never insert line breaks into the saved content.
+      pre.style.display = "none";
+      textarea.style.color = "#d4d4d4";
+      const updateWrapping = () => {
+        textarea.wrap = wrapInput.checked ? "soft" : "off";
+        textarea.style.whiteSpace = wrapInput.checked ? "pre-wrap" : "pre";
+        textarea.style.overflowWrap = wrapInput.checked ? "anywhere" : "normal";
+        gutter.style.display = wrapInput.checked ? "none" : "block";
+      };
+      updateWrapping();
+      wrapInput.addEventListener("change", updateWrapping);
+    }
 
     textWrapper.appendChild(pre);
     textWrapper.appendChild(textarea);

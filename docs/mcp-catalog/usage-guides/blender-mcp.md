@@ -189,3 +189,165 @@ known native prerequisite in004, but viewport screenshot success is not yet
 requalified; native file rendering is independently proved. Do not infer a
 screenshot pass, OpenImageDenoise availability or a full catalog pass from this
 dependency installation.
+
+## Feature 084 ARM64 readiness probe, 23 October 2026
+
+**Verified scope:** fresh direct MCP initialization, discovery of 28 tools and
+`get_scene_info` against a newly owned factory scene. This does not requalify
+rendering, Printed02 handle geometry, a native Hermes/Wright gateway, or the
+clean Intel Linux catalog procedure. Evidence is
+[`artifacts/first-contact/084/provider-readiness/blender-direct-scene-001.json`](https://github.com/burhop/wright/blob/dev/artifacts/first-contact/084/provider-readiness/blender-direct-scene-001.json).
+
+The cached ARM64 image `wright-desktop-blender-selected:20261015-01` has digest
+`4fa54f2eecd99edbbd1daac1ff6adad2d280013e4bcf606c3b3b0aa27cb3b3af`,
+Blender 4.3.2, blender-mcp 1.9.1 and MCP 1.30.0. Source revision is
+`5f8ddaf6e987c4aa0c3467fcc548838b28f64477`. Native add-on discovery reports
+protocol 5 and add-on 1.6. Keep package, SDK, native application and add-on
+versions separate. The factory scene contains Cube, Light and Camera; it is
+not an empty design scene or the requested engineering model.
+
+The owned probe container uses `--init`, network disabled, read-only root,
+temporary `/tmp` and `/run`, Xvfb display 84, and the unchanged selected add-on.
+Only its explicit bootstrap script is mounted read-only. MCP safe mode stays
+enabled and telemetry disabled. No existing Blender session is reused or
+stopped. Read-only Mesa cache warnings do not invalidate the successful scene
+read, but neither do they prove rendering readiness. The exact probe arguments,
+schemas and nested native result are retained; no provider bug is established.
+
+## Installed native discovery, 23 October 2026
+
+The same selected image now initializes through the isolated installed Wright
+Tool Registry with 28 tools. Its fresh native Blender/Xvfb service runs as
+UID/GID 1000 with the accepted workspace mounted at the identical absolute path,
+safe mode enabled and telemetry disabled. The first fresh launch incorrectly
+used unsupported `--noaudio`; the retained diagnostic and corrected launch are
+in the [native configuration evidence](https://github.com/burhop/wright/blob/dev/artifacts/first-contact/084/provider-readiness/native-runtime-001/README.md).
+Use `blender-native-launch-attempt-003.json` for that exact new launch, rather
+than treating it as the earlier direct probe's historical command. The add-on
+readiness log and installed tool schema are retained. This step called no
+engineering tool: rendering and handle construction remain separate checks.
+
+## Feature 084 canonical handle repair and retained-mesh diagnosis
+
+The installed native gateway called the same independent provider once with the
+frozen handle repair operation and a freshly copied, qualified FreeCAD STL. Its
+exact `{code, user_prompt}` arguments preserve the original prompt's CRLF bytes;
+only the operation's declared run ID and output root were bound. The
+[repair evidence](https://github.com/burhop/wright/blob/dev/artifacts/first-contact/084/provider-readiness/blender-canonical-repair-001/README.md)
+retains all identities and the failed result. This is actual attempted repair
+use, with no claim of successful handle repair or rendering.
+
+The direct gateway call timed out after 30.281 seconds at its configured default
+30-second deadline. No per-call timeout override was supplied. Do not treat a
+gateway timeout as native cancellation or replay permission: read-only logs from
+the owned container later showed a terminal grip-section requirement failure.
+The copied source remained unchanged and neither the repaired STL nor the
+preview was published. Native duration was not measured exactly.
+
+A first read-only diagnostic looked up the requested full object name and
+failed. Blender had retained a 63-character truncated name. The separately
+authorized second diagnostic used the exact owned prefix and mesh type with an
+explicit exactly-one-match check; it measured all eleven grip sections in 3.642
+seconds without import, mutation, export or replay. The
+[raw section observations](https://github.com/burhop/wright/blob/dev/artifacts/first-contact/084/provider-readiness/blender-canonical-repair-diagnosis-002/diagnosis-parsed.json)
+retain the strict original predicates and failures. They support inspection of
+the tessellated grip; they do not qualify a changed tolerance or prove the whole
+part. Preserve these failures when revising authored geometry checks. Neither
+the timeout nor this mismatch by itself establishes a provider defect.
+
+After the isolated runtime update, a separately authorized read of 32 retained
+root meridians completed in 1.415 seconds. All sampled minimum-radius bounds
+exceed 3 mm; 30 sections fail the authored near-exact endpoint coverage and upper
+nominal-radius bounds. The [raw root evidence](https://github.com/burhop/wright/blob/dev/artifacts/first-contact/084/provider-readiness/blender-canonical-root-diagnosis-002/README.md)
+retains the criteria and values without acceptance or mutation. The first root
+diagnostic was rejected before execution because exception-report metadata used
+`type(exc).__name__`: safe mode prohibits dunder attribute access even in error
+reporting. Removing that class metadata while retaining `str(exc)` allowed the
+unchanged measurement helpers to run. Keep safe mode enabled; preserve the
+rejection and never infer a native measurement from a successful transport alone.
+
+## Successful frozen-v4 repair and actual-mesh preview
+
+The separately approved `printed02-freecad-repair/4` qualification completed once
+through native candidate6 in 87.130 seconds, using a fresh run/output directory
+and the exact original source and prompt. The selected provider and safe-mode
+configuration remained unchanged. Its terminal report, exact arguments, source,
+repaired STL and PNG are retained in
+[canonical repair 002](https://github.com/burhop/wright/blob/dev/artifacts/first-contact/084/provider-readiness/blender-canonical-repair-002/README.md).
+The gateway's verified default was 120 seconds, distinct from its 360-second
+maximum and the observer's 180-second timeout. There was no timeout or replay.
+
+The operation inspected the actual source, applied bounded cleanup, exported a
+distinct STL, reimported and checked that file, then rendered only that actual
+mesh. Independent parsing confirms 76,742 triangles, one closed wound component,
+zero degenerate triangles and exact source/output oriented-triangle identity.
+The 1280×720 PNG decodes and shows the complete handle. Raw dimensions, bore,
+grip and root measurements remain in the report. This qualifies that bounded
+digital repair/render operation; it does not establish engineering acceptance,
+hardware fit, support suitability, physical strength or blanket R1 curvature.
+The approved measurement revisions and earlier failures remain explicit.
+
+## Completed Printed02 source8 handoff, 23 October 2026
+
+**Verified:** native Wright run `f45755b659114ec6a746ceaa4f23b773`, source revision 8,
+called the selected independent `execute_blender_code` with the accepted repair
+operation and original `user_prompt`. The
+[actual repair report](https://github.com/burhop/wright/blob/dev/artifacts/first-contact/084/native-handle-final-019/run-evidence/outputs/mesh-repair-report.json)
+records source inspection, bounded cleanup, export and independent reimport:
+76,742 triangles, one closed wound component, no reported nonadjacent overlaps,
+and unchanged bounds. No vertices or faces were removed. The distinct repaired
+STL has SHA-256
+`b0c4d21e441cbf69702721299437ec6d4d1a74f2c470af2404155cb72b0b0045`;
+the [actual geometry-only PNG](https://github.com/burhop/wright/blob/dev/artifacts/first-contact/084/native-handle-final-019/run-evidence/outputs/mesh-preview.png)
+has SHA-256 `c38b0a51a113cee9c0cb1d11bbc3999ded28dad4eb5fb1e07b8ce8fbb7c9c788`.
+The [inventory](https://github.com/burhop/wright/blob/dev/artifacts/first-contact/084/native-handle-final-019/run-evidence/receipt.json)
+binds these files to the FreeCAD producer and both downstream Orca preparations.
+
+The [final digital assessment receipt](https://github.com/burhop/wright/blob/dev/artifacts/first-contact/084/native-handle-final-019/final-validation/receipt.json)
+records 43 passing checks, 17 subjects and six applications of the user's final
+review. Earlier basis/geometry/transfer decisions retain synthetic attribution.
+Physical validation is `not_assessed`. The PNG is not a support view; topology,
+finite grip/root sections and native rounding evidence do not establish every
+surface's curvature, hardware fit, contact quality, removability or strength.
+Keep the visible mesh-fidelity proposals and earlier failed measurements intact.
+If a gateway observation times out, inspect the existing native result and exact
+output paths before retrying; retain safe mode and the original prompt bytes.
+
+## Disposable ARM64 guest: Docker route conflict, 28 October 2026
+
+Selected-container setup can interrupt a lab SSH connection if Docker's default
+`172.17.0.0/16` bridge overlaps the observed client address. In guest106 the
+package installation completed, but replies to the SSH client `172.17.0.1` used
+the new bridge. The desktop remained responsive, with 5,359 MiB available RAM.
+Do not infer installation failure or replay it from an observer timeout.
+
+Read-only desktop inspection established no containers and no existing Docker
+configuration. For this network-disabled measurement provider only, setting
+`{"bridge":"none"}` in the guest's `/etc/docker/daemon.json`, restarting the empty
+Docker service, and removing its leftover `docker0` restored SSH. Do not apply
+this to a host or a Docker service with workloads or existing configuration.
+Inspect routes and container ownership first. Wright and the guest were not
+restarted. This is setup evidence, not verified handle measurement or a new
+clean-container catalog qualification. See the retained
+[recovery report](../../../artifacts/first-contact/synthetic-beta-003/operator-retries/measurement-setup-130/RESULT.md).
+
+## Installed hosted-CAD mesh handoff, 28 October 2026
+
+The isolated ARM64 native Wright gateway now discovers28tools from the selected
+Blender service and successfully imports the actual SteveCAD revision5 STL from
+saved handoff run `a4eb84b46ec74d24be1580b6611f4270`. A new owned scene reports
+114×24×34mm,58,354faces,0non-manifold edges and14,457.158mm³ signed volume.
+The source STL was not modified. Pass the current schema's required
+`user_prompt` verbatim: omitting it rejected the initial read-only call before
+execution. Keep that failure separate from the corrected successful query.
+
+This establishes actual mesh import/basic measurement through Wright, not full
+handle checks, repair, approval or a fresh beta journey. The saved repair stage
+remains unbound. See the [readable result and retained receipts](../../../artifacts/first-contact/synthetic-beta-003/operator-retries/measurement-131/RESULT.md).
+
+
+## Prepared shape-render workflow scope, 30 October2026
+
+The existing ARM64 registration `4b919d9a-a7c8-4beb-82f3-8c7b0d8f80fb` invokes the independent safe-mode provider inside `wright-beta-handle-measurement-130`. Its retained launch mounts only the prepared handle project. Listing it in a different workspace does not grant that container access to the new directory. Reuse the supplied prepared project for a new separate workflow, or establish an explicitly scoped provider connection before claiming another workspace is ready. Do not broaden the old mount or change safe mode to force a run.
+
+UI-only customer198 saved geometry/render tasks but runtime rejected their file declarations before any Blender execution. This is Wright authoring evidence, not a new Blender rendering qualification or provider bug. Retained source and direct compiler observations: `artifacts/first-contact/synthetic-beta-003/operator-retries/shape-authoring-200/`. Use every provider-created file's explicit `expected_file_ports` mapping and ordinary version1 per-run paths; Wright's runtime owns actual hashes and output lineage. New simple-workflow customer verification remains pending.

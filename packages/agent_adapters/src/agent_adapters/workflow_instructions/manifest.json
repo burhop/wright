@@ -1,6 +1,6 @@
 {
   "profile_id": "wright.workflow-defaults",
-  "profile_version": "1.2.1",
+  "profile_version": "1.2.16",
   "action_intent_contract": "wright.workflow-action-intent/1",
   "assets": [
     {"id": "policy.require-specified", "role": "resource-context", "file": "require-specified.md"},
@@ -36,6 +36,7 @@
     {"id": "context.application", "role": "resource-context", "file": "application-context.md"},
     {"id": "validation.feedback", "role": "validation", "file": "validation-feedback.md"},
     {"id": "chat.defaults", "role": "chat", "file": "chat-defaults.md"},
+    {"id": "context.workflow-source-authoring", "role": "resource-context", "file": "workflow-source-authoring.md"},
     {"id": "context.workspace", "role": "resource-context", "file": "workspace-context.md", "variables": ["workspace_path"]}
   ],
   "bindings": [

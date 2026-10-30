@@ -1,3 +1,4 @@
+import { McpDeviceSignIn } from "./McpDeviceSignIn";
 import {
   useEffect,
   useMemo,
@@ -5,6 +6,7 @@ import {
   useState,
   type KeyboardEvent,
 } from "react";
+import { createPortal } from "react-dom";
 import {
   CapabilityApiError,
   mcpService,
@@ -41,7 +43,7 @@ function errorMessage(error: unknown): string {
 const setupSteps: Array<{ step: WizardStep; label: string }> = [
   { step: "source", label: "Requirements" },
   { step: "review", label: "Review" },
-  { step: "credentials", label: "Install" },
+  { step: "credentials", label: "Set up" },
 ];
 
 const backendLabels: Record<string, string> = {
@@ -80,6 +82,7 @@ export function OnboardingWizard({
   const [validation, setValidation] =
     useState<CapabilityValidationEvidence | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [licenseCompleted, setLicenseCompleted] = useState(false);
   const closeButton = useRef<HTMLButtonElement>(null);
   const dialog = useRef<HTMLDivElement>(null);
   const previousFocus = useRef<HTMLElement | null>(null);
@@ -107,6 +110,9 @@ export function OnboardingWizard({
     }
     return "";
   }, [argumentsText, command, configuration, endpoint, name, sourceKind]);
+  useEffect(() => {
+    setLicenseCompleted(false);
+  }, [isOpen, capabilityId, normalizedConfiguration]);
   const catalogSelection = Boolean(initialCapabilityId);
 
   if (!isOpen) return null;
@@ -169,7 +175,7 @@ export function OnboardingWizard({
       const created = await mcpService.createInstallPlan({
         ...sourceRequest,
         requested_scope: "global_registered",
-        independently_completed_license: true,
+        independently_completed_license: licenseCompleted,
       });
       setPlan(created);
       setStep("review");
@@ -227,7 +233,7 @@ export function OnboardingWizard({
     setStep("credentials");
   };
 
-  return (
+  return createPortal(
     <div
       ref={dialog}
       className="mcp-onboarding-backdrop"
@@ -242,7 +248,7 @@ export function OnboardingWizard({
             <div className="mcp-onboarding__eyebrow">MCP server setup</div>
             <h2 id="onboarding-wizard-title">
               {catalogSelection
-                ? "Install MCP server"
+                ? plan?.backend_kind === "remote_endpoint" ? "Connect MCP server" : "Set up MCP server"
                 : "Add custom MCP server"}
             </h2>
             <p>
@@ -402,7 +408,7 @@ export function OnboardingWizard({
                   !capabilityId.trim()
                 }
               >
-                Review install plan
+                Review setup plan
               </button>
             </div>
           )}
@@ -424,7 +430,7 @@ export function OnboardingWizard({
                   <div className="mcp-onboarding__eyebrow">
                     Ready for review
                   </div>
-                  <h3>Confirm this installation</h3>
+                  <h3>{plan.backend_kind === "remote_endpoint" ? "Confirm this connection" : "Confirm this installation"}</h3>
                 </div>
                 <span className={`mcp-plan-review__state ${plan.state}`}>
                   {plan.state === "reviewable" ? "Ready" : "Needs attention"}
@@ -432,7 +438,7 @@ export function OnboardingWizard({
               </div>
               <p className="mcp-plan-review__intro">
                 {plan.state === "reviewable"
-                  ? "Nothing has been installed yet. Review the changes below, then continue when they look right."
+                  ? "Review the changes below, then continue when they look right."
                   : "One requirement needs attention before installation can continue."}
               </p>
               {preview && (
@@ -480,6 +486,26 @@ export function OnboardingWizard({
                   ))}
                 </div>
               )}
+              {plan.requirements.license.independent_completion_required &&
+                plan.blocking_reasons.some((reason) =>
+                  ["external_license_incomplete", "license_unknown"].includes(reason.code),
+                ) && (
+                <section aria-label="Publisher requirements">
+                  <p>Wright cannot accept publisher terms or complete a subscription for you.</p>
+                  {plan.requirements.license.state === "unknown" && (
+                    <p>Check the source and license for this exact server before recording your review. Wright has not verified its license.</p>
+                  )}
+                  <label>
+                    <input type="checkbox" checked={licenseCompleted} onChange={(event) => setLicenseCompleted(event.target.checked)} />
+                    {plan.requirements.license.state === "unknown"
+                      ? "I have independently reviewed the source and license and completed any publisher requirements for this server."
+                      : "I have independently completed the publisher requirements for this server."}
+                  </label>
+                  <button type="button" disabled={!licenseCompleted} onClick={buildPlan}>
+                    Create a new plan with my recorded completion
+                  </button>
+                </section>
+              )}
               <footer className="mcp-onboarding__footer">
                 {plan.state !== "reviewable" ? (
                   <button
@@ -505,7 +531,7 @@ export function OnboardingWizard({
                       data-testid="onboarding-review-continue"
                       onClick={continueToCredentials}
                     >
-                      Continue to installation
+                      Continue to setup
                     </button>
                   </>
                 )}
@@ -551,7 +577,7 @@ export function OnboardingWizard({
                 data-testid="onboarding-apply-plan"
                 onClick={applyPlan}
               >
-                Install MCP server
+                {plan?.backend_kind === "remote_endpoint" ? "Connect MCP server" : "Install MCP server"}
               </button>
             </div>
           )}
@@ -562,10 +588,11 @@ export function OnboardingWizard({
             </p>
           )}
 
+          <McpDeviceSignIn serverId={plan?.capability_id || ""} active={step === "validating"} />
           {step === "validating" && (
             <p role="status">
-              Validating MCP initialize, initialized notification, tool
-              discovery, and any catalog-approved read-only probe…
+              Connecting and checking available tools. Complete sign-in in the
+              browser if prompted.
             </p>
           )}
 
@@ -607,6 +634,7 @@ export function OnboardingWizard({
           )}
         </div>
       </section>
-    </div>
+    </div>,
+    document.body,
   );
 }

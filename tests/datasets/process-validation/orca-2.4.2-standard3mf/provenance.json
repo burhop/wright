@@ -1,0 +1,9 @@
+{
+  "source_receipt": "artifacts/first-contact/084/provider-readiness/orca-standard3mf-mcp-001.json",
+  "scope": "Actual tiny fixture; no handle qualification. Tests derive binary STL from the retained ASCII coordinates.",
+  "files": {
+    "side-native.gcode.3mf": "f704cd576d7f6f136cd0c13a9a5cad1694fb02683c6832fcce087738ddc732f5",
+    "source-model-side.3mf": "c0c5c437fa4971cd10bb47ca933047fdb3892725eac3c10a4aa7bd2ae1b9194a",
+    "source-model.stl": "e9b98f045d0f11477906609d0a109f6e5d41c9779f058b35793fc8d3471cf298"
+  }
+}
