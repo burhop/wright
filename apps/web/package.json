@@ -30,7 +30,7 @@
     "react-router-dom": "^7.17.0",
     "remark-gfm": "^4.0.1",
     "three": "^0.185.1",
-    "zod": "4.4.3"
+    "zod": "4.6.7"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.12.1",
