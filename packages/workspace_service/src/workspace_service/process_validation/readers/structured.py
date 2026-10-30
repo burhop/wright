@@ -8,6 +8,10 @@ import json
 import math
 import re
 
+from pydantic import ValidationError
+
+from core.image_coordinates import ImageCoordinateFrame
+
 from core.process_validation import (
     Measurement,
     ReaderIdentity,
@@ -16,6 +20,7 @@ from core.process_validation import (
 )
 
 from .base import ValidationIssue
+from .image_coordinates import verify_image_frame
 
 
 def _invalid(message, code="output.invalid_content"):
@@ -101,8 +106,10 @@ def _check_structure(value, context):
 class StructuredReader:
     identity = ReaderIdentity(
         id="structured",
-        version="1",
-        config_digest=canonical_digest({"parser": "json-csv-text", "version": 1}),
+        version="2",
+        config_digest=canonical_digest(
+            {"parser": "json-csv-text", "version": 2, "image_coordinate_frame": 1}
+        ),
         method="structured_value",
         formats=(
             "json",
@@ -115,6 +122,14 @@ class StructuredReader:
             "kicad_sch",
         ),
     )
+
+    def _json_value(self, text, check, context):
+        try:
+            return json.loads(text, object_pairs_hook=_pairs, parse_constant=_constant)
+        except (ValueError, RecursionError) as exc:
+            raise _invalid(
+                "Output must be unambiguous finite JSON.", "output.invalid_json"
+            ) from exc
 
     def measure(self, snapshot, check, context):
         context.checkpoint()
@@ -134,14 +149,7 @@ class StructuredReader:
                     "Inline text output must be a string.", "output.text_type"
                 )
         if fmt == "json":
-            try:
-                value = json.loads(
-                    text, object_pairs_hook=_pairs, parse_constant=_constant
-                )
-            except (ValueError, RecursionError) as exc:
-                raise _invalid(
-                    "Output must be unambiguous finite JSON.", "output.invalid_json"
-                ) from exc
+            value = self._json_value(text, check, context)
         elif fmt == "csv":
             try:
                 reader = csv.DictReader(io.StringIO(text), strict=True)
@@ -196,10 +204,36 @@ class StructuredReader:
             except (TypeError, ValueError):
                 pass  # Evaluator returns a typed output defect with the raw cell.
         unit, frame, uncertainty = check.unit, check.frame, 0.0
+        image_evidence = ()
+        if check.unit == "px" and (
+            not isinstance(check.parameters.get("unit_pointer"), str)
+            or not isinstance(check.parameters.get("image_frame_pointer"), str)
+            or "frame_pointer" in check.parameters
+        ):
+            raise ValidationIssue(
+                "measurement.image_frame",
+                "Pixel observations require explicit unit and image-frame pointers; do not inherit the expected frame.",
+                state="inconclusive",
+                category="missing_evidence",
+            )
         if "unit_pointer" in check.parameters:
             unit = _pointer(value, check.parameters["unit_pointer"])
         if "frame_pointer" in check.parameters:
             frame = _pointer(value, check.parameters["frame_pointer"])
+        if "image_frame_pointer" in check.parameters:
+            try:
+                observed_frame = ImageCoordinateFrame.model_validate(
+                    _pointer(value, check.parameters["image_frame_pointer"])
+                )
+            except ValidationError as exc:
+                raise ValidationIssue(
+                    "measurement.image_frame",
+                    "The observed image coordinate frame is missing or invalid.",
+                    state="inconclusive",
+                    category="missing_evidence",
+                ) from exc
+            frame = observed_frame.identifier()
+            image_evidence = (verify_image_frame(observed_frame, check, context),)
         if "uncertainty_pointer" in check.parameters:
             uncertainty = _pointer(value, check.parameters["uncertainty_pointer"])
             if (
@@ -232,5 +266,6 @@ class StructuredReader:
             reader=self.identity,
             evidence_refs=(
                 f"subject:{snapshot.subject.id}@{snapshot.subject.sha256}#{check.selector}",
+                *image_evidence,
             ),
         )
