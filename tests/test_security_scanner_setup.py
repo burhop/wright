@@ -1,4 +1,5 @@
 from pathlib import Path
+import os
 import shlex
 import shutil
 import subprocess
@@ -11,6 +12,66 @@ ROOT = Path(__file__).resolve().parents[1]
 
 def read_text(relative_path: str) -> str:
     return (ROOT / relative_path).read_text(encoding="utf-8")
+
+
+@pytest.mark.skipif(
+    os.name == "nt", reason="Exercises the Unix linked-worktree scanner"
+)
+def test_linked_worktree_history_scan_includes_cached_remote_refs(
+    tmp_path: Path,
+) -> None:
+    repository = tmp_path / "repository"
+    repository.mkdir()
+
+    def git(*args: str) -> str:
+        return subprocess.check_output(
+            ["git", "-C", str(repository), *args], text=True, stderr=subprocess.DEVNULL
+        ).strip()
+
+    git("init", "-q")
+    git("config", "user.name", "Scanner test")
+    git("config", "user.email", "scanner@example.invalid")
+    scripts = repository / "scripts"
+    scripts.mkdir()
+    shutil.copy(ROOT / "scripts/security-scan.sh", scripts / "security-scan.sh")
+    (scripts / "check-public-alpha-leaks.py").write_text("pass\n", encoding="utf-8")
+    git("add", "scripts")
+    git("commit", "-qm", "candidate")
+    candidate = git("rev-parse", "HEAD")
+    (repository / "remote-only.txt").write_text("remote history\n", encoding="utf-8")
+    git("add", "remote-only.txt")
+    git("commit", "-qm", "remote-only")
+    remote = git("rev-parse", "HEAD")
+    git("update-ref", "refs/remotes/origin/other", remote)
+    worktree = tmp_path / "worktree"
+    git("worktree", "add", "-q", "--detach", str(worktree), candidate)
+
+    binary = tmp_path / "bin"
+    binary.mkdir()
+    docker = binary / "docker"
+    docker.write_text(
+        "#!/bin/sh\n"
+        'while [ "$1" != "-v" ]; do shift; done\n'
+        "shift\n"
+        "scan_root=${1%:/repo}\n"
+        'git -C "$scan_root" rev-parse --verify refs/remotes/scan-origin/other > "$SCAN_MARKER"\n',
+        encoding="utf-8",
+    )
+    docker.chmod(0o755)
+    marker = tmp_path / "observed-remote"
+    env = {
+        **os.environ,
+        "PATH": f"{binary}{os.pathsep}{os.environ['PATH']}",
+        "SCAN_MARKER": str(marker),
+    }
+    subprocess.run(
+        ["bash", str(worktree / "scripts/security-scan.sh"), "--skip-trufflehog"],
+        check=True,
+        env=env,
+        capture_output=True,
+        text=True,
+    )
+    assert marker.read_text(encoding="utf-8").strip() == remote
 
 
 def squashed(relative_path: str) -> str:
