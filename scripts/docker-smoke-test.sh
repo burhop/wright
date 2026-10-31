@@ -75,6 +75,29 @@ observed = version("aiohttp")
 assert Version(observed) >= Version("3.14.4"), f"Unpatched aiohttp runtime: {observed}"
 print(f"Patched aiohttp runtime: {observed}")
 '
+docker run --rm --network none --entrypoint /opt/hermes/.venv/bin/python "$IMAGE_TAG" -c '
+from importlib.metadata import version
+from packaging.version import Version
+observed = version("pyasn1")
+assert Version(observed) >= Version("0.6.5"), f"Unpatched pyasn1 runtime: {observed}"
+'
+docker run --rm --network none --entrypoint /usr/local/bin/python3.13 "$IMAGE_TAG" -c '
+import json
+from pathlib import Path
+import msgpack
+import pip._vendor.msgpack as vendored
+assert msgpack.__version__ == "1.2.3", msgpack.__version__
+assert vendored.__version__ == "1.2.3", vendored.__version__
+vendor_root = Path(vendored.__file__).parent.parent
+assert "msgpack==1.2.3" in (vendor_root / "vendor.txt").read_text(encoding="utf-8")
+components = json.loads((vendor_root / "bom.cdx.json").read_text(encoding="utf-8"))["components"]
+component = next(item for item in components if item.get("name") == "msgpack")
+assert component["version"] == "1.2.3" and component["purl"] == "pkg:pypi/msgpack@1.2.3"
+'
+docker run --rm --network none --entrypoint node "$IMAGE_TAG" -e '
+const version = require("/usr/local/lib/node_modules/npm/node_modules/undici/package.json").version;
+if (version !== "6.29.1") throw new Error(`Unpatched npm undici: ${version}`);
+'
 
 # certifi is separately installed in Wright/Hermes and vendored inside pip.
 # Qualify actual trust-store bytes, not just a lock entry or scanner database.
