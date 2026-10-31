@@ -1267,7 +1267,7 @@ def server(client, *, native_editor=False, native_working_view=False):
         )
 
     if native_editor:
-        html = Path(__file__).with_name("native-editor.html").read_text()
+        html = Path(__file__).with_name("native-editor.html").read_bytes().decode("utf-8")
         uri = (
             "ui://wright/workflow/"
             + hashlib.sha256(html.encode()).hexdigest()
