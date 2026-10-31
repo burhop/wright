@@ -29,6 +29,10 @@ function Initialize-HistoryScanRoot {
         $script:ScanRoot = Join-Path $script:TemporaryScanParent "repo"
         git clone --no-hardlinks --no-checkout --single-branch --no-tags $RootDir $script:ScanRoot | Out-Null
         Assert-LastExitCode "Linked-worktree history clone"
+        # Include cached origin refs like the all-branch CI checkout, without
+        # adding unrelated unpublished local branches to the public scan.
+        git -C $script:ScanRoot fetch --no-tags $RootDir '+refs/remotes/origin/*:refs/remotes/scan-origin/*' | Out-Null
+        Assert-LastExitCode "Fetch available remote history refs"
         $headCommit = (git -C $RootDir rev-parse --verify HEAD).Trim()
         Assert-LastExitCode "Resolve linked-worktree HEAD"
         git -C $script:ScanRoot checkout --detach $headCommit | Out-Null
@@ -40,7 +44,7 @@ function Initialize-HistoryScanRoot {
     if ($commitCount -lt 1) {
         throw "History scan root contains no commits; refusing a false-green scan."
     }
-    Write-Host "History scan coverage: $commitCount commits reachable from HEAD."
+    Write-Host "History scan coverage: $commitCount commits reachable from HEAD, plus available remote refs."
 }
 
 Push-Location $RootDir

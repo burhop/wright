@@ -26,7 +26,7 @@ def test_native_candidate_builds_once_and_runs_every_claimed_platform() -> None:
     assert workflow.count("scripts/build-native-runtime.py") == 1
     assert "ubuntu-24.04" in workflow
     assert "windows-latest" in workflow
-    assert "macos-14" in workflow
+    assert "macos-15" in workflow
     assert "native-base-platform-matrix" in workflow
     assert "native-lifecycle-contract" in workflow
     assert "native-candidate-required" in workflow
@@ -48,6 +48,7 @@ def test_native_candidate_builds_once_and_runs_every_claimed_platform() -> None:
 def test_production_release_keeps_native_docker_docs_and_release_terminal() -> None:
     release = (ROOT / ".github/workflows/release.yml").read_text(encoding="utf-8")
     assert "native-published-lifecycle" in release
+    assert "macos-15" in release
     assert "verify-manager-adapters" in release
     assert "hermes-git-plugin-v1" in release
     assert "manager-adapter-evidence" in release

@@ -260,6 +260,21 @@ def test_multimodal_workflow_input_does_not_widen_confined_authoring(sdk, operat
         },
         {"type": "file", "path": "outside-workspace"},
         {"type": "text", "text": "scope", "tools": ["terminal"]},
+        {
+            "type": "image_url",
+            "image_url": {
+                "url": "data:image/png;base64,c3ludGhldGlj",
+                "detail": "invalid",
+            },
+        },
+        {
+            "type": "image_url",
+            "image_url": {
+                "url": "data:image/png;base64,c3ludGhldGlj",
+                "detail": "high",
+                "extra": True,
+            },
+        },
     ],
 )
 def test_workflow_worker_rejects_unqualified_content_before_provider_call(sdk, part):
@@ -269,6 +284,23 @@ def test_workflow_worker_rejects_unqualified_content_before_provider_call(sdk, p
     with pytest.raises(ValueError):
         invoke(body, sdk.root)
     assert sdk.calls == []
+
+
+@pytest.mark.parametrize("detail", ["auto", "low", "high"])
+def test_workflow_worker_accepts_inline_image_detail(sdk, detail):
+    body = request(invoke({"operation": "probe"}, sdk.root)["resolution"])
+    body["operation"] = "generate-workflow"
+    body["messages"][1]["content"] = [
+        {
+            "type": "image_url",
+            "image_url": {
+                "url": "data:image/png;base64,c3ludGhldGlj",
+                "detail": detail,
+            },
+        }
+    ]
+    invoke(body, sdk.root)
+    assert sdk.calls[0]["messages"] == body["messages"]
 
 
 def test_workflow_worker_detects_route_change_after_parent_probe(sdk):
