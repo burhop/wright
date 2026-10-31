@@ -99,6 +99,7 @@ class UnitDefinition:
 
 
 _UNITS = {
+    "px": UnitDefinition("px", "image_distance", Decimal("1")),
     "1": UnitDefinition("1", "dimensionless", Decimal("1")),
     "%": UnitDefinition("%", "dimensionless", Decimal("0.01")),
     "m": UnitDefinition("m", "length", Decimal("1")),

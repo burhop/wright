@@ -175,7 +175,12 @@ def test_docker_smoke_strictly_reconciles_hermes_security_overrides() -> None:
     assert 'observed = version("pillow")' in smoke
     assert 'Version(observed) >= Version("13.0.0")' in smoke
     assert '"msgpack==1.2.3"' in dockerfile
+    assert 's/"version": "1.1.2"/"version": "1.2.3"/' in dockerfile
     assert '"pyasn1==0.6.5"' in dockerfile
+    assert 'version("pyasn1")' in smoke
+    assert 'Version("0.6.5")' in smoke
+    assert 'vendored.__version__ == "1.2.3"' in smoke
+    assert 'version !== "6.29.1"' in smoke
     assert dockerfile.count("libbrotli1=1.1.0-2+deb13u1") == 2
     assert '"tornado==6.5.9"' in dockerfile
     assert "aiohttp==3.14.4" in dockerfile

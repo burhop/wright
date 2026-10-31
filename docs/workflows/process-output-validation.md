@@ -4,6 +4,11 @@ Wright process validators check the exact output revision created by an earlier 
 
 This is a runtime process control. It does not claim that every file in a project was checked, replace engineering judgment, or turn a successful tool call into an engineering pass.
 
+For pixel residuals against photographs or other rasters, see
+[image-coordinate validation](image-coordinate-validation.md). Pixel checks bind
+the exact reference image and coordinate convention; they do not establish a
+physical scale or camera calibration.
+
 ## Add a validator in Workflows
 
 Open a workspace and select **Workflows**. In the editor:
@@ -49,6 +54,23 @@ The command returns the complete profile plus `profile_ref` and `baseline_ref`. 
 | `thermal-field@1`      | Actual bounded CSV/JSON field, balance, candidate, and refinement files with source/load/material lineage and declared units | Analytical rise, heat balance, refinement, and selection checks for `heat-spreader-sizing-01` | A solver run, CFD qualification, or physical thermal acceptance        |
 
 These readers work offline and do not require AgentCAD, build123d, CadQuery, OCP, or a solver in the Wright runtime. A producing MCP server or engineering application remains separately owned and qualified. Provider-backed subjects must include the provider, resource, revision, and readback identity expected by the registered reader.
+
+For an exact JSON artifact containing another JSON document as a string, the
+optional `structured-json-container@1` reader accepts the profile parameter
+`json_container_pointer`, such as `/content/0/text`. The check's `selector`, unit,
+frame and uncertainty pointers then address the decoded inner document. Both
+documents use the strict finite, duplicate-free JSON parser and bounded structure
+checks. Evidence retains the original outer artifact hash and both selector paths;
+no rewritten intermediate report becomes the subject. The ordinary `structured`
+reader and saved profiles keep their existing interpretation.
+
+This reader performs one explicitly selected decode, with no provider-specific
+envelope detection or implicit search through other messages. Missing containers,
+non-string values and malformed JSON hold the output. A provider success flag
+alone remains insufficient: the profile must check the actual observations and
+relevant failure indicators. For example, a dimensional check still selects the
+inner `/length_mm` observation and evaluates it against its pinned constraint;
+an outer `status: pass` flag cannot substitute for that measurement.
 
 If a required reader, role, format, datum, unit, or source revision is unavailable, Wright returns a blocked or needs-input assessment. It does not reinterpret the missing capability as a defect in the product. The machine-readable map at `packages/workspace_service/src/workspace_service/process_validation/profiles/coverage.json` lists qualified, implemented, planned, and unavailable capabilities. Qualification is per declared profile scope; it is never inherited by a related scenario.
 

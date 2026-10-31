@@ -478,6 +478,11 @@ authoritative in CI when a local Docker host is unavailable.
 
 ## CI failure protocol
 
+The image security correction merged in PR #175 also updates both the package
+identifier and version field in pip's msgpack software inventory. Exact-image
+smoke checks the installed system and vendored versions, inventory, Hermes
+pyasn1 and npm's nested undici. A fresh image scan remains authoritative.
+
 Engineering-image release assets use bounded retries for interrupted build-time
 GET downloads and remove incomplete output on terminal failure. The Docker bundle
 test, selected by the container slice of the push gate and the full merge gate,

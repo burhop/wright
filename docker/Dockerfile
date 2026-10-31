@@ -102,6 +102,7 @@ RUN set -eux; \
       "${pip_vendor}/vendor.txt"; \
     sed -i \
       -e "s/msgpack@1.1.2/msgpack@1.2.3/g" \
+      -e '/"name": "msgpack"/,/}/s/"version": "1.1.2"/"version": "1.2.3"/' \
       -e "s/urllib3@2.7.0/urllib3@2.8.0/g" \
       -e "s/certifi@2026.6.17/certifi@2026.10.19/g" \
       -e '/"name": "certifi"/,/}/s/"version": "2026.6.17"/"version": "2026.10.19"/' \

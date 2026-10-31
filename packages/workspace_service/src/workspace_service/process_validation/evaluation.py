@@ -2,6 +2,8 @@
 
 from decimal import Decimal
 
+from pydantic import ValidationError
+
 from core.engineering_scenarios import (
     ArtifactProducer,
     AssertionState,
@@ -10,6 +12,7 @@ from core.engineering_scenarios import (
     convert_unit,
 )
 from core.process_validation import canonical_digest
+from core.image_coordinates import ImageCoordinateFrame
 
 from ..engineering_scenario_assertions import EngineeringAssertionRegistry
 from .readers.base import ValidationIssue
@@ -31,6 +34,28 @@ def _same_json(left, right):
 
 def compare(check, measurement, subject):
     value, rule = measurement.value, check.constraint
+    if check.unit == "px":
+        try:
+            image_frame = ImageCoordinateFrame.model_validate(
+                check.parameters.get("image_frame")
+            )
+        except ValidationError as exc:
+            raise ValidationIssue(
+                "profile.image_frame",
+                "Pixel checks require an exact image coordinate frame.",
+                state="inconclusive",
+                category="source_conflict",
+            ) from exc
+        if check.frame != image_frame.identifier() or rule.operator not in {
+            "within",
+            "range",
+        }:
+            raise ValidationIssue(
+                "profile.image_frame",
+                "Pixel checks require a matching frame identity and numeric constraint.",
+                state="inconclusive",
+                category="source_conflict",
+            )
     if check.frame and measurement.frame != check.frame:
         raise ValidationIssue(
             "measurement.frame",
@@ -83,7 +108,7 @@ def compare(check, measurement, subject):
     except EngineeringScenarioError as exc:
         raise ValidationIssue(
             "measurement.unit",
-            "Observed unit cannot be converted to the required physical dimension.",
+            "Observed unit cannot be converted to the required measurement dimension.",
             state="inconclusive",
             category="source_conflict",
         ) from exc

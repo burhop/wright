@@ -35,6 +35,7 @@ from .readers.kicad import KiCadReader
 from .readers.printing import PrintingArtifactReader
 from .readers.sheet_metal import SheetMetalEvidenceReader
 from .readers.structured import StructuredReader
+from .readers.json_container import JsonContainerReader
 from .readers.step_box import StepBoundingBoxReader
 from .readers.structural import StructuralEvidenceReader
 from .readers.thermal import ThermalFieldReader
@@ -117,6 +118,7 @@ def default_reader_registry() -> ReaderRegistry:
     """The same installed readers for workflow preparation and evaluation."""
     registry = ReaderRegistry()
     registry.register(StructuredReader())
+    registry.register(JsonContainerReader())
     registry.register(CfdEvidenceReader())
     registry.register(StepSeatGeometryReader())
     registry.register(HarnessReader())

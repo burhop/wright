@@ -2,6 +2,9 @@
 
 import asyncio
 import hashlib
+import os
+import stat
+import subprocess
 
 import pytest
 import pytest_asyncio
@@ -94,7 +97,17 @@ async def test_byte_bound_digest_and_link_confinement(staging, tmp_path):
             await owner.stage_upload(str(root), "input.txt", content, digest)
     outside = tmp_path.parent / (tmp_path.name + "-outside")
     outside.mkdir()
-    (root / "uploads").symlink_to(outside, target_is_directory=True)
+    link = root / "uploads"
+    if os.name == "nt":
+        # Junctions exercise real reparse-point confinement without symlink privilege.
+        subprocess.run(
+            ["cmd", "/c", "mklink", "/J", str(link), str(outside)],
+            check=True,
+            capture_output=True,
+        )
+        assert link.lstat().st_file_attributes & stat.FILE_ATTRIBUTE_REPARSE_POINT
+    else:
+        link.symlink_to(outside, target_is_directory=True)
     with pytest.raises(ValueError):
         await owner.stage_upload(
             str(root), "input.txt", b"actual", hashlib.sha256(b"actual").hexdigest()

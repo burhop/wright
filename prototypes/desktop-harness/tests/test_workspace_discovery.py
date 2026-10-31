@@ -1,4 +1,7 @@
 from pathlib import Path
+import os
+import stat
+import subprocess
 from types import SimpleNamespace
 from unittest.mock import AsyncMock, Mock
 
@@ -8,6 +11,36 @@ import pytest
 
 from data_vault import WorkspaceRepository, upgrade_database
 from workspace_service.use_cases.lifecycle import WorkspaceLifecycleUseCases
+
+
+def directory_link(link, target):
+    """Exercise a real link, or a Windows junction when symlinks need privilege."""
+    try:
+        link.symlink_to(target, target_is_directory=True)
+    except OSError as error:
+        if os.name != "nt" or error.winerror != 1314:
+            raise
+        subprocess.run(
+            ["cmd", "/c", "mklink", "/J", str(link), str(target)],
+            check=True,
+            capture_output=True,
+        )
+        assert link.lstat().st_file_attributes & stat.FILE_ATTRIBUTE_REPARSE_POINT
+
+
+def file_link_or_directory_link(link, outside):
+    """Keep real file-link coverage where available; use a real junction otherwise."""
+    try:
+        link.symlink_to(outside)
+        return link.name
+    except OSError as error:
+        if os.name != "nt" or error.winerror != 1314:
+            raise
+        target = outside.parent / (outside.name + "-directory")
+        target.mkdir()
+        (target / outside.name).write_bytes(outside.read_bytes())
+        directory_link(link, target)
+        return f"{link.name}/{outside.name}"
 
 
 @pytest.mark.asyncio
@@ -189,7 +222,7 @@ async def test_symlink_outside_connection_does_not_disclose_workspace(discovery)
     directory.rmdir()
     target = root / "unrelated"
     target.mkdir()
-    directory.symlink_to(target, target_is_directory=True)
+    directory_link(directory, target)
     assert (await read(app)).json() == {"workspaces": []}
 
 
@@ -602,8 +635,8 @@ def test_bounded_file_owner_preserves_limits_and_confinement(tmp_path):
         files.read("note.txt", max_bytes=4)
     outside = tmp_path / "outside.txt"
     outside.write_text("private")
-    (root / "linked.txt").symlink_to(outside)
-    for path in ("../outside.txt", str(outside), "linked.txt"):
+    linked_path = file_link_or_directory_link(root / "linked.txt", outside)
+    for path in ("../outside.txt", str(outside), linked_path):
         with pytest.raises(ValueError):
             files.read(path, max_bytes=64)
     assert outside.read_text() == "private"
@@ -886,7 +919,9 @@ async def test_download_rejects_nonvisible_or_unconfined_paths_before_read(
     directory = create("Download")
     outside = root / "outside"
     outside.write_bytes(b"private")
-    (directory / "linked.step").symlink_to(outside)
+    linked_path = file_link_or_directory_link(directory / "linked.step", outside)
+    if path == "linked.step":
+        path = linked_path
     owner = app.state.desktop_service.files
     owner.read_bytes = AsyncMock(return_value=b"must not read")
     async with httpx.AsyncClient(
