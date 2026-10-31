@@ -530,8 +530,9 @@ async def test_execute_workspace_file_injects_only_display_handle_and_revokes_it
         "WRIGHT_DISPLAY_WORKSPACE_ID",
         "WRIGHT_DISPLAY_CONTRACT",
     }
-    assert "PROMPT" not in environment
-    assert "SCRIPT" not in environment
+    for key in ("PROMPT", "SCRIPT"):
+        assert environment.get(key) == os.environ.get(key)
+        assert (key in environment) == (key in os.environ)
     with pytest.raises(DisplayTokenRejected, match="revoked"):
         tokens.validate(
             environment["WRIGHT_DISPLAY_TOKEN"],
