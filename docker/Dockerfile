@@ -33,6 +33,8 @@ RUN set -eux; \
     node -e "const version=require('/usr/local/lib/node_modules/npm/node_modules/tar/package.json').version; if(version !== '7.5.22') throw new Error('unexpected npm tar override '+version)"; \
     rm -rf /tmp/npm-security-overrides
 COPY apps/web/ apps/web/
+# Offline provider setup pages are imported as frontend build resources.
+COPY docs/mcp-catalog/usage-guides/ docs/mcp-catalog/usage-guides/
 # TypeScript validates the colocated frontend specs during the production build.
 # Keep their canonical cross-package fixtures available in this build-only stage;
 # neither source path is copied from the web builder into the runtime image.
