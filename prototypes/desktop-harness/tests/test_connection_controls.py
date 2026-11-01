@@ -31,7 +31,13 @@ def controls(tmp_path, monkeypatch):
     repository = WorkspaceRepository(database, secrets=Mock())
     directory = tmp_path / "workspaces" / "alpha"
     directory.mkdir(parents=True)
-    repository.create("alpha", "chat-alpha", str(directory), workspace_name="Alpha")
+    repository.create(
+        "alpha",
+        "chat-alpha",
+        str(directory),
+        workspace_name="Alpha",
+        agent_id="openai-desktop-harness",
+    )
     repository.associate_session(
         "alpha", "chat-alpha", agent_id="openai-desktop-harness"
     )
@@ -84,10 +90,14 @@ def controls(tmp_path, monkeypatch):
     engine.start_server = AsyncMock(side_effect=start)
     engine.stop_server = AsyncMock(side_effect=stop)
     gateway = Mock()
-    owner = McpApiService(engine, SimpleNamespace(gateway_service=gateway))
     sync = Mock()
-    monkeypatch.setattr(
-        "api.services.mcp_services.sync_mcp_server_to_wright_gateway", sync
+    repository.set_active_gateway_session("chat-alpha")
+    owner = McpApiService(
+        engine,
+        SimpleNamespace(
+            gateway_service=gateway,
+            agent_sync_manager=SimpleNamespace(sync_workspace_tools=sync),
+        ),
     )
     backend = DesktopBackend(
         SimpleNamespace(db_path=database, repository=repository), tmp_path, 5207
