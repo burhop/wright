@@ -15,7 +15,12 @@ import {
   type ToolSchema,
   type WorkflowMcpTool,
 } from "./mcp-settings";
-import { isFinalPrompt, promptFilename, sourceKey } from "./prompt-settings";
+import {
+  isFinalPrompt,
+  promptFilename,
+  savedResponsePublication,
+  sourceKey,
+} from "./prompt-settings";
 
 export function McpBlockEditor({
   block,
@@ -64,6 +69,7 @@ export function McpBlockEditor({
   const selected = String(block.configuration.mcp_tool ?? "");
   const final = isFinalPrompt(block, workflow);
   const save = final || block.configuration.save_output === true;
+  const publication = savedResponsePublication(block);
   const config = (key: string, value: string | boolean) =>
     onApply([
       { kind: "set_block_configuration", blockId: block.id, key, value },
@@ -372,13 +378,20 @@ export function McpBlockEditor({
                 type="checkbox"
                 data-testid="workflow-recovery-mcp-save"
                 checked={save}
-                disabled={readOnly || final}
+                disabled={readOnly || final || !!publication}
                 onChange={(e) => config("save_output", e.target.checked)}
               />
               Save result to workspace
             </label>
             {final && (
               <small>Saved automatically because this is a final step.</small>
+            )}
+            {publication && (
+              <small data-testid="workflow-recovery-response-publication">
+                Saved response file output:{" "}
+                <code>{publication.port ?? "not configured"}</code>. Edit the
+                file output and save policy together in Source.
+              </small>
             )}
             {save && (
               <>
@@ -425,13 +438,25 @@ export function McpBlockEditor({
                   <select
                     data-testid="workflow-recovery-mcp-file-policy"
                     value={String(block.configuration.file_policy ?? "indexed")}
-                    disabled={readOnly}
+                    disabled={readOnly || !!publication}
                     onChange={(e) => config("file_policy", e.target.value)}
                   >
                     <option value="indexed">Create an indexed file</option>
                     <option value="overwrite">Overwrite existing file</option>
+                    {publication?.publishing && (
+                      <option value={publication.policy}>
+                        {publication.label}
+                      </option>
+                    )}
                   </select>
                 </label>
+                {publication && (
+                  <small>
+                    The saved response becomes a file input for downstream work.
+                    Wright checks the output binding and run path before
+                    execution.
+                  </small>
+                )}
               </>
             )}
           </section>

@@ -36,6 +36,81 @@ _MAX_RESULT_INVENTORY_ITEMS = 4096
 _logger = logging.getLogger(__name__)
 
 
+def _completed_diagnostic_rows(record, final_rows):
+    """Retain emitted evidence files without reviving earlier execution outputs."""
+    candidates = {
+        key: row
+        for key, row in record.get("partial_results", {}).items()
+        if isinstance(row, dict)
+        and row.get("artifact_role") in {"diagnostic", "verification"}
+        and isinstance(row.get("provenance"), dict)
+        and isinstance(row["provenance"].get("output_port"), str)
+        and row["provenance"]["output_port"].startswith("diagnostic:")
+    }
+    if not candidates:
+        return []
+    current = {}
+    for event in record.get("events", []):
+        if event.get("kind") == "result_ready":
+            row = event.get("engineering_result")
+            if isinstance(row, dict) and row.get("id") in candidates:
+                if row.get("provenance", {}).get("task_id") != event.get("task_id"):
+                    raise WorkflowRunReadError(
+                        "invalid", "Diagnostic event identity disagrees"
+                    )
+                current[row["id"]] = row
+        elif event.get("kind") == "design_revision":
+            invalidated = set(event.get("invalidated_task_ids", []))
+            current = {
+                key: row
+                for key, row in current.items()
+                if row.get("provenance", {}).get("task_id") not in invalidated
+            }
+    final = {row.get("id"): row for row in final_rows if isinstance(row, dict)}
+    extra = []
+    run_id = record.get("run_id") or (record.get("result") or {}).get("run_id")
+    for key, row in candidates.items():
+        if key not in current:
+            continue
+        provenance = row["provenance"]
+        port = provenance["output_port"]
+        task = provenance.get("task_id")
+        reps = row.get("representations", [])
+        if (
+            row != current[key]
+            or not isinstance(task, str)
+            or not task
+            or provenance.get("run_id") != run_id
+            or row.get("id") != key
+            or key != f"{run_id}:{task}:{port}"
+            or row.get("kind") not in {"file", "image"}
+            or not isinstance(reps, list)
+            or len(reps) != 1
+            or not isinstance(reps[0], dict)
+            or reps[0].get("kind") != "workspace_file"
+            or not port.removeprefix("diagnostic:")
+            or reps[0].get("location") != port.removeprefix("diagnostic:")
+            or (
+                reps[0].get("sha256") is not None
+                and (
+                    not isinstance(reps[0]["sha256"], str)
+                    or not re.fullmatch(r"[0-9a-f]{64}", reps[0]["sha256"])
+                )
+            )
+        ):
+            raise WorkflowRunReadError(
+                "invalid", "Recorded diagnostic identity disagrees"
+            )
+        if key in final:
+            if final[key] != row:
+                raise WorkflowRunReadError(
+                    "invalid", "Diagnostic result identities conflict"
+                )
+        else:
+            extra.append(row)
+    return extra
+
+
 def _recorded_result_rows(record):
     """Use current checkpoint facts when a later segment has no final result.
 
@@ -47,7 +122,8 @@ def _recorded_result_rows(record):
     if record.get("status") != "completed" and "partial_results" in record:
         return list(record["partial_results"].values())
     if isinstance(result.get("results"), list):
-        return result["results"]
+        rows = result["results"]
+        return rows + _completed_diagnostic_rows(record, rows)
     return list(record.get("partial_results", {}).values())
 
 
@@ -697,6 +773,21 @@ async def _record_run(
         if on_event:
             await on_event(redact_evidence(event))
 
+    def unresolved_operation():
+        observations = {}
+        for event in record["events"]:
+            if event.get("kind") == "operation_progress":
+                identity = (
+                    event.get("provider_binding"),
+                    event.get("task_id"),
+                    event.get("operation_id"),
+                )
+                observations[identity] = event.get("state")
+        return any(
+            state not in {"completed", "results_collected", "failed", "cancelled"}
+            for state in observations.values()
+        )
+
     try:
         await emit(
             {
@@ -868,6 +959,8 @@ async def _record_run(
         state = (
             cancellation_status() if cancellation_status is not None else "cancelled"
         )
+        if unresolved_operation():
+            state = "reconciliation_required"
         if state not in {"cancelled", "interrupted", "reconciliation_required"}:
             state = "interrupted"
         record.update(
@@ -880,10 +973,14 @@ async def _record_run(
         )
         raise
     except Exception as error:
+        code = getattr(error, "code", "EXECUTION_FAILED")
+        uncertain = code == "APPLICATION_OUTCOME_UNKNOWN" or (
+            code == "TASK_TIMEOUT" and unresolved_operation()
+        )
         record.update(
-            status="failed",
+            status="reconciliation_required" if uncertain else "failed",
             error=str(error),
-            code=getattr(error, "code", "EXECUTION_FAILED"),
+            code=code,
             correction=getattr(error, "correction", ""),
         )
         raise
@@ -917,7 +1014,7 @@ async def _record_run(
                     "Final workflow checkpoint exceeded its cleanup deadline"
                 )
         except Exception:
-            if record["status"] not in {"cancelled", "failed"}:
+            if record["status"] not in {"cancelled", "failed", "reconciliation_required"}:
                 raise
             # Preserve the original cancellation/failure. If storage cannot finish,
             # the read-only lease probe still reports interrupted/unknown, not live.

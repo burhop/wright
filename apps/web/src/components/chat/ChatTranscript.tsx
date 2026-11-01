@@ -13,7 +13,7 @@ interface ChatTranscriptProps {
   streamedText?: string;
   activeTool?: { name: string; preview: string; percentage?: number } | null;
   streamActivity?: StreamActivityEntry[];
-  onOpenFile?: (path: string) => void;
+  onOpenFile?: (path: string, resolveFilename?: boolean) => void;
   activeSessionId?: string;
   workspacePath?: string;
 }

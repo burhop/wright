@@ -14,7 +14,7 @@ from datetime import datetime
 from enum import StrEnum
 from typing import Any, Literal
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 
 MAX_EXPORT_BYTES = 2 * 1024 * 1024
@@ -184,11 +184,91 @@ class CleanupState(StrEnum):
 class DiagnosticScope(DiagnosticModel):
     session_id: str | None = Field(default=None, max_length=128)
     scenario_run_id: str | None = Field(default=None, max_length=128)
+    source_run_id: str | None = Field(default=None, max_length=128)
 
-    @field_validator("session_id", "scenario_run_id")
+    @field_validator("session_id", "scenario_run_id", "source_run_id")
     @classmethod
     def _safe_id(cls, value: str | None) -> str | None:
         return require_safe_identifier(value) if value is not None else None
+
+    @model_validator(mode="after")
+    def _distinct_run_scope(self):
+        if self.source_run_id and (self.session_id or self.scenario_run_id):
+            raise ValueError("Source receipts do not establish scenario/session scope")
+        return self
+
+
+SourceDiagnosticEventKind = Literal[
+    "run_started",
+    "run_resumed",
+    "run_completed",
+    "step_started",
+    "step_completed",
+    "step_diagnostic",
+    "design_revision",
+    "validation_exhausted",
+    "cancellation_requested",
+]
+
+
+class SourceDiagnosticEvent(DiagnosticModel):
+    sequence: int = Field(ge=1)
+    kind: SourceDiagnosticEventKind
+    step_id: str | None = Field(default=None, pattern=r"^[a-z][a-z0-9_]{0,159}$")
+    at: datetime | None = None
+    start_sequence: int | None = Field(default=None, ge=1)
+    elapsed_ms: int | None = Field(default=None, ge=0)
+    reason: str | None = Field(default=None, pattern=_REASON_CODE.pattern)
+
+    @field_validator("reason")
+    @classmethod
+    def _reason(cls, value: str | None) -> str | None:
+        return require_reason_code(value) if value is not None else None
+
+
+class SourceRunDiagnostic(DiagnosticModel):
+    run_id: str = Field(pattern=_SAFE_ID.pattern)
+    source_digest: str = Field(pattern=_DIGEST.pattern)
+    record_digest: str = Field(pattern=_DIGEST.pattern)
+    recorded_status: Literal[
+        "running",
+        "completed",
+        "pending_review",
+        "awaiting_approval",
+        "awaiting_external_outcome",
+        "continuation_ready",
+        "changes_requested",
+        "external_action_not_dispatched",
+        "external_action_outcome_unknown",
+        "failed",
+        "cancelled",
+        "interrupted",
+        "unknown",
+        "waiting_human",
+        "waiting_external",
+        "cancellation_requested",
+        "reconciliation_required",
+    ]
+    started_at: datetime | None = None
+    ended_at: datetime | None = None
+    event_count: int = Field(ge=0)
+    events: tuple[SourceDiagnosticEvent, ...] = Field(
+        default_factory=tuple, max_length=100
+    )
+    events_truncated: bool = False
+    metadata_omitted: bool = False
+
+    @field_validator("run_id")
+    @classmethod
+    def _run_id(cls, value: str) -> str:
+        return require_safe_identifier(value)
+
+    @field_validator("source_digest", "record_digest")
+    @classmethod
+    def _digest(cls, value: str) -> str:
+        if not _DIGEST.fullmatch(value):
+            raise ValueError("invalid digest")
+        return value
 
 
 class DiagnosticSummary(DiagnosticModel):
@@ -300,6 +380,7 @@ class SupportDiagnosticMaterial(DiagnosticModel):
     workspace_id: str = Field(max_length=128)
     principal_digest: str
     scope: DiagnosticScope
+    source_run: SourceRunDiagnostic | None = None
     summary: DiagnosticSummary
     providers: tuple[ProviderDiagnostic, ...] = Field(
         default_factory=tuple, max_length=MAX_PROVIDERS

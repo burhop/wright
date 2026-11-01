@@ -36,7 +36,7 @@ def sdk(monkeypatch):
     native["configuration_digest"] = hashlib.sha256(
         json.dumps(native, sort_keys=True).encode()
     ).hexdigest()
-    state = SimpleNamespace(native=native, calls=[], fail=False, replies=[])
+    state = SimpleNamespace(native=native, calls=[], fail=False, replies=[], response_model="reported-provider-revision")
 
     class Transport:
         async def probe(self):
@@ -54,7 +54,7 @@ def sdk(monkeypatch):
                 raise ValueError("synthetic unavailable SDK")
             return {
                 "text": state.replies.pop(0) if state.replies else state.text,
-                "response_model": "reported-provider-revision",
+                "response_model": state.response_model,
                 "usage": {"prompt_tokens": 17, "completion_tokens": 8},
             }
 
@@ -110,7 +110,11 @@ def test_changed_route_never_submits_a_decision(sdk, monkeypatch, change):
     assert sdk.calls == []
 
 
-def test_text_response_retains_actual_sdk_evidence_and_usage(sdk):
+@pytest.mark.parametrize(
+    "returned_model", ["configured-model", "different-adapter-alias", None]
+)
+def test_text_response_retains_actual_sdk_evidence_and_usage(sdk, returned_model):
+    sdk.response_model = returned_model
     route = asyncio.run(workflow_model_capabilities())["resolution"]
     records = []
 
@@ -139,9 +143,20 @@ def test_text_response_retains_actual_sdk_evidence_and_usage(sdk):
     )
     assert "model_lock" not in records[0]["frozen_model_resolution"]
     assert result.wright_invocations[1]["capture_scope"] == "provider_sdk_request"
+    response = records[-1]
+    assert response["adapter_returned_model"] == returned_model
+    assert response["upstream_reported_model"] is None
+    assert response["model_observation_scope"] == "hermes_model_sdk_adapter_result"
+    assert result.wright_usage["model"] == returned_model
 
 
-def test_bridge_still_validates_proposals_and_never_executes_a_tool(sdk):
+@pytest.mark.parametrize(
+    "returned_model", ["configured-model", "different-adapter-alias", None]
+)
+def test_bridge_still_validates_proposals_and_never_executes_a_tool(
+    sdk, returned_model
+):
+    sdk.response_model = returned_model
     route = asyncio.run(workflow_model_capabilities())["resolution"]
     sdk.text = json.dumps(
         {"kind": "tool_call", "name": "inspect", "arguments": {"part": "exact-part"}}
@@ -183,6 +198,10 @@ def test_bridge_still_validates_proposals_and_never_executes_a_tool(sdk):
     assert call["function"]["name"] == "inspect"
     assert json.loads(call["function"]["arguments"]) == {"part": "exact-part"}
     assert len(sdk.calls) == 1 and len(sdk.calls[0]["messages"]) == 2
+    response = result.wright_invocations[0]
+    assert response["adapter_returned_model"] == returned_model
+    assert response["upstream_reported_model"] is None
+    assert response["model_observation_scope"] == "hermes_model_sdk_adapter_result"
     assert any(
         record.get("capture_scope") == "provider_sdk_request"
         for record in result.wright_invocations

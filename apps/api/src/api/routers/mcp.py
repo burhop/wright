@@ -650,6 +650,19 @@ async def validate_server_endpoint(
         raise mcp_service_http_exception(e)
 
 
+@router.get(
+    "/servers/{server_id}/signin",
+    dependencies=[Depends(require_engineer_or_admin)],
+)
+async def read_mcp_signin_endpoint(server_id: str, request: Request, response: Response):
+    """Read transient approval instructions; never return OAuth tokens or dispatch."""
+    response.headers["Cache-Control"] = "no-store"
+    presenter = getattr(request.app.state, "mcp_oauth_presentation", None)
+    if presenter is None:
+        return {"presentation": "unavailable", "device": None}
+    return presenter.read_native(server_id)
+
+
 @router.post(
     "/servers/{server_id}/validation-runs",
     dependencies=[Depends(require_engineer_or_admin)],

@@ -223,12 +223,49 @@ def input_file_reference(plan, fields, input_id, path, data):
     )
 
 
+def _file_only_consumer(plan, fields, input_id):
+    addresses = {f"{input_id}.{port['key']}" for port in fields.get("outputs", [])}
+    return not any(
+        port.get("kind") == "reference_images" for port in fields.get("outputs", [])
+    ) and allows_binary_file_reference(plan.steps, addresses)
+
+
+async def _large_file_identity(service, workspace_dir, path, limits):
+    """Reuse streamed artifact identity without loading native files as content."""
+    target = WorkspacePath(workspace_dir).resolve(path, must_exist=True)
+    before = target.stat()
+    if not target.is_file() or not 0 < before.st_size <= limits.maximum_representation_bytes:
+        raise ValueError("The file exceeds the supported artifact reference size.")
+    digest = await service.files.hash_reference(workspace_dir, path)
+    after = WorkspacePath(workspace_dir).resolve(path, must_exist=True).stat()
+    if (before.st_dev, before.st_ino, before.st_size, before.st_mtime_ns) != (
+        after.st_dev, after.st_ino, after.st_size, after.st_mtime_ns
+    ):
+        raise ValueError("The input file changed while its identity was prepared.")
+    return digest, after.st_size
+
+
 async def _file_value(
     *, service, workspace_dir, plan, fields, binding, limits, review_snapshots=None
 ):
     path = binding.reference.artifact_ref
     try:
-        WorkspacePath(workspace_dir).resolve(path, must_exist=True)
+        target = WorkspacePath(workspace_dir).resolve(path, must_exist=True)
+        if (
+            review_snapshots is None
+            and target.stat().st_size > limits.maximum_upload_bytes
+            and _file_only_consumer(plan, fields, binding.input_id)
+        ):
+            digest, size = await _large_file_identity(
+                service, workspace_dir, path, limits
+            )
+            if digest != binding.reference.sha256:
+                raise ProcessInterfaceError(
+                    "SUBJECT_STALE",
+                    "A prepared input file changed.",
+                    "Select the current exact file and prepare its inputs again.",
+                )
+            return WorkflowReference(path, digest, file_only=True, size_bytes=size)
         data = await service.files.read_bytes(
             workspace_dir, path, maximum_bytes=limits.maximum_upload_bytes
         )
@@ -249,6 +286,14 @@ async def _file_value(
     except ProcessInterfaceError:
         raise
     except (OSError, ValueError, UnicodeError) as error:
+        if isinstance(error.__cause__, UnicodeError):
+            raise ProcessInterfaceError(
+                "RESPONSE_INVALID",
+                f"Input '{fields['name']}' expects text, but the selected file contains binary data.",
+                "Configure the connected step to consume this input as a file, "
+                "or select a UTF-8 text document. The selected file has not been changed.",
+                navigation=NavigationTarget(kind="block", block_id=binding.input_id),
+            ) from error
         raise ProcessInterfaceError(
             "RESPONSE_INVALID",
             "The selected file cannot supply this process input.",
@@ -421,13 +466,27 @@ async def prepare_inputs(
         ):
             default_path = fields["settings"]["workspace_file"]
             try:
-                WorkspacePath(workspace_dir).resolve(default_path, must_exist=True)
-                raw = await service.files.read_reference(workspace_dir, default_path)
+                target = WorkspacePath(workspace_dir).resolve(default_path, must_exist=True)
+                if (
+                    review_snapshots is None
+                    and target.stat().st_size > limits.maximum_upload_bytes
+                    and _file_only_consumer(plan, fields, key)
+                ):
+                    identity, _ = await _large_file_identity(
+                        service, workspace_dir, default_path, limits
+                    )
+                else:
+                    raw = await service.files.read_bytes(
+                        workspace_dir,
+                        default_path,
+                        maximum_bytes=limits.maximum_upload_bytes,
+                    )
+                    identity = hashlib.sha256(raw).hexdigest()
                 default = FileBinding(
                     input_id=key,
                     reference=ArtifactRef(
                         artifact_ref=default_path,
-                        sha256=hashlib.sha256(raw).hexdigest(),
+                        sha256=identity,
                     ),
                     provenance="explicit_default",
                 )
@@ -480,7 +539,11 @@ async def prepare_inputs(
                 limits=limits,
                 review_snapshots=review_snapshots,
             )
-            total_file_bytes += value.size_bytes or 0
+            # Opaque references carry identity/path metadata, not file contents
+            # in the preparation request or model context. Their per-artifact
+            # bound and exact downstream identity checks still apply.
+            if not value.file_only or review_snapshots is not None:
+                total_file_bytes += value.size_bytes or 0
             if total_file_bytes > limits.maximum_input_request_bytes:
                 raise ProcessInterfaceError(
                     "RESPONSE_INVALID",

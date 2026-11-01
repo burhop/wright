@@ -507,10 +507,19 @@ async def monitor_operation(
                 message="Observation stopped; the provider operation may still be working.",
             )
         raise
-    except TimeoutError:
-        # A cancellation request is not proof that a remote mutation stopped.
-        await cancel_and_observe()
-        raise
+    except TimeoutError as error:
+        # The observation budget limits Wright's waiting, not the provider job.
+        # Only the explicit cancellation barrier may invoke the cancel tool.
+        last_observation = _observation(profile, source="unknown")
+        await event(
+            "reconciliation_required",
+            message="Observation timed out; no cancellation was requested. The provider operation may still be working.",
+        )
+        raise _error(
+            "APPLICATION_OUTCOME_UNKNOWN",
+            f"{step.title}: observation ended before the operation outcome was confirmed.",
+            "Inspect the recorded provider operation and collect its existing result before another submission.",
+        ) from error
     except Exception:
         if (
             last_provider_state

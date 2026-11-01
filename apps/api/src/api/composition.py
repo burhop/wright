@@ -459,6 +459,15 @@ def build_api_gateway_service(
     *,
     proxy_brep_via_api: bool = False,
 ) -> GatewayService:
+    from api.capability_gateway import capability_discovery_tools
+    from workspace_service.workflow_source_gateway import workflow_source_authoring_tools
+
+    @lru_cache(maxsize=1)
+    def authoring_service():
+        if Path(db_path).resolve() == Path(DATABASE_PATH).resolve():
+            return workspace_service()
+        return build_workspace_service(db_path)
+
     repository = GatewayRepository(db_path)
     catalog = DatabaseGatewayCatalog(db_path)
     document = load_catalog_document()
@@ -481,7 +490,10 @@ def build_api_gateway_service(
             "workspace_id": session.workspace_id,
             "session_id": session.binding_session_id or session.session_id,
         },
-        extra_tools=[],
+        extra_tools=[
+            *capability_discovery_tools(engine),
+            *workflow_source_authoring_tools(authoring_service, lambda: gateway),
+        ],
     )
     ui_reader = EngineMcpUiResourceReader(engine)
     ui_resources = McpUiResourceStore(ui_reader)

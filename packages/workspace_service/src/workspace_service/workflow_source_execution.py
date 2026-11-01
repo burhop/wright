@@ -182,6 +182,7 @@ class PromptStep:
     human_review: bool = False
     external_action: dict | None = None
     expected_file_ports: dict[str, str] = field(default_factory=dict)
+    saved_response_file_port: str = ""
     source_contract: str = ""
     reference_inline_max_bytes: int = 1_048_576
     validation: dict | None = None
@@ -365,6 +366,22 @@ def _require_connected_process(sections, blocks, ports):
         )
 
 
+def source_execution_diagnostic(source: str) -> dict[str, str | None] | None:
+    """Explain saved-source compilation only; never qualify or execute a run."""
+    from core.redaction import redact_text
+
+    try:
+        compile_prompt_workflow(source)
+    except WorkflowSourceExecutionError as error:
+        return {
+            "code": error.code,
+            "message": redact_text(str(error))[:8192],
+            "correction": redact_text(error.correction)[:8192],
+            "block_id": error.block_id,
+        }
+    return None
+
+
 def compile_prompt_workflow(source: str) -> PromptWorkflow:
     sections = _parse(source)
     workflows = [s for s in sections if s["kind"] == "workflow"]
@@ -543,6 +560,29 @@ def compile_prompt_workflow(source: str) -> PromptWorkflow:
         settings = fields.get("settings", {})
         if not isinstance(settings, dict):
             raise _invalid(f"{title}: invalid settings.")
+        saved_response_port = settings.get("saved_response_file_port", "")
+        publication_policy = settings.get("file_policy") in (
+            "publish_indexed",
+            "publish_overwrite",
+        )
+        if "saved_response_file_port" in settings or publication_policy:
+            if (
+                not isinstance(saved_response_port, str)
+                or not saved_response_port
+                or not publication_policy
+                or settings.get("save_output") is not True
+                or settings.get("authoring_template")
+                in {
+                    "human-input",
+                    "process-validator",
+                    "external-action-approval",
+                    "manual-review",
+                }
+            ):
+                raise _invalid(
+                    f"{title}: a saved response file port requires explicit save_output=true "
+                    "and publish_indexed or publish_overwrite on a response-producing task."
+                )
         if settings.get("authoring_template") == "human-input":
             from .workflow_human_input import compile_human_input
 
@@ -653,6 +693,38 @@ def compile_prompt_workflow(source: str) -> PromptWorkflow:
             instructions = fields.get("instructions", "")
             if not isinstance(instructions, str) or not instructions.strip():
                 raise _invalid(f"{title}: enter approval instructions.")
+            from .workflow_external_actions import (
+                requests_local_simulation,
+                validate_local_simulation,
+            )
+
+            local_action = {
+                "action_kind": action_kind,
+                "binding": binding,
+                "destination": destination,
+                "settings": action_settings,
+                "action": action,
+            }
+            if requests_local_simulation(local_action):
+                try:
+                    validate_local_simulation(local_action, bound=False)
+                except ValueError as error:
+                    raise _invalid(f"{title}: {error}") from error
+                file_sources = [
+                    source
+                    for port in fields.get("inputs", [])
+                    if port.get("kind") == "workspace_file"
+                    for source in incoming.get(f"{block_id}.{port.get('key')}", [])
+                ]
+                if not receipt_path or not any(
+                    blocks[ports[source][0]]["kind"] == "task"
+                    and ports[source][2].get("kind") == "workspace_file"
+                    for source in file_sources
+                ):
+                    raise _invalid(
+                        f"{title}: local simulation requires a run-scoped JSON receipt "
+                        "and connected workspace-file artifacts produced by upstream tasks."
+                    )
             steps.append(
                 PromptStep(
                     block_id,
@@ -819,21 +891,42 @@ def compile_prompt_workflow(source: str) -> PromptWorkflow:
             for p in fields.get("outputs", [])
             if p.get("kind") == "workspace_file"
         }
+        if saved_response_port and (
+            saved_response_port not in declared_file_ports
+            or (isinstance(file_ports, dict) and saved_response_port in file_ports)
+            or cad
+            or application
+            or native_image
+            or design_check
+            or settings.get("revision_policy")
+            or settings.get("run_path_template", "") not in ("", "wright.run-path/1")
+        ):
+            raise _invalid(
+                f"{title}: name one separate workspace-file output for the saved response; "
+                "application, image and correction producers are not supported."
+            )
+        provider_file_ports = declared_file_ports - {saved_response_port}
+        if saved_response_port and (
+            not isinstance(file_ports, dict) or provider_file_ports != set(file_ports)
+        ):
+            raise _invalid(
+                f"{title}: map every other file output to one expected file."
+            )
         if not isinstance(file_ports, dict) or any(
             port not in declared_file_ports or path not in expected_files
             for port, path in file_ports.items()
         ):
             raise _invalid(f"{title}: map file outputs to declared expected files.")
-        if (is_mcp and declared_file_ports and expected_files) or (
-            agent_task and declared_file_ports and not cad and not application
+        if (is_mcp and provider_file_ports and expected_files) or (
+            agent_task and provider_file_ports and not cad and not application
         ):
             if (
                 is_mcp
                 and not file_ports
-                and len(declared_file_ports) == len(expected_files) == 1
+                and len(provider_file_ports) == len(expected_files) == 1
             ):
-                file_ports = {next(iter(declared_file_ports)): expected_files[0]}
-            if declared_file_ports != set(file_ports):
+                file_ports = {next(iter(provider_file_ports)): expected_files[0]}
+            if provider_file_ports != set(file_ports):
                 raise _invalid(
                     f"{title}: map each file output to one exact expected file.",
                     "Choose a filename for each output in this step’s Output files section.",
@@ -987,7 +1080,8 @@ def compile_prompt_workflow(source: str) -> PromptWorkflow:
         if (
             not all(isinstance(value, str) for value in (fmt, policy, mode))
             or fmt not in FORMATS
-            or policy not in {"indexed", "overwrite"}
+            or policy
+            not in {"indexed", "overwrite", "publish_indexed", "publish_overwrite"}
             or mode not in {"inline", "connection"}
         ):
             raise _invalid(
@@ -1099,6 +1193,17 @@ def compile_prompt_workflow(source: str) -> PromptWorkflow:
             if PurePosixPath(filename).suffix.lower() != FORMATS[fmt]:
                 raise _invalid(
                     f"{title}: the filename must end in {FORMATS[fmt]} for {fmt} output."
+                )
+        if saved_response_port and policy == "publish_overwrite":
+            from .workflow_run_paths import TOKEN, VERSION
+
+            if (
+                settings.get("run_path_template") != VERSION
+                or filename.split("/").count(TOKEN) != 1
+                or TOKEN not in filename.split("/")[:-1]
+            ):
+                raise _invalid(
+                    f"{title}: publish_overwrite requires an explicitly declared run-scoped output path."
                 )
         arguments, argument_sources, arguments_from = {}, {}, None
         file_dependencies = {}
@@ -1216,6 +1321,7 @@ def compile_prompt_workflow(source: str) -> PromptWorkflow:
                 design_check,
                 max_revisions,
                 expected_file_ports=file_ports,
+                saved_response_file_port=saved_response_port,
                 source_contract=source_contract,
                 reference_inline_max_bytes=reference_inline_max_bytes,
                 revision_policy=revision_policy,
@@ -1238,7 +1344,10 @@ def compile_prompt_workflow(source: str) -> PromptWorkflow:
             producer_id = review.references[0][1].split(".")[0]
             producer = next((step for step in steps if step.id == producer_id), None)
             if producer is None or not (
-                (producer.save and producer.file_policy == "indexed")
+                (
+                    producer.save
+                    and producer.file_policy in {"indexed", "publish_indexed"}
+                )
                 or producer.expected_files
                 or producer.cad
                 or producer.application
@@ -1247,7 +1356,10 @@ def compile_prompt_workflow(source: str) -> PromptWorkflow:
                 raise _invalid(
                     "Save the reviewed document as an indexed workspace file before Engineer review."
                 )
-        if any(step.save and step.file_policy != "indexed" for step in steps):
+        if any(
+            step.save and step.file_policy not in {"indexed", "publish_indexed"}
+            for step in steps
+        ):
             raise _invalid(
                 "A workflow with Engineer review must use indexed output files to preserve earlier drafts."
             )
@@ -1292,6 +1404,49 @@ def compile_prompt_workflow(source: str) -> PromptWorkflow:
     validate_human_input_rework(steps, revisions)
     validate_rework(steps, revisions)
     # Reject output collisions within one run before calling any model.
+    declared_paths = [
+        (step, path)
+        for step in steps
+        for path in (
+            (
+                (step.output_path,)
+                if step.save or (step.external_action and step.output_path)
+                else ()
+            )
+            + step.expected_files
+        )
+    ]
+    for step in steps:
+        if not step.saved_response_file_port:
+            continue
+        path = PurePosixPath(step.output_path.casefold())
+        for owner, candidate in declared_paths:
+            other = PurePosixPath(candidate.casefold())
+            same = other == path
+            indexed_neighbor = (
+                step.file_policy == "publish_indexed"
+                and other.parent == path.parent
+                and other.suffix == path.suffix
+                and re.fullmatch(re.escape(path.stem) + r"-\d{3,}", other.stem)
+            )
+            indexed_owner = (
+                owner.save
+                and candidate == owner.output_path
+                and owner.file_policy in {"indexed", "publish_indexed"}
+                and other.parent == path.parent
+                and other.suffix == path.suffix
+                and re.fullmatch(re.escape(other.stem) + r"-\d{3,}", path.stem)
+            )
+            if (
+                (same and (owner.id != step.id or candidate in step.expected_files))
+                or indexed_neighbor
+                or indexed_owner
+                or path in other.parents
+                or other in path.parents
+            ):
+                raise _invalid(
+                    f"{step.title}: the saved response path collides with another declared output."
+                )
     names: dict[str, str] = {}
     for step in steps:
         if step.save or (step.external_action and step.output_path):
@@ -1361,7 +1516,7 @@ def compile_prompt_workflow(source: str) -> PromptWorkflow:
                 )
             )
         steps = retained_steps
-    return PromptWorkflow(
+    plan = PromptWorkflow(
         str(workflows[0]["fields"].get("name", "Workflow")),
         tuple(steps),
         {str(s["id"]): s["fields"] for s in inputs},
@@ -1370,6 +1525,13 @@ def compile_prompt_workflow(source: str) -> PromptWorkflow:
         if instruction_set
         else None,
     )
+    # Validate declarations while authoring, before users supply inputs or start
+    # execution. This pure projection reserves no directories and the returned
+    # plan remains unbound; only the runtime assigns the actual run identity.
+    from .workflow_run_paths import bind_run_paths
+
+    bind_run_paths(plan, "authoring-validation")
+    return plan
 
 
 def validate_response(value: str, fmt: str) -> str:
@@ -1462,9 +1624,12 @@ def validate_workspace_authoring_shape(source: str):
                     "Use engineer, configured_tool, company_library, ai_assisted, or ai_then_engineer.",
                 )
             for direction in ("inputs", "outputs"):
-                for port in (
-                    fields[direction] if isinstance(fields[direction], list) else []
-                ):
+                if not isinstance(fields[direction], list):
+                    raise _invalid(
+                        f"{section['id']}.{direction} must be an array of connection points.",
+                        "Use a JSON array of connection-point objects, or [] when none are declared.",
+                    )
+                for port in fields[direction]:
                     expected = {
                         "key",
                         "name",
@@ -1482,6 +1647,28 @@ def validate_workspace_authoring_shape(source: str):
                         raise _invalid(
                             f"{section['id']}: incomplete connection-point fields.",
                             "Use key, name, kind, item, required, quantity and description for every port.",
+                        )
+                    if (
+                        not _STABLE_NAME.fullmatch(port["key"])
+                        or any(
+                            not isinstance(port.get(field), str)
+                            or not port[field].strip()
+                            for field in ("name", "kind", "description")
+                        )
+                        or not isinstance(port["required"], bool)
+                        or port["quantity"] not in ("one", "optional", "many")
+                        or (
+                            port["item"] is not None
+                            and (
+                                not isinstance(port["item"], str)
+                                or not _STABLE_NAME.fullmatch(port["item"])
+                            )
+                        )
+                    ):
+                        raise _invalid(
+                            f"{section['id']}.{direction}: invalid values for connection point {port['key']!r}.",
+                            "Use a lower_snake_case key, nonempty name/kind/description, a boolean required, "
+                            "quantity one/optional/many (not null), and an item stable name or null.",
                         )
                     if port["key"] in port_keys:
                         raise _invalid(
@@ -2287,8 +2474,13 @@ async def execute_prompt_workflow(
     async def save_response(step, record):
         import hashlib
 
+        if record.get("saved_response"):
+            return record["saved_response"]
         actual = await service.files.write_generated(
-            workspace_dir, step.output_path, record["response"], step.file_policy
+            workspace_dir,
+            step.output_path,
+            record["response"],
+            step.file_policy.removeprefix("publish_"),
         )
         record["output_path"] = actual
         record["output_bytes"] = len(record["response"].encode())
@@ -2303,8 +2495,24 @@ async def execute_prompt_workflow(
             )
         }
         output["sha256"] = hashlib.sha256(record["response"].encode()).hexdigest()
+        if step.saved_response_file_port:
+            output["output_port"] = step.saved_response_file_port
         record["saved_response"] = output
+        if step.saved_response_file_port:
+            port = step.saved_response_file_port
+            result = file_result(output, Provenance(run_id, step.id, port))
+            responses[f"{step.id}.{port}"] = result
+            artifacts_by_output[f"{step.id}.{port}"] = [output]
+            engineering_results.append(result)
+            await emit(
+                "result_ready",
+                task_id=step.id,
+                task_title=step.title,
+                engineering_result=result.to_dict(),
+            )
         for index, result in enumerate(engineering_results):
+            if step.saved_response_file_port:
+                break
             if result.provenance.task_id == step.id and result.kind in {
                 "text",
                 "structured",
@@ -2775,6 +2983,8 @@ async def execute_prompt_workflow(
             if reference_records:
                 record["references"] = reference_records
             for key, kind in step.output_ports:
+                if key == step.saved_response_file_port:
+                    continue  # Bound only after successful, verified publication.
                 mapped = [
                     item for item in produced_files if item.get("output_port") == key
                 ]
@@ -3391,6 +3601,8 @@ async def execute_prompt_workflow(
                             engineering_result=produced_result.to_dict(),
                         )
             for key, kind in step.output_ports:
+                if key == step.saved_response_file_port:
+                    continue  # A response string is never a saved-file receipt.
                 if step.application and key == step.application.get(
                     "output_port", "resource"
                 ):
@@ -3481,15 +3693,14 @@ async def execute_prompt_workflow(
             # The response remains usable downstream without a file. Saved files
             # will be attached as representations of this same result below.
             key = step.output_ports[0][0] if step.output_ports else "response"
-            if key in step.expected_file_ports:
+            file_ports = set(step.expected_file_ports)
+            if step.saved_response_file_port:
+                file_ports.add(step.saved_response_file_port)
+            if key in file_ports:
                 # Do not reuse a named file result's ID for the task summary.
                 # All-file producers still retain their response for diagnostics.
                 key = next(
-                    (
-                        port
-                        for port, _ in step.output_ports
-                        if port not in step.expected_file_ports
-                    ),
+                    (port for port, _ in step.output_ports if port not in file_ports),
                     "__task_response",
                 )
             result_kind = "structured" if step.output_format == "json" else "text"
@@ -3510,9 +3721,7 @@ async def execute_prompt_workflow(
                     Provenance(run_id, step.id, key),
                     artifact_role="verification"
                     if step.validation
-                    or all(
-                        key in step.expected_file_ports for key, _ in step.output_ports
-                    )
+                    or all(key in file_ports for key, _ in step.output_ports)
                     else "deliverable",
                 )
             )
@@ -3528,6 +3737,10 @@ async def execute_prompt_workflow(
                 and item.get("source_port") in step.file_dependencies
             }
         )
+        if step.saved_response_file_port:
+            # This opt-in publication is a declared handoff. Legacy overwrite
+            # remains deferred; publish_overwrite is confined to a reserved run.
+            await save_response(step, record)
         if validation_application:
             from .process_validation.process import register_outputs
 

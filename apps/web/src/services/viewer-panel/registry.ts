@@ -12,6 +12,7 @@ import { PdfProvider } from "./providers/pdf-provider";
 import { IframeProvider } from "./providers/iframe-provider";
 import { ImageProvider } from "./providers/image-provider";
 import { MarkdownProvider } from "./providers/markdown-provider";
+import { NativeFileProvider } from "./providers/native-file-provider";
 
 const REGEX_META_CHARACTERS = new Set([
   "\\",
@@ -202,6 +203,16 @@ viewerRegistry.register({
   ],
   priority: "default",
   providerFactory: () => new ImageProvider(),
+});
+
+viewerRegistry.register({
+  id: "native-file-viewer",
+  label: "Native engineering file",
+  selector: ["fcstd", "fcstd1", "blend", "blend1", "3mf", "glb", "zip"].map(
+    (extension) => ({ extension }),
+  ),
+  priority: "default",
+  providerFactory: () => new NativeFileProvider(),
 });
 
 viewerRegistry.register({

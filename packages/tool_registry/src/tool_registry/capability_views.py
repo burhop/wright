@@ -381,6 +381,8 @@ def _search_text(view: CapabilityView) -> str:
     requirements = json.dumps(view.requirements, sort_keys=True)
     return " ".join(
         [
+            view.capability_id,
+            view.canonical_id,
             view.name,
             view.vendor,
             view.description,

@@ -386,3 +386,37 @@ def test_source_gateway_keeps_isolated_state_under_filtered_hermes_environment(
     assert "private-api-test-canary" not in text
     assert "unrelated-model-test-canary" not in text
     assert "OPENAI_API_KEY" not in gateway["env"]
+
+
+def test_native_profile_root_binding_preserves_existing_environment(
+    tmp_path, monkeypatch
+):
+    from agent_adapters.hermes_gateway import hermes_wright_gateway_profile
+
+    config_path = tmp_path / "selected.yaml"
+    config_path.write_text(
+        yaml.safe_dump(
+            {
+                "mcp_servers": {
+                    "wrightgateway": {
+                        "env": {"USER_SETTING": "retain", "WRIGHT_HOME": "/old-root"},
+                        "timeout": 90,
+                    }
+                }
+            }
+        )
+    )
+    monkeypatch.setenv("WRIGHT_HOME", str(tmp_path / "native-root"))
+    monkeypatch.setenv("WRIGHT_API_TOKEN", "not-a-profile-value")
+    profile = hermes_wright_gateway_profile(None, terminal_cwd=str(tmp_path / "work"))
+    assert wright_gateway_sync.write_gateway_profile_config(profile, [str(config_path)])
+    gateway = yaml.safe_load(config_path.read_text())["mcp_servers"]["wrightgateway"]
+    assert gateway["env"] == {
+        "USER_SETTING": "retain",
+        "WRIGHT_HOME": str(tmp_path / "native-root"),
+    }
+    assert gateway["timeout"] == 90
+    assert not wright_gateway_sync.write_gateway_profile_config(
+        profile, [str(config_path)]
+    )
+

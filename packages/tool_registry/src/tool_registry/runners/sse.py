@@ -17,6 +17,7 @@ from mcp.shared.auth import (
     OAuthToken,
 )
 from core.redaction import redact_mapping, redact_text
+from .device_oauth import DeviceCodeAuth
 from .base import BaseRunner, ProgressCallback
 from .protocol import ChildProtocolState, NotificationHandler
 from .device_oauth import DeviceCodeAuth, DevicePresentation
@@ -26,6 +27,10 @@ from ..models import validate_mcp_header_name
 logger = logging.getLogger(__name__)
 _OAUTH_CALLBACK_TIMEOUT = 300.0
 OAuthPresentation = Callable[[str, str | None, str | None], Awaitable[None]]
+
+
+class _OAuthBrowserUnavailable(RuntimeError):
+    """Authorization cannot proceed when its browser could not be opened."""
 
 
 class _WrightOAuthTokenStorage:
@@ -113,12 +118,17 @@ class _OAuthCallbackServer:
             return
         try:
             opened = webbrowser.open(url, new=2)
-            if not opened:
-                logger.warning("Could not open the MCP OAuth authorization page")
         except Exception as error:
             logger.warning(
                 "Could not open the MCP OAuth authorization page: %s",
                 redact_text(error),
+            )
+            opened = False
+        if not opened:
+            raise _OAuthBrowserUnavailable(
+                "Could not open the MCP sign-in page. Start Wright from your "
+                "desktop session with a working browser, then retry the connection. "
+                "The server is not authenticated."
             )
 
     async def wait_for_callback(self) -> tuple[str, str | None]:
@@ -483,6 +493,12 @@ class SseRunner(BaseRunner):
                         self._probe_response = resp_data
                         self._message_endpoint = self.sse_url
                         logger.info("Detected Streamable HTTP support")
+            except _OAuthBrowserUnavailable:
+                # A missing browser is not evidence of a legacy SSE provider.
+                # Preserve the actionable error instead of waiting for an
+                # impossible callback or retrying another transport.
+                await self._stop_locked()
+                raise
             except Exception as e:
                 if self.static_headers is not None:
                     await self._stop_locked()
@@ -517,6 +533,10 @@ class SseRunner(BaseRunner):
                 raise RuntimeError(
                     "Device sign-in currently requires a Streamable HTTP MCP endpoint"
                 )
+
+            if self.device_authorization_presenter is not None and not self._is_streamable_http:
+                await self._stop_locked()
+                raise RuntimeError("Device sign-in requires a Streamable HTTP endpoint")
 
             # Start reading task
             self._read_task = asyncio.create_task(self._connect_and_read())

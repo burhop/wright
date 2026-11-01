@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from fnmatch import fnmatchcase
 from pathlib import Path
+import shlex
 
 import pytest
 import yaml
@@ -211,6 +212,41 @@ def test_dashboard_server_changes_select_exact_http_security_regressions() -> No
     assert "CodeQL" in runbook
 
 
+def test_packaged_recipe_resources_select_closure_and_image_contracts() -> None:
+    gate = _read("scripts/check-dev-push.sh")
+    pattern = "    examples/process-interfaces/definition.py|examples/process-interfaces/printed-replacement-part/*)"
+    start = gate.index(pattern)
+    route = gate[start : gate.index(";;", start)]
+    for target in (
+        "tests/packaging/test_handle_setup_resources.py",
+        "tests/test_docker_smoke_contract.py",
+        "tests/release/test_dev_push_process.py",
+        "tests/release/test_image_vulnerability_scan.py",
+    ):
+        assert target in route
+    # This additive selection must not replace the existing Python-source route.
+    assert "*.py|pyproject.toml|uv.lock|src/*|scripts/*)" in gate
+    assert "closed setup-resource inventory" in _read(RUNBOOK)
+
+
+def test_every_docker_context_copy_is_bound_to_the_scanned_source() -> None:
+    dockerfile = _read("docker/Dockerfile").replace("\\\n", " ")
+    for line in dockerfile.splitlines():
+        words = shlex.split(line, comments=True)
+        if not words or words[0] != "COPY":
+            continue
+        if any(word.startswith("--from=") for word in words):
+            continue
+        paths = [word for word in words[1:] if not word.startswith("--")]
+        for source in paths[:-1]:
+            source = source.rstrip("/")
+            assert (ROOT / source).exists()
+            assert any(
+                source == bound or source.startswith(bound + "/")
+                for bound in BUILD_INPUTS
+            ), f"Docker COPY input is absent from image/source binding: {source}"
+
+
 def test_program_control_changes_route_through_focused_quality_gates() -> None:
     push = _read("scripts/check-dev-push.sh")
     merge = _read("scripts/check-dev-merge.sh")
@@ -354,6 +390,52 @@ def test_full_gate_excludes_focused_roots_from_broad_tests_collection() -> None:
         "--ignore=tests/program_control_plane"
     )
     assert "--import-mode=importlib" not in gate
+
+
+@pytest.mark.parametrize(
+    "path, extra_target",
+    [
+        ("scripts/check-dev-merge.sh", "tests/test_public_python_distribution.py"),
+        (".github/workflows/python-quality.yml", None),
+    ],
+)
+def test_default_release_native_context_retains_union_and_coverage_once(
+    path: str,
+    extra_target: str | None,
+) -> None:
+    source = _read(path).replace("\\\n", " ")
+    commands = [
+        shlex.split(line.strip().removeprefix("run: "))
+        for line in source.splitlines()
+        if "python -m pytest" in line
+        and "--extra" not in line
+        and any(root in line for root in ("tests/release", "tests/native_runtime"))
+    ]
+    # A root dropped here removes contracts; a second command silently adds
+    # duplicate work. Runtime/extras and installed/platform jobs stay separate.
+    assert len(commands) == 1
+    command = commands[0]
+    for argument in (
+        "tests/release",
+        "tests/native_runtime",
+        "--cov=scripts.release",
+        "--cov=wright_engineering",
+        "--cov-report=term",
+        "--cov-fail-under=85",
+    ):
+        assert argument in command
+    assert not any(
+        argument.startswith(("--ignore", "-k", "--no-cov")) for argument in command
+    )
+    if extra_target:
+        assert extra_target in command
+        assert source.index("--cov-fail-under=85") < source.index(
+            "VITE_WRIGHT_PROCESS_DEFINITION_VIEW=1"
+        )
+    else:
+        assert source.index("--cov-fail-under=85") < source.index("for python_suite in")
+    assert "--extra runtime --extra engineering-models" in source
+    assert "--ignore=tests/release" not in source
 
 
 def test_scheduler_sensitive_performance_evidence_is_non_blocking_and_scheduled() -> (

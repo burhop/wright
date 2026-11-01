@@ -1,17 +1,21 @@
 import { useEffect, useRef, type KeyboardEvent } from "react";
 import type { CapabilityView } from "../../services/mcp-service";
 import { capabilityFacts } from "./CapabilityFacts";
+import { capabilitySetupGuides } from "../../services/provider-setup-guides";
+import { ProviderSetupGuide } from "../workspace/ProviderSetupGuide";
 import { WindowsQualificationSummary } from "./WindowsQualificationSummary";
 
 export function CapabilityDetails({
   capability,
   observing,
+  observationNotice,
   onObserve,
   onPlan,
   onClose,
 }: {
   capability: CapabilityView;
   observing: boolean;
+  observationNotice?: "complete" | "failed" | null;
   onObserve: () => void;
   onPlan?: () => void;
   onClose: () => void;
@@ -129,7 +133,10 @@ export function CapabilityDetails({
             aria-label="Setup summary"
           >
             <section className="capability-dialog__fit">
-              <h3>Installation</h3>
+              <h3>{capability.locality === "remote" ? "Connection setup" : "Installation"}</h3>
+              {capabilitySetupGuides[capability.canonical_id] && (
+                <ProviderSetupGuide text={capabilitySetupGuides[capability.canonical_id]} />
+              )}
               <p>{facts.method}</p>
               {capability.source_records
                 .filter((source) => source.primary)
@@ -149,6 +156,38 @@ export function CapabilityDetails({
               >
                 {observing ? "Checking…" : "Check this computer"}
               </button>
+              <div role="status" aria-live="polite" aria-atomic="true">
+                {observing && <p>Checking setup requirements…</p>}
+                {!observing && observationNotice === "failed" && (
+                  <p>
+                    Computer check could not finish. Check Wright’s connection
+                    and try again.
+                  </p>
+                )}
+                {!observing && observationNotice === "complete" && (
+                  <div data-testid="capability-observation-result">
+                    <p>
+                      <strong>Computer check complete</strong>
+                      {" · "}
+                      {{
+                        compatible: "Known requirements match",
+                        incompatible: "Requirements missing",
+                        uncertain: "Setup needs confirmation",
+                        blocked: "Setup blocked",
+                      }[capability.compatibility.status]}
+                    </p>
+                    {capability.compatibility.reasons.map((reason, index) => (
+                      <div key={`${reason.code}-${index}`}>
+                        <p>{reason.message}</p>
+                        {reason.recovery && <p>{reason.recovery}</p>}
+                      </div>
+                    ))}
+                    <p>
+                      Installation and an actual tool call are separate steps.
+                    </p>
+                  </div>
+                )}
+              </div>
             </section>
 
             <section className="capability-dialog__requirements">
@@ -364,7 +403,7 @@ export function CapabilityDetails({
               data-testid="capability-plan"
               onClick={onPlan}
             >
-              Install MCP server
+              {capability.locality === "remote" ? "Connect MCP server" : "Install MCP server"}
             </button>
           ) : null}
         </footer>

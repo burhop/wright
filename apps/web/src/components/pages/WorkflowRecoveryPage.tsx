@@ -1,4 +1,5 @@
 import { copyWorkspaceWorkflowSource } from "../../services/workflow-source-copy";
+import type { OpenWorkspaceToolSetup } from "../../services/workspace-tool-setup";
 import { useCallback, useEffect, useId, useRef, useState } from "react";
 import type { ProcessRef } from "@wright/process-client";
 
@@ -8,6 +9,7 @@ import WorkflowRecoveryConcept, {
 } from "../../prototypes/workflow-recovery/WorkflowRecoveryConcept";
 import { HistoricalResultView } from "../process-interfaces/HistoricalResultView";
 import { EngineeringTemplateDialog } from "../../prototypes/workflow-recovery/EngineeringTemplateDialog";
+import { PrintedHandleSetupDialog } from "../../prototypes/workflow-recovery/PrintedHandleSetupDialog";
 import { WorkflowBundleDialog } from "../../prototypes/workflow-recovery/WorkflowBundleDialog";
 import { type RecoveryLayout } from "../../prototypes/workflow-recovery/model";
 import { blankWorkflowSource } from "../../services/blank-workflow";
@@ -30,6 +32,7 @@ export interface WorkflowRecoveryPageProps {
   onSavingChange?: (path: string, saving: boolean) => void;
   onOpenFile?: (path: string) => void;
   onOpenProcess?: (process: ProcessRef, runId?: string) => void;
+  onConfigureTools?: OpenWorkspaceToolSetup;
   createIfMissing?: boolean;
   navigation?: import("../../services/process-navigation").ProcessNavigationRequest;
 }
@@ -45,6 +48,7 @@ export function WorkflowRecoveryPage({
   onSavingChange,
   onOpenFile,
   onOpenProcess,
+  onConfigureTools,
   createIfMissing = false,
   navigation,
 }: WorkflowRecoveryPageProps) {
@@ -62,13 +66,30 @@ export function WorkflowRecoveryPage({
     "new" | "open" | "save-as" | "clone" | null
   >(null);
   const [templateDialogOpen, setTemplateDialogOpen] = useState(false);
+  const templateEntry = useRef<"explore" | "menu">("menu");
   const [transferOpen, setTransferOpen] = useState(false);
+  const [setupSubject, setSetupSubject] = useState<string | null>(null);
+  const [setupNotice, setSetupNotice] = useState("");
+  const setupButton = useRef<HTMLButtonElement>(null);
+  const page = useRef<HTMLElement>(null);
   const [fileActionError, setFileActionError] = useState("");
   const [fileActionPending, setFileActionPending] = useState(false);
   const [editorUnsaved, setEditorUnsaved] = useState(false);
+  const [workingViewPending, setWorkingViewPending] = useState(false);
+  const [workingViewError, setWorkingViewError] = useState("");
+  const workingViewRequest = useRef(0);
+  useEffect(() => {
+    workingViewRequest.current += 1;
+    setWorkingViewPending(false);
+    setWorkingViewError("");
+    return () => {
+      workingViewRequest.current += 1;
+    };
+  }, [workspaceId, sessionId, visiblePath, document?.storage_digest, editorUnsaved]);
   const handleUnsavedChange = useCallback(
     (unsaved: boolean) => {
       setEditorUnsaved(unsaved);
+      if (unsaved) setSetupSubject(null);
       onUnsavedChange?.(workflowFilePath, unsaved);
     },
     [onUnsavedChange, workflowFilePath],
@@ -111,7 +132,9 @@ export function WorkflowRecoveryPage({
     setTemplateDialogOpen(false);
     window.requestAnimationFrame(() => {
       const menu = window.document.querySelector<HTMLElement>(
-        '[data-testid="workflow-file-menu"]',
+        templateEntry.current === "explore"
+          ? '[data-testid="workflow-explore-example"]'
+          : '[data-testid="workflow-file-menu"]',
       );
       if (menu?.offsetParent) menu.focus();
     });
@@ -231,6 +254,8 @@ export function WorkflowRecoveryPage({
   useEffect(() => {
     let current = true;
     setDocument(null);
+    setSetupSubject(null);
+    setSetupNotice("");
     setState("loading");
     setMessage("");
     void openWorkflow()
@@ -565,6 +590,7 @@ export function WorkflowRecoveryPage({
 
   return (
     <section
+      ref={page}
       className="workflow-recovery-page"
       data-testid="page-workflow-recovery"
       data-workspace-id={workspaceId}
@@ -591,6 +617,72 @@ export function WorkflowRecoveryPage({
           borderBottom: "1px solid var(--color-border)",
         }}
       >
+        {onOpenWorkflow && (
+          <button
+            type="button"
+            className="recovery-button recovery-button--secondary"
+            data-testid="workflow-explore-example"
+            onClick={() => {
+              templateEntry.current = "explore";
+              setTemplateDialogOpen(true);
+            }}
+            style={{ padding: "5px 12px", marginRight: "auto" }}
+          >
+            Explore an example
+          </button>
+        )}
+        {templateReadiness?.template_id === "replacement-drawer-handle" &&
+          templateReadiness.starter_unchanged !== false &&
+          templateReadiness.state === "setup_required" && (
+            <button
+              ref={setupButton}
+              type="button"
+              className="recovery-button recovery-button--secondary"
+              data-testid="workflow-handle-setup-open"
+              disabled={state !== "ready" || !currentDocument || editorUnsaved}
+              title={
+                editorUnsaved
+                  ? "Setup requires an unchanged starter. Preserve your edits or create a fresh starter."
+                  : "Inspect and bind the handle process to this workspace"
+              }
+              onClick={() => {
+                if (!currentDocument || editorUnsaved) return;
+                setSetupNotice("");
+                setSetupSubject(
+                  `${sessionId}:${currentDocument.path}:${currentDocument.storage_digest}`,
+                );
+              }}
+              style={{ padding: "5px 12px", marginRight: 8 }}
+            >
+              Set up this job
+            </button>
+          )}
+        {templateReadiness?.template_id === "replacement-drawer-handle" &&
+          templateReadiness.starter_unchanged === false &&
+          templateReadiness.accepted_source_digest === currentDocument?.storage_digest && (
+            <button
+              type="button"
+              className="recovery-button recovery-button--secondary"
+              data-testid="workflow-edited-process-setup-open"
+              disabled={state !== "ready" || !currentDocument}
+              title="Inspect setup issues and configure the existing steps. Your edits stay in this process."
+              style={{ padding: "5px 12px", marginRight: 8 }}
+              onClick={() => {
+                const readiness = page.current?.querySelector<HTMLDetailsElement>(
+                  '[data-testid="workflow-recovery-run-readiness"]',
+                );
+                if (!readiness) {
+                  setSetupNotice("Open this process in the editor to inspect its step setup.");
+                  return;
+                }
+                readiness.open = true;
+                readiness.querySelector("summary")?.focus();
+                readiness.scrollIntoView({ block: "nearest" });
+              }}
+            >
+              Configure existing steps
+            </button>
+          )}
         <button
           type="button"
           className="recovery-button recovery-button--secondary"
@@ -606,23 +698,60 @@ export function WorkflowRecoveryPage({
             type="button"
             className="recovery-button recovery-button--secondary"
             data-testid="workflow-working-view-open"
-            disabled={state !== "ready" || !currentDocument || editorUnsaved}
-            onClick={() => {
-              if (!currentDocument || editorUnsaved) return;
-              onOpenProcess({
+            disabled={state !== "ready" || !currentDocument || editorUnsaved || workingViewPending}
+            onClick={async () => {
+              if (!currentDocument || editorUnsaved || workingViewPending) return;
+              const request = ++workingViewRequest.current;
+              const process = {
                 workspace_id: currentDocument.workspace_id,
                 source_path: currentDocument.path,
                 source_digest: currentDocument.storage_digest,
-              });
+              };
+              setWorkingViewPending(true);
+              setWorkingViewError("");
+              try {
+                // Reconcile through the same durable history as the editor.
+                // Opening a view never starts or repeats a process.
+                const [latest] = await workspaceService.getWorkspaceWorkflowRuns(
+                  sessionId,
+                  process.source_path,
+                  { latestOnly: true, workspaceId: process.workspace_id },
+                );
+                if (request !== workingViewRequest.current) return;
+                if (
+                  latest?.source_digest === process.source_digest &&
+                  latest.source_matches_current !== false &&
+                  !latest.run_id
+                )
+                  throw new Error(
+                    "The saved run has no usable identity. Open Previous runs to inspect it; no new process was started.",
+                  );
+                const runId =
+                  latest?.source_digest === process.source_digest &&
+                  latest.source_matches_current !== false
+                    ? latest.run_id ?? undefined
+                    : undefined;
+                onOpenProcess(process, runId);
+              } catch (error) {
+                if (request !== workingViewRequest.current) return;
+                setWorkingViewError(
+                  error instanceof Error
+                    ? error.message
+                    : "The existing run could not be checked. Try opening the working view again.",
+                );
+              } finally {
+                if (request === workingViewRequest.current)
+                  setWorkingViewPending(false);
+              }
             }}
             style={{ padding: "5px 12px", marginRight: 8 }}
             title={
               editorUnsaved
                 ? "Save your changes before opening the working view"
-                : "Open this workflow's input, result and progress interface in a workspace tab. Nothing runs automatically."
+                : "Open the latest run for this saved workflow, or its inputs if it has no matching run. Nothing runs automatically."
             }
           >
-            Open working view
+            {workingViewPending ? "Opening working view…" : "Open working view"}
           </button>
         )}
         {onOpenProcess && editorUnsaved && (
@@ -642,6 +771,8 @@ export function WorkflowRecoveryPage({
           </button>
         )}
       </div>
+      {workingViewError && <p role="alert">{workingViewError}</p>}
+      {setupNotice && <p role="status">{setupNotice}</p>}
       {currentDocument?.layout_status === "stale" && (
         <p role="status">
           Diagram placement is from an older file version. Review the current
@@ -656,6 +787,36 @@ export function WorkflowRecoveryPage({
         onClose={closeTemplateDialog}
         onCreated={(path) => onOpenWorkflow?.(path)}
       />
+      {currentDocument &&
+        !editorUnsaved &&
+        setupSubject ===
+          `${sessionId}:${currentDocument.path}:${currentDocument.storage_digest}` && (
+          <PrintedHandleSetupDialog
+            key={setupSubject}
+            document={currentDocument}
+            sessionId={sessionId}
+            onListFiles={listWorkspaceFiles}
+            onConfigureTools={onConfigureTools}
+            onClose={() => {
+              setSetupSubject(null);
+              window.requestAnimationFrame(() => setupButton.current?.focus());
+            }}
+            onAccepted={(accepted) => {
+              const saved = requireScopedDocument(accepted);
+              bootstrapRequest.current = {
+                scope: workflowScope,
+                promise: Promise.resolve(saved),
+              };
+              setDocument(saved);
+              setEditorInstance((current) => current + 1);
+              setSetupSubject(null);
+              setSetupNotice(
+                "Prepared revision saved. Open working view to check the current inputs, tools, model and authority before starting. Engineering review remains separate.",
+              );
+              window.requestAnimationFrame(() => setupButton.current?.focus());
+            }}
+          />
+        )}
       {transferOpen && currentDocument && (
         <WorkflowBundleDialog
           document={currentDocument}
@@ -893,6 +1054,7 @@ export function WorkflowRecoveryPage({
                           data-testid="workflow-start-template"
                           onClick={(e) => {
                             e.currentTarget.closest("details")!.open = false;
+                            templateEntry.current = "menu";
                             setTemplateDialogOpen(true);
                           }}
                         >

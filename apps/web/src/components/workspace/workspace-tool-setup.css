@@ -1,0 +1,29 @@
+.workspace-tool-setup-help {
+  padding: var(--space-md);
+  border-bottom: 1px solid var(--color-border);
+  font-size: 0.8rem;
+  overflow: auto;
+  max-height: 65vh;
+  overflow-wrap: anywhere;
+}
+.workspace-tool-setup-help h3 {
+  margin-top: 0;
+}
+.workspace-tool-setup-help a {
+  color: var(--color-primary);
+  text-decoration: underline;
+}
+.workspace-tool-setup-help button {
+  margin: 12px 0 0;
+}
+.provider-setup-guide pre {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  max-height: 45vh;
+  overflow: auto;
+  font-size: 0.75rem;
+}
+.provider-setup-guide summary {
+  cursor: pointer;
+  margin: 12px 0;
+}

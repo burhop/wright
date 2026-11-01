@@ -64,6 +64,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libexpat1=2.9.0-1~deb13u1 \
     git \
     libblkid1 \
+    libcurl4t64=8.14.1-2+deb13u7 \
     liblastlog2-2 \
     libmount1 \
     libpcre2-8-0=10.46-1~deb13u3 \
@@ -85,6 +86,7 @@ RUN uv pip install --system "msgpack==1.2.3" "setuptools==84.0.0" && \
 # pip 26.2.1 vendors vulnerable msgpack/urllib3/certifi and a deprecated setuptools
 # pkg_resources compatibility module. The supported pip CLI does not use that
 # module, so replace the affected libraries, remove it, and update its inventory together.
+# Certifi resource anchors must use pip's vendored namespace after relocation.
 RUN set -eux; \
     pip_vendor=/usr/local/lib/python3.13/site-packages/pip/_vendor; \
     mkdir -p /tmp/pip-security-overrides; \
@@ -93,7 +95,7 @@ RUN set -eux; \
     cp -a /tmp/pip-security-overrides/msgpack "${pip_vendor}/msgpack"; \
     cp -a /tmp/pip-security-overrides/urllib3 "${pip_vendor}/urllib3"; \
     cp -a /tmp/pip-security-overrides/certifi "${pip_vendor}/certifi"; \
-    sed -i 's/"certifi"/"pip._vendor.certifi"/g' "${pip_vendor}/certifi/core.py"; \
+    python -c "from pathlib import Path; p=Path('/usr/local/lib/python3.13/site-packages/pip/_vendor/certifi/core.py'); s=p.read_text(); old=chr(34)+'certifi'+chr(34); assert s.count(old)==4; p.write_text(s.replace(old, chr(34)+'pip._vendor.certifi'+chr(34)))"; \
     sed -i 's/from certifi import/from pip._vendor.certifi import/' "${pip_vendor}/certifi/__main__.py"; \
     sed -i \
       -e "s/msgpack==1.1.2/msgpack==1.2.3/" \
@@ -109,6 +111,8 @@ RUN set -eux; \
       -e '/"name": "certifi"/,/}/s/"version": "2026.6.17"/"version": "2026.10.19"/' \
       -e "s/setuptools@70.3.0/setuptools@78.1.1/g" \
       "${pip_vendor}/bom.cdx.json"; \
+    python -c "import json; from pathlib import Path; d=json.loads(Path('/usr/local/lib/python3.13/site-packages/pip/_vendor/bom.cdx.json').read_text()); matches=[c for c in d['components'] if c.get('name')=='certifi']; assert len(matches)==1; assert matches[0]['version']=='2026.10.19'; assert matches[0]['purl']=='pkg:pypi/certifi@2026.10.19'"; \
+    python -c "from pathlib import Path; from pip._vendor import certifi; root=Path('/usr/local/lib/python3.13/site-packages/pip/_vendor'); assert certifi.__version__=='2026.10.19'; assert Path(certifi.where()).read_bytes()==Path('/tmp/pip-security-overrides/certifi/cacert.pem').read_bytes(); assert 'certifi==2026.10.19' in (root/'vendor.txt').read_text(); assert '2026.6.17' not in (root/'bom.cdx.json').read_text()"; \
     rm -rf /tmp/pip-security-overrides /root/.cache/uv
 
 RUN uv venv /opt/hermes/.venv --python /usr/local/bin/python3.13 && \
@@ -158,6 +162,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     gzip \
     libexpat1=2.9.0-1~deb13u1 \
     libblkid1 \
+    libcurl4t64=8.14.1-2+deb13u7 \
     liblastlog2-2 \
     libmount1 \
     libpcre2-8-0=10.46-1~deb13u3 \
@@ -259,6 +264,34 @@ COPY --chown=agent:agent apps/api/ apps/api/
 COPY --chown=agent:agent hermes-plugin-wright/ hermes-plugin-wright/
 COPY --chown=agent:agent README.md README.md
 COPY --chown=agent:agent src/ src/
+# Canonical installed setup resources are force-included by both Python package
+# builds. Copy their closed source inventory before installing the workspace.
+COPY --chown=agent:agent examples/process-interfaces/definition.py examples/process-interfaces/definition.py
+COPY --chown=agent:agent \
+    examples/process-interfaces/printed-replacement-part/prepare.py \
+    examples/process-interfaces/printed-replacement-part/provider_inputs.py \
+    examples/process-interfaces/printed-replacement-part/retained_source.py \
+    examples/process-interfaces/printed-replacement-part/repair_gate.py \
+    examples/process-interfaces/printed-replacement-part/native_inspection.py \
+    examples/process-interfaces/printed-replacement-part/orientation_stages.py \
+    examples/process-interfaces/printed-replacement-part/scenario_inputs.py \
+    examples/process-interfaces/printed-replacement-part/orca_binding.py \
+    examples/process-interfaces/printed-replacement-part/orca_stages.py \
+    examples/process-interfaces/printed-replacement-part/run_disclosure.py \
+    examples/process-interfaces/printed-replacement-part/orca-preparation.py \
+    examples/process-interfaces/printed-replacement-part/run-disclosure-template.md \
+    examples/process-interfaces/printed-replacement-part/
+COPY --chown=agent:agent \
+    examples/process-interfaces/printed-replacement-part/scenarios/printed-replacement-part-02.json \
+    examples/process-interfaces/printed-replacement-part/scenarios/printed-replacement-part-02.instructions.json \
+    examples/process-interfaces/printed-replacement-part/scenarios/printed-replacement-part-02.orca-instructions.json \
+    examples/process-interfaces/printed-replacement-part/scenarios/
+COPY --chown=agent:agent \
+    examples/process-interfaces/printed-replacement-part/handle-geometry/basis.json \
+    examples/process-interfaces/printed-replacement-part/handle-geometry/construction.json \
+    examples/process-interfaces/printed-replacement-part/handle-geometry/repair.json \
+    examples/process-interfaces/printed-replacement-part/handle-geometry/setup-contract.json \
+    examples/process-interfaces/printed-replacement-part/handle-geometry/
 COPY --chown=agent:agent integrations/rivet/editor/ integrations/rivet/editor/
 COPY --chown=agent:agent integrations/rivet/runner/ integrations/rivet/runner/
 

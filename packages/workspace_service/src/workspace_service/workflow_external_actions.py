@@ -15,6 +15,51 @@ from data_vault import (
     WorkflowContinuationStateConflict,
 )
 
+LOCAL_SIMULATION_BINDING = {
+    "server": "wright",
+    "tool": "local_simulate_handoff",
+    "schema": hashlib.sha256(b"wright.local_simulate_handoff.v1").hexdigest(),
+}
+LOCAL_SIMULATION_DESTINATION = {
+    "kind": "integration_test",
+    "id": "local-simulation://workspace",
+}
+
+
+def requests_local_simulation(action: Mapping[str, Any]) -> bool:
+    """Recognize declarations that must satisfy the fixed simulation contract."""
+    binding, operation = action.get("binding"), action.get("action")
+    return (
+        isinstance(binding, Mapping)
+        and binding.get("tool") == LOCAL_SIMULATION_BINDING["tool"]
+    ) or (
+        isinstance(operation, Mapping) and operation.get("mode") == "local_simulation"
+    )
+
+
+def validate_local_simulation(action: Mapping[str, Any], *, bound: bool) -> None:
+    """Validate local receipt semantics; this never supplies approval authority."""
+    kind = action.get("action_kind")
+    settings = action.get("settings")
+    if (
+        kind
+        not in {"printer_transfer", "supplier_upload_preview", "cart_quote_handoff"}
+        or action.get("binding") != LOCAL_SIMULATION_BINDING
+        or action.get("destination") != LOCAL_SIMULATION_DESTINATION
+        or action.get("action")
+        != {"kind": kind, "mode": "local_simulation", "simulation": True}
+        or type((action.get("action") or {}).get("simulation")) is not bool
+        or not isinstance(settings, dict)
+        or set(settings)
+        != ({"simulation", "receipt_path"} if bound else {"simulation"})
+        or settings.get("simulation") is not True
+        or (bound and not isinstance(settings.get("receipt_path"), str))
+    ):
+        raise ValueError(
+            "Local simulation requires its exact fixed binding, local destination, "
+            "simulation action and simulation-only settings."
+        )
+
 
 class WorkflowExternalActionError(RuntimeError):
     def __init__(self, code: str, message: str) -> None:

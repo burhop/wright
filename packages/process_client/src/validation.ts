@@ -238,9 +238,12 @@ export function identifier(value: string, label: string): string {
 }
 
 export function relativeLocator(value: string): string {
-  identifier(value, "relative locator");
   if (
-    /[\\:\x00]/.test(value) ||
+    typeof value !== "string" ||
+    value.trim() !== value ||
+    value.length < 1 ||
+    [...value].length > 8192 ||
+    /[\\:\x00-\x1f\x7f]/.test(value) ||
     value.split("/").some((part) => ["", ".", ".."].includes(part))
   )
     invalid("relative locator");

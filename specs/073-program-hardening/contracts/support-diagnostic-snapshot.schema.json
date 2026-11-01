@@ -17,9 +17,12 @@
       "additionalProperties": false,
       "properties": {
         "session_id": {"type": "string", "pattern": "^[A-Za-z0-9._:-]{1,128}$"},
-        "scenario_run_id": {"type": "string", "pattern": "^[A-Za-z0-9._:-]{1,128}$"}
-      }
+        "scenario_run_id": {"type": "string", "pattern": "^[A-Za-z0-9._:-]{1,128}$"},
+        "source_run_id": {"type": "string", "pattern": "^[A-Za-z0-9._:-]{1,128}$"}
+      },
+      "not": {"required": ["source_run_id"], "anyOf": [{"required": ["session_id"]}, {"required": ["scenario_run_id"]}]}
     },
+    "source_run": {"$ref": "#/$defs/SourceRunDiagnostic"},
     "summary": {
       "type": "object",
       "additionalProperties": false,
@@ -79,6 +82,204 @@
       }
     },
     "snapshot_digest": {"type": "string", "pattern": "^sha256:[a-f0-9]{64}$"}
+  },
+  "$defs": {
+  "SourceDiagnosticEvent": {
+    "additionalProperties": false,
+    "properties": {
+      "sequence": {
+        "minimum": 1,
+        "title": "Sequence",
+        "type": "integer"
+      },
+      "kind": {
+        "enum": [
+          "run_started",
+          "run_resumed",
+          "run_completed",
+          "step_started",
+          "step_completed",
+          "step_diagnostic",
+          "design_revision",
+          "validation_exhausted",
+          "cancellation_requested"
+        ],
+        "title": "Kind",
+        "type": "string"
+      },
+      "step_id": {
+        "anyOf": [
+          {
+            "pattern": "^[a-z][a-z0-9_]{0,159}$",
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Step Id"
+      },
+      "at": {
+        "anyOf": [
+          {
+            "format": "date-time",
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "At"
+      },
+      "start_sequence": {
+        "anyOf": [
+          {
+            "minimum": 1,
+            "type": "integer"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Start Sequence"
+      },
+      "elapsed_ms": {
+        "anyOf": [
+          {
+            "minimum": 0,
+            "type": "integer"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Elapsed Ms"
+      },
+      "reason": {
+        "anyOf": [
+          {
+            "pattern": "^[A-Z0-9_]{1,80}$",
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Reason"
+      }
+    },
+    "required": [
+      "sequence",
+      "kind"
+    ],
+    "title": "SourceDiagnosticEvent",
+    "type": "object"
+  },
+  "SourceRunDiagnostic": {
+    "additionalProperties": false,
+    "properties": {
+      "run_id": {
+        "pattern": "^[A-Za-z0-9._:-]{1,128}$",
+        "title": "Run Id",
+        "type": "string"
+      },
+      "source_digest": {
+        "pattern": "^sha256:[a-f0-9]{64}$",
+        "title": "Source Digest",
+        "type": "string"
+      },
+      "record_digest": {
+        "pattern": "^sha256:[a-f0-9]{64}$",
+        "title": "Record Digest",
+        "type": "string"
+      },
+      "recorded_status": {
+        "enum": [
+          "running",
+          "completed",
+          "pending_review",
+          "awaiting_approval",
+          "awaiting_external_outcome",
+          "continuation_ready",
+          "changes_requested",
+          "external_action_not_dispatched",
+          "external_action_outcome_unknown",
+          "failed",
+          "cancelled",
+          "interrupted",
+          "unknown",
+          "waiting_human",
+          "waiting_external",
+          "cancellation_requested",
+          "reconciliation_required"
+        ],
+        "title": "Recorded Status",
+        "type": "string"
+      },
+      "started_at": {
+        "anyOf": [
+          {
+            "format": "date-time",
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Started At"
+      },
+      "ended_at": {
+        "anyOf": [
+          {
+            "format": "date-time",
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Ended At"
+      },
+      "event_count": {
+        "minimum": 0,
+        "title": "Event Count",
+        "type": "integer"
+      },
+      "events": {
+        "items": {
+          "$ref": "#/$defs/SourceDiagnosticEvent"
+        },
+        "maxItems": 100,
+        "title": "Events",
+        "type": "array"
+      },
+      "events_truncated": {
+        "default": false,
+        "title": "Events Truncated",
+        "type": "boolean"
+      },
+      "metadata_omitted": {
+        "default": false,
+        "title": "Metadata Omitted",
+        "type": "boolean"
+      }
+    },
+    "required": [
+      "run_id",
+      "source_digest",
+      "record_digest",
+      "recorded_status",
+      "event_count"
+    ],
+    "title": "SourceRunDiagnostic",
+    "type": "object"
   }
 }
-
+}

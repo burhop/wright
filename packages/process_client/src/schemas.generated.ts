@@ -1,5 +1,5 @@
 // Generated from core.process_interfaces.contract_schemas(). Do not hand edit.
-// Schema SHA-256: 7df3efb8e3dec1ef83b02a4457542dee0d5ceab51d0dffa988107f93251076ba
+// Schema SHA-256: 35807455fe18b629267dfb970492e4ef57f3820f563383f8c39a25a1dbec6346
 export const contractSchemas: Readonly<Record<string, unknown>> = {
   "Action": {
     "additionalProperties": false,
@@ -192,7 +192,7 @@ export const contractSchemas: Readonly<Record<string, unknown>> = {
     "additionalProperties": false,
     "properties": {
       "artifact_ref": {
-        "maxLength": 160,
+        "maxLength": 8192,
         "minLength": 1,
         "title": "Artifact Ref",
         "type": "string"
@@ -1619,7 +1619,7 @@ export const contractSchemas: Readonly<Record<string, unknown>> = {
       "artifact_ref": {
         "anyOf": [
           {
-            "maxLength": 160,
+            "maxLength": 8192,
             "minLength": 1,
             "type": "string"
           },
@@ -2539,7 +2539,7 @@ export const contractSchemas: Readonly<Record<string, unknown>> = {
       "technical_details_ref": {
         "anyOf": [
           {
-            "maxLength": 160,
+            "maxLength": 8192,
             "minLength": 1,
             "type": "string"
           },
@@ -2767,7 +2767,7 @@ export const contractSchemas: Readonly<Record<string, unknown>> = {
       "run_log_path": {
         "anyOf": [
           {
-            "maxLength": 160,
+            "maxLength": 8192,
             "minLength": 1,
             "type": "string"
           },

@@ -400,4 +400,39 @@ describe("CapabilityLibrary", () => {
       screen.getByRole("button", { name: "Try loading again" }),
     ).toBeEnabled();
   });
+  it.each([
+    ["freecad-mcp-nekanat", "FreeCAD"],
+    ["autodesk-product-help-mcp", "get_available_products"],
+    ["stevecad-mcp", "https://stevecad.studio/mcp"],
+  ])("opens bundled help for exact provider %s without installing", async (id, text) => {
+    const user = userEvent.setup();
+    vi.mocked(mcpService.getCapabilities).mockResolvedValueOnce({
+      ...result,
+      capabilities: [{ ...capability, capability_id: id, canonical_id: id }],
+    });
+    const onPlan = vi.fn();
+    render(<CapabilityLibrary onPlanOnboarding={onPlan} />);
+    const button = await screen.findByRole("button", { name: /view MCP server details/i });
+    expect(button).toHaveTextContent("View details and setup guide");
+    await user.click(button);
+    const summary = screen.getByText("Read provider setup guide (bundled copy)");
+    await user.click(summary);
+    expect(screen.getByRole("dialog")).toHaveTextContent(text);
+    expect(screen.getByRole("dialog")).toHaveTextContent("does not establish readiness on your machine");
+    expect(onPlan).not.toHaveBeenCalled();
+    expect(mcpService.observeCapability).not.toHaveBeenCalled();
+  });
+
+  it("keeps other FreeCAD providers distinct from the documented provider", async () => {
+    const user = userEvent.setup();
+    vi.mocked(mcpService.getCapabilities).mockResolvedValueOnce({
+      ...result,
+      capabilities: [{ ...capability, capability_id: "freecad-mcp-proximile", canonical_id: "freecad-mcp-proximile" }],
+    });
+    render(<CapabilityLibrary />);
+    await user.click(await screen.findByRole("button", { name: /view MCP server details/i }));
+    expect(screen.queryByText("Read provider setup guide (bundled copy)")).not.toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /publisher instructions/i })).toHaveAttribute("href", capability.source_records[0].url);
+  });
+
 });

@@ -282,6 +282,18 @@ async def lifespan(app: FastAPI):
             DATABASE_PATH, sync_workspace_tools_to_wright_gateway
         )
     mcp_settings = McpTransportSettings.from_env()
+    # Explicit deployment selection; keep the existing local-browser default.
+    # Reuse the qualified device grant for a remotely operated Wright instance.
+    oauth_flow = os.environ.get("WRIGHT_MCP_OAUTH_FLOW", "authorization_code")
+    if oauth_flow not in {"authorization_code", "device_code"}:
+        raise ValueError("Unsupported WRIGHT_MCP_OAUTH_FLOW")
+    device_presenter = None
+    app.state.mcp_oauth_presentation = None
+    if oauth_flow == "device_code":
+        from api.services.mcp_oauth_presentation import NativeDeviceSignIn
+
+        app.state.mcp_oauth_presentation = NativeDeviceSignIn()
+        device_presenter = app.state.mcp_oauth_presentation.present_native
     app.state.mcp_engine = McpEngine(
         DATABASE_PATH,
         # Gateway calls retain their default deadline and may explicitly request

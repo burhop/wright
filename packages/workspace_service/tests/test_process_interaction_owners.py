@@ -82,6 +82,163 @@ def test_action_evidence_is_deduplicated_exact_and_never_truncated():
     assert error.value.reason.code == "READINESS_UNSUPPORTED"
 
 
+def test_nested_thermal_evidence_preserves_all_long_paths_and_digests():
+    prefix = "thermal/" + "/".join(["recorded-comparison" * 3] * 3)
+    artifacts = [
+        {"path": f"{prefix}/result-{index}.json", "sha256": f"{index:064x}"}
+        for index in range(46)
+    ]
+    checkpoint = SimpleNamespace(continuation={"artifact_files": artifacts})
+    before = json.dumps(checkpoint.continuation, sort_keys=True)
+    evidence = _approval_evidence(checkpoint)
+    assert len(evidence) == 46
+    assert all(len(item.artifact_ref) > 160 for item in evidence)
+    assert {(item.artifact_ref, item.sha256) for item in evidence} == {
+        (item["path"], item["sha256"]) for item in artifacts
+    }
+    assert json.dumps(checkpoint.continuation, sort_keys=True) == before
+
+
+def thermal_review_evidence():
+    plot = EngineeringResult(
+        "thermal-run:solve:temperature-plot",
+        "analysis",
+        "Heat-spreader temperature field",
+        (
+            Representation(
+                "workspace_file", "thermal/temperature-map.png", "png", sha256="b" * 64
+            ),
+        ),
+        Provenance(
+            "thermal-run", "solve", "temperature-plot", definition_digest="f" * 64
+        ),
+    )
+    table = EngineeringResult(
+        "thermal-run:solve:temperatures",
+        "file",
+        "Temperature table",
+        (
+            Representation(
+                "workspace_file", "thermal/temperatures.csv", "csv", sha256="c" * 64
+            ),
+        ),
+        Provenance("thermal-run", "solve", "temperatures"),
+    )
+    static = [
+        {"path": f"inputs/{name}", "sha256": "a" * 64}
+        for name in ("concept.png", "context.md", "loads.json", "requirements.md")
+    ]
+    return SimpleNamespace(
+        run_id="thermal-run",
+        subject={"definition_digest": "f" * 64},
+        continuation={
+            "run_id": "thermal-run",
+            "artifact_files": [
+                *static,
+                {"path": "thermal/temperature-map.png", "sha256": "b" * 64},
+                {"path": "thermal/temperatures.csv", "sha256": "c" * 64},
+            ],
+            "results": [table.to_dict(), plot.to_dict()],
+        },
+    )
+
+
+def test_thermal_review_promotes_exact_produced_plot_before_static_concept_without_losing_evidence():
+    checkpoint = thermal_review_evidence()
+    before = json.dumps(checkpoint.continuation, sort_keys=True)
+    original = {
+        (item["path"], item["sha256"])
+        for item in checkpoint.continuation["artifact_files"]
+    }
+    # The prior alphabetical presentation placed all four static inputs first.
+    assert all(path.startswith("inputs/") for path, _ in sorted(original)[:4])
+    evidence = _approval_evidence(checkpoint)
+    assert [item.artifact_ref for item in evidence[:2]] == [
+        "thermal/temperature-map.png",
+        "thermal/temperatures.csv",
+    ]
+    assert {(item.artifact_ref, item.sha256) for item in evidence} == original
+    assert all(
+        item.result_id is None and item.representation_id is None for item in evidence
+    )
+    assert json.dumps(checkpoint.continuation, sort_keys=True) == before
+
+
+@pytest.mark.parametrize(
+    "mismatch",
+    ["run", "continuation_run", "definition", "path", "digest", "kind", "missing_hash"],
+)
+def test_review_does_not_promote_stale_or_mismatched_result_representations(mismatch):
+    checkpoint = thermal_review_evidence()
+    result = checkpoint.continuation["results"][1]
+    representation = result["representations"][0]
+    if mismatch == "run":
+        result["provenance"]["run_id"] = "previous-run"
+    elif mismatch == "continuation_run":
+        checkpoint.continuation["run_id"] = "previous-run"
+    elif mismatch == "definition":
+        result["provenance"]["definition_digest"] = "e" * 64
+    elif mismatch == "path":
+        representation["location"] = "another/temperature-map.png"
+    elif mismatch == "digest":
+        representation["sha256"] = "d" * 64
+    elif mismatch == "kind":
+        representation["kind"] = "value"
+    else:
+        representation["sha256"] = None
+    original = {
+        (item["path"], item["sha256"])
+        for item in checkpoint.continuation["artifact_files"]
+    }
+    evidence = _approval_evidence(checkpoint)
+    paths = [item.artifact_ref for item in evidence]
+    assert paths.index("thermal/temperature-map.png") > paths.index(
+        "inputs/concept.png"
+    )
+    assert {(item.artifact_ref, item.sha256) for item in evidence} == original
+
+
+def test_review_uses_exact_export_format_and_keeps_other_revisions_unpromoted():
+    checkpoint = thermal_review_evidence()
+    table, plot = checkpoint.continuation["results"]
+    # Named export representations are retained results too; their own provenance
+    # and exact path/hash must match, irrespective of their filename suffix.
+    plot["representations"][0]["location"] = "thermal/z-field.data"
+    plot["representations"][0]["format"] = "PNG"
+    table["exports"] = [plot]
+    checkpoint.continuation["results"] = [table]
+    checkpoint.continuation["artifact_files"] += [
+        {"path": "thermal/z-field.data", "sha256": "b" * 64},
+        {"path": "thermal/z-field.data", "sha256": "d" * 64},
+    ]
+    evidence = _approval_evidence(checkpoint)
+    assert (evidence[0].artifact_ref, evidence[0].sha256) == (
+        "thermal/z-field.data",
+        "b" * 64,
+    )
+    paths = [(item.artifact_ref, item.sha256) for item in evidence]
+    assert paths.index(("thermal/z-field.data", "d" * 64)) > paths.index(
+        ("inputs/concept.png", "a" * 64)
+    )
+    assert set(paths) == {
+        (item["path"], item["sha256"])
+        for item in checkpoint.continuation["artifact_files"]
+    }
+
+
+@pytest.mark.parametrize(
+    "saved", [None, {"not": "a result list"}, [{"incomplete": True}]]
+)
+def test_unusable_optional_result_metadata_keeps_all_exact_review_references(saved):
+    checkpoint = thermal_review_evidence()
+    checkpoint.continuation["results"] = saved
+    evidence = _approval_evidence(checkpoint)
+    assert [(item.artifact_ref, item.sha256) for item in evidence] == sorted(
+        (item["path"], item["sha256"])
+        for item in checkpoint.continuation["artifact_files"]
+    )
+
+
 def test_action_instructions_use_exact_accepted_review_text_not_a_new_revision():
     source = """task review
   instructions: "Inspect the exact socket section."

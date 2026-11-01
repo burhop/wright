@@ -11,6 +11,7 @@ import {
   authoringConfigurationCommands,
   authoringInputState,
   authoringReadiness,
+  canAssignMcpWorkOperation,
 } from "./authoring-objects";
 import { type WorkflowMcpTool } from "./mcp-settings";
 import { mcpServerChoices, type McpServerChoice } from "./mcp-server-blocks";
@@ -25,11 +26,45 @@ import {
 import { WorkflowObjectIcon } from "./WorkflowObjectIcon";
 import { disconnectedProcessDiagnostic } from "./run-readiness";
 import { isPromptBlock, promptIsConfigured } from "./prompt-settings";
+import { isValidatorBlock } from "./validation-settings";
 import type { WorkspaceWorkflowSourceReadiness } from "../../services/workspace-service";
 
 export interface AuthoringWorkspaceFile {
   path: string;
   name: string;
+}
+
+export function UnboundWorkOperation({ block, readOnly, onApply }: {
+  block: RecoveryBlock;
+  readOnly: boolean;
+  onApply: (commands: RecoveryCommand[]) => boolean;
+}) {
+  if (!canAssignMcpWorkOperation(block)) return null;
+  return (
+    <section aria-label="Operation" data-testid="workflow-recovery-unbound-operation">
+      <h3>Operation: not assigned</h3>
+      <p>Change this step to an AI task using connected tools. This creates an unsaved change; its requirements, inputs, outputs and review connections stay attached.</p>
+      <button
+        type="button"
+        className="recovery-button recovery-button--secondary"
+        disabled={readOnly}
+        onClick={() => {
+          const defaults = AUTHORING_TEMPLATES.find((item) => item.id === "mcp-task")!.configuration!;
+          onApply([
+            { kind: "assign_mcp_work_operation", blockId: block.id },
+            ...Object.entries({ prompt_source: "inline", ...defaults })
+              .filter(([key]) => block.configuration[key] === undefined)
+              .map(([key, value]): RecoveryCommand => ({
+                kind: "set_block_configuration", blockId: block.id, key, value,
+              })),
+          ]);
+        }}
+      >
+        Change step to AI with tools
+      </button>
+      <p>Then choose a connected server and review the task instructions. Save to keep the change, or use Undo to restore the previous operation. Check readiness before running.</p>
+    </section>
+  );
 }
 
 export function isServerScopedMcpTask(block: RecoveryBlock): boolean {
@@ -94,6 +129,9 @@ export function AuthoringRunReadiness({
   const isMcpTask = (block: RecoveryBlock) =>
     isServerScopedMcpTask(block) || isExactMcpTool(block);
   const unbound = tasks.filter((block) => {
+    // Validators execute through Wright's profile-bound runtime, not an
+    // external tool binding. Backend preflight still validates their settings.
+    if (isValidatorBlock(block)) return false;
     const hasMcpBinding = mcpTaskHasRequiredBinding(block);
     const requiresExecutionBinding =
       block.executionKind === "deterministic" || isMcpTask(block);
@@ -135,6 +173,7 @@ export function AuthoringRunReadiness({
   const unavailableMcpCount = mcpTasks.filter((block) =>
     ["unavailable", "check unavailable"].includes(mcpStatus(block)),
   ).length;
+  const sourceDiagnostic = saved ? templateReadiness?.execution_diagnostic : null;
   const attentionCount =
     inputs.inputs.filter((item) => item.status !== "configured").length +
     unbound.length +
@@ -143,6 +182,7 @@ export function AuthoringRunReadiness({
     (processIssue ? 1 : 0) +
     (!saved ? 1 : 0) +
     (!executionConnected ? 1 : 0) +
+    (sourceDiagnostic ? 1 : 0) +
     unavailableMcpCount +
     (templateReadiness &&
     !["not_template", "ready", "verified"].includes(templateReadiness.state)
@@ -153,20 +193,24 @@ export function AuthoringRunReadiness({
       ? "Hand-authored workflow"
       : templateReadiness.state === "setup_required"
         ? "Setup required"
-        : templateReadiness.state === "reference"
-          ? "Reference only"
-          : templateReadiness.state === "unavailable"
-            ? "Check unavailable"
-            : templateReadiness.state === "verified"
-              ? "Verified"
-              : "Ready"
+        : templateReadiness.state === "revised"
+          ? "Revised · preflight required"
+          : templateReadiness.state === "reference"
+            ? "Reference only"
+            : templateReadiness.state === "unavailable"
+              ? "Check unavailable"
+              : templateReadiness.state === "verified"
+                ? "Verified"
+                : "Ready"
     : "Checking…";
   const templateStatusTone =
     !templateReadiness ||
     templateReadiness.state === "not_template" ||
+    templateReadiness.state === "revised" ||
     templateReadiness.state === "ready" ||
     templateReadiness.state === "verified"
-      ? templateReadiness?.state === "not_template"
+      ? templateReadiness?.state === "not_template" ||
+        templateReadiness?.state === "revised"
         ? "unknown"
         : "good"
       : "attention";
@@ -214,8 +258,8 @@ export function AuthoringRunReadiness({
           />
           <ReadinessItem
             label="Saved definition"
-            value={saved ? "Saved" : "Unsaved changes"}
-            status={saved ? "good" : "attention"}
+            value={saved ? (sourceDiagnostic ? "Saved draft · setup needed" : "Saved") : "Unsaved changes"}
+            status={saved && !sourceDiagnostic ? "good" : "attention"}
           />
           <ReadinessItem
             label="Run path"
@@ -232,6 +276,30 @@ export function AuthoringRunReadiness({
             status={templateStatusTone}
           />
         </div>
+        {sourceDiagnostic && (
+          <div
+            className="recovery-run-readiness__issue"
+            data-testid="workflow-recovery-saved-source-issue"
+          >
+            <b>Saved draft: first setup issue</b>
+            <span>{sourceDiagnostic.message}</span>
+            <span>{sourceDiagnostic.correction}</span>
+            {sourceDiagnostic.block_id && findBlock(workflow, sourceDiagnostic.block_id) && (
+              <button
+                type="button"
+                onClick={() => onSelect(sourceDiagnostic.block_id!)}
+              >
+                Configure this step
+              </button>
+            )}
+            {onRefreshTemplateReadiness && (
+              <button type="button" onClick={onRefreshTemplateReadiness}>
+                Recheck saved workflow
+              </button>
+            )}
+            <span>Further setup may be needed after this issue is resolved. Tools, inputs, model access and reviews are checked separately.</span>
+          </div>
+        )}
         {tasks.length === 0 && (
           <p
             className="recovery-run-readiness__issue"
@@ -333,7 +401,9 @@ export function AuthoringRunReadiness({
                   ]
               ).map((reason) => (
                 <span key={reason}>
-                  Owner: template maintainer / Wright environment · Next:{" "}
+                  {templateReadiness.state === "revised"
+                    ? "Owner: current workflow / Wright environment · Next: "
+                    : "Owner: template maintainer / Wright environment · Next: "}
                   {reason}
                 </span>
               ))}
@@ -343,7 +413,9 @@ export function AuthoringRunReadiness({
                   data-testid="workflow-recovery-template-readiness-refresh"
                   onClick={onRefreshTemplateReadiness}
                 >
-                  Recheck qualification
+                  {templateReadiness.state === "revised"
+                    ? "Refresh revision status"
+                    : "Recheck qualification"}
                 </button>
               )}
             </div>

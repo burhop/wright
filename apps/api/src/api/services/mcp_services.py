@@ -5,8 +5,10 @@ from datetime import timedelta
 
 from fastapi import Depends, HTTPException, Request, status
 
-from api.services.wright_gateway_sync import sync_mcp_server_to_wright_gateway
-from workspace_service.adapters.runtime import get_workspace_enabled_tools
+from workspace_service.adapters.runtime import (
+    get_active_gateway_session,
+    get_workspace_enabled_tools,
+)
 from tool_registry import McpEngine
 from tool_registry import services as registry_services
 from tool_registry.capability_services import CapabilityServiceDependencies
@@ -635,7 +637,9 @@ class McpApiService:
                 )
         if capability_id and entry is None:
             raise McpNotFoundError(f"Capability '{capability_id}' not found.")
-        observation = self._machine_observation(entries)
+        # A new plan commonly follows installation of a missing prerequisite.
+        # Bind it to a fresh observation rather than the catalog browsing cache.
+        observation = self._machine_observation(entries, refresh=True)
         return create_install_plan(
             self.db_path,
             snapshot_id=snapshot.snapshot_id,
@@ -671,7 +675,7 @@ class McpApiService:
     ):
         plan = get_install_plan(self.db_path, plan_id)
         adapters = self._onboarding_adapters(plan.backend_kind)
-        return apply_install_plan(
+        result = apply_install_plan(
             self.db_path,
             plan_id,
             digest,
@@ -680,6 +684,10 @@ class McpApiService:
             now=self.capability_dependencies.clock(),
             trace_id=trace_id,
         )
+        if result.get("state") == "completed":
+            self._sync_workspace_tools(None)
+            self._notify_gateway_changes()
+        return result
 
     def get_onboarding_run(self, run_id: str):
         return get_onboarding_run(self.db_path, run_id)
@@ -733,7 +741,7 @@ class McpApiService:
             **({"workspace_dir": workspace_dir} if workspace_dir is not None else {}),
         )
         if sync_agent_profile:
-            sync_mcp_server_to_wright_gateway(updated)
+            self._sync_workspace_tools(None)
         self._notify_gateway_changes()
         return updated
 
@@ -784,7 +792,7 @@ class McpApiService:
         server = await registry_services.delete_registered_server(
             self.engine, server_id
         )
-        sync_mcp_server_to_wright_gateway(server)
+        self._sync_workspace_tools(None)
         self._notify_gateway_changes()
         return server
 
@@ -867,6 +875,8 @@ class McpApiService:
         return is_enabled
 
     def _sync_workspace_tools(self, session_id: str | None) -> None:
+        if not session_id:
+            session_id = get_active_gateway_session(self.db_path)
         if not session_id:
             return
         sync_manager = getattr(self.app_state, "agent_sync_manager", None)

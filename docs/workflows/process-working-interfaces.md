@@ -76,6 +76,27 @@ workflows. **Update from current defaults...** proposes an explicit update for a
 existing workflow; review it and save a new revision. Changing global defaults
 never silently changes a saved workflow or a run already underway.
 
+Chat's `workflow_update_source` tool can preserve the saved instruction collection
+without asking the model to reproduce it: use `preserve_saved_instructions: true`,
+omit the source's workflow-level `instructions` field, and provide the exact read
+storage revision/digest. The backend copies that collection and its typed policy,
+validates the complete candidate, and saves through the same revision checks as
+other edits. Its response identifies the preserved collection and source revision.
+Conflicting supplied instructions, a missing saved collection, or a stale base
+are rejected. Intentional instruction edits still supply the complete collection
+with preservation omitted/false. This does not update current defaults, rewrite
+prior runs, or carry their reviews to the revised source.
+
+Authoring tools default to a compact process view: `editable_source` contains
+the process without its saved instruction collection, and `saved_instructions`
+identifies that collection and its typed policy. The returned storage digest
+always identifies the complete saved file. Use the explicit preservation option
+when updating that projected text. `source_view: "complete"` returns the exact
+source and saved layout; the editor and exports retain both. Authoring context
+offers `include_instruction_bodies: true` for full default inspection. A broad
+tool-contract listing shows identities; filtering an exact server includes its
+schemas. These response choices do not alter execution, readiness or reviews.
+
 Use **Request input** for a deliberate question, including a first-step question.
 Configure its fields and connect its response to downstream work. A declared
 condition can select whether to ask. A valid answer continues the same durable
@@ -223,11 +244,15 @@ the authority; built-in reviewed operations and exact integration-test enrollmen
 retain their separate scope. This check grants no permission and does not replace
 the final dispatch checks or a process's declared human review.
 
-1. Use **Workflows** to create a new blank workflow, or open the intended existing
-   file through Workspace Files or **Open workflow** in the editor's file menu.
+1. Use **Workflows** to choose a saved workflow, or select **New workflow** for a
+   blank draft. Existing files also open through Workspace Files or **Open
+   workflow** in the editor's file menu.
    File tabs retain the existing editor, diagram and source controls.
    An explicit workflow link selects that source rather than a restored unrelated
    tab. Opening an existing file does not create a missing workflow.
+   Closing the last maximized tab restores workspace navigation. If an earlier
+   saved layout leaves the empty workspace maximized, choose **Restore workspace
+   layout** in its empty view.
 2. Save your edits, then choose **Open working view** to open the same saved
    workflow's input, result and progress interface in a workspace tab. It does
    not select a template or start execution. **Open workflow** returns to the

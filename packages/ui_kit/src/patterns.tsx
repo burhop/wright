@@ -279,11 +279,11 @@ export function ReadinessPanel({
 }
 const stateLabels: Record<InteractionSnapshot["state"], string> = {
   preparing: "Preparing",
-  ready: "Ready",
+  ready: "Not started",
   running: "Running",
   waiting_human: "Paused at a review or response step",
   waiting_external: "Waiting for an external operation",
-  reconciliation_required: "Status needs reconciliation",
+  reconciliation_required: "Operation status unconfirmed",
   completed: "Process completed",
   failed: "Process needs attention",
   cancelled: "Process cancelled",
@@ -295,7 +295,7 @@ const observationStateLabels: Record<Observation["state"], string> = {
   running: "Running",
   waiting_human: "Waiting for a review or response",
   waiting_external: "Waiting for an external operation",
-  reconciliation_required: "Needs reconciliation",
+  reconciliation_required: "Status unconfirmed",
   completed: "Completed",
   failed: "Failed",
   cancelled: "Cancelled",
@@ -335,7 +335,10 @@ export function ProgressPanel({
         </p>
       )}
       {state === "reconciliation_required" && (
-        <p>Check the recorded outcome before repeating an action.</p>
+        <p>
+          The engineering operation may still be running. Check its recorded
+          status and existing results before starting it again.
+        </p>
       )}
       {observations.map((observation) => {
         const observed = Date.parse(observation.observed_at),
@@ -372,8 +375,9 @@ export function ProgressPanel({
             {observation.activity && <p>{observation.activity}</p>}
             {stale ? (
               <p className="wp-muted">
-                This status needs a fresh observation; progress and time are
-                unavailable.
+                {observation.state === "waiting_human"
+                  ? "The last observation recorded a wait for a review or response. Refresh to check whether a decision has since been recorded; progress and time estimates are unavailable."
+                  : "This status needs a fresh observation; progress and time are unavailable."}
               </p>
             ) : (
               <>
@@ -413,7 +417,9 @@ export function ProgressPanel({
             <p className="wp-muted">
               Last observed{" "}
               <time dateTime={observation.observed_at}>
-                {observation.observed_at}
+                {Number.isFinite(observed)
+                  ? new Date(observed).toLocaleString()
+                  : "Time unavailable"}
               </time>
             </p>
             {(observation.limitations ?? []).map((limitation, index) => (
@@ -496,8 +502,8 @@ export function ResultCard({
       data-result-id={output.result_id}
       tabIndex={-1}
     >
-      <h3 title={output.title}>{title}</h3>
-      <p className="wp-muted">{output.role === "previous_attempt" ? "Historical evidence · superseded output" : output.role}</p>
+      <h3>{title}</h3>
+      {output.role === "previous_attempt" && <p className="wp-muted">Historical evidence · superseded output</p>}
       {children}
       {(output.representations ?? []).map((reference) => (
         <EvidenceReference
@@ -545,7 +551,7 @@ export function ResultCard({
       </div>
       {!output.assessments?.length && (
         <p className="wp-muted">
-          No assessment is linked here. Rendering is not verification.
+          No linked checks
         </p>
       )}
       <button
@@ -564,6 +570,8 @@ export function ResultCard({
       </button>
       <details>
         <summary>Result identity</summary>
+        <p>{output.title}</p>
+        <p>Role: {output.role}</p>
         <code>{output.result_id}</code>
         {output.revision_id && <p>Revision: {output.revision_id}</p>}
         {output.producer_attempt && <p>Attempt: {output.producer_attempt}</p>}

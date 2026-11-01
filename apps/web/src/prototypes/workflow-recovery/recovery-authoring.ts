@@ -995,7 +995,12 @@ function parsePortList(
   const direction: RecoveryPort["direction"] =
     field === "inputs" ? "input" : "output";
   const basePortsByKey = new Map(
-    base.ports.map((port) => [stableKey(port.id), port]),
+    base.ports
+      .filter(
+        (port) =>
+          port.ownerBlockId === ownerBlockId && port.direction === direction,
+      )
+      .map((port) => [stableKey(port.id), port]),
   );
   const seen = new Set<string>();
   const ports: RecoveryPort[] = [];

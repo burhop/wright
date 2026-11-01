@@ -71,7 +71,11 @@ def _license_requirement(
             else [
                 _reason(
                     "license_unknown",
-                    "The source does not identify license terms.",
+                    (
+                        "The imported configuration does not declare license terms."
+                        if entry is None
+                        else "The catalog does not identify a license."
+                    ),
                     "Verify the source and license, then record that review before applying.",
                 )
             ]

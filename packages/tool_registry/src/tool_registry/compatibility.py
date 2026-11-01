@@ -354,7 +354,13 @@ def evaluate_compatibility(
             )
         )
 
+    host_labels = {name.strip().casefold() for name in entry.host_software_required}
     for dependency in sorted(entry.dependencies.system):
+        # Catalog host labels can name desktop applications, not PATH commands.
+        # Their approved observations are evaluated below; a failed lookup of
+        # the display label does not establish that the application is absent.
+        if dependency.strip().casefold() in host_labels:
+            continue
         fact = observation.host_observations.get(f"executable:{dependency}")
         if fact is None:
             worsen("uncertain")
@@ -385,7 +391,9 @@ def evaluate_compatibility(
                 _reason(
                     "host_software_unobserved",
                     f"Required host software '{host}' could not be confirmed.",
-                    "Install/configure the host and enable its approved detector.",
+                    "This automatic check does not prove the application is absent. "
+                    "Use the provider setup guide to connect an existing installation "
+                    "and perform its normal connection check, or install it if needed.",
                     "machine.host_observations",
                 )
             )

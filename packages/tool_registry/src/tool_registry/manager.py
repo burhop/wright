@@ -267,6 +267,7 @@ class McpEngine:
             runner = SseRunner(
                 server.command,
                 server_id=server_id,
+                device_authorization_presenter=self._lifecycle_adapter.device_authorization_presenter,
                 operation_timeout=self._lifecycle_adapter.operation_timeout,
                 authorization_presenter=self._lifecycle_adapter.authorization_presenter,
                 device_authorization_presenter=self._lifecycle_adapter.device_authorization_presenter,

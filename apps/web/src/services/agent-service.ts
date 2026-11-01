@@ -381,6 +381,8 @@ export class HermesAgentService {
     const reader = response.body.getReader();
     const decoder = new TextDecoder("utf-8");
     let buffer = "";
+    // Network reads need not keep an event: line and its data: line together.
+    let currentEvent = "";
 
     while (true) {
       const { value, done } = await reader.read();
@@ -390,7 +392,6 @@ export class HermesAgentService {
       const lines = buffer.split("\n");
       buffer = lines.pop() || "";
 
-      let currentEvent = "";
       for (const line of lines) {
         const trimmed = line.trim();
         if (!trimmed) continue;
@@ -730,6 +731,7 @@ export class HermesAgentService {
       content: m.content,
       timestamp: m.timestamp,
       traceId: m.trace_id ?? null,
+      toolEvidence: Array.isArray(m.tool_evidence) ? m.tool_evidence : [],
     }));
   }
 

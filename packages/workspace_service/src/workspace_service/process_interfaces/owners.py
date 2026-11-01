@@ -33,6 +33,7 @@ from .projection import (
     ProjectionFacts,
     RecordedRun,
     _STATES,
+    _VIEWERS,
     project_operation_observations,
 )
 
@@ -189,22 +190,59 @@ def _action_receipt(checkpoint):
 
 
 def _approval_evidence(checkpoint):
-    evidence = tuple(
-        ArtifactRef(artifact_ref=path, sha256=digest)
-        for path, digest in sorted(
-            {
-                (item["path"], item["sha256"])
-                for item in checkpoint.continuation.get("artifact_files", ())
-            }
-        )
-    )
-    if len(evidence) > PAGE_ITEMS:
+    continuation = checkpoint.continuation
+    identities = {
+        (item["path"], item["sha256"])
+        for item in continuation.get("artifact_files", ())
+    }
+    if len(identities) > PAGE_ITEMS:
         raise ProcessInterfaceError(
             "READINESS_UNSUPPORTED",
             "This action checkpoint exceeds the bounded evidence composition size.",
             "Inspect every artifact in the canonical run and reduce the declared checkpoint's evidence scope.",
         )
-    return evidence
+    # Review current outputs before static references. This changes ordering only:
+    # result metadata cannot add evidence, rebind a digest or grant read authority.
+    priorities = {}
+    run_id = getattr(checkpoint, "run_id", None)
+    if run_id and continuation.get("run_id") == run_id:
+        definition_digest = checkpoint.subject.get("definition_digest")
+        saved_results = continuation.get("results", ())
+        for saved in saved_results if isinstance(saved_results, (list, tuple)) else ():
+            try:
+                pending = [restore_result(saved)]
+            except (KeyError, TypeError, ValueError):
+                continue  # Unusable result metadata cannot promote a reference.
+            while pending:
+                result = pending.pop()
+                if result.provenance.run_id != run_id or (
+                    result.provenance.definition_digest is not None
+                    and result.provenance.definition_digest != definition_digest
+                ):
+                    continue
+                pending.extend(result.exports)
+                for representation in result.representations:
+                    if representation.kind != "workspace_file" or not isinstance(
+                        representation.sha256, str
+                    ):
+                        continue
+                    identity = (representation.location, representation.sha256)
+                    if identity not in identities:
+                        continue
+                    # The existing viewer map identifies supported visual previews;
+                    # neither a filename suffix nor prompt wording establishes one.
+                    visual = isinstance(representation.format, str) and (
+                        _VIEWERS.get(representation.format.lower()) == "image"
+                    )
+                    priorities[identity] = min(
+                        priorities.get(identity, 2), 0 if visual else 1
+                    )
+    return tuple(
+        ArtifactRef(artifact_ref=path, sha256=digest)
+        for path, digest in sorted(
+            identities, key=lambda item: (priorities.get(item, 2), *item)
+        )
+    )
 
 
 def _approval_instructions(checkpoint, resolved):

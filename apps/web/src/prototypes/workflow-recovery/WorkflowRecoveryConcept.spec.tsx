@@ -947,6 +947,72 @@ describe("WorkflowRecoveryConcept component states", () => {
     );
   });
 
+  it("sends a revised starter through ordinary preflight without labeling it qualified", async () => {
+    const onRun = vi
+      .fn()
+      .mockRejectedValue(
+        new Error(
+          "Current tool qualification is missing. Check readiness in the working view.",
+        ),
+      );
+    const onRefreshTemplateReadiness = vi.fn();
+    render(
+      <Editor
+        workflowSource={reportWorkflowSource}
+        workflowFilePath="workflows/revised.workflow.wflow"
+        storageDigest={"b".repeat(64)}
+        definitionRevision={2}
+        onRun={onRun}
+        onRefreshTemplateReadiness={onRefreshTemplateReadiness}
+        templateReadiness={{
+          state: "revised",
+          template_id: "replacement-drawer-handle",
+          template_version: "1.0.0",
+          source_digest: "a".repeat(64),
+          layout_digest: "c".repeat(64),
+          accepted_source_digest: "b".repeat(64),
+          definition_revision: 2,
+          definition_valid: null,
+          configured: null,
+          qualified: null,
+          available: null,
+          verified_run: null,
+          facts: [],
+          blocking_reasons: [],
+          message:
+            "Check this accepted revision's current inputs, tools, model and authority in the working view before starting.",
+        }}
+      />,
+    );
+    await userEvent.click(
+      screen.getByTestId("workflow-recovery-run-readiness-toggle"),
+    );
+    expect(
+      screen.getByText("Revised · preflight required", { exact: true }),
+    ).toBeVisible();
+    expect(screen.queryByText("Ready", { exact: true })).toBeNull();
+    expect(screen.queryByText("Verified", { exact: true })).toBeNull();
+    const issue = screen.getByTestId(
+      "workflow-recovery-template-readiness-issue",
+    );
+    expect(issue).toHaveTextContent("replacement-drawer-handle");
+    expect(issue).toHaveTextContent(
+      "current inputs, tools, model and authority",
+    );
+    await userEvent.click(
+      screen.getByRole("button", { name: "Refresh revision status" }),
+    );
+    expect(onRefreshTemplateReadiness).toHaveBeenCalledOnce();
+    await userEvent.click(screen.getByTestId("workflow-recovery-run-start"));
+    await waitFor(() => expect(onRun).toHaveBeenCalledOnce());
+    expect(onRun.mock.calls[0]?.[0].expectedStorageDigest).toBe("b".repeat(64));
+    await waitFor(() =>
+      expect(
+        screen.getByTestId("workflow-native-run-summary"),
+      ).toHaveTextContent("Current tool qualification is missing"),
+    );
+  });
+
   it("corrects the old single-file image template on save while preserving its file and identity", async () => {
     const workflow = cloneWorkflow(initialWorkflow);
     const image = createAuthoringObject("image-input", workflow, initialLayout);

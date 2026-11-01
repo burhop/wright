@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+import re
 from uuid import uuid4
 
 from .workflow_mcp_execution import WorkflowMcpRuntime
@@ -20,6 +21,17 @@ class PreparedWorkflowRun:
     runtime: object | None
     execution_context: dict | None
     run_id: str
+
+
+def has_revised_template_source(origin, document):
+    """Identify a locally revised starter; this grants no run qualification."""
+    initial = origin.get("instantiated_source_digest") if origin else None
+    return bool(
+        isinstance(initial, str)
+        and re.fullmatch(r"[a-f0-9]{64}", initial)
+        and initial != document.storage_digest
+        and document.definition_revision > 1
+    )
 
 
 async def qualify_workflow_run_origin(
@@ -50,6 +62,27 @@ async def qualify_workflow_run_origin(
             workspace_dir, source_path
         )
         if origin is not None:
+            # Catalog readiness describes the shipped starter. A later accepted
+            # source revision is qualified below against its actual inputs,
+            # tools, model and authority; lineage is never a permanent setup lock.
+            # Older origins without an exact initial identity remain fail-closed.
+            initial = origin.get("instantiated_source_digest")
+            if (
+                isinstance(initial, str)
+                and re.fullmatch(r"[a-f0-9]{64}", initial)
+                and initial != source_digest
+            ):
+                current = await service.workflow_sources.read(
+                    workspace_dir, source_path
+                )
+                if current.storage_digest != source_digest:
+                    raise WorkflowSourceExecutionError(
+                        "WORKFLOW_SOURCE_CONFLICT",
+                        "The accepted process changed during setup.",
+                        "Reopen the current process and check readiness again.",
+                    )
+                if has_revised_template_source(origin, current):
+                    return None
             readiness = service.engineering_workflow_templates.readiness(
                 str(origin.get("template_id", "")),
                 str(origin.get("template_version", "")),
@@ -139,6 +172,9 @@ async def prepare_authorized_workflow_run(
                 tool_runtime=open_tools() if grant["allowed_tools"] else runtime,
                 files=service.files,
             )
+        from .workflow_approval_execution import qualify_workflow_action_dispatch
+
+        qualify_workflow_action_dispatch(plan, context)
         plan, context = await freeze_workflow_model_routing(
             service, plan, context, expected_execution_context
         )

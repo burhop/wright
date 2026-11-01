@@ -19,6 +19,7 @@ import {
   type InteractionResponse,
 } from "@wright/process-client";
 import { CommonProcessView } from "./CommonProcessView";
+import { workspaceService } from "../../services/workspace-service";
 import {
   createProcessViewRecoveryStore,
   compactInput,
@@ -694,6 +695,39 @@ describe("desktop reasoning observation in the common view", () => {
 });
 
 describe("common process preparation and authority", () => {
+  it("offers diagnostics for the attached source run without starting or exporting work", async () => {
+    const { client, store } = fixture();
+    const preview = vi
+      .spyOn(workspaceService, "previewSupportDiagnostics")
+      .mockRejectedValue(
+        new Error("The saved run evidence could not be verified."),
+      );
+    const exportFile = vi
+      .spyOn(workspaceService, "exportSupportDiagnostics")
+      .mockResolvedValue();
+    render(
+      <CommonProcessView
+        client={client}
+        sessionId="session"
+        runId="run-one"
+        recoveryStore={store}
+      />,
+    );
+    await screen.findByText("Diagnose this run");
+    expect(preview).not.toHaveBeenCalled();
+    fireEvent.click(screen.getByText("Diagnose this run"));
+    fireEvent.click(screen.getByTestId("support-diagnostics-preview"));
+    await waitFor(() =>
+      expect(preview).toHaveBeenCalledWith("workspace", {
+        source_run_id: "run-one",
+      }),
+    );
+    expect(
+      await screen.findByText("The saved run evidence could not be verified."),
+    ).toBeVisible();
+    expect(exportFile).not.toHaveBeenCalled();
+    expect(client.start).not.toHaveBeenCalled();
+  });
   it("shows an undeclared-input diagnostic and exact correction without inventing a response form", async () => {
     const { client, store } = fixture();
     vi.mocked(client.follow).mockImplementation(async function* () {
