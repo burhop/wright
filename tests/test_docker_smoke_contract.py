@@ -120,6 +120,7 @@ def test_docker_runtime_serves_image_built_frontend_dist() -> None:
     for build_fixture in (
         "packages/core/tests/fixtures/workflow_drafts/representative-workflow.json",
         "specs/080-canonical-workflow-recovery/fixtures/mounting-bracket.workflow.json",
+        "prototypes/desktop-harness/engineering-experience/handle/replacement-handle-draft.workflow.wflow",
     ):
         assert f"COPY {build_fixture} {build_fixture}" in dockerfile
     assert (

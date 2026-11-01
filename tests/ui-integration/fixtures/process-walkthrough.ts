@@ -30,7 +30,7 @@ export function processWalkthrough(page: Page, testInfo: TestInfo) {
     manualSteps: [
       {label: "Open process", instruction: "Open the isolated workspace. Click Workflows, then Use saved process."},
       {label: "Provide inputs", instruction: "Enter the Design request. Choose a PNG in Reference image. Check its thumbnail and wait for transfer to finish."},
-      {label: "Prepare and run", instruction: "Click Prepare and check inputs, then Start process. Inspect activity and reported progress."},
+      {label: "Prepare and run", instruction: "Click Prepare and check inputs, then Start workflow. Inspect activity and reported progress."},
       {label: "Inspect and reopen", instruction: "Inspect the completed result. Close the working tab and reopen its saved link."},
     ],
     steps: [] as (Step & {state: string; summary: string; raw?: string; annotated?: string; result?: string})[],

@@ -29,6 +29,7 @@ export function ValidatorBlockEditor({
 }) {
   const [error, setError] = useState("");
   const settings = validatorSettings(block);
+  const segmentCorrection = settings?.rework_scope === "verified_segment";
   const selected = validationProfiles.find(
     (p) => p.name === settings?.profile.name,
   );
@@ -77,7 +78,7 @@ export function ValidatorBlockEditor({
           value={
             settings?.profile.source === "packaged" ? settings.profile.name : ""
           }
-          disabled={readOnly}
+          disabled={readOnly || segmentCorrection}
           onChange={(e) =>
             apply(() =>
               validationProfileCommands(block, workflow, e.target.value),
@@ -142,12 +143,19 @@ export function ValidatorBlockEditor({
       )}
       {settings && (
         <section aria-label="Automatic correction">
+          {segmentCorrection && (
+            <p>
+              If this check fails, the workflow corrects the design and repeats
+              the connected checks. These settings are defined in Source;
+              readiness checks whether the steps can safely repeat.
+            </p>
+          )}
           <label>
             If validation finds a correctable defect
             <select
               aria-label="Validation revision target"
               value={revision?.targetId ?? ""}
-              disabled={readOnly}
+              disabled={readOnly || segmentCorrection}
               onChange={(e) =>
                 apply(() =>
                   validationRevisionCommands(block, workflow, e.target.value),
@@ -155,6 +163,19 @@ export function ValidatorBlockEditor({
               }
             >
               <option value="">Hold the process and report findings</option>
+              {segmentCorrection &&
+                revision &&
+                !revisionTargets.some(
+                  (item) => item.id === revision.targetId,
+                ) && (
+                  <option value={revision.targetId}>
+                    Correct{" "}
+                    {workflow.blocks.find(
+                      (item) => item.id === revision.targetId,
+                    )?.title ?? "the designated step"}{" "}
+                    and repeat connected checks
+                  </option>
+                )}
               {revisionTargets.map((item) => (
                 <option key={item.id} value={item.id}>
                   Return findings to {item.title}

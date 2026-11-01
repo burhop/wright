@@ -1,3 +1,4 @@
+import { WorkflowToolDiscovery } from "./workflow-tool-discovery";
 import { afterEach, expect, it, vi } from "vitest";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import {
@@ -374,3 +375,62 @@ it("requires the declared prompt connection even when retained inline text is pr
   );
   expect(screen.getByTestId(issueId)).toBeInTheDocument();
 });
+
+it.each([true, false])(
+  "keeps failed-discovery correction in the owning host (native=%s)",
+  async (native) => {
+    const server = mcpServerChoices([tool])[0]!;
+    const result = applyRecoveryBatch(
+      initialWorkflow,
+      initialLayout,
+      recoveryCommandBatch(
+        initialWorkflow.revision,
+        "graph",
+        createMcpServerBlock(server, initialWorkflow, initialLayout),
+      ),
+    );
+    const workflow = acceptRecoveryResult(
+      initialWorkflow,
+      initialLayout,
+      result,
+    )!.workflow;
+    const openConnections = vi.fn();
+    const read = vi.fn().mockRejectedValue(new Error("Unavailable"));
+    render(
+      <WorkflowToolDiscovery.Provider
+        value={{
+          read,
+          sessionId: "session",
+          ...(native ? { openConnections } : {}),
+        }}
+      >
+        <AuthoringRunReadiness
+          workflow={workflow}
+          saved
+          executionConnected
+          onSelect={vi.fn()}
+        />
+      </WorkflowToolDiscovery.Provider>,
+    );
+    fireEvent.click(
+      screen.getByTestId("workflow-recovery-run-readiness-toggle"),
+    );
+    if (native) {
+      fireEvent.click(
+        await screen.findByRole("button", {
+          name: "Check workspace connections",
+        }),
+      );
+      expect(openConnections).toHaveBeenCalledTimes(1);
+      expect(
+        screen.queryByRole("link", { name: "Check Tool Registry" }),
+      ).toBeNull();
+    } else {
+      expect(
+        await screen.findByRole("link", { name: "Check Tool Registry" }),
+      ).toHaveAttribute("href", "/tool-registry");
+      expect(openConnections).not.toHaveBeenCalled();
+    }
+    expect(read).toHaveBeenCalledWith("session");
+  },
+);

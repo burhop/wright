@@ -308,8 +308,11 @@ def test_conditional_human_response_does_not_extend_the_supported_graph():
             b["fields"] for b in blocks if b["id"] == "response"
         ).update(when="selected")
     )
-    with pytest.raises(WorkflowSourceExecutionError, match="conditional or control"):
+    with pytest.raises(
+        WorkflowSourceExecutionError, match="controls which step happens next"
+    ) as caught:
         compile_prompt_workflow(text)
+    assert "keep its required decisions and reviews" in caught.value.correction
 
 
 def test_automatic_corrections_cannot_replay_a_declared_answer():

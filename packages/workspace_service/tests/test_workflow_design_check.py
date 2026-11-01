@@ -503,3 +503,166 @@ def test_native_fail_mislabeled_pass_stops_before_export_and_quote(
     assert calls == ["make", "check"]
     assert not (tmp_path / "flat.txt").exists()
     assert not (tmp_path / "quote.txt").exists()
+
+
+@pytest.mark.parametrize(
+    "second_verdicts", [("revise", "pass"), ("revise", "revise", "revise")]
+)
+def test_independent_correction_paths_preserve_prior_pass_and_each_budget(
+    monkeypatch, tmp_path, second_verdicts
+):
+    """Real scheduler, synthetic CAD: a later repair must not replay earlier work."""
+    monkeypatch.setattr("workspace_service.workflow_cad.CadTask", FakeCad)
+    first = plan()
+    second_make = replace(first.steps[0], id="make_second", output_path="second.txt")
+    second_check = replace(
+        first.steps[1],
+        id="check_second",
+        cad_from="make_second.model",
+        output_path="second-check.json",
+    )
+    workflow = replace(
+        first,
+        steps=(*first.steps[:2], second_make, second_check, first.steps[2]),
+        revisions={"check": "make", "check_second": "make_second"},
+    )
+    validate_rework(workflow.steps, workflow.revisions)
+    calls = []
+    sequences = {
+        "check": iter(("revise", "pass")),
+        "check_second": iter(second_verdicts),
+    }
+
+    async def run_task(step, prompt, *args, **kwargs):
+        calls.append(step.id)
+        return (
+            json.dumps(report(next(sequences[step.id])))
+            if step.design_check
+            else "Created"
+        ), [{"status": "succeeded"}]
+
+    async def generate(*args):
+        calls.append("quote")
+        return "Released only after both checks passed"
+
+    async def run():
+        return await execute_prompt_workflow(
+            service=service(tmp_path),
+            workspace_dir=str(tmp_path),
+            plan=workflow,
+            input_values={},
+            response_generator=generate,
+            tool_runtime=SimpleNamespace(run_task=run_task),
+            action_generator=lambda: None,
+        )
+
+    if second_verdicts[-1] == "pass":
+        result = asyncio.run(run())
+        assert len(result["steps"]) == 5
+        assert (
+            tmp_path / "quote.txt"
+        ).read_text() == "Released only after both checks passed"
+        assert len(result["revision_attempts"]) == 4
+    else:
+        with pytest.raises(WorkflowSourceExecutionError) as error:
+            asyncio.run(run())
+        assert error.value.code == "DESIGN_CHECK_REJECTED"
+        assert not (tmp_path / "quote.txt").exists()
+    assert calls == (
+        ["make", "check", "make", "check"]
+        + [item for _ in second_verdicts for item in ("make_second", "check_second")]
+        + (["quote"] if second_verdicts[-1] == "pass" else [])
+    )
+
+
+def test_multiple_paths_do_not_allow_crossing_prior_check_or_review():
+    first = plan()
+    later = replace(first.steps[1], id="later_check")
+    with pytest.raises(
+        WorkflowSourceExecutionError, match="one preceding safe producer"
+    ):
+        validate_rework(
+            (*first.steps[:2], later), {"check": "make", "later_check": "make"}
+        )
+
+
+def verified_segment_plan():
+    from .test_workflow_process_validation_rework import mcp_file_rework_source
+    from workspace_service.workflow_source_execution import compile_prompt_workflow
+
+    original = compile_prompt_workflow(mcp_file_rework_source())
+    producer, check = original.steps
+    analysis = replace(
+        producer,
+        id="analysis",
+        title="Analyze the current geometry",
+        expected_files=tuple(
+            path.replace("/produce/", "/analysis/") for path in producer.expected_files
+        ),
+        expected_file_ports={
+            key: path.replace("/produce/", "/analysis/")
+            for key, path in producer.expected_file_ports.items()
+        },
+        file_dependencies={"produce.jig_step": {"source": "connected_output"}},
+    )
+    check = replace(
+        check,
+        validation={
+            **check.validation,
+            "rework_scope": "verified_segment",
+            "repair_subjects": ["jig_step"],
+        },
+    )
+    return (producer, analysis, check), {check.id: producer.id}
+
+
+def test_explicit_verified_segment_accepts_only_connected_create_new_producers():
+    steps, revisions = verified_segment_plan()
+    validate_rework(steps, revisions)
+    with pytest.raises(
+        WorkflowSourceExecutionError, match="one preceding safe producer"
+    ):
+        validate_rework(
+            (
+                *steps[:-1],
+                replace(
+                    steps[-1],
+                    validation={
+                        **steps[-1].validation,
+                        "rework_scope": "producer",
+                        "repair_subjects": [],
+                    },
+                ),
+            ),
+            revisions,
+        )
+
+
+@pytest.mark.parametrize(
+    "fault",
+    [
+        "review",
+        "external_action",
+        "overwrite",
+        "unconnected",
+        "wrong_owner",
+        "too_many_revisions",
+    ],
+)
+def test_verified_segment_rejects_unsafe_or_unrelated_replay(fault):
+    steps, revisions = verified_segment_plan()
+    producer, analysis, check = steps
+    if fault == "review":
+        analysis = replace(analysis, human_review=True)
+    elif fault == "external_action":
+        analysis = replace(analysis, external_action={"action_kind": "fixture"})
+    elif fault == "overwrite":
+        analysis = replace(analysis, file_policy="overwrite")
+    elif fault == "unconnected":
+        analysis = replace(analysis, file_dependencies={})
+    elif fault == "wrong_owner":
+        check = replace(check, validation_sources=(("jig_step", "analysis.jig_step"),))
+    else:
+        check = replace(check, max_revisions=4)
+    with pytest.raises(WorkflowSourceExecutionError):
+        validate_rework((producer, analysis, check), revisions)

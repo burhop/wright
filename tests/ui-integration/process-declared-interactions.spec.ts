@@ -220,10 +220,10 @@ for (const loseAcknowledgement of [false, true]) {
       .getByRole("button", { name: "Prepare and check inputs", exact: true })
       .click();
     await expect(
-      page.getByRole("button", { name: "Start process", exact: true }),
+      page.getByRole("button", { name: "Start workflow", exact: true }),
     ).toBeEnabled();
     await page
-      .getByRole("button", { name: "Start process", exact: true })
+      .getByRole("button", { name: "Start workflow", exact: true })
       .click();
     const common = page.getByTestId("common-process-view");
     await expect(common.getByLabel("selection (required)")).toBeVisible();

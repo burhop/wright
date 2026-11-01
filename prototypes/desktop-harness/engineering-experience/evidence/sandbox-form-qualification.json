@@ -1,0 +1,17 @@
+{
+  "status": "PASS",
+  "boundary": "actual compiled UI; fixture writes; restrictive simulated host, not Windows acceptance",
+  "resource_sha256": "a0cbc2ed0a761a893a350f014528a513e65667f739fb0512d8122c8920bbd0bc",
+  "calls": [
+    "wright_workspace_list",
+    "wright_workspace_create",
+    "wright_workspace_list",
+    "wright_workspace_files",
+    "wright_workflow_create",
+    "wright_workspace_file_describe"
+  ],
+  "errors": [],
+  "editor_open": "fixture deliberately rejects file describe; visible recovery verified",
+  "workspace_click_count": 1,
+  "workflow_enter_count": 1
+}

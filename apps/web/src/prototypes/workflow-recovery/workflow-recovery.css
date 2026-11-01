@@ -1190,6 +1190,16 @@
 .recovery-code header div:first-child {
   display: grid;
 }
+.recovery-code header {
+  flex-wrap: wrap;
+}
+.recovery-code__view-options {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--recovery-size-8);
+  margin-left: auto;
+}
 .recovery-code footer {
   border-top: var(--recovery-size-1) solid var(--color-surface-elevated);
   border-bottom: 0;
@@ -1220,6 +1230,7 @@
   color: var(--recovery-muted);
 }
 .recovery-code textarea {
+  box-sizing: border-box;
   width: 100%;
   min-height: 260px;
   resize: none;
@@ -1229,6 +1240,10 @@
   color: var(--color-primary);
   font: var(--recovery-size-11)/1.55 var(--font-mono);
   tab-size: 2;
+}
+.recovery-code textarea[wrap="off"] {
+  white-space: pre;
+  overflow-wrap: normal;
 }
 .recovery-diagnostics {
   position: absolute;
@@ -2826,7 +2841,8 @@
 }
 .recovery-inspector__titlebar button {
   flex-shrink: 0;
-  width: 30px;
+  width: auto;
+  padding: 4px 8px;
   min-height: 30px;
   border: 1px solid var(--recovery-line);
   border-radius: 5px;
@@ -2987,6 +3003,16 @@
 }
 .recovery-engineering-files li > span {
   min-width: 0;
+  flex: 1 1 160px;
+}
+.recovery-engineering-files li {
+  flex-wrap: wrap;
+  align-items: flex-start;
+}
+.recovery-engineering-files li > code {
+  flex: 1 1 100%;
+  min-width: 0;
+  white-space: normal;
 }
 .recovery-engineering-files small {
   display: block;
@@ -4326,4 +4352,20 @@
 }
 .recovery-saved-run-results .recovery-result-inspector {
   margin: 16px 0;
+}
+
+.recovery-canvas .react-flow__controls button.recovery-canvas__show-all {
+  width: auto;
+  padding: 0 10px;
+  font-size: 13px;
+}
+
+/* File destinations are short inspector fields, not a second prompt editor. */
+.workflow-recovery .recovery-task-output-files :is(h3, p) {
+  margin: 0;
+}
+.workflow-recovery--redesign
+  .recovery-authoring-settings__prompt
+  textarea[data-testid="workflow-recovery-task-result"] {
+  min-height: 4.5em;
 }

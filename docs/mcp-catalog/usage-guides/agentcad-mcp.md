@@ -141,3 +141,12 @@ pyproject retains the same build123d/OCP bounds. An AgentCAD-only upgrade is
 therefore not a resolution of the observed ARM64 prerequisite. No new install
 was attempted or dependencies overridden. See
 [current upstream evidence](https://github.com/burhop/wright/blob/37746c7b20ee1146c55e67dc965aa2b0a9e9992b/prototypes/desktop-harness/agentcad-current-upstream-evidence.json).
+
+### 29 October 2026 recheck
+
+A fresh selected-container resolver dry-run for `agentcad[mcp]==0.6.0` on
+Linux ARM64/Python 3.12.12 still fails: its required `cadquery-ocp>=7.8,<7.9`
+versions provide no matching ARM64 wheel. No dependencies were overridden and
+no provider was registered. The current Robot corrective-CAD requirement remains
+blocked on this host; it was not removed or replaced by an older diagnosis-only
+workflow. Receipt: `prototypes/desktop-harness/engineering-experience/evidence/robot-provider-current/workspace-setup-receipt.json`.

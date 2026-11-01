@@ -629,3 +629,24 @@ artifact index and disk. A deliberately disabled cleanup still fails. Both
 native gates run this controlled interleaving before long suites, in addition to
 normal workspace coverage. Do not replace completion observation with a longer
 sleep or weaken the no-leftover-artifact assertions.
+
+### Portable handle resource bytes on Windows
+
+PR #174 exposed two Windows-only qualification failures: checkout line-ending
+conversion changed the accepted handle/source-profile bytes, and Python's ZIP
+writer used host-dependent creator metadata. Exact `.gitattributes` entries keep
+the pinned resource inputs and workflow fixtures LF; the existing resource builder
+sets Unix creator metadata explicitly. Do not regenerate accepted ZIP/source
+hashes to accommodate checkout conversions. The manufacturing-package suite
+rebuilds the exact accepted archive, simulates Windows ZIP defaults, verifies its
+members and executes its existing passive readers. The frontend handle authoring
+suite retains its actual block-kind change assertion. Both are already collected
+by the normal gates and Windows jobs; Linux simulation is not Windows acceptance.
+
+PR #174's new CodeQL findings also cover the shared raster viewer and simulated
+host fixtures. Keep raster data-URL prefixes literal and payloads base64-encoded;
+retain byte identity, size limits and SVG/HTML rejection. Fixture HTTP responses
+must not include exception details, and request-derived viewer IDs must become
+bounded numbers before HTML/script interpolation. Existing UI-kit tests qualify
+all supported raster formats and hostile MIME rejection; CodeQL remains required
+for full data-flow analysis. Do not suppress rules or exclude maintained sources.

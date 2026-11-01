@@ -232,3 +232,60 @@ def test_named_file_mapping_cannot_substitute_a_model_claim_for_created_files(
                 tool_runtime=runner,
             )
         )
+
+
+@pytest.mark.parametrize("mapping", [{}, {"model": "model.step"}])
+def test_ai_task_requires_each_declared_file_before_execution(tmp_path, mapping):
+    producer = task(
+        "produce",
+        fmt="text",
+        authoring_template="mcp-task",
+        mcp_server="docs",
+        expected_files="model.step\nmesh.stl" if mapping else "",
+        expected_file_ports=mapping,
+    ).replace(
+        '[{"key":"produce_response","kind":"engineering_document","name":"Response"}]',
+        '[{"key":"model","kind":"workspace_file","name":"CAD model"},'
+        '{"key":"mesh","kind":"workspace_file","name":"Mesh"}]',
+    )
+    with pytest.raises(
+        WorkflowSourceExecutionError, match="map each file output"
+    ) as caught:
+        compile_prompt_workflow(source(producer))
+
+    assert caught.value.block_id == "produce"
+    from .test_process_input_readiness import prepare
+    from workspace_service.process_interfaces.errors import ProcessInterfaceError
+
+    editor_source = (
+        source(producer)
+        .replace(
+            '  name: "Test workflow"',
+            '  name: "Test workflow"\n  purpose: "File mapping check"\n'
+            '  discipline: "engineering"\n  reviewed_ai_suggestions: false',
+        )
+        .replace(
+            "  step_type: work",
+            '  purpose: "Produce files"\n  group: null\n  step_type: work',
+        )
+    )
+    lines = []
+    for line in editor_source.splitlines():
+        if line.startswith(("  inputs: ", "  outputs: ")):
+            field, raw = line.split(": ", 1)
+            ports = [
+                {
+                    "item": None,
+                    "required": True,
+                    "quantity": "one",
+                    "description": "File readiness fixture",
+                    **port,
+                }
+                for port in json.loads(raw)
+            ]
+            line = field + ": " + json.dumps(ports)
+        lines.append(line)
+    with pytest.raises(ProcessInterfaceError) as readiness:
+        asyncio.run(prepare(tmp_path, "\n".join(lines) + "\n"))
+    assert readiness.value.reason.navigation.kind == "block"
+    assert readiness.value.reason.navigation.block_id == "produce"

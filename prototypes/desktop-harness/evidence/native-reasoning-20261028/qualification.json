@@ -1,0 +1,113 @@
+{
+  "status": "PASS",
+  "run_id": "8ba0ff7d41b04b1980432eba25bad0d9",
+  "run_sha256": "34e67631cc3b1616c0b36ba07a7b570cacdabe451fda480facd86670f96283cb",
+  "source_digest": "bac62bd7cac1483ff5845ffaa7d73099ff939211244d1c53bb4c127564666dbd",
+  "only_source_changes": [
+    "workflow ID",
+    "display title"
+  ],
+  "historical_seven_hashes_unchanged": {
+    "/tmp/wright-engineering-run-journey-state-20261028/workspaces/block-inspection-desktop-run-journey/runs/block-preview-recovery/91c3fe3f4e0c477e9d9ea0d0dde477b2.json": true,
+    "/tmp/wright-engineering-run-journey-state-20261028/workspaces/block-inspection-desktop-run-journey/workflows/block-preview-recovery.workflow.wflow": true,
+    "/tmp/wright-engineering-run-journey-state-20261028/desktop-binding.json": true,
+    "/tmp/wright-engineering-run-journey-state-20261028/desktop-versions.json": true,
+    "/tmp/wright-engineering-run-journey-state-20261028/preview.json": true,
+    "/tmp/wright-engineering-run-journey-state-20261028/workspaces/block-inspection-desktop-run-journey/results/block-preview-recovery/91c3fe3f4e0c477e9d9ea0d0dde477b2/inspection.json": true,
+    "/tmp/wright-engineering-run-journey-state-20261028/workspaces/block-inspection-desktop-run-journey/results/block-preview-recovery/91c3fe3f4e0c477e9d9ea0d0dde477b2/block-isometric.png": true
+  },
+  "document_id": "48b3d987-173d-4f5e-a684-7d7864ca29ff",
+  "revision": 1,
+  "build_id": "5353ac34-e923-4dd0-83e9-85e3ae5caafc",
+  "observed_dimensions_mm": [
+    2000,
+    4000,
+    8000
+  ],
+  "tolerance_mm": 0.01,
+  "solid_count": 1,
+  "volume_mm3": 63999999999.99999,
+  "tool_calls": [
+    {
+      "tool": "stevecad-mcp__read_design",
+      "arguments": {
+        "document_id": "48b3d987-173d-4f5e-a684-7d7864ca29ff"
+      },
+      "status": "succeeded"
+    },
+    {
+      "tool": "stevecad-mcp__inspect_model",
+      "arguments": {
+        "document_id": "48b3d987-173d-4f5e-a684-7d7864ca29ff",
+        "view": "isometric",
+        "checks": []
+      },
+      "status": "succeeded"
+    }
+  ],
+  "requests": [
+    {
+      "request_id": "a4a0ef0f-8682-4a35-91d2-db26e468679f",
+      "request_digest": "284ad4c2972e9d3d2bae2c30a2c94bbee09fc3d3e4099a9a586937b66f57fe24",
+      "binding_digest": "85b1f1234619cc166aa64ee7b19201464d56bfede8166dea789d0957462a4cd2"
+    },
+    {
+      "request_id": "32641542-2b46-4942-b02d-6e96efaf68df",
+      "request_digest": "b58fe1c2c43c4f70f012e3ff4baf53584aaac4e2245a190357a41e1cb2bd3491",
+      "binding_digest": "85b1f1234619cc166aa64ee7b19201464d56bfede8166dea789d0957462a4cd2"
+    },
+    {
+      "request_id": "093b098c-7f3a-4cb0-9419-6178cee0311e",
+      "request_digest": "50aac2e0c45319b1b4b219157376fa7e1a98828a1df8b470ec3d1ce964dee447",
+      "binding_digest": "85b1f1234619cc166aa64ee7b19201464d56bfede8166dea789d0957462a4cd2"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "results/block-preview-recovery/8ba0ff7d41b04b1980432eba25bad0d9/block-isometric.png",
+      "sha256": "1a1f6ca6c17ef90e5e0e9d6f70eb8f4e867405a0f89669ecdaca5dda1d23698f",
+      "size_bytes": 7380
+    },
+    {
+      "path": "results/block-preview-recovery/8ba0ff7d41b04b1980432eba25bad0d9/inspection.json",
+      "sha256": "f0baf4b28656ff8975c072999d967a0accd8df0426850f17dd7cb3f6f6efc148",
+      "size_bytes": 1595
+    }
+  ],
+  "model_routing": {
+    "schema_version": "wright.workflow-model-routing/1",
+    "text": {
+      "adapter": "openai-desktop-harness",
+      "binding": {
+        "schema_version": "wright.desktop-binding/1",
+        "connection_id": "wright-desktop-prototype:0092fcecad69433d8d9ae7395ecd0bb818224e561d01ea9e4351d0e967876471",
+        "adapter": "openai-desktop-harness",
+        "image_input_profile": "inline-png-jpeg-engineering-v1",
+        "requested_model": null,
+        "reported_model": null,
+        "model_identity_source": "unreported",
+        "reported_app_build": null,
+        "protocol_version": "wright.desktop-reasoning/1"
+      },
+      "configuration_digest": "85a9de73e1bc7d90bf57930617a6c361c0aafdb389032be4e464398475a75e9c"
+    },
+    "images": {}
+  },
+  "boundary": "Actual tools exposed to this desktop conversation; no Python relay or substitute model. Wright owns execution and evidence. Windows rendering and UI-to-chat wakeup remain unverified.",
+  "installed_plugin_version": "0.31.0",
+  "installed_ui_source_commit": "47067f9a7d72cc46237a59be06ccc7d3f9e6a9ac",
+  "installed_resource_sha256": "67544884b46d983b02e9231caa994ae831f1ef63ffe76cc5d63606ce149ac810",
+  "backend_source_commit": "b1563881d7703b80f87d9ecb0cd463380e1bdd1b",
+  "native_observation": {
+    "connection": "PASS",
+    "model_visible_tools": 23,
+    "server_tools": 59,
+    "direct_reasoning": "PASS",
+    "native_image_tool": "PASS",
+    "windows_panel": "UNVERIFIED",
+    "windows_download_open": "UNVERIFIED",
+    "producing_step_ui_return": "UNVERIFIED",
+    "chat_switch_restore": "UNVERIFIED",
+    "automatic_ui_to_chat_handoff": "UNVERIFIED"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "status": "PASS",
+  "repair_output_sha256": "95855df2ca135e8211699cb78544f2ea4198a7b5f33fa8ccdf4949ce9baf56ae",
+  "slicer_input_sha256": "95855df2ca135e8211699cb78544f2ea4198a7b5f33fa8ccdf4949ce9baf56ae",
+  "same_bytes": true,
+  "qualified_scope": "actual gateway and independent native providers; fixture workspace enrollment; no accepted workflow run",
+  "orientation_comparison": "not qualified",
+  "physical_operations": false
+}

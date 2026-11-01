@@ -1,6 +1,6 @@
-import { render, screen } from "@testing-library/react";
+import { act, cleanup, render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import ChatLayout from "../src/components/chat/ChatLayout";
 import { ViewerPanelProvider } from "../src/store/viewer";
 
@@ -23,8 +23,45 @@ vi.mock("../src/store/sessions", () => {
 });
 
 describe("ChatLayout", () => {
+  let unexpectedRequests: string[];
   beforeEach(() => {
     vi.resetAllMocks();
+    unexpectedRequests = [];
+    // Keep the real child UI, but settle its read-only discovery before teardown.
+    // These layout tests must never contact an installed/local backend.
+    const responses: Record<string, unknown> = {
+      "/api/agent/active": { agent: "hermes" },
+      "/api/agent/models": { groups: [], selection_supported: false },
+      "/api/agent/commands": { commands: [] },
+      "/api/mcp/servers/installed": { servers: [] },
+      "/api/workspace/files": {
+        workspace: {
+          name: "Test workspace",
+          path: "/",
+          type: "directory",
+          children: [],
+        },
+      },
+      "/api/workspace/tools": { enabled_tools: [] },
+      "/api/workspace/mcp-status": {
+        status: "ready",
+        message: "",
+        running_mcps: [],
+      },
+    };
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
+        const path = new URL(String(input), "http://localhost").pathname;
+        if ((init?.method ?? "GET") !== "GET" || !(path in responses)) {
+          unexpectedRequests.push(`${init?.method ?? "GET"} ${path}`);
+          throw new Error(`Unexpected layout-test request: ${path}`);
+        }
+        return new Response(JSON.stringify(responses[path]), {
+          headers: { "Content-Type": "application/json" },
+        });
+      }),
+    );
     // Default mock implementation for useChat
     mockUseChat.mockReturnValue({
       state: {
@@ -72,15 +109,27 @@ describe("ChatLayout", () => {
       },
     ]);
   });
+  afterEach(async () => {
+    cleanup();
+    await act(async () => {});
+    vi.unstubAllGlobals();
+    expect(unexpectedRequests).toEqual([]);
+  });
 
-  it("renders three-panel layout and no banner when connected", () => {
-    render(
-      <MemoryRouter>
-        <ViewerPanelProvider>
-          <ChatLayout />
-        </ViewerPanelProvider>
-      </MemoryRouter>,
-    );
+  async function renderLayout() {
+    await act(async () => {
+      render(
+        <MemoryRouter>
+          <ViewerPanelProvider>
+            <ChatLayout />
+          </ViewerPanelProvider>
+        </MemoryRouter>,
+      );
+    });
+  }
+
+  it("renders three-panel layout and no banner when connected", async () => {
+    await renderLayout();
 
     expect(screen.getByTestId("chat-layout")).toBeInTheDocument();
     expect(screen.getByTestId("sessions-sidebar")).toBeInTheDocument();
@@ -95,7 +144,7 @@ describe("ChatLayout", () => {
     ).not.toBeInTheDocument();
   });
 
-  it("renders health banner when Hermes Agent is disconnected", () => {
+  it("renders health banner when Hermes Agent is disconnected", async () => {
     mockUseHealthStatus.mockReturnValue([
       {
         serviceId: "wright-api",
@@ -114,13 +163,7 @@ describe("ChatLayout", () => {
       },
     ]);
 
-    render(
-      <MemoryRouter>
-        <ViewerPanelProvider>
-          <ChatLayout />
-        </ViewerPanelProvider>
-      </MemoryRouter>,
-    );
+    await renderLayout();
 
     expect(screen.getByTestId("health-banner-hermes")).toBeInTheDocument();
     expect(
@@ -129,7 +172,7 @@ describe("ChatLayout", () => {
     expect(screen.getByText(/Hermes gateway is offline/i)).toBeInTheDocument();
   });
 
-  it("renders thinking indicator when streaming but no text received yet", () => {
+  it("renders thinking indicator when streaming but no text received yet", async () => {
     mockUseChat.mockReturnValue({
       state: {
         sessions: [
@@ -168,13 +211,7 @@ describe("ChatLayout", () => {
       refreshSessions: vi.fn(),
     });
 
-    render(
-      <MemoryRouter>
-        <ViewerPanelProvider>
-          <ChatLayout />
-        </ViewerPanelProvider>
-      </MemoryRouter>,
-    );
+    await renderLayout();
 
     expect(screen.getByTestId("thinking-indicator")).toBeInTheDocument();
   });
@@ -210,18 +247,13 @@ describe("ChatLayout", () => {
       refreshSessions: vi.fn(),
     });
 
-    render(
-      <MemoryRouter>
-        <ViewerPanelProvider>
-          <ChatLayout />
-        </ViewerPanelProvider>
-      </MemoryRouter>,
-    );
+    await renderLayout();
 
     const plusBtn = screen.getByTestId("create-session-btn");
     expect(plusBtn).toBeInTheDocument();
-    plusBtn.click();
+    await act(async () => plusBtn.click());
 
     expect(mockCreateSession).toHaveBeenCalled();
+    expect(mockSelectSession).toHaveBeenCalledWith("new-session-id");
   });
 });

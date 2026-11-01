@@ -133,7 +133,9 @@ export function ReasonNotice({
           className="wp-link"
           onClick={() => onNavigate(reason.navigation!)}
         >
-          Open related item
+          {reason.navigation.kind === "block"
+            ? "Open affected step"
+            : "Open related item"}
         </button>
       )}
       <details>

@@ -1,0 +1,15 @@
+{
+  "prototype_source_commit": "0ecf3acc5c8649b1aa18ef0033779baf4880ecf4",
+  "prototype_source": "/tmp/wright-desktop-native036-source-0ecf3acc-20261029",
+  "wheel_source_commit": "2d2e012a4176b4d0c0656670db12552b5bac9d1c",
+  "wheel_sha256": "853d8fc481ee247faff3ee7e6ebd17d963ec49eda755305c72a549d4559f7a13",
+  "wheel_runtime_unchanged": true,
+  "changed_files": [
+    "docs/design/codex-engineering-experience-plan.md",
+    "prototypes/desktop-harness/preview_server.py",
+    "prototypes/desktop-harness/tests/test_preview_routing.py"
+  ],
+  "preview_server_sha256": "82ceea1ca7e28599b1a6984a86d6acf9add7ed877025c8fd6502f6733e20005b",
+  "native_resource_sha256": "3e80402bce3890e6ccf7e6abec352bec95ac767f332a85c8746d533a5ae3bf59",
+  "installed": false
+}

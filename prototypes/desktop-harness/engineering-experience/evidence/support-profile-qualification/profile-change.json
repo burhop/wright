@@ -1,0 +1,10 @@
+{
+  "change": {
+    "enable_support": {
+      "before": "0",
+      "after": "1"
+    }
+  },
+  "original_unchanged": true,
+  "scope": "support coupon qualification only; not accepted handle profile"
+}

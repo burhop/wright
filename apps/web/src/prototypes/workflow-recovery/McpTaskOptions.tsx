@@ -1,15 +1,20 @@
+import {
+  useWorkflowToolDiscovery,
+  useWorkflowToolSession,
+} from "./workflow-tool-discovery";
 import { cadModelTypes, mcpServerChoices } from "./mcp-server-blocks";
 import { useEffect, useState } from "react";
 import type { RecoveryBlock, RecoveryWorkflow } from "./model";
+import { TaskOutputFiles } from "./TaskOutputFiles";
 import { CadTaskOptions } from "./CadTaskOptions";
 import { ApplicationTaskOptions } from "./ApplicationTaskOptions";
 import type { RecoveryCommand } from "./command-system";
-import { listWorkflowMcpTools, type WorkflowMcpTool } from "./mcp-settings";
+import { type WorkflowMcpTool } from "./mcp-settings";
 
 export function McpTaskOptions({
   block,
   workflow,
-  sessionId,
+  sessionId: hostSessionId,
   readOnly,
   onApply,
 }: {
@@ -19,6 +24,8 @@ export function McpTaskOptions({
   readOnly: boolean;
   onApply: (commands: RecoveryCommand[]) => boolean;
 }) {
+  const sessionId = useWorkflowToolSession(hostSessionId);
+  const discoverTools = useWorkflowToolDiscovery();
   const [tools, setTools] = useState<WorkflowMcpTool[]>([]);
   const [loading, setLoading] = useState(Boolean(sessionId));
   const [error, setError] = useState("");
@@ -29,7 +36,7 @@ export function McpTaskOptions({
     setError("");
     setLoading(Boolean(sessionId));
     if (sessionId)
-      void listWorkflowMcpTools(sessionId)
+      void discoverTools(sessionId)
         .then((value) => {
           if (active) setTools(value);
         })
@@ -45,7 +52,7 @@ export function McpTaskOptions({
     return () => {
       active = false;
     };
-  }, [sessionId, retry]);
+  }, [sessionId, retry, discoverTools]);
   const config = (key: string, value: string | number) =>
     onApply([
       { kind: "set_block_configuration", blockId: block.id, key, value },
@@ -279,24 +286,40 @@ export function McpTaskOptions({
           onChange={(e) => config("expected_result", e.target.value)}
         />
       </label>
+      {!block.configuration.cad &&
+        !block.configuration.application_resource &&
+        !block.configuration.image_output && (
+          <TaskOutputFiles
+            block={block}
+            workflow={workflow}
+            readOnly={readOnly}
+            onApply={onApply}
+          />
+        )}
       <details>
         <summary>Additional guidance and limits</summary>
-        {!block.configuration.cad && !block.configuration.image_output && (
-          <label>
-            Files the tools must produce
-            <textarea
-              rows={2}
-              value={String(block.configuration.expected_files ?? "")}
-              readOnly={readOnly}
-              onChange={(e) => config("expected_files", e.target.value)}
-              placeholder="Optional workspace paths, one per line"
-            />
-            <small>
-              Wright checks these files exist and are non-empty before reporting
-              completion.
-            </small>
-          </label>
-        )}
+        {!block.configuration.cad &&
+          !block.configuration.image_output &&
+          !workflow.ports.some(
+            (port) =>
+              block.outputPortIds.includes(port.id) &&
+              port.typeId === "type.file.workspace",
+          ) && (
+            <label>
+              Files the tools must produce
+              <textarea
+                rows={2}
+                value={String(block.configuration.expected_files ?? "")}
+                readOnly={readOnly}
+                onChange={(e) => config("expected_files", e.target.value)}
+                placeholder="Optional workspace paths, one per line"
+              />
+              <small>
+                Wright checks these files exist and are non-empty before
+                reporting completion.
+              </small>
+            </label>
+          )}
         <label>
           Tool guidance
           <textarea

@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Wright native document tabs test</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+      font: 14px system-ui;
+    }
+    body {
+      margin: 20px;
+      max-width: 600px;
+    }
+    h1 {
+      font-size: 18px;
+    }
+    button {
+      font: inherit;
+      padding: 8px 12px;
+      margin: 4px 8px 4px 0;
+    }
+    li {
+      margin: 12px 0;
+    }
+    #status {
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+    small {
+      opacity: 0.7;
+    }
+  </style>
+  <h1>Native document tabs test</h1>
+  <p>
+    Open two workflow copies and a retained image in the desktop's own tabs.
+  </p>
+  <button id="all" disabled>Open all three</button>
+  <ul id="files"></ul>
+  <p id="status" role="status">Connecting to the desktop…</p>
+  <small>This test opens files only. No engineering process runs.</small>
+  <script>
+    let sequence = 0,
+      origin = "*",
+      ready = false,
+      files = [],
+      caps = {};
+    const requests = new Map(),
+      outcomes = [];
+    const status = document.getElementById("status");
+    function request(method, params) {
+      return new Promise((resolve, reject) => {
+        const id = ++sequence,
+          timer = setTimeout(() => {
+            requests.delete(id);
+            reject(Error("Host response unavailable"));
+          }, 10000);
+        requests.set(id, { resolve, reject, timer });
+        parent.postMessage({ jsonrpc: "2.0", id, method, params }, origin);
+      });
+    }
+    async function publish() {
+      status.textContent = outcomes
+        .map((x) => x.name + ": " + x.outcome)
+        .join("\n");
+      if (caps.updateModelContext)
+        await request("ui/update-model-context", {
+          structuredContent: {
+            native_file_tab_test: {
+              boundary:
+                "Host open requests only; tab display and retention need observation",
+              outcomes,
+            },
+          },
+        }).catch(() => {});
+    }
+    async function openFile(file) {
+      try {
+        await request("openai/files/open", { path: file.absolute_path });
+        outcomes.push({
+          name: file.label,
+          path: file.absolute_path,
+          outcome: "open request accepted",
+        });
+      } catch {
+        outcomes.push({
+          name: file.label,
+          path: file.absolute_path,
+          outcome: "open request failed or unconfirmed",
+        });
+      }
+      await publish();
+    }
+    function render() {
+      const list = document.getElementById("files");
+      list.replaceChildren();
+      for (const file of files) {
+        const li = document.createElement("li"),
+          button = document.createElement("button");
+        button.textContent = file.label;
+        button.disabled = !ready;
+        button.onclick = () => openFile(file);
+        li.append(button);
+        list.append(li);
+      }
+      document.getElementById("all").disabled = !ready || files.length !== 3;
+      if (!outcomes.length)
+        status.textContent = ready
+          ? "Ready. The desktop will choose each file viewer."
+          : "This host does not advertise native file opening.";
+    }
+    document.getElementById("all").onclick = async () => {
+      document.getElementById("all").disabled = true;
+      for (const file of files) await openFile(file);
+      render();
+    };
+    window.addEventListener("message", (event) => {
+      if (event.source !== parent) return;
+      const m = event.data;
+      if (!m || m.jsonrpc !== "2.0") return;
+      if (m.id && requests.has(m.id)) {
+        const p = requests.get(m.id);
+        clearTimeout(p.timer);
+        requests.delete(m.id);
+        origin = event.origin;
+        m.error
+          ? p.reject(Error("Host rejected request"))
+          : p.resolve(m.result);
+        return;
+      }
+      if (m.method === "ui/notifications/tool-result") {
+        const data = m.params?.structuredContent;
+        if (data?.view === "native-tabs-probe" && Array.isArray(data.files)) {
+          files = data.files
+            .filter((x) => x.kind === "workflow" || x.kind === "image")
+            .slice(0, 3);
+          render();
+        }
+      }
+    });
+    request("ui/initialize", {
+      protocolVersion: "2026-01-26",
+      appInfo: { name: "wright-native-file-tab-probe", version: "0.1.0" },
+      appCapabilities: {},
+    })
+      .then((result) => {
+        caps = result.hostCapabilities ?? {};
+        ready = !!caps.experimental?.["openai/files"];
+        parent.postMessage(
+          {
+            jsonrpc: "2.0",
+            method: "ui/notifications/initialized",
+            params: {},
+          },
+          origin,
+        );
+        render();
+      })
+      .catch(() => {
+        status.textContent = "Desktop connection unavailable.";
+      });
+  </script>
+</html>

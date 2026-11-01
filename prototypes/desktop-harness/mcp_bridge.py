@@ -10,6 +10,7 @@ import hashlib
 from contextlib import asynccontextmanager
 from datetime import datetime, timezone
 import json
+import os
 import re
 from pathlib import Path
 from typing import Any, Literal
@@ -190,16 +191,104 @@ WORKSPACE_PANEL_URI = (
 )
 
 
+def read_private_api_credential(path: Path) -> str:
+    """Read only a private credential; never repair an existing file's ACL.
+
+    Windows stat mode bits do not describe its DACL. Use the already required
+    Windows MCP dependency (pywin32) to validate the same open file we read.
+    Trust only the current user, SYSTEM and local Administrators; OWNER RIGHTS
+    is permitted only when the owner is one of those principals. This deliberately
+    rejects unfamiliar ACE types and grants, even if a deny might restrict them.
+    """
+    refused = "Prototype API credential must be private and not a symlink"
+    if os.name != "nt":
+        if path.is_symlink() or path.stat().st_mode & 0o077:
+            raise ValueError(refused)
+        return path.read_text()
+
+    try:
+        import win32api
+        import win32con
+        import win32file
+        import win32security
+
+        # No write/delete sharing: validate and read one object, without a
+        # path-based check/read race or following a final reparse point.
+        handle = win32file.CreateFile(
+            str(path), win32con.GENERIC_READ | win32con.READ_CONTROL,
+            win32con.FILE_SHARE_READ, None, win32con.OPEN_EXISTING,
+            win32file.FILE_FLAG_OPEN_REPARSE_POINT, None,
+        )
+        try:
+            attributes = win32file.GetFileInformationByHandle(handle)[0]
+            if attributes & (
+                win32con.FILE_ATTRIBUTE_REPARSE_POINT | win32con.FILE_ATTRIBUTE_DIRECTORY
+            ):
+                raise ValueError(refused)
+            token = win32security.OpenProcessToken(
+                win32api.GetCurrentProcess(), win32con.TOKEN_QUERY
+            )
+            try:
+                user = win32security.GetTokenInformation(token, win32security.TokenUser)[0]
+            finally:
+                token.Close()
+            trusted = {
+                win32security.ConvertSidToStringSid(user),
+                "S-1-5-18",  # Local SYSTEM
+                "S-1-5-32-544",  # Local Administrators
+            }
+            descriptor = win32security.GetSecurityInfo(
+                handle, win32security.SE_FILE_OBJECT,
+                win32security.OWNER_SECURITY_INFORMATION | win32security.DACL_SECURITY_INFORMATION,
+            )
+            owner = win32security.ConvertSidToStringSid(descriptor.GetSecurityDescriptorOwner())
+            acl = descriptor.GetSecurityDescriptorDacl()
+            if owner not in trusted or acl is None:
+                raise ValueError(refused)
+            for index in range(acl.GetAceCount()):
+                (kind, flags), mask, sid = acl.GetAce(index)
+                if flags & win32security.INHERIT_ONLY_ACE:
+                    continue
+                if kind == win32security.ACCESS_DENIED_ACE_TYPE:
+                    continue
+                if kind != win32security.ACCESS_ALLOWED_ACE_TYPE:
+                    raise ValueError(refused)
+                principal = win32security.ConvertSidToStringSid(sid)
+                if mask and principal not in trusted | {"S-1-3-4"}:  # OWNER RIGHTS
+                    raise ValueError(refused)
+            size = win32file.GetFileSize(handle)
+            if not 0 < size <= 4096:
+                raise ValueError(refused)
+            return win32file.ReadFile(handle, size)[1].decode("utf-8")
+        finally:
+            handle.Close()
+    except Exception:
+        # Fail closed without exposing credential paths or Win32 diagnostics.
+        raise ValueError(refused) from None
+
+
 class WrightDesktopClient:
-    def __init__(self, state, *, native_editor=False, native_working_view=False):
+    def __init__(
+        self, state, *, native_editor=False, native_working_view=False,
+        native_workspace_files=False,
+    ):
         self.state = Path(state).resolve(strict=True)
-        preview = json.loads((self.state / "preview.json").read_text())
+        # Windows routing/pin metadata must have the same integrity boundary as
+        # the token: a writable API URL could otherwise disclose a private token.
+        def configuration(name):
+            path = self.state / name
+            return json.loads(
+                read_private_api_credential(path)
+                if os.name == "nt" else path.read_text(encoding="utf-8")
+            )
+
+        preview = configuration("preview.json")
         url = preview["api_url"]
         parsed = urlsplit(url)
         if parsed.scheme != "http" or parsed.hostname != "127.0.0.1" or parsed.path:
             raise ValueError("This prototype connects only to its loopback Wright API")
-        self.binding = json.loads((self.state / "desktop-binding.json").read_text())
-        versions = json.loads((self.state / "desktop-versions.json").read_text())
+        self.binding = configuration("desktop-binding.json")
+        versions = configuration("desktop-versions.json")
         if versions.get("mcp_sdk") != version("mcp"):
             raise ValueError(
                 "Pinned MCP SDK version differs; requalify before connecting"
@@ -217,15 +306,28 @@ class WrightDesktopClient:
             raise ValueError(
                 "Native working view differs from the frozen configuration"
             )
+        if bool(versions.get("native_workspace_files", False)) != native_workspace_files:
+            raise ValueError("Native workspace files differ from the frozen configuration")
         for name, file in (
             ("native_source_tools", "native_source_tools.py"),
             ("native_editor", "native-editor.html"),
             ("native_process_tools", "native_process_tools.py"),
+            ("native_workspace_files", "native_workspace_files.py"),
+            ("native_workspace_file_tools", "native_workspace_file_tools.py"),
+            ("native_file_contracts", "native_file_contracts.py"),
         ):
             if (
                 (
                     native_working_view
                     and name == "native_process_tools"
+                    and name not in versions["files"]
+                )
+                or (
+                    native_workspace_files
+                    and name in {
+                        "native_workspace_files", "native_workspace_file_tools",
+                        "native_file_contracts",
+                    }
                     and name not in versions["files"]
                 )
                 or name in versions["files"]
@@ -239,13 +341,10 @@ class WrightDesktopClient:
                 )
         self.client_id = str(uuid4())
         token_file = self.state / ".preview-api-token"
-        if token_file.is_symlink() or token_file.stat().st_mode & 0o077:
-            raise ValueError(
-                "Prototype API credential must be private and not a symlink"
-            )
+        credential = read_private_api_credential(token_file)
         self.http = httpx.AsyncClient(
             base_url=url,
-            headers={"Authorization": "Bearer " + token_file.read_text()},
+            headers={"Authorization": "Bearer " + credential},
             trust_env=False,
             follow_redirects=False,
             timeout=15,
@@ -333,9 +432,19 @@ async def connection_lifespan(client):
                 await client.http.aclose()
 
 
-def server(client, *, native_editor=False, native_working_view=False):
+def server(
+    client, *, native_editor=False, native_working_view=False,
+    native_file_tab_probe: Path | None = None,
+    native_workspace_files=False,
+):
     if native_working_view and not native_editor:
         raise ValueError("Native working view requires the native editor resource")
+    if native_file_tab_probe and not native_editor:
+        raise ValueError("Native file tab probe requires the native editor resource")
+    if native_workspace_files and not native_editor:
+        raise ValueError("Native workspace files require the native editor resource")
+    if native_workspace_files and native_file_tab_probe:
+        raise ValueError("Choose general workspace files or the fixed-file probe")
 
     @asynccontextmanager
     async def lifespan(_):
@@ -1000,6 +1109,65 @@ def server(client, *, native_editor=False, native_working_view=False):
             },
         )
 
+    @mcp.tool(annotations=read, meta={"ui": {"visibility": ["app"]}})
+    async def wright_workspace_pending(
+        workspace_id: str,
+        session_id: str,
+        checkpoint_after: str = "",
+        review_after: str = "",
+    ) -> dict[str, Any]:
+        """Read workspace attention items; never approve, resume or start work."""
+        await client.scope(workspace_id, session_id)
+        document = await client.call(
+            "GET",
+            "/api/workspace/workflow-sources/pending",
+            params={
+                "session_id": session_id,
+                "checkpoint_after": checkpoint_after,
+                "review_after": review_after,
+            },
+        )
+        if document.get("workspace_id") != workspace_id:
+            raise ValueError("Pending work scope differs")
+        for key in ("checkpoints", "reviews"):
+            page = document.get(key)
+            if (
+                not isinstance(page, dict)
+                or not isinstance(page.get("items"), list)
+                or len(page["items"]) > 20
+                or any(not isinstance(row, dict) for row in page["items"])
+                or not isinstance(page.get("next_cursor"), (str, type(None)))
+            ):
+                raise ValueError("Pending work page is unavailable")
+        fields = (
+            "checkpoint_id",
+            "review_id",
+            "workflow_path",
+            "run_id",
+            "path",
+            "source_digest",
+            "step_title",
+            "state",
+            "action_kind",
+            "checkpoint_kind",
+            "response_id",
+            "expires_at",
+        )
+        return {
+            "workspace_id": workspace_id,
+            "session_id": session_id,
+            **{
+                key: {
+                    "items": [
+                        {field: row.get(field) for field in fields}
+                        for row in document[key]["items"]
+                    ],
+                    "next_cursor": document[key]["next_cursor"],
+                }
+                for key in ("checkpoints", "reviews")
+            },
+        }
+
     @mcp.tool(annotations=read, structured_output=True)
     async def wright_workflow_history(
         workspace_id: str, session_id: str, path: str
@@ -1300,6 +1468,7 @@ def server(client, *, native_editor=False, native_working_view=False):
                 selection = {"workspace_id": workspace_id, "session_id": session_id}
             return {
                 "view": "home",
+                **({"native_workspace_files_enabled": True} if native_workspace_files else {}),
                 **({"selection": selection} if selection is not None else {}),
                 **await client.call("GET", "/api/desktop/workspaces"),
             }
@@ -1327,13 +1496,29 @@ def server(client, *, native_editor=False, native_working_view=False):
                 "workspace": workspace,
                 "document": document,
                 "working_view_enabled": native_working_view,
+                **({"native_workspace_files_enabled": True} if native_workspace_files else {}),
             }
 
         register_native_source_tools(mcp, client)
+        if native_workspace_files:
+            from native_workspace_file_tools import register_native_workspace_file_tools
+
+            register_native_workspace_file_tools(
+                mcp, client, resource_uri=uri, working_view_enabled=native_working_view,
+            )
+        if native_file_tab_probe:
+            from native_file_tab_probe import register_native_file_tab_probe
+
+            register_native_file_tab_probe(
+                mcp, client, manifest_path=native_file_tab_probe,
+                resource_uri=uri, working_view_enabled=native_working_view,
+            )
         if native_working_view:
             from native_process_tools import register_native_process_tools
 
-            register_native_process_tools(mcp, client, resource_uri=uri)
+            register_native_process_tools(
+                mcp, client, resource_uri=uri, native_workspace_files=native_workspace_files,
+            )
     return mcp
 
 
@@ -1342,15 +1527,26 @@ if __name__ == "__main__":
     parser.add_argument("--state-dir", required=True, type=Path)
     parser.add_argument("--native-editor", action="store_true")
     parser.add_argument("--native-working-view", action="store_true")
+    parser.add_argument("--native-file-tab-probe", type=Path)
+    parser.add_argument("--native-workspace-files", action="store_true")
     args = parser.parse_args()
     if args.native_working_view and not args.native_editor:
         parser.error("Native working view requires the opt-in native editor")
+    if args.native_file_tab_probe and not args.native_editor:
+        parser.error("Native file tab probe requires the opt-in native editor")
+    if args.native_workspace_files and not args.native_editor:
+        parser.error("Native workspace files require the opt-in native editor")
+    if args.native_workspace_files and args.native_file_tab_probe:
+        parser.error("Choose general workspace files or the fixed-file probe")
     server(
         WrightDesktopClient(
             args.state_dir,
             native_editor=args.native_editor,
             native_working_view=args.native_working_view,
+            native_workspace_files=args.native_workspace_files,
         ),
         native_editor=args.native_editor,
         native_working_view=args.native_working_view,
+        native_file_tab_probe=args.native_file_tab_probe,
+        native_workspace_files=args.native_workspace_files,
     ).run(transport="stdio")

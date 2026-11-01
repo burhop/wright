@@ -1,0 +1,43 @@
+{
+  "scope": "synthetic 10mm coupon only",
+  "package_sha256": "0b9ec98fe7359cc439f616351f90ecd5a91890e351abbad0423b35ad3ecfd20d",
+  "package_bytes": 37898,
+  "verified_package_settings": {
+    "curr_bed_type": "Textured PEI Plate",
+    "filament_type": [
+      "PETG"
+    ],
+    "layer_height": "0.2",
+    "nozzle_diameter": [
+      "0.4"
+    ],
+    "printer_model": "Bambu Lab P1S",
+    "sparse_infill_density": "40%",
+    "wall_loops": "5"
+  },
+  "passive_inspection": {
+    "method": "Passive recorded-package inspection; no slicer or machine command executed",
+    "slice_evidence": {
+      "path": "inspection-nominal/slice-evidence.json",
+      "sha256": "5305c950e1b3040ee3af94de3f1e19ca2c3236b157f67db516920455f806e5d8",
+      "bytes": 898
+    },
+    "support_preview": {
+      "path": "inspection-nominal/support-preview.json",
+      "sha256": "dd33830fbc9ea86a41d365d96a5cd6985fbcb191de2da2f205e92a968eb36190",
+      "bytes": 103464
+    },
+    "toolpath_summary": {
+      "path": "inspection-nominal/toolpath-summary.json",
+      "sha256": "d8f7d32704690097203e952dec2e7dca615fc3cdf213d7e0403a404e18d38f0b",
+      "bytes": 1460
+    },
+    "engineering_acceptance": false
+  },
+  "package_pngs": [],
+  "handle_qualified": false,
+  "legacy_preview_check": {
+    "status": "failed",
+    "error": "Actual package preview is missing, ambiguous or exceeds its bound"
+  }
+}

@@ -1,0 +1,331 @@
+{
+  "bundle_digest": "bdabb6e2404614603c2699e8dd3f80d90ab7ddb264ac945dc11506b884688028",
+  "can_import": true,
+  "can_run": false,
+  "diagnostics": [
+    {
+      "code": "local_qualification_required",
+      "severity": "warning",
+      "message": "Qualify this binding using the local registry/adapter before running; names and UUIDs do not prove equivalence.",
+      "dependency": "specification"
+    },
+    {
+      "code": "local_qualification_required",
+      "severity": "warning",
+      "message": "Qualify this binding using the local registry/adapter before running; names and UUIDs do not prove equivalence.",
+      "dependency": "analysis"
+    },
+    {
+      "code": "local_qualification_required",
+      "severity": "warning",
+      "message": "Qualify this binding using the local registry/adapter before running; names and UUIDs do not prove equivalence.",
+      "dependency": "manufacturing"
+    },
+    {
+      "code": "local_qualification_required",
+      "severity": "warning",
+      "message": "Qualify this binding using the local registry/adapter before running; names and UUIDs do not prove equivalence.",
+      "dependency": "report"
+    },
+    {
+      "code": "local_qualification_required",
+      "severity": "warning",
+      "message": "Qualify this binding using the local registry/adapter before running; names and UUIDs do not prove equivalence.",
+      "dependency": "mesh_repair"
+    },
+    {
+      "code": "local_qualification_required",
+      "severity": "warning",
+      "message": "Qualify this binding using the local registry/adapter before running; names and UUIDs do not prove equivalence.",
+      "dependency": "print_orientations"
+    },
+    {
+      "code": "local_qualification_required",
+      "severity": "warning",
+      "message": "Qualify this binding using the local registry/adapter before running; names and UUIDs do not prove equivalence.",
+      "dependency": "slice_orientations"
+    },
+    {
+      "code": "local_qualification_required",
+      "severity": "warning",
+      "message": "Qualify this binding using the local registry/adapter before running; names and UUIDs do not prove equivalence.",
+      "dependency": "retain_slice_observations"
+    },
+    {
+      "code": "external_dependency",
+      "severity": "warning",
+      "message": "This dependency remains external and must be prepared before starting.",
+      "dependency": "specification"
+    },
+    {
+      "code": "external_dependency",
+      "severity": "warning",
+      "message": "This dependency remains external and must be prepared before starting.",
+      "dependency": "analysis"
+    },
+    {
+      "code": "external_dependency",
+      "severity": "warning",
+      "message": "This dependency remains external and must be prepared before starting.",
+      "dependency": "manufacturing"
+    },
+    {
+      "code": "external_dependency",
+      "severity": "warning",
+      "message": "This dependency remains external and must be prepared before starting.",
+      "dependency": "report"
+    },
+    {
+      "code": "external_dependency",
+      "severity": "warning",
+      "message": "This dependency remains external and must be prepared before starting.",
+      "dependency": "mesh_repair"
+    },
+    {
+      "code": "external_dependency",
+      "severity": "warning",
+      "message": "This dependency remains external and must be prepared before starting.",
+      "dependency": "print_orientations"
+    },
+    {
+      "code": "external_dependency",
+      "severity": "warning",
+      "message": "This dependency remains external and must be prepared before starting.",
+      "dependency": "slice_orientations"
+    },
+    {
+      "code": "external_dependency",
+      "severity": "warning",
+      "message": "This dependency remains external and must be prepared before starting.",
+      "dependency": "retain_slice_observations"
+    }
+  ],
+  "external_dependencies": [
+    {
+      "category": "model",
+      "identity": "specification",
+      "disposition": "external",
+      "sha256": null,
+      "details": {
+        "requested_model": "workspace-default",
+        "output_format": "markdown",
+        "qualification": "requires-local-adapter-readiness"
+      }
+    },
+    {
+      "category": "provider",
+      "identity": "analysis",
+      "disposition": "external",
+      "sha256": null,
+      "details": {
+        "server_id": "import:draft-e4f0ce6f14f1c0347530",
+        "tool_name": "",
+        "schema_digest": "",
+        "qualification": "requires-local-registry-review",
+        "qualified_operations": []
+      }
+    },
+    {
+      "category": "provider",
+      "identity": "manufacturing",
+      "disposition": "external",
+      "sha256": null,
+      "details": {
+        "server_id": "import:draft-e4f0ce6f14f1c0347530",
+        "tool_name": "",
+        "schema_digest": "",
+        "qualification": "requires-local-registry-review",
+        "qualified_operations": []
+      }
+    },
+    {
+      "category": "model",
+      "identity": "report",
+      "disposition": "external",
+      "sha256": null,
+      "details": {
+        "requested_model": "workspace-default",
+        "output_format": "markdown",
+        "qualification": "requires-local-adapter-readiness"
+      }
+    },
+    {
+      "category": "provider",
+      "identity": "mesh_repair",
+      "disposition": "external",
+      "sha256": null,
+      "details": {
+        "server_id": "import:draft-92ea6423d17519e26dc7",
+        "tool_name": "",
+        "schema_digest": "",
+        "qualification": "requires-local-registry-review",
+        "qualified_operations": []
+      }
+    },
+    {
+      "category": "provider",
+      "identity": "print_orientations",
+      "disposition": "external",
+      "sha256": null,
+      "details": {
+        "server_id": "import:draft-92ea6423d17519e26dc7",
+        "tool_name": "",
+        "schema_digest": "",
+        "qualification": "requires-local-registry-review",
+        "qualified_operations": []
+      }
+    },
+    {
+      "category": "provider",
+      "identity": "slice_orientations",
+      "disposition": "external",
+      "sha256": null,
+      "details": {
+        "server_id": "import:draft-5d6b66c011b0a1e0ae8b",
+        "tool_name": "",
+        "schema_digest": "",
+        "qualification": "requires-local-registry-review",
+        "qualified_operations": []
+      }
+    },
+    {
+      "category": "provider",
+      "identity": "retain_slice_observations",
+      "disposition": "external",
+      "sha256": null,
+      "details": {
+        "server_id": "wright-workspace-files",
+        "tool_name": "wright-workspace-files__write_text_document",
+        "schema_digest": "66c045c726240dd539b71339450e63e3056b4cf2c8d30954d407c027a17b0b12",
+        "qualification": "requires-local-registry-review",
+        "qualified_operations": []
+      }
+    }
+  ],
+  "requirements": [
+    {
+      "category": "instructions",
+      "identity": "embedded",
+      "disposition": "embedded",
+      "sha256": "5dc7663ae713c52a815ba3dac36fd64633d4b6b2aa54de3947bc221569473071",
+      "details": {
+        "version": "wright.workflow-instructions/1",
+        "action_intent_contract": "wright.workflow-action-intent/1"
+      }
+    },
+    {
+      "category": "reference",
+      "identity": "uploads/467f9fe327ccaf085c507487c2907503bd2e50bdd055cbcf6bdeff706b705fb0/concept.png",
+      "disposition": "embedded",
+      "sha256": "467f9fe327ccaf085c507487c2907503bd2e50bdd055cbcf6bdeff706b705fb0",
+      "details": {}
+    },
+    {
+      "category": "model",
+      "identity": "specification",
+      "disposition": "external",
+      "sha256": null,
+      "details": {
+        "requested_model": "workspace-default",
+        "output_format": "markdown",
+        "qualification": "requires-local-adapter-readiness"
+      }
+    },
+    {
+      "category": "provider",
+      "identity": "analysis",
+      "disposition": "external",
+      "sha256": null,
+      "details": {
+        "server_id": "import:draft-e4f0ce6f14f1c0347530",
+        "tool_name": "",
+        "schema_digest": "",
+        "qualification": "requires-local-registry-review",
+        "qualified_operations": []
+      }
+    },
+    {
+      "category": "provider",
+      "identity": "manufacturing",
+      "disposition": "external",
+      "sha256": null,
+      "details": {
+        "server_id": "import:draft-e4f0ce6f14f1c0347530",
+        "tool_name": "",
+        "schema_digest": "",
+        "qualification": "requires-local-registry-review",
+        "qualified_operations": []
+      }
+    },
+    {
+      "category": "model",
+      "identity": "report",
+      "disposition": "external",
+      "sha256": null,
+      "details": {
+        "requested_model": "workspace-default",
+        "output_format": "markdown",
+        "qualification": "requires-local-adapter-readiness"
+      }
+    },
+    {
+      "category": "provider",
+      "identity": "mesh_repair",
+      "disposition": "external",
+      "sha256": null,
+      "details": {
+        "server_id": "import:draft-92ea6423d17519e26dc7",
+        "tool_name": "",
+        "schema_digest": "",
+        "qualification": "requires-local-registry-review",
+        "qualified_operations": []
+      }
+    },
+    {
+      "category": "provider",
+      "identity": "print_orientations",
+      "disposition": "external",
+      "sha256": null,
+      "details": {
+        "server_id": "import:draft-92ea6423d17519e26dc7",
+        "tool_name": "",
+        "schema_digest": "",
+        "qualification": "requires-local-registry-review",
+        "qualified_operations": []
+      }
+    },
+    {
+      "category": "provider",
+      "identity": "slice_orientations",
+      "disposition": "external",
+      "sha256": null,
+      "details": {
+        "server_id": "import:draft-5d6b66c011b0a1e0ae8b",
+        "tool_name": "",
+        "schema_digest": "",
+        "qualification": "requires-local-registry-review",
+        "qualified_operations": []
+      }
+    },
+    {
+      "category": "provider",
+      "identity": "retain_slice_observations",
+      "disposition": "external",
+      "sha256": null,
+      "details": {
+        "server_id": "wright-workspace-files",
+        "tool_name": "wright-workspace-files__write_text_document",
+        "schema_digest": "66c045c726240dd539b71339450e63e3056b4cf2c8d30954d407c027a17b0b12",
+        "qualification": "requires-local-registry-review",
+        "qualified_operations": []
+      }
+    },
+    {
+      "category": "reference",
+      "identity": "uploads/88cca1f2aecee63de6b8951d62a5b6ac15f8a7fcb96f828b3b190a7aaf357b4c/inspection-resources-v2.zip",
+      "disposition": "embedded",
+      "sha256": "88cca1f2aecee63de6b8951d62a5b6ac15f8a7fcb96f828b3b190a7aaf357b4c",
+      "details": {}
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "boundary": "Read-only wright_connections_list on isolated frozen candidate; not a live provider protocol probe",
+  "workspace_id": "af3b3e57-e686-4262-b458-0e21eaa4998d",
+  "server_id": "stevecad-mcp",
+  "installed": false,
+  "active": false,
+  "enabled_here": false,
+  "local_validation": null,
+  "credentials_missing": false,
+  "compatibility": "uncertain",
+  "interpretation": "credentials_missing=false does not establish authentication for an uninstalled server; setup and personal sign-in remain outstanding"
+}

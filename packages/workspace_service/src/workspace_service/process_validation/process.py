@@ -71,6 +71,7 @@ def register_outputs(
             id=output_id(run_id, step.id, attempt, port),
             role="output",
             result_id=result.id if result else f"{run_id}:{step.id}:{port}",
+            input_digests=tuple(record.get("verified_file_input_digests", ())),
             producer=ProducerIdentity(
                 run_id=run_id, step_id=step.id, attempt=attempt, output_port=port
             ),

@@ -43,6 +43,28 @@ def test_readonly_and_update_ports_are_distinct_and_ui_only(panel):
     assert all(tool.meta["ui"]["visibility"] == ["app"] for tool in tools.values())
 
 
+def test_working_entry_retains_frozen_native_file_presentation_choice(monkeypatch):
+    monkeypatch.syspath_prepend(str(Path(__file__).resolve().parents[1]))
+    from native_process_tools import register_native_process_tools
+
+    client = SimpleNamespace(
+        scope=AsyncMock(return_value={"workspace_id": "workspace"}),
+        call=AsyncMock(return_value={"run_id": "saved-run"}),
+    )
+    server = FastMCP("native-working-entry-test")
+    register_native_process_tools(
+        server, client, resource_uri="ui://test/view.html", native_workspace_files=True
+    )
+    result = run(server, "wright_process_view", scope("snapshot", run_id="saved-run"))
+    assert result["native_workspace_files_enabled"] is True
+    assert result["snapshot"] == {"run_id": "saved-run"}
+    client.call.assert_awaited_once()
+    assert client.call.call_args.args == (
+        "GET",
+        "/api/workspace/process-interfaces/runs/saved-run",
+    )
+
+
 def test_snapshot_preserves_exact_source_run_and_page(panel):
     server, client = panel
     run(

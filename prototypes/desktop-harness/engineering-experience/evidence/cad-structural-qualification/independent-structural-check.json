@@ -1,0 +1,25 @@
+{
+  "status": "PASS",
+  "scope": "independent CSV balance/constraints/load scaling and actual Wright field readers; not mesh convergence, accepted material, reviewed boundary conditions or strength compliance",
+  "cases": [
+    {
+      "force_n": 1,
+      "nodes": 934,
+      "stress_samples": 11488,
+      "maximum_displacement_mm": 0.0364361669874457,
+      "maximum_von_mises_mpa": 0.18302062255076312,
+      "force_balance_error_n": 1.9950707752514063e-13
+    },
+    {
+      "force_n": 2,
+      "nodes": 934,
+      "stress_samples": 11488,
+      "maximum_displacement_mm": 0.0728723339748914,
+      "maximum_von_mises_mpa": 0.36604124510152625,
+      "force_balance_error_n": 3.9901415505028126e-13
+    }
+  ],
+  "linearity": "displacements and all stress components double at every recorded location",
+  "digests_verified": 8,
+  "provider_critic_approval": false
+}

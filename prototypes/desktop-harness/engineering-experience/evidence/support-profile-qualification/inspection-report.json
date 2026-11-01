@@ -1,0 +1,98 @@
+{
+  "scope": "synthetic 20 x 8 x 24 mm overhang in two orientations; not a handle or engineering approval",
+  "orientations": {
+    "upright": {
+      "package_sha256": "987a3f6b336ee1dbb99ca44f9895ca9c62b22dc3ea45c8962f777648794a310f",
+      "package_bytes": 126810,
+      "settings": {
+        "enable_support": "1",
+        "curr_bed_type": "Textured PEI Plate",
+        "filament_type": [
+          "PETG"
+        ],
+        "layer_height": "0.2",
+        "nozzle_diameter": [
+          "0.4"
+        ],
+        "printer_model": "Bambu Lab P1S",
+        "sparse_infill_density": "40%",
+        "wall_loops": "5"
+      },
+      "inspection": {
+        "method": "Passive recorded-package inspection; no slicer or machine command executed",
+        "slice_evidence": {
+          "path": "inspection-upright/slice-evidence.json",
+          "sha256": "a37d2abd4437eae9cb1852344449e7cc11b6630b077d6ef8f623b585917f7896",
+          "bytes": 1333
+        },
+        "support_preview": {
+          "path": "inspection-upright/support-preview.json",
+          "sha256": "09c92f6673817eb714f65600fb298c7c99c58ba0624a440532770f86596d3064",
+          "bytes": 1096257
+        },
+        "toolpath_summary": {
+          "path": "inspection-upright/toolpath-summary.json",
+          "sha256": "339a9caf6f5fb2671187ec1fce5c82ef34b506110c631b2568c6291b761adf06",
+          "bytes": 1518
+        },
+        "engineering_acceptance": false
+      },
+      "layers": 120,
+      "segments": {
+        "model": 3438,
+        "support": 14042,
+        "unclassified": 789
+      },
+      "response_matches_actual_intent": true
+    },
+    "side": {
+      "package_sha256": "43cdd81c221b6cafa9a4b8c698a5ab6056809087f49c5208b1d3c56fdfa0b67e",
+      "package_bytes": 42131,
+      "settings": {
+        "enable_support": "1",
+        "curr_bed_type": "Textured PEI Plate",
+        "filament_type": [
+          "PETG"
+        ],
+        "layer_height": "0.2",
+        "nozzle_diameter": [
+          "0.4"
+        ],
+        "printer_model": "Bambu Lab P1S",
+        "sparse_infill_density": "40%",
+        "wall_loops": "5"
+      },
+      "inspection": {
+        "method": "Passive recorded-package inspection; no slicer or machine command executed",
+        "slice_evidence": {
+          "path": "inspection-side/slice-evidence.json",
+          "sha256": "60497cfaca187ef2624f22f71cf81caa6a3d6092166b81e204bd99e2beb78af4",
+          "bytes": 1318
+        },
+        "support_preview": {
+          "path": "inspection-side/support-preview.json",
+          "sha256": "b5510a9934d0fd079e694e52e19960936e06723f8f3ef59f8c5dfb0d9603d942",
+          "bytes": 44994
+        },
+        "toolpath_summary": {
+          "path": "inspection-side/toolpath-summary.json",
+          "sha256": "a73c50b1cef70e97cbadaf200992c56efa242282f897a88a0489649ba01bdc1b",
+          "bytes": 1381
+        },
+        "engineering_acceptance": false
+      },
+      "layers": 40,
+      "segments": {
+        "model": 1247,
+        "support": 0,
+        "unclassified": 0
+      },
+      "response_matches_actual_intent": true
+    }
+  },
+  "profiles": {
+    "machine": "592792d59f9a6c472c122feffc2f6c1dcd3ad595631b815d388e35943a3c318f",
+    "process": "39f151071ae067740cb57cb5d4aa530b1193201fe79ab41c4ff0283d00900131",
+    "filament": "e9b822d4074fc69530de0508c37dbf9fe97d53e967f3d5229e10243c3140df29"
+  }
+}

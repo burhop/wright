@@ -1,3 +1,4 @@
+import { NativeActionForm } from "./NativeActionForm";
 import { useRef, useState } from "react";
 import { CompactEncrypt, importJWK, type JWK } from "jose";
 import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
@@ -208,9 +209,8 @@ export function NativeCredentials({
         </p>
       ))}
       {form && (
-        <form
-          onSubmit={(event) => {
-            event.preventDefault();
+        <NativeActionForm
+          onAction={() => {
             void save();
           }}
         >
@@ -237,7 +237,7 @@ export function NativeCredentials({
           <button disabled={pending || !fields.length} type="submit">
             Save credentials
           </button>
-        </form>
+        </NativeActionForm>
       )}
       {message && <p role="status">{message}</p>}
     </details>

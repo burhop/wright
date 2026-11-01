@@ -1,7 +1,12 @@
-import { createAuthoringObject } from "./authoring-objects";
+import {
+  AUTHORING_TEMPLATES,
+  createAuthoringObject,
+} from "./authoring-objects";
 import { cadCommands, type CadOptions } from "./CadTaskOptions";
 import type { RecoveryCommand } from "./command-system";
 import type { RecoveryLayout, RecoveryWorkflow } from "./model";
+import { recoveryAuthoringSectionKind, type RecoveryBlock } from "./model";
+import { sourceKey } from "./prompt-settings";
 import { workflowMcpServerName, type WorkflowMcpTool } from "./mcp-settings";
 
 export interface McpServerChoice {
@@ -106,4 +111,56 @@ export function createMcpServerBlock(
     });
   }
   return commands;
+}
+
+export function canConfigureUnboundTask(block: RecoveryBlock): boolean {
+  return (
+    recoveryAuthoringSectionKind(block) === "task" &&
+    block.kind === "work" &&
+    block.executionKind === "deterministic" &&
+    !block.bindingId &&
+    !block.configuration.authoring_template &&
+    !block.configuration.mcp_server &&
+    !block.configuration.mcp_tool
+  );
+}
+
+/** Explicit authoring change; retain every engineering port and dependency. */
+export function configureUnboundMcpTask(
+  block: RecoveryBlock,
+  server: McpServerChoice,
+): RecoveryCommand[] {
+  if (
+    !canConfigureUnboundTask(block) ||
+    !server.tools.length ||
+    server.tools.some((tool) => tool.server_id !== server.id)
+  )
+    throw new Error("This step cannot use the selected server configuration.");
+  const defaults = AUTHORING_TEMPLATES.find(
+    (template) => template.id === "mcp-task",
+  )!.configuration;
+  const configuration = {
+    ...defaults,
+    ...block.configuration,
+    authoring_template: "mcp-task",
+    mcp_server: server.id,
+    mcp_server_name: server.name,
+    binding_state: "configured",
+    ...(block.inputPortIds[0]
+      ? { prompt_input: sourceKey(block.inputPortIds[0]) }
+      : {}),
+  };
+  return [
+    {
+      kind: "set_block_execution_kind",
+      blockId: block.id,
+      value: "ai_capable",
+    },
+    ...Object.entries(configuration).map(([key, value]): RecoveryCommand => ({
+      kind: "set_block_configuration",
+      blockId: block.id,
+      key,
+      value,
+    })),
+  ];
 }

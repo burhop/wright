@@ -762,12 +762,13 @@ function RecoveryCanvasControls() {
         −
       </ControlButton>
       <ControlButton
+        className="recovery-canvas__show-all"
         data-testid="workflow-recovery-canvas-fit"
-        aria-label="Fit workflow to view"
-        title="Fit workflow to view"
-        onClick={() => void fitView({ padding: 0.12 })}
+        aria-label="Show all steps"
+        title="Show all steps"
+        onClick={() => void fitView({ padding: 0.12, minZoom: 0.05 })}
       >
-        ⌗
+        Show all steps
       </ControlButton>
     </Controls>
   );
@@ -868,9 +869,11 @@ function RecoveryCanvasNavigator({
   showSearch,
 }: {
   readonly projection: Parameters<typeof findBlockByIdentity>[0];
-  readonly onSelect: (semanticId: string) => void;
+  readonly onSelect: (semanticId: string, inspect?: boolean) => void;
   readonly showSearch: boolean;
 }) {
+  const canvasWidth = useStore((state) => state.width);
+  const overview = useStore((state) => state.transform[2] < 0.65);
   const [query, setQuery] = useState("");
   const [status, setStatus] = useState("");
   const { getNode, setCenter } = useReactFlow();
@@ -882,20 +885,26 @@ function RecoveryCanvasNavigator({
       );
       return;
     }
-    onSelect(block.semanticId);
+    onSelect(block.semanticId, canvasWidth > 900);
     const node = getNode(block.semanticId);
     if (node !== undefined) {
-      void setCenter(
-        node.position.x + (node.measured?.width ?? 260) / 2,
-        node.position.y + (node.measured?.height ?? 180) / 2,
-        { zoom: 1, duration: 250 },
+      // Let the inspector layout and React Flow's resize observation settle
+      // before centering against the newly available canvas area.
+      requestAnimationFrame(() =>
+        requestAnimationFrame(() => {
+          void setCenter(
+            node.position.x + (node.measured?.width ?? 260) / 2,
+            node.position.y + (node.measured?.height ?? 180) / 2,
+            { zoom: 1, duration: 250 },
+          );
+        }),
       );
     }
     setStatus(`Focused ${block.title}.`);
   };
   return (
     <>
-      {showSearch && (
+      {(showSearch || overview) && (
         <form
           className="recovery-canvas__find nodrag nopan"
           onSubmit={(event) => {
@@ -907,11 +916,21 @@ function RecoveryCanvasNavigator({
           <input
             id="workflow-recovery-find"
             data-testid="workflow-recovery-find-input"
+            onKeyDown={(event) => {
+              if (event.key === "Enter") {
+                event.preventDefault();
+                focus();
+              }
+            }}
             value={query}
             placeholder="Step name"
             onChange={(event) => setQuery(event.currentTarget.value)}
           />
-          <button data-testid="workflow-recovery-find-submit" type="submit">
+          <button
+            data-testid="workflow-recovery-find-submit"
+            type="button"
+            onClick={focus}
+          >
             Show
           </button>
           {status !== "" && (
@@ -1447,7 +1466,7 @@ export const ReactFlowRecoveryCanvas: DraftCanvasRenderer = ({
         ]}
         nodeTypes={nodeTypes}
         edgeTypes={edgeTypes}
-        minZoom={0.4}
+        minZoom={0.05}
         maxZoom={1.8}
         proOptions={{ hideAttribution: true }}
         defaultViewport={
@@ -1596,7 +1615,9 @@ export const ReactFlowRecoveryCanvas: DraftCanvasRenderer = ({
         </div>
         <RecoveryCanvasNavigator
           projection={projection}
-          onSelect={(semanticId) => onIntent({ type: "select", semanticId })}
+          onSelect={(semanticId, inspect) =>
+            onIntent({ type: "select", semanticId, inspect })
+          }
           showSearch={detailLevel === "compact"}
         />
         <RecoveryCanvasControls />

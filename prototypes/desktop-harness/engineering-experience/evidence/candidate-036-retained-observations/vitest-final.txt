@@ -1,0 +1,9 @@
+
+ RUN  v4.1.10 /home/burhop/repos/wright/.local-run/worktrees/desktop-engineering-experience/apps/web
+
+
+ Test Files  1 passed (1)
+      Tests  13 passed (13)
+   Start at  23:31:35
+   Duration  2.16s (transform 338ms, setup 129ms, import 365ms, tests 643ms, environment 796ms)
+

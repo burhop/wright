@@ -1,0 +1,8 @@
+{
+  "baseline_findings": 1,
+  "scoped_findings": 0,
+  "neighbor_findings": 1,
+  "neighbor_file": "neighbor.json",
+  "scanner": "ghcr.io/gitleaks/gitleaks:v8.30.1",
+  "passed": true
+}

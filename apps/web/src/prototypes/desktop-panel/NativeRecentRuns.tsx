@@ -18,6 +18,7 @@ export function NativeRecentRuns({
   onOpen,
   initialPath,
   titles,
+  workingSourceDigest,
 }: {
   readonly workspace: DesktopWorkspace;
   readonly paths: string[];
@@ -25,6 +26,7 @@ export function NativeRecentRuns({
   readonly onOpen?: (path: string, run: RecordedRun) => Promise<void>;
   readonly initialPath?: string;
   readonly titles?: Readonly<Record<string, string>>;
+  readonly workingSourceDigest?: string;
 }) {
   const [path, setPath] = useState(
     initialPath && paths.includes(initialPath) ? initialPath : "",
@@ -148,7 +150,11 @@ export function NativeRecentRuns({
                 Read saved evidence
               </button>
             )}
-            {onOpen && run.run_id && run.source_digest ? (
+            {onOpen &&
+            run.run_id &&
+            run.source_digest &&
+            (!workingSourceDigest ||
+              run.source_digest === workingSourceDigest) ? (
               <button
                 disabled={opening || loading}
                 onClick={() => {
@@ -166,7 +172,13 @@ export function NativeRecentRuns({
                 Open working view
               </button>
             ) : (
-              <small>Exact run navigation unavailable for this record.</small>
+              <small>
+                {workingSourceDigest &&
+                run.source_digest &&
+                run.source_digest !== workingSourceDigest
+                  ? "Earlier workflow version — use Read saved evidence to inspect its results."
+                  : "Exact run navigation unavailable for this record."}
+              </small>
             )}
           </li>
         ))}

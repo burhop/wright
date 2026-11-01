@@ -1,0 +1,13 @@
+{
+  "status": "PASS",
+  "scope": {
+    "workspace_id": "bfbb635d-3195-4fca-891a-cf0621690a08",
+    "session_id": "desktop-b54dd14f-2286-46cf-8eca-20d894766f88",
+    "path": "workflows/handle.workflow.wflow"
+  },
+  "resource_sha256": "f77a8cef947f904ec188fef20dfdb70a0ca7e14e381133a6cce78b0abb0bc0ff",
+  "saves": 0,
+  "storage_revision": 1,
+  "storage_digest": "574184585ee11646e3ce1880338f5576f401d3108717f75d477669589d1ee497",
+  "boundary": "Actual compiled UI and Wright storage; simulated Linux host; no engineering execution or approval; Windows unverified"
+}

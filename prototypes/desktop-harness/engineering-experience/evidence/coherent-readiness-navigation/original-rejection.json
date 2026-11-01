@@ -1,0 +1,10 @@
+{
+  "status": 400,
+  "body": {
+    "detail": {
+      "code": "WORKFLOW_NOT_READY",
+      "message": "Create the editable handle and exports is not configured to run in this version of Wright.",
+      "correction": "Open this step's settings and configure the tool or task it requires. If that capability is unavailable, keep the step and its required checks or reviews in place; you can still inspect and edit the workflow."
+    }
+  }
+}

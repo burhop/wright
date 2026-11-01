@@ -1,3 +1,4 @@
+import { NativeActionForm } from "./NativeActionForm";
 import { useEffect, useRef, useState } from "react";
 import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import type { DesktopWorkspace } from "./NativeHomePanel";
@@ -88,6 +89,7 @@ export function NativeConnections({
   readonly openLink?: (url: string) => Promise<void>;
 }) {
   const [search, setSearch] = useState("");
+  const [browsingCatalog, setBrowsingCatalog] = useState(false);
   const [query, setQuery] = useState("");
   const [cursor, setCursor] = useState<string | null>(null);
   const [next, setNext] = useState<string | null>(null);
@@ -236,7 +238,7 @@ export function NativeConnections({
       availabilityReadPending.current = item.capability_id;
       setDisableUncertain(item.capability_id);
       setAvailabilityNotice(
-        "Disable outcome is not confirmed. Search / refresh to check saved availability before another attempt; no request was repeated.",
+        "Disable outcome is not confirmed. Refresh the list to check saved availability before another attempt; no request was repeated.",
       );
     } finally {
       disabling.current = false;
@@ -377,47 +379,65 @@ export function NativeConnections({
     cursor,
     refresh,
   ]);
+  const visibleItems = browsingCatalog
+    ? items
+    : items.filter((item) => item.installed || item.enabled_here);
   return (
     <section aria-label="Connections">
       <h2>Connections</h2>
       {availabilityNotice && <p role="status">{availabilityNotice}</p>}
-      <p>
-        Engineering tools for {workspace.workspace_name}. Availability here does
-        not approve workflow actions.
-      </p>
-      <NativeCustomConnection
-        key={replacement?.sequence ?? "custom"}
-        initialConfiguration={replacement?.configuration}
-        workspace={workspace}
-        call={call}
-        disabled={planning || acting || uncertain}
-        onBusy={setPlanning}
-        onPlan={setPlan}
-      />
-      <form
-        onSubmit={(event) => {
-          event.preventDefault();
+      <p>Engineering tools for {workspace.workspace_name}.</p>
+      <button
+        disabled={loading || planning || acting}
+        onClick={() => {
+          setBrowsingCatalog((current) => !current);
+          setSearch("");
+          setQuery("");
+          setCursor(null);
+        }}
+      >
+        {browsingCatalog ? "Back to added tools" : "Browse tool catalog"}
+      </button>
+      <div hidden={!browsingCatalog && !replacement}>
+        <NativeCustomConnection
+          key={replacement?.sequence ?? "custom"}
+          initialConfiguration={replacement?.configuration}
+          workspace={workspace}
+          call={call}
+          disabled={planning || acting || uncertain}
+          onBusy={setPlanning}
+          onPlan={setPlan}
+        />
+      </div>
+      <NativeActionForm
+        onAction={() => {
           setCursor(null);
           setQuery(search);
+          if (search.trim()) setBrowsingCatalog(true);
           setRefresh((value) => value + 1);
         }}
       >
-        <label htmlFor="connection-search">Find an MCP</label>
-        <input
-          id="connection-search"
-          value={search}
-          onChange={(event) => setSearch(event.target.value)}
-        />
+        <div hidden={!browsingCatalog}>
+          <label htmlFor="connection-search">Find an engineering tool</label>
+          <input
+            id="connection-search"
+            value={search}
+            onChange={(event) => setSearch(event.target.value)}
+          />
+        </div>
         <button type="submit" disabled={loading}>
-          Search / refresh
+          {browsingCatalog ? "Search / refresh" : "Refresh status"}
         </button>
-      </form>
-      <button
-        disabled={planning || acting}
-        onClick={() => void savedPlans(null)}
-      >
-        Saved setup in this workspace
-      </button>
+      </NativeActionForm>
+      <details>
+        <summary>Setup history</summary>
+        <button
+          disabled={planning || acting}
+          onClick={() => void savedPlans(null)}
+        >
+          Saved setup in this workspace
+        </button>
+      </details>
       {planning && <p role="status">Reading setup…</p>}
       {savedError && (
         <p role="alert">
@@ -619,17 +639,29 @@ export function NativeConnections({
         <p role="status">Loading connections…</p>
       ) : error ? (
         <p role="alert">
-          Connections could not be read. Search / refresh to retry; no settings
+          Connections could not be read. Refresh the list to retry; no settings
           changed.
         </p>
       ) : (
         <>
-          {!items.length && <p>No matching connections.</p>}
-          <ul>
-            {items.map((item) => (
+          {browsingCatalog ? <h3>Tool catalog</h3> : <h3>Added tools</h3>}
+          {!visibleItems.length && (
+            <p>
+              {browsingCatalog
+                ? "No matching connections."
+                : next
+                  ? "No added tools on this page. Check the next page or search by name."
+                  : "No added tools found. Browse the tool catalog to choose one."}
+            </p>
+          )}
+          <ul
+            className="native-connections__items"
+            aria-label="Connection list"
+            tabIndex={0}
+          >
+            {visibleItems.map((item) => (
               <li key={item.capability_id}>
                 <strong>{item.name}</strong>
-                <p>{item.description}</p>
                 <p>
                   {!item.installed
                     ? "Setup needed"
@@ -647,7 +679,7 @@ export function NativeConnections({
                 <p>
                   {item.credentials_missing
                     ? "Authentication: credentials needed."
-                    : "Authentication: no missing credentials reported; current sign-in has not been checked here."}
+                    : "Authentication: not checked here."}
                 </p>
                 <p>
                   Current readiness:{" "}
@@ -658,16 +690,23 @@ export function NativeConnections({
                       : "unverified — no protocol check recorded"}
                   . Host compatibility: {item.compatibility.status}.
                 </p>
-                {item.local_validation && (
-                  <p>Last checked: {item.local_validation.observed_at}.</p>
-                )}
-                <p>
-                  Open saved setup for connection options. A current readiness
-                  check is still required before running a workflow; workspace
-                  access does not approve process actions.
-                </p>
                 <details>
                   <summary>Readiness details</summary>
+                  <p>{item.description}</p>
+                  {!item.credentials_missing && (
+                    <p>
+                      Authentication: no missing credentials reported; current
+                      sign-in has not been checked here.
+                    </p>
+                  )}
+                  {item.local_validation && (
+                    <p>Last checked: {item.local_validation.observed_at}.</p>
+                  )}
+                  <p className="native-connections__next">
+                    {item.installed
+                      ? "Open saved setup for connection options. Check current readiness before running a workflow."
+                      : "Choose Review setup to see what this connection needs before enabling it."}
+                  </p>
                   <p>
                     Host compatibility: {item.compatibility.status}. Process:{" "}
                     {item.process_status}.
@@ -703,68 +742,76 @@ export function NativeConnections({
                     </p>
                   ))}
                 </details>
-                {item.installed && item.server_id && (
-                  <NativeConnectionControls
-                    key={`${workspace.workspace_id}:${workspace.session_id}:${item.server_id}`}
-                    call={call}
-                    workspace={workspace}
-                    capabilityId={item.capability_id}
-                    serverId={item.server_id}
-                    onReplacement={(configuration) => {
-                      setReplacement({
-                        sequence: ++replacementSequence.current,
-                        configuration,
-                      });
-                      setPlan(undefined);
-                      setUncertain(false);
-                    }}
-                    onChanged={(state) =>
-                      setItems((current) =>
-                        current.map((connection) =>
-                          connection.server_id === state.server_id
-                            ? {
-                                ...connection,
-                                active: state.active,
-                                installed: state.installed,
-                                process_status: state.status,
-                                installed_version: state.installed_version,
-                              }
-                            : connection,
-                        ),
-                      )
-                    }
-                  />
-                )}
-                {item.enabled_here && item.server_id && (
-                  <button
-                    disabled={
-                      planning ||
-                      acting ||
-                      loading ||
-                      disableUncertain === item.capability_id
-                    }
-                    onClick={() => void disableConnection(item)}
-                  >
-                    Disable {item.name} in this workspace
-                  </button>
-                )}
-                {item.enabled_here && !item.server_id && (
-                  <p>
-                    Availability changes are unavailable because the registered
-                    connection could not be identified. Refresh Connections.
-                  </p>
+                {(item.installed || item.enabled_here) && (
+                  <details className="native-connections__manage">
+                    <summary>Manage connection</summary>
+                    {item.installed && item.server_id && (
+                      <NativeConnectionControls
+                        key={`${workspace.workspace_id}:${workspace.session_id}:${item.server_id}`}
+                        call={call}
+                        workspace={workspace}
+                        capabilityId={item.capability_id}
+                        serverId={item.server_id}
+                        onReplacement={(configuration) => {
+                          setReplacement({
+                            sequence: ++replacementSequence.current,
+                            configuration,
+                          });
+                          setPlan(undefined);
+                          setUncertain(false);
+                        }}
+                        onChanged={(state) =>
+                          setItems((current) =>
+                            current.map((connection) =>
+                              connection.server_id === state.server_id
+                                ? {
+                                    ...connection,
+                                    active: state.active,
+                                    installed: state.installed,
+                                    process_status: state.status,
+                                    installed_version: state.installed_version,
+                                  }
+                                : connection,
+                            ),
+                          )
+                        }
+                      />
+                    )}
+                    {item.enabled_here && item.server_id && (
+                      <button
+                        disabled={
+                          planning ||
+                          acting ||
+                          loading ||
+                          disableUncertain === item.capability_id
+                        }
+                        onClick={() => void disableConnection(item)}
+                      >
+                        Disable {item.name} in this workspace
+                      </button>
+                    )}
+                    {item.enabled_here && !item.server_id && (
+                      <p>
+                        Availability changes are unavailable because the
+                        registered connection could not be identified. Refresh
+                        Connections.
+                      </p>
+                    )}
+                  </details>
                 )}
                 <button
+                  aria-label={`Saved setup for ${item.name}`}
                   disabled={planning || acting || uncertain}
                   onClick={() => void savedPlans(item.capability_id)}
                 >
-                  Saved setup for {item.name}
+                  Saved setup
                 </button>
                 <button
+                  aria-label={`Review setup for ${item.name}`}
                   disabled={planning || acting || uncertain}
                   onClick={() => void prepare(item.capability_id)}
                 >
-                  Review setup for {item.name}
+                  Review setup
                 </button>
               </li>
             ))}

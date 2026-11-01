@@ -556,7 +556,9 @@ async function prepareView(
     screen.getByRole("button", { name: "Prepare and check inputs" }),
   );
   await waitFor(() =>
-    expect(screen.getByRole("button", { name: "Start process" })).toBeEnabled(),
+    expect(
+      screen.getByRole("button", { name: "Start workflow" }),
+    ).toBeEnabled(),
   );
   return view;
 }
@@ -575,6 +577,66 @@ afterEach(() => {
 });
 
 describe("desktop reasoning observation in the common view", () => {
+  it("explains a rejected workflow and keeps Start visible without granting an action", async () => {
+    const { client, store } = fixture();
+    vi.mocked(client.getSnapshot).mockRejectedValue(
+      new ProcessClientError({
+        code: "WORKFLOW_NOT_READY",
+        message:
+          "This workflow uses a connection that this execution path does not support.",
+        correction:
+          "You can inspect and edit this workflow, but cannot start it here. Keep required decisions and reviews.",
+      }),
+    );
+    render(
+      <CommonProcessView
+        client={client}
+        sessionId="session"
+        recoveryStore={store}
+        canNavigate
+      />,
+    );
+    expect(
+      await screen.findByRole("heading", {
+        name: "Cannot start this workflow",
+      }),
+    ).toBeVisible();
+    const start = screen.getByRole("button", { name: "Start workflow" });
+    expect(start).toBeVisible();
+    expect(start).toBeDisabled();
+    expect(
+      screen.getByText(/Keep required decisions and reviews/),
+    ).toBeVisible();
+    fireEvent.click(start);
+    fireEvent.click(
+      screen.getByRole("button", { name: "View workflow diagram" }),
+    );
+    await waitFor(() => expect(client.navigate).toHaveBeenCalledOnce());
+    expect(client.start).not.toHaveBeenCalled();
+    expect(client.setInputs).not.toHaveBeenCalled();
+  });
+
+  it("does not invent start authority when the backend has no start action", async () => {
+    const { client, store } = fixture();
+    vi.mocked(client.getSnapshot).mockResolvedValue({
+      ...initial,
+      actions: [],
+    });
+    render(
+      <CommonProcessView
+        client={client}
+        sessionId="session"
+        recoveryStore={store}
+      />,
+    );
+    await screen.findByLabelText("Design request (required)");
+    const start = screen.getByRole("button", { name: "Start workflow" });
+    expect(start).toBeVisible();
+    expect(start).toBeDisabled();
+    fireEvent.click(start);
+    expect(client.start).not.toHaveBeenCalled();
+  });
+
   it("shows the exact chat wait and detaches only its reader on close", async () => {
     const { client, store } = fixture();
     const read = vi.fn(async (_run: string, _signal: AbortSignal) => ({
@@ -684,7 +746,7 @@ describe("common process preparation and authority", () => {
       screen.queryByRole("button", { name: "Submit response" }),
     ).toBeNull();
     expect(screen.queryByRole("combobox")).toBeNull();
-    fireEvent.click(screen.getByRole("button", { name: "Open related item" }));
+    fireEvent.click(screen.getByRole("button", { name: "Open affected step" }));
     await waitFor(() =>
       expect(client.navigate).toHaveBeenCalledWith({
         kind: "block",
@@ -861,7 +923,7 @@ describe("common process preparation and authority", () => {
     ])
       expect(mutation).not.toHaveBeenCalled();
     expect(
-      screen.getByRole("button", { name: "Start process" }),
+      screen.getByRole("button", { name: "Start workflow" }),
     ).toBeDisabled();
   });
   it("keeps saved defaults inspectable while showing unanswered inputs first", async () => {
@@ -999,7 +1061,7 @@ describe("common process preparation and authority", () => {
       screen.getByText("Inspect the saved design reference."),
     ).toBeVisible();
     expect(
-      screen.getByRole("button", { name: "Start process" }),
+      screen.getByRole("button", { name: "Start workflow" }),
     ).toBeDisabled();
     expect(client.setInputs).toHaveBeenCalledWith([]);
     expect(client.start).not.toHaveBeenCalled();
@@ -1081,7 +1143,7 @@ describe("common process preparation and authority", () => {
     );
     await waitFor(() =>
       expect(
-        screen.getByRole("button", { name: "Start process" }),
+        screen.getByRole("button", { name: "Start workflow" }),
       ).toBeEnabled(),
     );
     fireEvent.click(screen.getByText("Saved defaults (1)"));
@@ -1089,7 +1151,7 @@ describe("common process preparation and authority", () => {
       target: { value: "Changed design" },
     });
     expect(
-      screen.getByRole("button", { name: "Start process" }),
+      screen.getByRole("button", { name: "Start workflow" }),
     ).toBeDisabled();
     expect(screen.getByText("Readiness has not been checked")).toBeVisible();
     expect(store.clear).toHaveBeenCalled();
@@ -1157,7 +1219,7 @@ describe("common process preparation and authority", () => {
         return { ...receipt, request_id: requestId };
       },
     );
-    fireEvent.click(screen.getByRole("button", { name: "Start process" }));
+    fireEvent.click(screen.getByRole("button", { name: "Start workflow" }));
     await screen.findByRole("button", { name: "Cancel this run" });
     expect(saved()?.start?.receipt?.run_id).toBe("run-one");
     expect(client.start).toHaveBeenCalledTimes(1);
@@ -1173,7 +1235,7 @@ describe("common process preparation and authority", () => {
       target: { value: "A different size" },
     });
     expect(
-      screen.getByRole("button", { name: "Start process" }),
+      screen.getByRole("button", { name: "Start workflow" }),
     ).toBeDisabled();
     expect(screen.getByText("Readiness has not been checked")).toBeVisible();
     expect(store.clear).toHaveBeenCalled();
@@ -1215,7 +1277,7 @@ describe("common process preparation and authority", () => {
           }
         : withFalse,
     );
-    render(
+    const mounted = render(
       <CommonProcessView
         client={client}
         sessionId="session"
@@ -1233,16 +1295,36 @@ describe("common process preparation and authority", () => {
     ]);
     await screen.findByText("A later step needs a destination.");
     expect(
-      screen.getByRole("button", { name: "Start process" }),
+      screen.getByRole("button", { name: "Start workflow" }),
     ).toBeDisabled();
     expect(client.start).not.toHaveBeenCalled();
-    fireEvent.click(screen.getByRole("button", { name: "Open related item" }));
+    fireEvent.click(screen.getByRole("button", { name: "Open affected step" }));
     await waitFor(() =>
       expect(client.navigate).toHaveBeenCalledWith({
         kind: "block",
         block_id: "destination",
       }),
     );
+    // Returning without a source change restores the exact prepared inputs;
+    // navigation must not silently start or prepare another run.
+    mounted.unmount();
+    render(
+      <CommonProcessView
+        client={client}
+        sessionId="session"
+        recoveryStore={store}
+        canNavigate
+      />,
+    );
+    await screen.findByText("A later step needs a destination.");
+    expect(
+      screen.getByLabelText("Cooling enabled (required)"),
+    ).not.toBeChecked();
+    expect(client.getSnapshot).toHaveBeenLastCalledWith(
+      expect.objectContaining({ inputSnapshotId: input.snapshot_id }),
+    );
+    expect(client.setInputs).toHaveBeenCalledTimes(1);
+    expect(client.checkReadiness).toHaveBeenCalledTimes(1);
     expect(client.start).not.toHaveBeenCalled();
   });
   it("shows a capability blocker once by default and keeps Start reasons inspectable", async () => {
@@ -1287,7 +1369,7 @@ describe("common process preparation and authority", () => {
       screen.getByRole("button", { name: "Prepare and check inputs" }),
     );
     await screen.findByText("Not ready to start");
-    const button = screen.getByRole("button", { name: "Start process" });
+    const button = screen.getByRole("button", { name: "Start workflow" });
     expect(button).toBeDisabled();
     const disclosures = screen.getByText("Why unavailable").closest("details")!;
     expect(disclosures).not.toHaveAttribute("open");
@@ -1317,7 +1399,7 @@ describe("common process preparation and authority", () => {
         vi.advanceTimersByTime(3000);
       });
       expect(
-        screen.getByRole("button", { name: "Start process" }),
+        screen.getByRole("button", { name: "Start workflow" }),
       ).toBeDisabled();
       expect(
         screen.getByText("The readiness check has expired."),
@@ -1352,7 +1434,7 @@ describe("common process preparation and authority", () => {
     );
     await screen.findByText("Ready to start");
     expect(
-      screen.getByRole("button", { name: "Start process" }),
+      screen.getByRole("button", { name: "Start workflow" }),
     ).toBeDisabled();
     expect(client.start).not.toHaveBeenCalled();
   });
@@ -1432,9 +1514,12 @@ describe("common process preparation and authority", () => {
       screen.getByRole("button", { name: "Prepare and check inputs" }),
     ).toBeDisabled();
     expect(
-      screen.getByAltText("Selected reference: reference.png"),
+      await screen.findByAltText("Selected reference: reference.png"),
     ).toBeVisible();
-    expect(create).toHaveBeenCalled();
+    expect(
+      screen.getByAltText("Selected reference: reference.png"),
+    ).toHaveAttribute("src", "data:image/png;base64,aW1hZ2U=");
+    expect(create).not.toHaveBeenCalled();
     await act(async () => {
       upload.resolve({ artifact_ref: "inputs/reference.png", sha256: hash });
     });
@@ -1465,7 +1550,9 @@ describe("common process preparation and authority", () => {
     expect(
       screen.getByRole("button", { name: "Prepare and check inputs" }),
     ).toBeDisabled();
-    expect(screen.getByRole("button", { name: "Open process" })).toBeDisabled();
+    expect(
+      screen.getByRole("button", { name: "View workflow diagram" }),
+    ).toBeDisabled();
     expect(screen.getByText(/File previews are unavailable/)).toBeVisible();
     expect(client.start).not.toHaveBeenCalled();
   });
@@ -1631,7 +1718,7 @@ describe("common process request recovery and observer lifetime", () => {
     vi.mocked(store.write).mockImplementation(() => {
       throw new Error("storage unavailable");
     });
-    fireEvent.click(screen.getByRole("button", { name: "Start process" }));
+    fireEvent.click(screen.getByRole("button", { name: "Start workflow" }));
     await screen.findByRole("alert");
     expect(client.start).not.toHaveBeenCalled();
   });
@@ -1645,7 +1732,7 @@ describe("common process request recovery and observer lifetime", () => {
       }),
     );
     const view = await prepareView(client, store);
-    fireEvent.click(screen.getByRole("button", { name: "Start process" }));
+    fireEvent.click(screen.getByRole("button", { name: "Start workflow" }));
     await screen.findByRole("button", { name: "Reconcile start request" });
     const identity = saved()?.start?.requestId;
     expect(identity).toBeTruthy();
@@ -1674,7 +1761,7 @@ describe("common process request recovery and observer lifetime", () => {
       accepted.promise.then((value) => ({ ...value, request_id: requestId })),
     );
     const view = await prepareView(client, store);
-    const button = screen.getByRole("button", { name: "Start process" });
+    const button = screen.getByRole("button", { name: "Start workflow" });
     fireEvent.click(button);
     fireEvent.click(button);
     await waitFor(() => expect(client.start).toHaveBeenCalledTimes(1));
@@ -1702,7 +1789,7 @@ describe("common process request recovery and observer lifetime", () => {
       accepted.promise.then((value) => ({ ...value, request_id: requestId })),
     );
     const view = await prepareView(client, store);
-    fireEvent.click(screen.getByRole("button", { name: "Start process" }));
+    fireEvent.click(screen.getByRole("button", { name: "Start workflow" }));
     await waitFor(() => expect(client.start).toHaveBeenCalledTimes(1));
     view.unmount();
     await act(async () => {
@@ -1933,7 +2020,9 @@ describe("common process request recovery and observer lifetime", () => {
       result_id: "result-one",
       run_id: "run-one",
     });
-    fireEvent.click(screen.getByRole("button", { name: "Open file" }));
+    const opener = screen.getByRole("button", { name: "Open file" });
+    opener.focus();
+    fireEvent.click(opener);
     await screen.findByText("Opening representation…");
     expect(scroll).not.toHaveBeenCalled();
     expect(
@@ -1946,7 +2035,9 @@ describe("common process request recovery and observer lifetime", () => {
     await screen.findByText("exact output");
     expect(screen.getByRole("region", { name: "Selected file" })).toHaveFocus();
     expect(screen.getByRole("heading", { name: "geometry.csv" })).toBeVisible();
-    expect(screen.getByRole("button", { name: "Close file" })).toBeVisible();
+    expect(
+      screen.getByRole("button", { name: "Back to results" }),
+    ).toBeVisible();
     expect(scroll).toHaveBeenCalledExactlyOnceWith({ block: "start" });
     expect(screen.getByText("Failed")).toBeVisible();
     await act(async () => {
@@ -1960,6 +2051,20 @@ describe("common process request recovery and observer lifetime", () => {
       runId: "run-one",
       signal: expect.any(AbortSignal),
     });
+    fireEvent.click(screen.getByRole("button", { name: "Back to results" }));
+    expect(
+      screen.queryByRole("region", { name: "Selected file" }),
+    ).not.toBeInTheDocument();
+    // The refreshed snapshot removed the original output; return to results,
+    // never to a detached control or a different run.
+    expect(
+      screen
+        .getByRole("heading", { name: "Results and checks" })
+        .closest("section"),
+    ).toHaveFocus();
+    expect(scroll).toHaveBeenLastCalledWith({ block: "nearest" });
+    expect(client.start).not.toHaveBeenCalled();
+    expect(client.cancel).not.toHaveBeenCalled();
     HTMLElement.prototype.scrollIntoView = originalScroll;
   });
   it("aborts a representation read on close without cancelling the process", async () => {
@@ -2009,10 +2114,14 @@ describe("common process request recovery and observer lifetime", () => {
       />,
     );
     await screen.findByText("Exact part");
-    fireEvent.click(screen.getByRole("button", { name: "Open file" }));
+    const opener = screen.getByRole("button", { name: "Open file" });
+    opener.focus();
+    fireEvent.click(opener);
     expect(signal?.aborted).toBe(false);
-    view.unmount();
+    fireEvent.click(screen.getByRole("button", { name: "Back to results" }));
     expect(signal?.aborted).toBe(true);
+    expect(opener).toHaveFocus();
+    view.unmount();
     expect(client.cancel).not.toHaveBeenCalled();
     expect(client.start).not.toHaveBeenCalled();
   });
@@ -2281,6 +2390,67 @@ describe("common process request recovery and observer lifetime", () => {
       fireEvent.click(screen.getByText("Why unavailable"));
       expect(explanation).toBeVisible();
       expect(client.cancel).not.toHaveBeenCalled();
+      expect(client.start).not.toHaveBeenCalled();
+    },
+  );
+  it.each(["completed", "failed", "cancelled", "waiting_human"] as const)(
+    "offers visible preparation for %s without starting or resuming",
+    async (state) => {
+      const { client, store } = fixture();
+      const ended: InteractionSnapshot = {
+        ...running,
+        state,
+        inputs: [],
+        actions: [],
+      };
+      vi.mocked(client.attach).mockResolvedValue(ended);
+      vi.mocked(client.follow).mockImplementation(async function* () {
+        yield { type: "snapshot", snapshot: ended };
+      });
+      const prepare = vi.fn();
+      render(
+        <CommonProcessView
+          client={client}
+          sessionId="session"
+          runId="run-one"
+          recoveryStore={store}
+          onPrepareAnother={prepare}
+        />,
+      );
+      const button = await screen.findByRole("button", {
+        name: "Prepare new run",
+      });
+      expect(button).toBeVisible();
+      expect(button.closest("details")).toBeNull();
+      fireEvent.click(button);
+      expect(prepare).toHaveBeenCalledTimes(1);
+      expect(client.start).not.toHaveBeenCalled();
+      expect(client.cancel).not.toHaveBeenCalled();
+    },
+  );
+  it.each(["running", "waiting_external", "reconciliation_required"] as const)(
+    "does not offer a replacement run while state is %s",
+    async (state) => {
+      const { client, store } = fixture();
+      const observed: InteractionSnapshot = { ...running, state, actions: [] };
+      vi.mocked(client.follow).mockImplementation(async function* () {
+        yield { type: "snapshot", snapshot: observed };
+      });
+      const prepare = vi.fn();
+      render(
+        <CommonProcessView
+          client={client}
+          sessionId="session"
+          runId="run-one"
+          recoveryStore={store}
+          onPrepareAnother={prepare}
+        />,
+      );
+      await waitFor(() => expect(client.follow).toHaveBeenCalled());
+      expect(
+        screen.queryByRole("button", { name: "Prepare new run" }),
+      ).toBeNull();
+      expect(prepare).not.toHaveBeenCalled();
       expect(client.start).not.toHaveBeenCalled();
     },
   );

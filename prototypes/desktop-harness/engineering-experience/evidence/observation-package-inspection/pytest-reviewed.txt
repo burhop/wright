@@ -1,0 +1,22 @@
+.....................................F.................................. [ 40%]
+........................................................................ [ 81%]
+................................                                         [100%]
+=================================== FAILURES ===================================
+______________ test_supplementary_response_equality_is_type_exact ______________
+
+handoff = (PosixPath('/tmp/pytest-of-burhop/pytest-2175/test_supplementary_response_eq0'), {'expected_response_fields': {'output...utputs', ...}, {'ok': True, 'output': 'configured-host/package.3mf', 'plate': 1, 'source': 'configured-host/mesh.stl'})
+
+    def test_supplementary_response_equality_is_type_exact(handoff):
+        root, config, response = handoff
+        envelope = observed_response(root, config, response)
+        call = envelope["observations"]["value"][0]
+        call["text"] = json.dumps({**response, "ok": 1, "plate": True})
+        observed_response(root, config, response, calls=[call])
+>       with pytest.raises(ValueError):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE <class 'ValueError'>
+
+tests/test_manufacturing_package_inspection.py:389: Failed
+=========================== short test summary info ============================
+FAILED tests/test_manufacturing_package_inspection.py::test_supplementary_response_equality_is_type_exact
+1 failed, 175 passed in 1.99s

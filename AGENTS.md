@@ -73,6 +73,12 @@ Distinguish agreed direction, proposed work, implementation, verified behaviour,
 and user acceptance. Preserve existing evidence and the refined workflow editor.
 Keep this guidance outside the managed Spec Kit section during context refresh.
 
+For the OpenAI desktop-harness UI workstream, read
+`docs/design/codex-engineering-experience-plan.md` before planning UI changes.
+Use its complete engineering journeys, control-level specifications and lessons;
+an inspection-only recovery test does not qualify first-time design or reruns.
+Preserve the shared editor/backend and distinguish installed, tested and accepted.
+
 <!-- SPECKIT START -->
 For additional context about technologies to be used, project structure,
 shell commands, and other important information, read the current plan

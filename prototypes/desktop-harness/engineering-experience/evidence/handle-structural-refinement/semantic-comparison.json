@@ -1,0 +1,6 @@
+{
+  "status": "PASS",
+  "method": "Exact section/field/value comparison ignoring only section order and JSON object key ordering",
+  "sections": 64,
+  "all_declared_instructions_ports_connections_and_settings_equal": true
+}

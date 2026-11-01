@@ -6,3 +6,4 @@ export * from "./result-representation";
 export * from "./geometry";
 export * from "./toolpaths";
 export * from "./working-controls";
+export * from "./file-download";

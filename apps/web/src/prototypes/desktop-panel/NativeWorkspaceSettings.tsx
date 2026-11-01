@@ -1,3 +1,4 @@
+import { NativeActionForm } from "./NativeActionForm";
 import { useEffect, useMemo, useState } from "react";
 import type { DesktopWorkspace, HomeCall } from "./NativeHomePanel";
 import {
@@ -174,9 +175,8 @@ export function NativeWorkspaceSettings({
         accepted instructions. Use this desktop conversation to work with them.
       </p>
       {form && (
-        <form
-          onSubmit={(event) => {
-            event.preventDefault();
+        <NativeActionForm
+          onAction={() => {
             void save();
           }}
         >
@@ -251,7 +251,7 @@ export function NativeWorkspaceSettings({
           >
             Discard edit
           </button>
-        </form>
+        </NativeActionForm>
       )}
       <button
         type="button"

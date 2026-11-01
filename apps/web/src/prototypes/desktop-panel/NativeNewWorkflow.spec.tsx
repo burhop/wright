@@ -100,3 +100,43 @@ it("rejects a receipt for another workspace", async () => {
   await screen.findByText(/Creation was not confirmed/);
   expect(onOpen).not.toHaveBeenCalled();
 });
+
+it.each(["sent", "unsupported", "uncertain"] as const)(
+  "makes %s chat handoff visible without creating or running work",
+  async (outcome) => {
+    const onPlanInChat =
+      outcome === "uncertain"
+        ? vi.fn().mockRejectedValue(new Error("lost"))
+        : vi.fn().mockResolvedValue(outcome);
+    const call = vi.fn();
+    const onOpen = vi.fn();
+    render(
+      <NativeNewWorkflow
+        workspace={workspace}
+        call={call}
+        onOpen={onOpen}
+        onBusy={vi.fn()}
+        disabled={false}
+        onPlanInChat={onPlanInChat}
+      />,
+    );
+    fireEvent.click(screen.getByRole("button", { name: "New workflow" }));
+    const plan = screen.getByRole("button", { name: "Plan in Codex chat" });
+    fireEvent.click(plan);
+    fireEvent.click(plan);
+    const message = await screen.findByRole(
+      outcome === "uncertain" ? "alert" : "status",
+    );
+    expect(message).toHaveTextContent(
+      outcome === "sent"
+        ? "Workspace context sent"
+        : outcome === "unsupported"
+          ? "cannot send"
+          : "Delivery was not confirmed",
+    );
+    expect(onPlanInChat).toHaveBeenCalledExactlyOnceWith(workspace);
+    expect(plan).toBeDisabled();
+    expect(call).not.toHaveBeenCalled();
+    expect(onOpen).not.toHaveBeenCalled();
+  },
+);

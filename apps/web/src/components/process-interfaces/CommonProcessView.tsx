@@ -49,6 +49,7 @@ export interface CommonProcessViewProps {
   readonly client: ProcessClient;
   readonly sessionId: string;
   readonly title?: string;
+  readonly description?: string;
   readonly runId?: string;
   readonly readOnly?: boolean;
   readonly onUnsavedChange?: (pending: boolean) => void;
@@ -61,7 +62,7 @@ export interface CommonProcessViewProps {
   readonly canReadRepresentations?: boolean;
   readonly canNavigate?: boolean;
   readonly onRunAttached?: (runId: string, receipt?: StartReceipt) => void;
-  readonly onPrepareAnother?: () => void;
+  readonly onPrepareAnother?: () => void | Promise<void>;
   readonly navigation?: ProcessNavigationRequest;
   readonly readReasoningStatus?: WorkflowReasoningStatusReader;
 }
@@ -158,6 +159,7 @@ function CommonProcessController({
   client,
   sessionId,
   title,
+  description,
   runId,
   readOnly = false,
   onUnsavedChange,
@@ -222,6 +224,7 @@ function CommonProcessController({
   }>();
   const representationGeneration = useRef(0);
   const representationReader = useRef<HTMLDivElement | null>(null);
+  const representationOpener = useRef<HTMLElement | null>(null);
   const focusedRepresentation = useRef<number | undefined>(undefined);
   const focusReadyRepresentation = (
     selected: NonNullable<typeof representation>,
@@ -697,6 +700,11 @@ function CommonProcessController({
     : undefined;
   const requestRepresentation = useCallback(
     (reference: ArtifactRef, focusReader = true) => {
+      const focused = document.activeElement;
+      representationOpener.current =
+        focused instanceof HTMLElement && workingRoot.current?.contains(focused)
+          ? focused
+          : null;
       const generation = ++representationGeneration.current;
       representationRead.current?.abort();
       const control = new AbortController();
@@ -1018,6 +1026,7 @@ function CommonProcessController({
   const startAction = snapshot?.actions?.find((a) => a.operation === "start");
   const permittedStart: Action | undefined = startAction && {
     ...startAction,
+    title: "Start workflow",
     enabled:
       startAction.enabled &&
       !activeRun &&
@@ -1181,7 +1190,7 @@ function CommonProcessController({
               "Process"}
           </h1>
           <NavigationButton
-            title="Open process"
+            title="View workflow diagram"
             target={{
               kind: "process",
               ...(activeRun ? { run_id: activeRun } : {}),
@@ -1197,13 +1206,17 @@ function CommonProcessController({
             Refresh view
           </button>
         </header>
+        {description && <p className="wp-muted">{description}</p>}
         {readOnly && <p className="wp-muted">This view is read-only.</p>}
-        {loading && <p role="status">Loading the saved process state…</p>}
+        {loading && <p role="status">Loading workflow…</p>}
         {storageReason && (
           <ReasonNotice reason={storageReason} onNavigate={navigate} />
         )}
         {navigationReason && (
           <ReasonNotice reason={navigationReason} onNavigate={navigate} />
+        )}
+        {!activeRun && !snapshot && !loading && reason && (
+          <h2>Cannot start this workflow</h2>
         )}
         {reason && (
           <ReasonNotice
@@ -1211,6 +1224,11 @@ function CommonProcessController({
             tone={reason.code === "CANCELLATION_REQUESTED" ? "info" : "error"}
             onNavigate={navigate}
           />
+        )}
+        {!activeRun && !snapshot && !loading && reason && (
+          <button type="button" className="wp-button" disabled>
+            Start workflow
+          </button>
         )}
         {busy === "start" && (
           <p role="status">Sending the prepared run to Wright…</p>
@@ -1242,6 +1260,7 @@ function CommonProcessController({
               {(!activeRun || !!snapshot.inputs?.length) && (
                 <Section
                   title={activeRun ? "Run inputs" : "Inputs"}
+                  focusId="inputs"
                   description={
                     activeRun
                       ? "These are the frozen inputs used by this run."
@@ -1310,7 +1329,7 @@ function CommonProcessController({
                         onNavigate={navigate}
                         now={now}
                       />
-                      {permittedStart && (
+                      {permittedStart ? (
                         <ActionButton
                           action={permittedStart}
                           readOnly={readOnly}
@@ -1321,6 +1340,16 @@ function CommonProcessController({
                           onAction={!busy ? () => void start() : undefined}
                           onNavigate={navigate}
                         />
+                      ) : (
+                        <div>
+                          <button type="button" className="wp-button" disabled>
+                            Start workflow
+                          </button>
+                          <p className="wp-muted">
+                            Starting is unavailable. Check the inputs and tool
+                            readiness for the next action.
+                          </p>
+                        </div>
                       )}
                     </>
                   )}
@@ -1421,35 +1450,55 @@ function CommonProcessController({
                         onNavigate={navigate}
                       />
                     ))}
-                  {activeRun &&
-                    terminal(snapshot.state) &&
-                    onPrepareAnother && (
-                      <button
-                        type="button"
-                        className="wp-link"
-                        disabled={!!busy || readOnly}
-                        onClick={() => {
-                          try {
-                            if (
-                              recoveryRef.current?.start?.receipt?.run_id ===
-                              activeRun
-                            )
-                              remember(null);
-                            onPrepareAnother();
-                          } catch (error) {
-                            setReason(message(error));
-                          }
-                        }}
-                      >
-                        Prepare another run
-                      </button>
-                    )}
                 </Section>
               </details>
             </div>
             {!needsResponse && interactionPanel}
+            <div className="wp-row">
+              {activeRun &&
+                (terminal(snapshot.state) ||
+                  snapshot.state === "waiting_human") &&
+                onPrepareAnother && (
+                  <button
+                    type="button"
+                    className="wp-button"
+                    disabled={!!busy || readOnly}
+                    onClick={async () => {
+                      if (operation.current) return;
+                      operation.current = true;
+                      setBusy("new-preparation");
+                      try {
+                        await onPrepareAnother();
+                        if (
+                          recoveryRef.current?.start?.receipt?.run_id ===
+                          activeRun
+                        )
+                          remember(null);
+                      } catch (error) {
+                        if (alive.current) setReason(message(error));
+                      } finally {
+                        operation.current = false;
+                        if (alive.current) setBusy("");
+                      }
+                    }}
+                  >
+                    Prepare new run
+                  </button>
+                )}
+              {activeRun &&
+                (terminal(snapshot.state) ||
+                  snapshot.state === "waiting_human") &&
+                onPrepareAnother && (
+                  <p className="wp-muted">
+                    {snapshot.state === "waiting_human"
+                      ? "This run stays waiting in history. Prepare separate inputs for a new run; required reviews apply again."
+                      : "Review inputs for a full new run. Previous results remain in history; required reviews apply again."}
+                  </p>
+                )}
+            </div>
             <Section
               title="Results and checks"
+              focusId="results"
               description="Inspect the exact output revisions and their linked assessments."
             >
               {(snapshot.outputs ?? [])
@@ -1530,9 +1579,17 @@ function CommonProcessController({
                         representationRead.current?.abort();
                         representationRead.current = undefined;
                         setRepresentation(undefined);
+                        const opener = representationOpener.current;
+                        const destination = opener?.isConnected
+                          ? opener
+                          : workingRoot.current?.querySelector<HTMLElement>(
+                              `[data-process-section="${activeRun ? "results" : "inputs"}"]`,
+                            );
+                        destination?.focus({ preventScroll: true });
+                        destination?.scrollIntoView?.({ block: "nearest" });
                       }}
                     >
-                      Close file
+                      {activeRun ? "Back to results" : "Back to inputs"}
                     </button>
                     {representation.blob && (
                       <RepresentationDownload

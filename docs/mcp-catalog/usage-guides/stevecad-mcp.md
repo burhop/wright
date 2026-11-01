@@ -28,6 +28,16 @@ Useful evidence:
 
 ## Discover, then build
 
+On 28 October the desktop integration additionally completed an inspection-only
+run through tools actually exposed to the OpenAI desktop conversation. Wright
+dispatched exactly `read_design` and `inspect_model` for the existing block at
+revision 1/build `5353ac34-e923-4dd0-83e9-85e3ae5caafc`; no CAD was created or
+changed. The conversation received the real PNG and numerical measurements, and
+Wright retained both outputs in a new durable run. See the
+[direct desktop evidence](https://github.com/burhop/wright/blob/codex/desktop-usability-journeys/prototypes/desktop-harness/engineering-run-journey-20261028.md#connection-recovery-and-direct-desktop-reasoning--28-october-1815-utc).
+This qualifies native conversation reasoning/image transport, not Windows UI
+rendering, automatic chat wakeup or human engineering acceptance.
+
 Call `api_reference` without a name, then read the precise classes/methods needed.
 For specialized work, call `list_skills`, then `read_skill` with an exact returned
 name. `working-with-steve` is a documentation URL, not a discovered skill name.
@@ -514,3 +524,36 @@ remain unverified at this checkpoint. After the user authorizes the client,
 rediscover current provider contracts and observe normal protocol readiness before
 enabling permitted workspace tools. These authentication checks establish no new
 CAD, simulation, physical or engineering-review acceptance.
+
+## Completed isolated desktop inspection — 28 October 2026
+
+The user completed device sign-in for a fresh Wright prototype instance.
+Normal validation, current tool discovery and workspace enablement passed;
+the expired earlier attempt remains failed. This establishes successful
+authentication for that instance, not permanent readiness or Windows UI acceptance.
+
+The unchanged existing block-preview-recovery workflow completed run
+`91c3fe3f4e0c477e9d9ea0d0dde477b2` using only two normal gateway invocations:
+`read_design` followed by `inspect_model` with `view: "isometric", checks: []`.
+The exact document was `48b3d987-173d-4f5e-a684-7d7864ca29ff`, revision 1,
+build `5353ac34-e923-4dd0-83e9-85e3ae5caafc`. Confirm the current revision/build
+before dependent inspection; a changed identity must not silently pass as the
+saved subject. No design was recreated, modified, rebuilt or exported.
+
+Provider measurements reported 2000 × 4000 × 8000 mm, one solid, six faces and
+approximately 64 m³. The saved 0.01 mm dimension tolerance was preserved.
+An actual isometric PNG and JSON report were retained. A completed-run service
+restart preserved exact source/run/binding/output bytes with no tool replay.
+
+The installed 0.30 UI was tested in a simulated Linux native-file host. This
+desktop assistant supplied the reasoning decisions through a public MCP client
+relay because the existing conversation retained an older connection. That is
+not proof of native host reconnection, Windows rendering or automatic reasoning
+handoff. No alternate model or provider-internal prompt is claimed. This bounded
+inspection does not establish physical acceptance or a multi-tool campaign.
+
+See [journey and evidence index](https://github.com/burhop/wright/blob/codex/desktop-usability-journeys/prototypes/desktop-harness/engineering-run-journey-20261028.md).
+Private receipts are under `.local-run/engineering-run-journey-20261028/` in the
+feature worktree: `engineering-audit.json`, `engineering-results-ui/report.json`
+and `completed-restart-proof.json`. Credentials and sign-in codes are excluded
+from this guide and the tracked handoff.

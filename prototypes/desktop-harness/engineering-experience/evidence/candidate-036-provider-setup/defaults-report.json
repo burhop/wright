@@ -1,0 +1,23 @@
+{
+  "status": "FAIL",
+  "scope": {
+    "workspace_id": "fc0b0211-6825-484c-bb64-7b79af461bac",
+    "session_id": "desktop-a02ed298-81fd-4346-a1ee-040374e58ace"
+  },
+  "expected_server_ids": [
+    "import:draft-af20446479ca6a5d3642",
+    "import:draft-e4f0ce6f14f1c0347530"
+  ],
+  "observed": [
+    {
+      "server_id": "import:draft-e4f0ce6f14f1c0347530",
+      "enabled_here": false
+    },
+    {
+      "server_id": "import:draft-af20446479ca6a5d3642",
+      "enabled_here": false
+    }
+  ],
+  "engineering_runs_started": false,
+  "claim": "Loaded provider default workspace membership only; not invocation approval"
+}

@@ -1,0 +1,24 @@
+{
+  "status": "PASS",
+  "boundary": "compiled UI, simulated host and data; not Windows acceptance",
+  "resource_sha256": "32b8427efa6d486add8e569cef51633dc372c6d6f51a4de39e053e1b17b00307",
+  "checks": [
+    "chooser hides files; return retains workspace",
+    "workspace files visible",
+    "chat handoff visible and exact workspace sent through public host message",
+    "added tools only by default",
+    "expired check remains visible",
+    "catalog reachable without mutation",
+    "480px no horizontal overflow"
+  ],
+  "dimensions": {
+    "width": 480,
+    "scroll": 480
+  },
+  "calls": [
+    "wright_workspace_list",
+    "wright_workspace_files",
+    "wright_connections_list"
+  ],
+  "errors": []
+}

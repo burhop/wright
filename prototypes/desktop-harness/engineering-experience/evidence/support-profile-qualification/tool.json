@@ -1,0 +1,49 @@
+{
+  "name": "offline-slicer-check__slice_model_file",
+  "schema_digest": "83c104ca27037ad6e9b3f705117157ba22eed66265796640df32006b0889e7e1",
+  "input_schema": {
+    "properties": {
+      "source": {
+        "title": "Source",
+        "type": "string"
+      },
+      "plate": {
+        "default": 1,
+        "title": "Plate",
+        "type": "integer"
+      },
+      "output": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Output"
+      },
+      "orient": {
+        "default": false,
+        "title": "Orient",
+        "type": "boolean"
+      },
+      "arrange": {
+        "default": false,
+        "title": "Arrange",
+        "type": "boolean"
+      },
+      "confirm": {
+        "default": false,
+        "title": "Confirm",
+        "type": "boolean"
+      }
+    },
+    "required": [
+      "source"
+    ],
+    "title": "slice_model_fileArguments",
+    "type": "object"
+  }
+}

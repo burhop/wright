@@ -61,6 +61,40 @@ function show(call = vi.fn().mockResolvedValue(reply()), onUploaded = vi.fn()) {
   return { call, onUploaded, ...view };
 }
 
+it("saves an explicitly prepared report through the same scoped upload and receipt checks", async () => {
+  const call = vi.fn().mockResolvedValue(reply());
+  const onUploaded = vi.fn();
+  const prepare = vi.fn(() => new File([data], "part.step"));
+  render(
+    <NativeFileUpload
+      call={call}
+      workspace={workspace}
+      onUploaded={onUploaded}
+      preparedFile={prepare}
+      actionLabel="Save UI report"
+      help="Only the prepared report is saved."
+    />,
+  );
+  expect(screen.queryByLabelText(/Choose input file/)).toBeNull();
+  expect(call).not.toHaveBeenCalled();
+  expect(prepare).not.toHaveBeenCalled();
+  const save = screen.getByRole("button", { name: "Save UI report" });
+  fireEvent.click(save);
+  fireEvent.click(save);
+  await screen.findByText(/Saved part.step in uploads/);
+  expect(call).toHaveBeenCalledExactlyOnceWith("wright_workspace_file_upload", {
+    request: {
+      workspace_id: "a",
+      session_id: "chat-a",
+      filename: "part.step",
+      sha256: digest,
+      content_base64: encoded,
+    },
+  });
+  expect(onUploaded).toHaveBeenCalledExactlyOnceWith(path);
+  expect(prepare).toHaveBeenCalledTimes(1);
+});
+
 it("stages exact binary bytes once despite a duplicate click and refreshes saved files", async () => {
   const { call, onUploaded } = show();
   const button = screen.getByRole("button", { name: "Upload file" });

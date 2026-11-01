@@ -88,3 +88,24 @@ use `rw,exec,nosuid` while preserving read-only root, non-root user, no capabili
 and resource limits. Attempts01/02 terminated before useful provider execution
 and remain intact. A Pydantic forward-reference warning was observed; actual
 protocol/backend calls still passed. No provider defect is inferred from it.
+
+### 29 October 2026: current isolated provider requalification
+
+The desktop-engineering candidate built a separate selected-provider image
+`sha256:c11294f132cade3fb8846d5e85886c7eaf0c68e350c9956cea23acdadaabdd02`
+using the previously qualified exact dependency freeze and current offline
+operation source. All three copied datasets passed the existing direct probe on
+ARM64 with networking disabled, non-root execution and a read-only root. The
+original 1% independent metric and one-sample event checks remain unchanged;
+case 03 retained its missing interval. Source, result hashes and limits are in
+`prototypes/desktop-harness/engineering-experience/evidence/robot-provider-current/`.
+This is provider evidence only: current Wright gateway registration, canonical
+workflow execution/review and Windows acceptance are still unverified.
+
+The fresh Robot regression workspace subsequently completed normal command
+preview, setup-plan approval/application, protocol validation and workspace
+enablement for the pinned ROSBag server and existing offline operations. ROSBag
+advertised 31 tools. Invocation approval remains false; no canonical run started.
+The current example's separate AgentCAD corrective stage still has the ARM64
+prerequisite limitation described in its guide. Exact scoped setup identities are
+in `prototypes/desktop-harness/engineering-experience/evidence/robot-provider-current/workspace-setup-receipt.json`.

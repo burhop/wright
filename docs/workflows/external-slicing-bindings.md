@@ -135,3 +135,24 @@ records the broken cached launcher, installation permission failure, fresh
 selected environment/cache, actual native package, exact stopped owner and
 175 final owning/affected checks. The Windows Python/native host is reused;
 this is not clean Linux catalog qualification or qualification of every workflow.
+
+### Recorded AI-task tool observations
+
+A plain JSON MCP task can explicitly save `mcp_response_source: tool_observations`
+using the canonical runner's recorded attempts instead of a model summary. This
+is optional; existing exact-tool bindings retain their original response format.
+The passive inspector accepts `wright.mcp-tool-observations/1` only with an exact
+`provider_observation` selection containing `server_id`, qualified `tool`,
+`schema_digest` and complete `arguments`. It requires one matching successful
+attempt, complete unredacted evidence and consistent projection identity. Failed,
+ambiguous, incomplete or differently bound records block inspection before output.
+Supplementary provider content must be identical to the selected result; otherwise
+its interpretation needs explicit qualification. The existing provider-specific
+success, source/output/plate and actual package checks still apply.
+
+This lets two-orientation work select each actual slice without trusting an AI's
+retelling. It does not establish provider success from transport success, grant
+engineering acceptance or change package producer lineage. The accepted workflow
+must hand this response through its existing output/file dependency path. A hash
+check alone does not prove authenticity; the existing durable source/run/file
+owners provide that identity and authority.

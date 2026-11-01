@@ -1,16 +1,126 @@
 // Controlled component checks; actual installed desktop rendering is separate.
 import { afterEach, expect, it, vi } from "vitest";
 import {
+  act,
   cleanup,
   fireEvent,
   render,
   screen,
   waitFor,
+  within,
 } from "@testing-library/react";
 import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import { NativeHomePanel, type HomeCall } from "./NativeHomePanel";
 
 afterEach(cleanup);
+
+it("uses workspace files as the native-tab landing view with accepted names and contextual tools", async () => {
+  const nativeOpen = vi.fn().mockResolvedValue(true);
+  const onOpen = vi.fn();
+  const source =
+    'workflow preview\n  name: "Block preview recovery"\n  purpose: "Inspect retained evidence"\n  discipline: "mechanical.design"\n  reviewed_ai_suggestions: true\nend\n';
+  const call: HomeCall = async (name) => {
+    if (name === "wright_workspace_list")
+      return result({ workspaces: [alpha] });
+    if (name === "wright_workspace_files")
+      return result({
+        workspace_id: alpha.workspace_id,
+        session_id: alpha.session_id,
+        tree: {
+          type: "directory",
+          children: [
+            {
+              type: "file",
+              name: "measurement-02.csv",
+              path: "/uploads/hash/measurement-02.csv",
+            },
+            {
+              type: "file",
+              name: "block-preview-recovery.workflow.wflow",
+              path: "/workflows/block-preview-recovery.workflow.wflow",
+            },
+          ],
+        },
+      });
+    if (name === "wright_workflow_read")
+      return result({
+        workspace_id: alpha.workspace_id,
+        path: "workflows/block-preview-recovery.workflow.wflow",
+        source,
+        storage_digest: "a".repeat(64),
+        storage_revision: 1,
+        definition_revision: 1,
+        metadata_authority: "wright_host",
+      });
+    throw Error("Unexpected operation: " + name);
+  };
+  render(
+    <NativeHomePanel call={call} onOpen={onOpen} onOpenFile={nativeOpen} />,
+  );
+  await screen.findByRole("option", { name: "Alpha" });
+  fireEvent.change(await screen.findByLabelText("Workspace"), {
+    target: { value: alpha.workspace_id },
+  });
+  expect(
+    await screen.findByRole("heading", { name: "Workspace files" }),
+  ).toBeVisible();
+  expect(
+    screen.queryByRole("navigation", { name: "Workspace views" }),
+  ).not.toBeInTheDocument();
+  const row = await screen.findByRole("button", {
+    name: "Block preview recovery",
+  });
+  expect(
+    within(screen.getByRole("list", { name: "Workspace files" })).getAllByRole(
+      "button",
+    )[0],
+  ).toBe(row);
+  fireEvent.change(screen.getByLabelText("Find a file"), {
+    target: { value: "block preview recovery" },
+  });
+  expect(row).toBeVisible();
+  fireEvent.click(row);
+  await waitFor(() =>
+    expect(nativeOpen).toHaveBeenCalledExactlyOnceWith(
+      alpha,
+      "workflows/block-preview-recovery.workflow.wflow",
+    ),
+  );
+  expect(onOpen).not.toHaveBeenCalled();
+  expect(
+    await screen.findByText(/Open request sent for Block preview recovery/),
+  ).toBeVisible();
+  expect(screen.getByRole("button", { name: "Connections" })).toBeVisible();
+  expect(screen.getByRole("button", { name: "Previous runs" })).toBeVisible();
+});
+
+it("keeps a native-open failure visible without losing file navigation or retrying", async () => {
+  const nativeOpen = vi.fn().mockRejectedValue(Error("host unavailable"));
+  const call = vi
+    .fn()
+    .mockResolvedValueOnce(result({ workspaces: [alpha] }))
+    .mockResolvedValueOnce(files(alpha, "part.wflow"));
+  render(
+    <NativeHomePanel
+      call={withoutTitles(call)}
+      onOpen={vi.fn()}
+      onOpenFile={nativeOpen}
+    />,
+  );
+  await screen.findByRole("option", { name: "Alpha" });
+  fireEvent.change(await screen.findByLabelText("Workspace"), {
+    target: { value: alpha.workspace_id },
+  });
+  const row = await screen.findByRole("button", {
+    name: "part.wflow",
+  });
+  fireEvent.click(row);
+  expect(
+    await screen.findByText(/The file could not be opened in a desktop tab/),
+  ).toBeVisible();
+  expect(row).toBeVisible();
+  expect(nativeOpen).toHaveBeenCalledTimes(1);
+});
 // Existing navigation fixtures deliberately omit source bodies. Title reads are
 // independently tested below and must not consume sequenced navigation replies.
 const withoutTitles =
@@ -87,6 +197,11 @@ it("lists and filters workspace files without opening or executing them", async 
     />,
   );
   await screen.findByRole("button", { name: "part.wflow" });
+  expect(
+    screen.getByText(
+      "Some saved names are unavailable. Filenames are shown; Refresh to retry.",
+    ),
+  ).toBeVisible();
   expect(screen.queryByRole("button", { name: "uploaded.wflow" })).toBeNull();
   expect(screen.queryByText("plate.step")).not.toBeInTheDocument();
   fireEvent.click(screen.getByRole("button", { name: "Files" }));
@@ -100,11 +215,75 @@ it("lists and filters workspace files without opening or executing them", async 
     target: { value: "missing" },
   });
   expect(screen.getByText("No files match this search.")).toBeVisible();
+  expect(screen.getByLabelText("Choose input file")).not.toBeVisible();
+  fireEvent.click(screen.getByText("Upload a file", { exact: true }));
+  expect(screen.getByLabelText("Choose input file")).toBeVisible();
+  fireEvent.click(screen.getByText("Preview and download details"));
   expect(
     screen.getByText(/downloads support visible files up to 16 MiB/),
   ).toBeVisible();
   expect(call).toHaveBeenCalledTimes(2);
   expect(onOpen).not.toHaveBeenCalled();
+});
+
+it("opens workflow files from Files through the workflow viewer, preserving opaque uploads", async () => {
+  const call = vi.fn(async (name: string) =>
+    name === "wright_workspace_list"
+      ? result({ workspaces: [alpha] })
+      : result({
+          workspace_id: "a",
+          session_id: "a-chat",
+          tree: {
+            type: "directory",
+            children: [
+              {
+                type: "file",
+                name: "part.wflow",
+                path: "/workflows/part.wflow",
+              },
+              {
+                type: "file",
+                name: "uploaded.wflow",
+                path: "/uploads/opaque/uploaded.wflow",
+              },
+            ],
+          },
+        }),
+  );
+  const onOpen = vi.fn().mockResolvedValue(undefined);
+  render(
+    <NativeHomePanel
+      call={withoutTitles(call)}
+      onOpen={onOpen}
+      initialSelection={alpha}
+    />,
+  );
+  await screen.findByRole("button", { name: "part.wflow" });
+  fireEvent.click(screen.getByRole("button", { name: "Files" }));
+  fireEvent.click(screen.getByRole("button", { name: "part.wflow" }));
+  await waitFor(() =>
+    expect(onOpen).toHaveBeenCalledExactlyOnceWith(
+      alpha,
+      "workflows/part.wflow",
+    ),
+  );
+  expect(
+    call.mock.calls.some(([name]) => name === "wright_workspace_file_preview"),
+  ).toBe(false);
+  await waitFor(() =>
+    expect(
+      screen.getByRole("button", { name: "uploaded.wflow" }),
+    ).toBeEnabled(),
+  );
+  fireEvent.click(screen.getByRole("button", { name: "uploaded.wflow" }));
+  await waitFor(() =>
+    expect(call).toHaveBeenCalledWith("wright_workspace_file_preview", {
+      workspace_id: "a",
+      session_id: "a-chat",
+      path: "uploads/opaque/uploaded.wflow",
+    }),
+  );
+  expect(onOpen).toHaveBeenCalledTimes(1);
 });
 
 it("opens a selected workflow with the exact workspace and desktop session", async () => {
@@ -157,7 +336,7 @@ it("offers the remembered exact location only in its workspace and reopens only 
     />,
   );
   const reopen = await screen.findByRole("button", {
-    name: "Reopen part · Run and results",
+    name: "Reopen part · Run view",
   });
   expect(onReopen).not.toHaveBeenCalled();
   fireEvent.click(reopen);
@@ -435,7 +614,8 @@ it("displays the accepted title, searches title and normalized filename, and ret
         : result({
             workspace_id: "a",
             path,
-            source: 'workflow recovery\n  name: "Named inspection"\nend',
+            source:
+              'workflow recovery\n  name: "Named inspection"\n  purpose: "Compare measured tracking deviations"\nend',
             metadata_authority: "wright_host",
             storage_revision: 1,
             definition_revision: 1,
@@ -447,10 +627,14 @@ it("displays the accepted title, searches title and normalized filename, and ret
     <NativeHomePanel call={call} onOpen={open} initialSelection={alpha} />,
   );
   await screen.findByRole("button", { name: "Named inspection" });
+  expect(
+    screen.getByText("Compare measured tracking deviations"),
+  ).toBeVisible();
   for (const query of [
     "named inspection",
     "block preview recovery",
     "block_preview-recovery",
+    "measured tracking deviations",
   ]) {
     fireEvent.change(screen.getByLabelText("Find a workflow"), {
       target: { value: query },
@@ -463,4 +647,95 @@ it("displays the accepted title, searches title and normalized filename, and ret
   expect(screen.getByText("/" + path)).toBeVisible();
   fireEvent.click(screen.getByRole("button", { name: "Named inspection" }));
   await waitFor(() => expect(open).toHaveBeenCalledWith(alpha, path));
+});
+
+it("explains pending saved names instead of exposing a temporary filename or false empty search", async () => {
+  const path = "workflows/opaque-file.workflow.wflow";
+  let finish!: (value: CallToolResult) => void;
+  const pending = new Promise<CallToolResult>((resolve) => {
+    finish = resolve;
+  });
+  const call = vi.fn(async (name: string) =>
+    name === "wright_workspace_list"
+      ? result({ workspaces: [alpha] })
+      : name === "wright_workspace_files"
+        ? files(alpha, "opaque-file.workflow.wflow")
+        : pending,
+  );
+  render(
+    <NativeHomePanel call={call} onOpen={vi.fn()} initialSelection={alpha} />,
+  );
+  await screen.findByText("Reading saved workflow names…");
+  fireEvent.change(screen.getByLabelText("Find a workflow"), {
+    target: { value: "Inspect robot tracking" },
+  });
+  expect(
+    screen.queryByText("No workflows match this search."),
+  ).not.toBeInTheDocument();
+  expect(
+    screen.queryByRole("button", { name: "opaque-file.workflow.wflow" }),
+  ).not.toBeInTheDocument();
+  await act(async () =>
+    finish(
+      result({
+        workspace_id: "a",
+        path,
+        source:
+          'workflow recovery\n  name: "Inspect robot tracking"\n  purpose: "Compare measured deviations"\nend',
+        metadata_authority: "wright_host",
+        storage_revision: 1,
+        definition_revision: 1,
+        storage_digest: "a".repeat(64),
+      }),
+    ),
+  );
+  expect(
+    await screen.findByRole("button", { name: "Inspect robot tracking" }),
+  ).toBeVisible();
+  expect(screen.getByText("Compare measured deviations")).toBeVisible();
+  expect(
+    screen.queryByText("Reading saved workflow names…"),
+  ).not.toBeInTheDocument();
+});
+
+it("separates choosing a native workspace from its files and returns without changing the workspace", async () => {
+  const call = vi.fn<HomeCall>(async (name, args) => {
+    if (name === "wright_workspace_list")
+      return result({ workspaces: [alpha, beta] });
+    if (name === "wright_workspace_files")
+      return files(args.workspace_id === "a" ? alpha : beta, "reference.png");
+    throw Error("Unexpected operation: " + name);
+  });
+  const onOpen = vi.fn();
+  const onOpenFile = vi.fn();
+  render(
+    <NativeHomePanel call={call} onOpen={onOpen} onOpenFile={onOpenFile} />,
+  );
+  fireEvent.change(await screen.findByLabelText("Workspace"), {
+    target: { value: "a" },
+  });
+  await screen.findByRole("heading", { name: "Alpha" });
+  expect(screen.queryByLabelText("Workspace")).not.toBeInTheDocument();
+  expect(
+    await screen.findByRole("button", { name: "reference.png" }),
+  ).toBeVisible();
+  fireEvent.click(screen.getByRole("button", { name: "Change workspace" }));
+  expect(screen.getByLabelText("Workspace")).toBeVisible();
+  expect(
+    screen.queryByRole("button", { name: "reference.png" }),
+  ).not.toBeInTheDocument();
+  fireEvent.click(screen.getByRole("button", { name: "Return to Alpha" }));
+  expect(screen.getByRole("heading", { name: "Alpha" })).toBeVisible();
+  expect(screen.getByRole("button", { name: "reference.png" })).toBeVisible();
+  expect(
+    call.mock.calls.filter(([name]) => name === "wright_workspace_files"),
+  ).toHaveLength(1);
+  fireEvent.click(screen.getByRole("button", { name: "Change workspace" }));
+  fireEvent.change(screen.getByLabelText("Workspace"), {
+    target: { value: "b" },
+  });
+  await screen.findByRole("heading", { name: "Beta" });
+  expect(screen.queryByLabelText("Workspace")).not.toBeInTheDocument();
+  expect(onOpen).not.toHaveBeenCalled();
+  expect(onOpenFile).not.toHaveBeenCalled();
 });

@@ -1,0 +1,51 @@
+{
+  "status": "bound draft; full workflow remains not ready",
+  "server_id": "import:draft-e4f0ce6f14f1c0347530",
+  "tool": "run_simulation",
+  "input_schema": {
+    "properties": {
+      "solver": {
+        "title": "Solver",
+        "type": "string"
+      },
+      "input_content": {
+        "title": "Input Content",
+        "type": "string"
+      },
+      "job_name": {
+        "default": "",
+        "title": "Job Name",
+        "type": "string"
+      },
+      "np": {
+        "default": 1,
+        "title": "Np",
+        "type": "integer"
+      },
+      "critic_approved": {
+        "default": false,
+        "title": "Critic Approved",
+        "type": "boolean"
+      }
+    },
+    "required": [
+      "solver",
+      "input_content"
+    ],
+    "title": "run_simulationArguments",
+    "type": "object"
+  },
+  "schema_sha256": "2ce453761de318023b7ca77b56737c9e4421b6e95f364e5076dde5552ae95329",
+  "selected_image": "sha256:9d8dbbde565bc8208a8cce03491b198b36105a1b5ceb556e82f5bdf17fa59ac4",
+  "source_sha256": "bc9306fe76f92baebe95932ad94757dfb25d6da3fe7ed212640e6d1dbc66125f",
+  "scope": "Accepted only in isolated candidate 036 revision 2. Older installed workspace unchanged; no engineering execution or review.",
+  "remaining": [
+    "CAD authentication and binding",
+    "exact geometry and strength validation profiles",
+    "mesh repair/orientation/slicing handoff",
+    "bounded correction edges",
+    "real review and execution"
+  ],
+  "accepted_storage_revision": 2,
+  "accepted_storage_digest": "5a3c740dc11cd7cad1b7da912010defe901b5ffea96d8ff278a1d45d1e439e51"
+}

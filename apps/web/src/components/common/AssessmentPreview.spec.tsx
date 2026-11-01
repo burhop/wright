@@ -131,7 +131,11 @@ it("does not request reports for ordinary JSON or run instructions from Markdown
       readValidationReport={read}
     />,
   );
-  await screen.findByText('{"value":3}');
+  await waitFor(() =>
+    expect(
+      JSON.parse(view.container.querySelector("pre")?.textContent ?? "null"),
+    ).toEqual({ value: 3 }),
+  );
   expect(read).not.toHaveBeenCalled();
   view.rerender(
     <RepresentationViewer

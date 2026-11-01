@@ -132,14 +132,16 @@ export function EngineeringStepContext({
             : "No purpose has been written for this step yet.")}
       </p>
       {!!sourceNames.length && (
-        <>
-          <h4>Uses information from</h4>
+        <details>
+          <summary data-testid="workflow-step-upstream-toggle">
+            Uses information from ({sourceNames.length} steps)
+          </summary>
           <ul>
             {sourceNames.map((name) => (
               <li key={name}>{name}</li>
             ))}
           </ul>
-        </>
+        </details>
       )}
       {!input && !!block.outputPortIds.length && (
         <>

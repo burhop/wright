@@ -1,3 +1,7 @@
+import {
+  useWorkflowToolDiscovery,
+  useWorkflowToolSession,
+} from "./workflow-tool-discovery";
 import { useCallback, useEffect, useState } from "react";
 import type { RecoveryCommand } from "./command-system";
 import { findBlock, type RecoveryBlock, type RecoveryWorkflow } from "./model";
@@ -5,7 +9,6 @@ import {
   configureMcpTool,
   connectMcpInput,
   fieldSchema,
-  listWorkflowMcpTools,
   workflowMcpServerName,
   mcpCandidates,
   readJson,
@@ -17,7 +20,7 @@ import { isFinalPrompt, promptFilename, sourceKey } from "./prompt-settings";
 export function McpBlockEditor({
   block,
   workflow,
-  sessionId,
+  sessionId: hostSessionId,
   readOnly,
   onApply,
 }: {
@@ -27,6 +30,8 @@ export function McpBlockEditor({
   readOnly: boolean;
   onApply: (commands: RecoveryCommand[]) => boolean;
 }) {
+  const sessionId = useWorkflowToolSession(hostSessionId);
+  const discoverTools = useWorkflowToolDiscovery();
   const [tools, setTools] = useState<WorkflowMcpTool[]>([]);
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
@@ -35,14 +40,14 @@ export function McpBlockEditor({
     if (!sessionId) return;
     setLoading(true);
     try {
-      setTools(await listWorkflowMcpTools(sessionId));
+      setTools(await discoverTools(sessionId));
       setMessage("");
     } catch (e) {
       setMessage(String(e));
     } finally {
       setLoading(false);
     }
-  }, [sessionId]);
+  }, [sessionId, discoverTools]);
   useEffect(() => {
     void load();
   }, [load]);

@@ -1,0 +1,12 @@
+{
+  "status": "PASS",
+  "unchanged_other_sections": 88,
+  "cad_instruction_body_preserved": true,
+  "cad_ports_dependencies_outputs_preserved": true,
+  "only_changes": [
+    "CAD performed_by",
+    "CAD settings",
+    "instructions renamed to prompt for AI-assisted task"
+  ],
+  "source_saved_revision": 2
+}

@@ -293,6 +293,21 @@ describe("public kit presentation and authority", () => {
     fireEvent.click(screen.getByRole("button", { name: "Start process" }));
     expect(onAction).toHaveBeenCalledTimes(1);
   });
+  it("offers exact step navigation for a readiness correction", () => {
+    const onNavigate = vi.fn();
+    const target = { kind: "block" as const, block_id: "check_geometry" };
+    render(
+      <ReasonNotice
+        reason={{ ...reason, navigation: target }}
+        onNavigate={onNavigate}
+      />,
+    );
+    fireEvent.click(screen.getByRole("button", { name: "Open affected step" }));
+    expect(onNavigate).toHaveBeenCalledExactlyOnceWith(target);
+    expect(
+      screen.queryByRole("button", { name: "Open related item" }),
+    ).not.toBeInTheDocument();
+  });
   it("shows missing readiness and declared later dependency distinctions", () => {
     render(
       <ReadinessPanel
@@ -1733,28 +1748,88 @@ describe("bounded representation views", () => {
     fireEvent.load(image);
     expect(ready).toHaveBeenCalledTimes(1);
   });
-  it("shows exact assessment-sized JSON as inert text without the smaller prose limit", async () => {
+  it("shows assessment-sized JSON with readable spacing and preserves its source Blob", async () => {
     const text = JSON.stringify({
       schema_version: "wright.process-validation/1",
       summary: { counts: { pass: 25, blocked: 1 } },
       evidence: "x".repeat(80_000),
       note: "<script>window.bad=true</script>",
     });
+    const blob = new Blob([text], { type: "application/json" });
     const view = render(
-      <RepresentationViewer
-        blob={new Blob([text], { type: "application/json" })}
-        title="Exact assessment"
-      />,
+      <RepresentationViewer blob={blob} title="Exact assessment" />,
     );
     await waitFor(() =>
-      expect(view.container.querySelector("pre")?.textContent).toBe(text),
+      expect(view.container.querySelector("pre")?.textContent).toBe(
+        JSON.stringify(JSON.parse(text), null, 2),
+      ),
     );
+    expect(await blob.text()).toBe(text);
     expect(
       view.container.querySelector("script, iframe, object, embed"),
     ).toBeNull();
     expect(
       screen.queryByText(/exceeds the supported preview size/),
     ).not.toBeInTheDocument();
+  });
+  it.each([
+    [
+      '{"measurement":9007199254740993}',
+      '{\n  "measurement": 9007199254740993\n}',
+    ],
+    [
+      '{"measurement":1.00000000000000001}',
+      '{\n  "measurement": 1.00000000000000001\n}',
+    ],
+    [
+      '{"measurement":1,"measurement":2}',
+      '{\n  "measurement": 1,\n  "measurement": 2\n}',
+    ],
+    ['{"label":"\\u0061"}', '{\n  "label": "\\u0061"\n}'],
+    ['{"incomplete":', '{"incomplete":'],
+    [
+      '{"mm":[2000.0,-0.0,1e+06],"empty":{},"items":[]}',
+      '{\n  "mm": [\n    2000.0,\n    -0.0,\n    1e+06\n  ],\n  "empty": {},\n  "items": []\n}',
+    ],
+  ])(
+    "preserves exact JSON evidence tokens when adding spacing: %s",
+    async (text, expected) => {
+      const view = render(
+        <RepresentationViewer
+          blob={new Blob([text], { type: "application/json" })}
+          title="Exact measurements"
+        />,
+      );
+      await waitFor(() =>
+        expect(view.container.querySelector("pre")?.textContent).toBe(expected),
+      );
+    },
+  );
+  it("keeps the original bounded JSON when indentation would exceed the preview limit", async () => {
+    const text = "[".repeat(1100) + "0" + "]".repeat(1100);
+    const view = render(
+      <RepresentationViewer
+        blob={new Blob([text], { type: "application/json" })}
+        title="Nested evidence"
+      />,
+    );
+    await waitFor(() =>
+      expect(view.container.querySelector("pre")?.textContent).toBe(text),
+    );
+  });
+  it("keeps spaces and escaped quotes inside JSON strings", async () => {
+    const text = '{"note":"two  spaces and \\"quoted\\"","units":"mm"}';
+    const view = render(
+      <RepresentationViewer
+        blob={new Blob([text], { type: "application/json" })}
+        title="Measurement note"
+      />,
+    );
+    await waitFor(() =>
+      expect(view.container.querySelector("pre")?.textContent).toBe(
+        '{\n  "note": "two  spaces and \\"quoted\\"",\n  "units": "mm"\n}',
+      ),
+    );
   });
   it.each([
     ["application/json", 16 * 1024 * 1024 + 1],
@@ -1769,18 +1844,19 @@ describe("bounded representation views", () => {
     ).toBeInTheDocument();
     expect(read).not.toHaveBeenCalled();
   });
-  it("releases thumbnails and never reuses a bitmap for a different blob", () => {
-    vi.spyOn(URL, "createObjectURL").mockReturnValue("blob:old-image");
-    const revoke = vi
-      .spyOn(URL, "revokeObjectURL")
-      .mockImplementation(() => undefined);
+  it("uses exact inline raster bytes and never reuses a bitmap for a different blob", async () => {
+    const objectUrl = vi.spyOn(URL, "createObjectURL");
     const { rerender, unmount } = render(
       <ImageThumbnail
         blob={new Blob(["bitmap"], { type: "image/png" })}
         title="First image"
       />,
     );
-    expect(screen.getByAltText("First image")).toBeInTheDocument();
+    expect(await screen.findByAltText("First image")).toHaveAttribute(
+      "src",
+      "data:image/png;base64," + btoa("bitmap"),
+    );
+    expect(objectUrl).not.toHaveBeenCalled();
     rerender(
       <ImageThumbnail
         blob={new Blob(["data"], { type: "application/octet-stream" })}
@@ -1788,7 +1864,89 @@ describe("bounded representation views", () => {
       />,
     );
     expect(screen.queryByRole("img")).not.toBeInTheDocument();
-    expect(revoke).toHaveBeenCalledWith("blob:old-image");
     unmount();
+  });
+  it.each(["image/png", "image/jpeg", "image/webp", "image/gif"])(
+    "uses a fixed %s data URL with byte-exact base64 payload",
+    async (type) => {
+      const bytes = new Uint8Array([0, 34, 60, 62, 127, 255]);
+      render(
+        <ImageThumbnail blob={new Blob([bytes], { type })} title="Raster" />,
+      );
+      expect(await screen.findByAltText("Raster")).toHaveAttribute(
+        "src",
+        `data:${type};base64,${btoa(String.fromCharCode(...bytes))}`,
+      );
+    },
+  );
+  it.each([
+    "image/svg+xml",
+    "text/html",
+    "application/octet-stream",
+    'image/png;onerror="bad()"',
+  ])("does not read or inline %s as an image", (type) => {
+    const blob = new Blob(["<svg onload='bad()'/>"], { type });
+    const read = vi.spyOn(blob, "arrayBuffer");
+    render(<ImageThumbnail blob={blob} title="Unsupported" />);
+    expect(screen.queryByRole("img")).not.toBeInTheDocument();
+    expect(read).not.toHaveBeenCalled();
+  });
+  it("rejects oversized raster previews before reading and reports read/decode failures", async () => {
+    const oversized = new Blob([new Uint8Array(32 * 1024 * 1024 + 1)], {
+      type: "image/png",
+    });
+    const read = vi.spyOn(oversized, "arrayBuffer");
+    const ready = vi.fn();
+    const view = render(
+      <ImageThumbnail blob={oversized} title="Oversized" onReady={ready} />,
+    );
+    expect(read).not.toHaveBeenCalled();
+    expect(ready).toHaveBeenCalledOnce();
+    ready.mockClear();
+    const broken = new Blob(["png"], { type: "image/png" });
+    vi.spyOn(broken, "arrayBuffer").mockRejectedValue(
+      new Error("private read error"),
+    );
+    view.rerender(
+      <ImageThumbnail blob={broken} title="Broken" onReady={ready} />,
+    );
+    await waitFor(() => expect(ready).toHaveBeenCalledOnce());
+    expect(
+      screen.getByText(/This image could not be displayed/),
+    ).not.toHaveTextContent("private");
+    ready.mockClear();
+    view.rerender(
+      <ImageThumbnail
+        blob={new Blob(["invalid raster"], { type: "image/png" })}
+        title="Invalid"
+        onReady={ready}
+      />,
+    );
+    fireEvent.error(await screen.findByRole("img", { name: "Invalid" }));
+    expect(screen.queryByRole("img")).not.toBeInTheDocument();
+    expect(ready).toHaveBeenCalledOnce();
+  });
+  it("ignores a delayed image read after switching files", async () => {
+    const old = new Blob(["old"], { type: "image/png" });
+    let finish: (value: ArrayBuffer) => void = () => {};
+    vi.spyOn(old, "arrayBuffer").mockReturnValue(
+      new Promise((resolve) => {
+        finish = resolve;
+      }),
+    );
+    const view = render(<ImageThumbnail blob={old} title="Old" />);
+    expect(screen.getByText("Loading image…")).toBeInTheDocument();
+    view.rerender(
+      <ImageThumbnail
+        blob={new Blob(["new"], { type: "image/png" })}
+        title="Current"
+      />,
+    );
+    const current = await screen.findByRole("img", { name: "Current" });
+    await act(async () => finish(new TextEncoder().encode("old").buffer));
+    expect(current).toHaveAttribute(
+      "src",
+      "data:image/png;base64," + btoa("new"),
+    );
   });
 });

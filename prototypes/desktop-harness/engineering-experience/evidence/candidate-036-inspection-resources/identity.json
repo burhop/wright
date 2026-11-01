@@ -1,0 +1,13 @@
+{
+  "resource_sha256": "86469620a5ec563923bde8981369aa8aeb3d473feb1387a52838dda6c65ac066",
+  "workflow_revision": 8,
+  "workflow_digest": "6fb178e5e5ad1ccbf54d8852a17fd4d4c203866e831459ccf758acffb293e92a",
+  "inputs": [
+    {
+      "filename": "inspection-resources-v1.zip",
+      "sha256": "d6c8710ff13deec734094443569518746010504a7723b1c43ec63654fd427fe5",
+      "bytes": 80701
+    }
+  ],
+  "originals_unchanged": true
+}

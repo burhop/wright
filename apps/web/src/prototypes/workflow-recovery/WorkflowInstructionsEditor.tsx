@@ -233,69 +233,78 @@ export function WorkflowInstructionsEditor({
     >
       <p>
         {mode === "global"
-          ? "These server-backed defaults are captured by new workflows. Updating them does not change saved workflows or running processes."
-          : "These instructions travel with the saved workflow. Changing current defaults does not change this revision or a run already started."}
+          ? "New workflows start with these AI instructions. Changing them does not change saved workflows or work already running."
+          : "These are the AI instructions saved with this workflow. They are included when you export it. Changes apply when you save a new revision, not to work already running."}
       </p>
       {!draft && (
         <p role="status">
-          This legacy workflow has no embedded instruction collection. Its
-          behavior depends on installation defaults. Make its instructions
-          explicit before exporting it.
+          This older workflow uses this installation's default AI instructions.
+          Save instructions with the workflow before exporting it so another
+          installation can use the same instructions.
         </p>
       )}
       {draft && (
         <>
           <p>
-            <strong>Saved profile:</strong> {draft.profile_id} ·{" "}
-            {draft.profile_version}
+            Choose how AI handles missing design choices and add any guidance
+            below. Saved instructions and their versions remain available to
+            inspect.
           </p>
-          <section aria-label="Saved tool action contract">
-            <p data-testid="workflow-instructions-action-intent">
-              <strong>MCP action intent contract:</strong>{" "}
-              {actionIntentLabel(draft)}
-            </p>
+          <details>
+            <summary>Instruction version and compatibility</summary>
             <p>
-              {draft.action_intent_contract
-                ? "MCP tasks declare their action intent before tool dispatch. The runtime checks it against the saved policy and the permitted actions."
-                : "This profile predates declared MCP action intent. Strict MCP execution may require an explicitly reviewed instruction update before dispatch."}{" "}
-              This contract does not grant permission to perform an action.
+              <strong>Instruction set:</strong> {draft.profile_id} ·{" "}
+              {draft.profile_version}
             </p>
-          </section>
-          {onReviewActionIntentUpgrade && (
-            <button
-              type="button"
-              className="recovery-button recovery-button--secondary"
-              disabled={disabled}
-              data-testid="workflow-instructions-review-action-upgrade"
-              onClick={async () => {
-                if (disabled) return;
-                setBusy(true);
-                setError("");
-                setMessage("");
-                try {
-                  // The server proposes only a protocol migration; customized text and policy remain intact.
-                  const current = await materializeBodyEdits(
-                    draft,
-                    instructions ?? draft,
-                    editingOrigin,
-                  );
-                  const result = await onReviewActionIntentUpgrade(current);
-                  setProposed(null);
-                  setUpgrade(result);
-                } catch (error) {
-                  setError(
-                    error instanceof Error
-                      ? error.message
-                      : "Could not prepare the instruction upgrade.",
-                  );
-                } finally {
-                  setBusy(false);
-                }
-              }}
-            >
-              Review instruction compatibility upgrade…
-            </button>
-          )}
+            <section aria-label="Saved tool action contract">
+              <p data-testid="workflow-instructions-action-intent">
+                <strong>Tool communication format:</strong>{" "}
+                {actionIntentLabel(draft)}
+              </p>
+              <p>
+                {draft.action_intent_contract
+                  ? "Before using an engineering tool, AI describes the action it intends to take. Wright checks that it is allowed by the workflow's saved limits and permissions."
+                  : "These older instructions may need a reviewed update before engineering tools can be used."}{" "}
+                These instructions do not grant new permissions or replace
+                required reviews.
+              </p>
+            </section>
+            {onReviewActionIntentUpgrade && (
+              <button
+                type="button"
+                className="recovery-button recovery-button--secondary"
+                disabled={disabled}
+                data-testid="workflow-instructions-review-action-upgrade"
+                onClick={async () => {
+                  if (disabled) return;
+                  setBusy(true);
+                  setError("");
+                  setMessage("");
+                  try {
+                    // The server proposes only a protocol migration; customized text and policy remain intact.
+                    const current = await materializeBodyEdits(
+                      draft,
+                      instructions ?? draft,
+                      editingOrigin,
+                    );
+                    const result = await onReviewActionIntentUpgrade(current);
+                    setProposed(null);
+                    setUpgrade(result);
+                  } catch (error) {
+                    setError(
+                      error instanceof Error
+                        ? error.message
+                        : "Could not prepare the instruction upgrade.",
+                    );
+                  } finally {
+                    setBusy(false);
+                  }
+                }}
+              >
+                Review instruction update…
+              </button>
+            )}
+          </details>
           <label>
             Unspecified design choices
             <select
@@ -322,8 +331,8 @@ export function WorkflowInstructionsEditor({
             </select>
           </label>
           <p>
-            Supplied requirements stay binding. Requests for answers belong in
-            declared Request input steps.
+            AI must preserve your requirements. Add a Request input step
+            wherever the workflow should wait for an answer from you.
           </p>
           <label>
             Protected requirements (one identifier per line)
@@ -366,18 +375,17 @@ export function WorkflowInstructionsEditor({
               }
             >
               <option value="append">Append to saved instructions</option>
-              <option value="replace">
-                Replace instructions for task roles
-              </option>
+              <option value="replace">Replace task guidance</option>
             </select>
           </label>
           <p>
-            Guidance applies to workflow, image and MCP task roles. Other role
-            scopes are retained and shown below.
+            This guidance applies to AI steps, image steps and engineering-tool
+            steps. Other saved instructions remain unchanged and can be
+            inspected below.
           </p>
           <details>
             <summary data-testid="workflow-instructions-preview-toggle">
-              Effective instructions and origins
+              Instructions used by AI
             </summary>
             <label>
               Instruction role
@@ -463,8 +471,9 @@ export function WorkflowInstructionsEditor({
                 </label>
                 {asset.role === "protocol" && (
                   <p>
-                    Protocol instructions require a compatible execution
-                    contract and are shown read-only here.
+                    These instructions define how AI communicates with Wright.
+                    They are read-only here; changes require a compatible
+                    instruction update.
                   </p>
                 )}
               </details>

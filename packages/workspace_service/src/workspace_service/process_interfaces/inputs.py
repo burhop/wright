@@ -92,7 +92,14 @@ def _sections(source):
         plan = compile_prompt_workflow(source)
         blocks = _parse(source)
     except WorkflowSourceExecutionError as error:
-        raise _unsupported(str(error), error.correction) from error
+        raise ProcessInterfaceError(
+            "READINESS_UNSUPPORTED",
+            str(error),
+            error.correction,
+            navigation=NavigationTarget(kind="block", block_id=error.block_id)
+            if error.block_id
+            else None,
+        ) from error
     return plan, blocks
 
 
