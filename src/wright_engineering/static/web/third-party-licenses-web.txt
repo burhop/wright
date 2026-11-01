@@ -1661,7 +1661,7 @@ SOFTWARE.
 ---
 
 Name: zod
-Version: 4.6.6
+Version: 4.6.7
 License: MIT
 Private: false
 Description: TypeScript-first schema declaration and validation library with static type inference
