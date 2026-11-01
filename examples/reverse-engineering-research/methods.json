@@ -1,0 +1,1102 @@
+{
+  "schema_version": 1,
+  "revision": "2026-10-28-research-58",
+  "status": "research_proposal_not_runtime_configuration",
+  "runtime_consumed": false,
+  "purpose": "Reusable method inventory for reverse engineering authoring and future qualification; no registered provider or execution support is implied.",
+  "guide": "../../docs/workflows/reverse-engineering-methods.md",
+  "outcome_classes": [
+    "visual_resemblance",
+    "external_envelope",
+    "dimensional_reconstruction",
+    "functional_replacement"
+  ],
+  "evidence_classes": [
+    "observed",
+    "measured",
+    "inferred",
+    "unknown"
+  ],
+  "methods": [
+    {
+      "id": "evidence_bound_component_depth",
+      "priority": "after_feature_and_state_identity_before_flattening_observed_volumes",
+      "inputs": [
+        "original_oblique_and_complementary_views",
+        "visible_feature_profiles_and_depth_ordering",
+        "exact_native_reference_revision",
+        "shared_interface_curves",
+        "explicit_bounded_provisional_depth_controls"
+      ],
+      "outputs": [
+        "separately_editable_visible_component_geometry",
+        "source_profile_and_interface_checks",
+        "exact_native_export",
+        "orientation_intersection_and_multiview_evidence",
+        "unverified_depth_and_preservation_findings"
+      ],
+      "uses": [
+        "visual_resemblance",
+        "visible_volume_reconstruction",
+        "component_and_feature_separation"
+      ],
+      "sources": [
+        "../../docs/workflows/reverse-engineering-methods.md"
+      ],
+      "qualification": "Separate front profiles, projecting bodies and recessed carriers; do not treat them as coplanar holes. CAD components do not prove manufacturing splits or physical function. Preserve named profiles and derive dimensions only where source/camera evidence supports them; otherwise expose bounded provisional depth. Verify actual exported analytic or rational support and full trim extent, not just endpoints or a successful loft. Revalidate shared front/back interfaces, orientation, native intersections and every relevant view. Retain strict identity failures separately from supporting-surface or sampled geometric agreement; do not waive them or hide unsupported regions. For conditional cross-view depth, retain feature-plane alternatives, camera freedoms/rank, original paired pixels and residuals. A same-image withheld feature is not independent calibration. Couple adjoining surfaces through shared depth fields and boundary equations; qualify the coherent visible section together. Report fit-dependent image gains separately from physical accuracy. Identify repeated feature families independently before assuming common spacing. Retain all paired-view residuals and controls at bounds. Inspect native intersection representations; a dense degree1 section curve can fail an unchanged guard even when sparse samples look coincident. Analytic support proofs must be restricted to validated types and actual exported controls. Query normals on both sides of C0 creases with recorded offsets. Separate native surface continuity from preview tessellation. Record actual absolute versus relative meshing semantics and measure mesh-to-support residuals where supported. Partition unchanged triangles into bounded batches with complete coverage; never hide defects by filtering geometry. Direct trimmed-domain point witnesses can supplement failed closest-point solvers without changing guards or claiming whole-domain identity. Check actual native occlusion across visible feature extents, not only fitted centers. Restrict projected convex-control-envelope proofs to validated surface/camera types with consistent denominator sign. Verify any bounded occluder trim against the original domain and preserve unrelated failures. A clear camera sightline does not establish physical geometry or independent image fidelity. Preserve semantic component and feature ownership alongside retained geometry; recover lost associations through historical source and independently matched native boundaries. Confirm apparent shading/occlusion defects with native rays before removing geometry. Distinguish source-supported creases from construction seams and keep failed boundary/continuity constraints visible. For nested fascia/pocket geometry, establish projecting returns, bowls, side-pocket throats and ledges as distinct section subjects. Preserve shared attachment curves while allowing each recess its own named depth control. Validate dominant source shape before spending effort closing or thickening a print derivative. A shared shallow field with an automatic return to the envelope can suppress the required pocket. Bind each attachment to the correct semantic endpoint and datum:front mouth and recessed backing are different interfaces. Revalidate previously qualified setbacks and full visible-feature rays after topology changes. A join to the wrong endpoint can pass intersection checks while hiding the intended feature. Preserve declared geometry-dependency signatures when reusing derived section curves;changed inputs require explicit recomputation. Background visible through an intentional opening is not proof of a missing exterior panel;check actual neighboring boundaries before adding skin. A source-supported return location and inherited depth amplitude are distinct controls. Preserve the depth ceiling and complete zero-displacement attachment bands,then inspect the actual target region in multiple views. A regular CAD graph with preserved joins can still have the wrong shoulder shape. Hold a visually unsupported depth-field trial rather than promote it on CAD validity alone. Bind plot windows and included owners to the intended feature;an inherited detail crop can omit the region being evaluated. Explicitly label X-ray boundaries and partial-context renders;neither establishes whole-car visibility or physical seams. A fixed frontal orthographic trace has a depth nullspace: explicitly calculate its Jacobian before claiming depth from pixel fit. A held oblique camera would need an established physical feature correspondence; view-dependent pocket silhouettes, apparent folds and highlights must not be silently treated as the same fixed edge.",
+      "wright_status": "local_C19_revision1_lower_section_correction_338;14changed_faces_174retained_188openfaces;158of174strict_encoding_matches;16unwaived;lower_port_training_means_rear32.28to2.99px_closeup76.54to2.36px;raw_section_failures_retained_analytic_native_support_proof339c_and_one_sided_orientation343c;no_generic_runtime_binding_or_physical_accuracy_qualified;C20_native_trial359_three_changed_faces_continuity363_and_parametric_witnesses364;preview_relative_tolerance_metadata_corrected_by_explicit_absolute_rear_mesh369_and_residual371;not_promoted;C21_native390_three_divider_subsets391c_6132points_4599blocked_before395_zero_after392;physical_and_global_acceptance_unverified;C21front_native_rays402_lamps_clear;four_lower_windshield_faces_source_association403_recovered_without_geometry_change;hood_fairing_not_yet_qualified",
+      "local_evidence": [
+        "rear-corner-boundaries-1562/report.json",
+        "rear-macro-review-route-1564.json",
+        "rear-pocket-control-bounds-1571/report.json",
+        "rear-pocket-attachment-checks-1573/report.json",
+        "rear-pocket-target-comparisons-1574/report.json",
+        "rear-pocket-trial-disposition-1575/report.json",
+        "source-pocket-return-traces-1623/report.json",
+        "pocket-source-ownership-1624/report.json",
+        "pocket-observability-1640/report.json"
+      ]
+    },
+    {
+      "id": "image_conic_visible_boundary",
+      "priority": "conditional_after_feature_identity_and_configuration_review",
+      "inputs": [
+        "original_image_rasters",
+        "explicit_feature_search_windows",
+        "luminance_edge_samples",
+        "versioned_camera_and_placement_hypotheses",
+        "exact_native_skin"
+      ],
+      "outputs": [
+        "calculated_image_conics_and_fit_evidence",
+        "editable_visible_regions_and_open_trimmed_holes",
+        "exact_native_plane_conic_and_area_checks",
+        "cross_view_conflicts_and_anchor_invalidation"
+      ],
+      "uses": [
+        "visual_resemblance",
+        "visible_aperture_topology",
+        "source_consistency_diagnosis"
+      ],
+      "sources": [
+        "../../docs/workflows/reverse-engineering-methods.md"
+      ],
+      "qualification": "Separate manual seeds and weak perimeter guides from qualified pixel measurements. A fitted image conic does not identify physical 3D circularity, wall/depth dimensions or material. Verify exact exported planes, complete ellipse boundaries, trims, open centers, area, orientation, retained faces and intersections. Rebind changed 3D camera anchors visibly; retain all original picks, rejected hypotheses and poor cross-view residuals.",
+      "wright_status": "local_Roadster_C15_study_218_to_240; trial_not_preferred_due_pose_geometry_conflict; no_generic_runtime_binding_or_physical_calibration_qualified"
+    },
+    {
+      "id": "regional_envelope_and_shared_curve_fairing",
+      "priority": "after_source_correspondence_and_before_repeated_surface_fitting",
+      "inputs": [
+        "original_consistent_state_regions",
+        "versioned_positive_depth_camera",
+        "explicit_convex_image_domain",
+        "shared_native_boundaries",
+        "bounded_named_parameters"
+      ],
+      "outputs": [
+        "editable_coupled_surface_candidate",
+        "conditional_domain_and_feasibility_evidence",
+        "exact_export_and_native_controls",
+        "section_shape_and_continuity_checks",
+        "multiview_tradeoffs"
+      ],
+      "uses": [
+        "visual_resemblance",
+        "conditional_envelope_correction",
+        "surface_fairing"
+      ],
+      "sources": [
+        "../../docs/workflows/reverse-engineering-methods.md"
+      ],
+      "qualification": "Prove convexity, positive depth, basis/weight support and constrained spans. Preserve protected interfaces and report conflicting unconstrained blends. Mark all fitting/selection views explicitly. Inspect exact native controls, retained definitions, transverse sections, joins, intersections and feature visibility; finite checks do not establish global smoothness, exact trims or physical dimensional fidelity. Identify every split boundary and actual side-specific anchor before correction; old geometry need not be symmetric. Native construction and STEP may expose equivalent curves as Bezier or B-spline. Use mathematically exact conversion, preserving domains, knots and weights; do not apply non-rational control-point displacement to unsupported rational curves. Preserve failed candidates. Verify complete boundary controls/support, source bands, competing-face visibility and owned edge incidence on the actual exported revision. An inferred ruled or filled bridge between existing boundaries does not establish measured interior shape, G1/G2 continuity or whole-body closure. C48 binds two continuous rocker skins to ten actual native upper spans. Source-only faint trim-ridge intensity profiles preserve edge identity and declared observational intervals;four ofeight source columns are withheld from fitting. Native exact-curve checks are separate from raster ownership and physical tolerance. A visible trim ridge is not an inferred underside or full silhouette. Zero lateral offset is an explicit completion hypothesis,not measured depth. Check singular triangular surface boundaries with actual native CAD interference diagnostics and whole-domain regularity reasoning. Near-coincident endpoints can invalidate a Coons triangle despite sampled Jacobian and general validity checks. A declared ruled triangular construction with an exactly shared apex can replace the affected surface while preserving the other boundaries; verify the exact native output. A coupled corner correction must split owned paths at actual support knots and preserve declared baseline curve parameterization; a one-edge selector cannot assume a boundary remains unsplit. Qualify individual-face self-interference separately from topological validity, then check the connected network. Coons fairing can change interior shape without changing boundary ownership; do not describe it as an exact global coordinate warp. Preserve stronger failed cases without relaxing the bound. Inspect the complete support field and actual visible face owner when a localized correction leaves a bulge. Extending a bounded return may address a different discrepancy than increasing a narrow peak. Retain unchanged native adjacent faces when complete field bounds and an independent shared-edge audit demonstrate fixed interfaces. A finite-camera search-bound fit remains an unadopted diagnostic. If a correction retains a sharp transition at a fixed adjacent surface,revise the coupled supports rather than forcing a local angle metric. Derive compensation from the actual plan-slope jump and existing weight field;preserve declared attachment curves and qualify the exact native artifact. A shared support and a complete C1 jet check at one junction do not certify allbodyG1/G2. Bound all residuals outside the declared correction region too;partitioning complete polynomial cells can tighten a conservative projection bound without discarding numerical differences.",
+      "wright_status": "local_Roadster_C14_qualification_191b_to_212; no_generic_runtime_binding_or_physical_calibration_qualified",
+      "local_evidence": [
+        "native-c45-boundary-visibility-921/report.json",
+        "native-c46-boundary-visibility-935/report.json",
+        "c46-nose-gap-rays-937/report.json",
+        "c47-corner-preflight-942/report.json",
+        "c48-rocker-preflight-976/report.json",
+        "native-c48-regions-987/report.json",
+        "coupled-bowl-corner-local-1650/amp-0750/report.json",
+        "coupled-bowl-corner-local-1650/amp-1000/failure.json",
+        "coupled-bowl-corner-orientation-1653/report.json",
+        "coupled-bowl-depth-proof-1656/report.json",
+        "lower-black-corner-ownership-1672/report.json",
+        "lower-corner-return-local-1677/report.json",
+        "lower-corner-return-orientation-1678/report.json",
+        "lower-corner-return-depth-proof-1679/report.json",
+        "coupled-corner-fairing-local-1720/w-0400/report.json",
+        "native-B18-positive-region-proof-1757/report.json",
+        "native-B18-paired-projection-bounds-1759/report.json"
+      ]
+    },
+    {
+      "id": "cross_view_feature_topology",
+      "priority": "before_assigning_station_widths_or_correcting_surface_interiors",
+      "inputs": [
+        "original_consistent_state_images",
+        "distinct_seam_or_feature_vertices",
+        "explicit_correspondence_hypotheses",
+        "versioned_cameras_and_scale",
+        "exact_candidate_geometry"
+      ],
+      "outputs": [
+        "source_linked_corner_roles",
+        "coupled_boundary_correction",
+        "full_coordinate_residuals",
+        "unchanged_input_evidence",
+        "exact_native_multiview_and_continuity_checks"
+      ],
+      "uses": [
+        "visual_resemblance",
+        "component_and_feature_separation",
+        "source_consistency_diagnosis"
+      ],
+      "sources": [
+        "../../docs/workflows/reverse-engineering-methods.md"
+      ],
+      "qualification": "Distinguish an outer silhouette, glass-edge intersection, body crease and lower closure corner; preserve every raw pixel and versioned subject binding. Precise line localization does not prove material correspondence or visibility. Uncalibrated coordinate transfer and fitted camera/shape families are hypotheses, not triangulation or physical dimensions. Rebuild adjoining skins together; check shared full/partial curves and full-object silhouette/section tradeoffs before native submission. An internal-feature improvement cannot conceal a worsened external envelope. Opened-component images remain usable for explicitly identified fixed visible regions; observed recesses need depth-bearing geometry with bounded provisional depths, not just flat visual partitions. Inspect the exact export without claiming hidden thickness or mechanism. Distinguish photographed highlights, silhouettes, joins and occlusion boundaries before changing shape. Record missing near-side branches and competing correspondences; use exact full-assembly multi-view ownership to expose unobserved open-region leakage rather than hiding it.",
+      "wright_status": "local_Roadster_C13_native_qualification_164c_to_186_and_C16_local_held_tradeoff_243_to_266; new_fixed_rear_depth_source_recorded_not_modeled; no_generic_runtime_binding_or_physical_camera_calibration_qualified",
+      "local_evidence": "C24 exact native export506/controls510/intersections509; feature-band coverage512; partial side correspondence511b; all-view ownership513. Native build/regularity pass, but side/depth ambiguity, open rear visibility and12strict retention discrepancies prevent whole-vehicle acceptance."
+    },
+    {
+      "id": "evidence_bound_surface_partition",
+      "priority": "after_provisional_envelope",
+      "inputs": [
+        "exact_native_skin",
+        "original_feature_trace",
+        "versioned_camera",
+        "explicit_eligible_and_protected_faces"
+      ],
+      "outputs": [
+        "editable_visual_region_surfaces",
+        "partition_coverage_and_overlap_evidence",
+        "exact_export",
+        "multiview_invariance_checks"
+      ],
+      "uses": [
+        "visual_resemblance",
+        "component_and_feature_separation"
+      ],
+      "sources": [
+        "../../docs/workflows/reverse-engineering-methods.md"
+      ],
+      "qualification": "Preserve supporting skin geometry, exact output identity and orientation; inspect area integration, bidirectional coverage and overlapping regions. Image-derived partitions do not establish recess depth, physical material, hidden geometry or independent dimensional accuracy. Dark side-window,rear glazing,roof and recessed deck/cover can be different subjects. Bind persistent seams,termination,configuration and occlusion across original views before combining them into a continuous surface. Separately addressable CAD regions do not assert material identity or hidden mechanisms. Review1021 proposes a shared shoulder/window/sail/deck network;it is advice,not a completed authoring or validation claim. Build coherent neighboring regions from one owned curve/junction network. When inherited perimeters conflict,replace the affected surrounding regions together and explicitly invalidate their old ownership checks. B1native core and B2native front panels demonstrate this;old CAD remains a seed,not truth. Preserve emitting/functional borders where supported and revalidate their visibility against the exact new assembly. A source-camera region cut may improve front appearance while blackening the white side nose. Retain that failed trial and reconsider support/ownership; do not promote a one-view recolor. Use an owned boundary network with exact shared edges and revalidate affected views. Visual labels are not physical materials or manufactured panel seams. Distinguish a retained vertex touching the interior of another face edge from an interior surface crossing. A section with0edges can still contain a contact vertex and fail an un-imprinted compound interference check. Diagnose exact faulty subshapes before changing geometry. A non-destructive joint imprint can introduce the shared vertex without changing either surface set;verify every retained face by empty two-way CAD differences and recheck the actual resulting topology. A local imprint study is not proof that a native component/STEP export preserves shared topology,or that a complete body is closed.",
+      "wright_status": "local_Roadster_C12_qualification_150_to_161; no_generic_runtime_binding_qualified",
+      "local_evidence": [
+        "cabin-interface-curves-1012/report.json",
+        "cabin-topology-astra-review-1021-proposal.json",
+        "native-b1-interfaces-1033/report.json",
+        "b2-owned-front-1047/report.json",
+        "native-b2-interfaces-1056/report.json",
+        "native-b2-source-visibility-1057/report.json",
+        "front-region-partition-1136/report.json",
+        "native-front-network-1162/report.json",
+        "B22-left-well-trim-trial-1973/report.json",
+        "B22-left-well-trim-seam-proof-1974/report.json",
+        "native-B23-STEP-qualification-1983/report.json",
+        "B23-native-boundary-audit-1986/report.json",
+        "native-B24-STEP-qualification-2063/report.json",
+        "native-B24-roof-contact-2065/report.json",
+        "native-B24-contact-imprint-study-2066/report.json"
+      ],
+      "recent_local_case": {
+        "case": "Roadster I13 depth-spanning camera and border study1777",
+        "evidence": [
+          "I13-quarter-border-refined-guide-1772/measured/observations.json",
+          "quarter-appearance-partition-1774/report.json",
+          "quarter-partition-comparison-1775/report.json",
+          "I13-border-ownership-1776/report.json"
+        ],
+        "scope": "17source stations:14stable candidates,3ambiguous retained. Straight source-line RMS0.731px,max2.256px. Cheek partition projects to manual shadowed I15 border within4.92px across camera alternatives; incomplete coverage remains.",
+        "disposition": "Held local study. Appearance-only cut does not solve connected geometry or establish a physical seam. Complete all crossed owners before considering a native revision.",
+        "numerical": "Default area integration gave inconsistent partition sums; original failure retained. Adaptive integration and exact B-spline pole/knot/weight/periodicity identity establish scoped support preservation. Existing engineering guards unchanged."
+      },
+      "exact_native_partition_example": {
+        "status": "scoped_native_two_face_correction",
+        "piece_ownership": "unchanged original upper wall rim and inboard floor edge; not area ranking",
+        "preserve": "all original source and every positive-area partition",
+        "verification": "actual saved source, exact STEP, shared native edge, per-face and pair checks, other294face equivalence, full body boundary inventory and four conditional comparison views",
+        "invalidation": "changed parent native artifacts, feature ownership, source, kernel behavior, camera or selected output requires applicable revalidation",
+        "limits": "body still open; no physical dimension, full print or general runtime qualification"
+      }
+    },
+    {
+      "id": "circular_feature_camera_constraints",
+      "priority": "conditional",
+      "inputs": [
+        "original_feature_border_pixels",
+        "feature_plane_and_circle_hypothesis",
+        "configuration_identity",
+        "versioned_camera_hypotheses",
+        "independent_landmarks_or_cross_view_ratios"
+      ],
+      "outputs": [
+        "conditional_camera_family",
+        "nuisance_parameter_hypotheses",
+        "border_residuals",
+        "withheld_checks_and_tradeoffs"
+      ],
+      "uses": [
+        "visual_resemblance",
+        "camera_initialization",
+        "source_consistency_diagnosis"
+      ],
+      "sources": [
+        "https://docs.opencv.org/4.13.0/d3/dc0/group__imgproc__shape.html",
+        "https://docs.opencv.org/4.13.0/d9/d0c/group__calib3d.html"
+      ],
+      "qualification": "Border identity, perspective circle-conic control, distortion/camber/steering, datum and same-state assumptions, nuisance identifiability and withheld full-object checks. An ellipse fit or inferred radius is not dimensional truth. Audit actual current native rim boundaries under an inherited camera before reusing old analytic profile proxies. Keep both tube ends and establish observed-end correspondence. Fit a new image camera only to declared reference features while holding body regions out of the fit. Preserve source threshold/ROI branches,finite-camera search-bound failures and an explicit weak-perspective alternative. Local Jacobian rank or subpixel training fit does not establish focal calibration or physical dimensions. Quantify withheld-feature and body-projection sensitivity before claiming independent validation.",
+      "wright_status": "conditional_local_Roadster_studies_91_to_96; no_generic_runtime_binding_or_calibrated_camera_qualified",
+      "local_evidence": [
+        "native-camera-rim-audit-1673/report.json",
+        "daylight-rim-observations-1681/report.json",
+        "daylight-rim-observations-1682/report.json",
+        "daylight-native-camera-1684/bounded-cases.json",
+        "daylight-weak-perspective-1685/report.json",
+        "daylight-lower-return-comparison-1687/report.json"
+      ],
+      "recent_local_case": {
+        "case": "Roadster I13 depth-spanning camera and border study1777",
+        "evidence": [
+          "I13-wheel-camera-1766/report.json",
+          "I13-steering-sensitivity-1767/report.json"
+        ],
+        "scope": "Exact native front/rear wheel circles span vehicle depth; source-only manual rim proposals retained. Three principal-point variants, zero-steering fit and front-shape holdout retained.",
+        "finding": "Zero-steering front pick RMS~5.36px; steering-nuisance fits estimate7.49-7.59degrees with front pick RMS1.15-1.46px. This is an assumption diagnostic, not proof of actual steering, lens calibration or dimensions.",
+        "invalidation": "Source boundary, native radius/position, steering/camber, intrinsics or camera change invalidates dependent projections."
+      }
+    },
+    {
+      "id": "straight_feature_vanishing_direction",
+      "priority": "conditional",
+      "inputs": [
+        "original_line_pixels",
+        "declared_object_frame_direction_prior",
+        "camera_hypotheses",
+        "withheld_features"
+      ],
+      "outputs": [
+        "camera_direction_residuals",
+        "pose_hypotheses",
+        "prior_conflicts"
+      ],
+      "uses": [
+        "camera_initialization",
+        "source_consistency_diagnosis"
+      ],
+      "sources": [
+        "https://docs.opencv.org/4.13.0/d9/d0c/group__calib3d.html"
+      ],
+      "qualification": "Prove image conventions and homogeneous direction calculation; retain prior and weighting, validate independent features and do not assign hidden depth from image straightness.",
+      "wright_status": "conditional_local_Roadster_study83; no_generic_runtime_binding_qualified"
+    },
+    {
+      "id": "projected_search_volume_feasibility",
+      "priority": "before_repeated_bounded_shape_fitting",
+      "inputs": [
+        "explicit_provisional_convex_volume",
+        "positive_depth_camera",
+        "original_feature_pixels"
+      ],
+      "outputs": [
+        "projected_volume_hull",
+        "unreachable_observations",
+        "conflicting_hypothesis_report"
+      ],
+      "uses": [
+        "bounded_correction_diagnosis",
+        "source_consistency_diagnosis"
+      ],
+      "sources": [
+        "https://docs.opencv.org/4.13.0/d3/dc0/group__imgproc__shape.html",
+        "https://docs.opencv.org/4.13.0/d9/d0c/group__calib3d.html"
+      ],
+      "qualification": "Convexity, positive depth, complete volume vertices and projection controls; distinguish construction bounds from engineering requirements. Exclusion does not identify which camera/volume/correspondence assumption failed.",
+      "wright_status": "conditional_local_Roadster_study89; no_generic_runtime_binding_qualified"
+    },
+    {
+      "id": "camera_matched_projection",
+      "priority": "first",
+      "inputs": [
+        "exact_candidate_geometry",
+        "original_image",
+        "versioned_camera_and_preprocessing",
+        "visible_masks_and_landmarks"
+      ],
+      "outputs": [
+        "projection",
+        "regional_residuals",
+        "coverage_and_uncertainty"
+      ],
+      "uses": [
+        "visual_resemblance",
+        "external_envelope"
+      ],
+      "sources": [
+        "https://docs.opencv.org/4.x/d9/d0c/group__calib3d.html",
+        "https://fspy.io/"
+      ],
+      "qualification": "Exact-artifact render identity, camera conventions, distortion, crop, occlusion and controlled defects; do not infer metric accuracy from pixels. Check exact-output visible-component coverage before further fairing. Separate silhouette/highlight/physical-edge observations. Polynomial image-band bounds cover only the chosen interpolated observations under recorded camera and positive-depth assumptions; preserve held-out view discrepancies. Bind a projection claim to exact artifact/component,geometry/camera versions,source/crop/trace identity,configuration and source band. A camera change invalidates every dependent projection claim,even when old CAD bytes are unchanged. Roadster1000 finds an inherited lip passes its old camera but misses the current camera by~33px. Refit1001 passes front4px while side1004regresses;hold it. A bounded camera-only minimax1005 failing19px is finite-search evidence,not infeasibility. Shared geometry/cameras must be reconsidered together,not per-patch camera substitution. A camera fitted to sparse upper landmarks does not automatically calibrate lower body or silhouette. A wheel-circle/ground-plane solve is a declared hypothesis, not authenticated metrology; retain source points, exact projected-circle residuals, bound hits and finite starts. Projected positive-basis control hulls can conservatively certify a complete patch inside a stated piecewise-linear source contour. Verify actual exported controls, weights, domain and positive depth; do not rely only on corner membership or a dense mesh. Verify a camera on reference features spanning the depth relevant to the claim. Rims clustered at the rear,especially reconstructed elliptical profiles,do not independently establish whole-vehicle perspective. Keep wheelbase,circular-wheel,radius,offset and steering assumptions explicit when evaluating a broader camera family. Reconcile cropped references to existing originals by feature matching and visual confirmation;higher resolution from the same exposure is not an additional independent view.",
+      "wright_status": "existing_native_render_chain_is_reuse_candidate; new_measurement_binding_not_qualified",
+      "local_evidence": [
+        "C23 actual exported coverage check479; original references481; failed27-control fit484; bounded adaptive51-control fit485; complete interpolated image-band numerical bounds486. Conditional reference curve only, not physical dimensional or native-panel acceptance. C40actual two-sheet correction838:25/50blocked rays to0;I02reviewed ROI11739to23023canopy pixels.841observer reproduces100Roadsterrays and existing pocket0.5/2mm depths in both camera projections. Final27focused controls842 pass; whole-vehicle fidelity remains unverified.",
+        "current-front-lip-1000/report.json",
+        "front-assembly-refit-1001/report.json",
+        "front-refit-side-1004/report.json",
+        "joint-front-camera-1005/report.json",
+        "wheel-ground-camera-1127/report.json",
+        "native-front-hull-validation-1164/report.json",
+        "negative-cheek-boundary-projection-1760/report.json",
+        "daylight-original-reconciliation-1761/report.json"
+      ],
+      "optional_local_exact_STEP_observer": {
+        "path": "inspect_step_rays.py",
+        "status": "implemented_and_locally_qualified_not_registered_workflow_runtime",
+        "evidence": [
+          "c40-correction-summary-838/report.json",
+          "step-ray-generality-841/report.json",
+          "step-ray-tests-842/test-output.txt",
+          "step-ray-generality-848/report.json",
+          "step-ray-tests-849/test-output.txt"
+        ],
+        "identity": "Expected exact STEP hash, camera, source pixels, unit basis, helper/dependency/runtime provenance; face indices revision specific.",
+        "invalidation": "Geometry/export/camera/pixels/source registration/unit basis changes invalidate affected checks.",
+        "missing": "Optional exact STEP inspection unavailable when CadQuery/OCCT absent; no silent mesh substitution.",
+        "ownership": "Open-format read-only measurement; reuse existing source/run/artifact/validator owners for any future accepted binding; no executor/vendor/UI/model-policy changes.",
+        "multi_root_STEP": "All independently imported STEP roots retained; two-root/two-solid analytic control verifies both parts.28finalfocusedtests pass."
+      },
+      "control_hull_measurement_example": {
+        "utility": "certify_projected_control_hull.py",
+        "schema": "wright.projected_control_hull_measurement/1",
+        "inputs": [
+          "exact-hashed control/camera/source-contour JSON",
+          "fresh measurement report path"
+        ],
+        "dependencies": [
+          "NumPy",
+          "OpenCV",
+          "Pillow",
+          "existing project_mesh_to_photo.py sibling"
+        ],
+        "missing_capability": "capability_unavailable,exit2;no fabricated measurement",
+        "geometry_binding": "Caller must verify bound geometry/control representation,positive basis/weights and source/camera identities. Read-only calculator creates no validation or approval authority.",
+        "local_evidence": [
+          "projected-control-hulls-1153/report.json",
+          "native-front-hull-validation-1164/report.json",
+          "projected-hull-cli-controls-1166/report.json"
+        ],
+        "other_workflow_scope": "Existing exact corrected pocket STEP with synthetic image bounds;numeric control only,not a real-photo or physical acceptance claim.",
+        "automatic_runtime_binding_qualified": false
+      },
+      "recent_local_case": {
+        "case": "Roadster I13 depth-spanning camera and border study1777",
+        "evidence": [
+          "I13-camera-comparison-1769/report.json",
+          "I13-border-ownership-1776/report.json"
+        ],
+        "scope": "All292actual B18faces retained in one-sided perspective comparisons. Body excluded from camera fit. Native ray intersections identify subjects crossed by the observed border.",
+        "finding": "Rear-rim-only weak perspective cannot establish whole-body registration. The traced source border crosses trailing skin,cheek and fascia; regional geometry must use the complete owner set.",
+        "same_exposure": "I13original is the existing daylight crop counterpart, not an independent additional view."
+      }
+    },
+    {
+      "id": "silhouette_visual_hull",
+      "priority": "second",
+      "inputs": [
+        "consistent_multiview_masks",
+        "calibrated_cameras",
+        "scale_if_metric"
+      ],
+      "outputs": [
+        "envelope_bound",
+        "coverage",
+        "uncertainty"
+      ],
+      "uses": [
+        "external_envelope"
+      ],
+      "sources": [
+        "https://graphics.stanford.edu/~mapauly/Pdfs/SigCourse04.pdf"
+      ],
+      "qualification": "Mask/camera perturbations, sparse-view bounds and concavity negative control; no inferred cavity acceptance.",
+      "wright_status": "candidate_not_qualified"
+    },
+    {
+      "id": "sfm_multiview_stereo",
+      "priority": "conditional",
+      "inputs": [
+        "overlapping_static_object_views",
+        "capture_groups",
+        "independent_scale_if_metric"
+      ],
+      "outputs": [
+        "cameras",
+        "sparse_points",
+        "observed_surface",
+        "coverage"
+      ],
+      "uses": [
+        "external_envelope",
+        "dimensional_reconstruction"
+      ],
+      "sources": [
+        "https://colmap.github.io/tutorial.html"
+      ],
+      "qualification": "Real parallax, reprojection checks, reflection/texture screening, independent dimensions and held-out observations; no silent hole-fill promotion.",
+      "wright_status": "candidate_not_qualified"
+    },
+    {
+      "id": "learned_multiview_geometry",
+      "priority": "experimental",
+      "inputs": [
+        "consistent_images",
+        "versioned_model_weights"
+      ],
+      "outputs": [
+        "camera_depth_point_hypotheses",
+        "model_confidence"
+      ],
+      "uses": [
+        "initialization"
+      ],
+      "sources": [
+        "https://github.com/facebookresearch/vggt"
+      ],
+      "qualification": "Local host/runtime and weights license; confidence calibration and independent geometry checks. Confidence is not millimetre uncertainty.",
+      "wright_status": "candidate_not_qualified"
+    },
+    {
+      "id": "radiance_field_or_splats",
+      "priority": "experimental",
+      "inputs": [
+        "consistent_capture_set",
+        "camera_basis",
+        "method_configuration"
+      ],
+      "outputs": [
+        "view_synthesis",
+        "optional_extracted_geometry"
+      ],
+      "uses": [
+        "visual_inspection",
+        "reconstruction_cross_check"
+      ],
+      "sources": [
+        "https://docs.nerf.studio/quickstart/export_geometry.html"
+      ],
+      "qualification": "Separate view-quality and surface-quality evaluation; qualify method-specific export and independent scale before metric use.",
+      "wright_status": "candidate_not_qualified"
+    },
+    {
+      "id": "generative_image_to_3d",
+      "priority": "optional_hypothesis_only",
+      "inputs": [
+        "images",
+        "model_weights_and_settings"
+      ],
+      "outputs": [
+        "inferred_shape_candidates"
+      ],
+      "uses": [
+        "initialization",
+        "alternative_interpretation"
+      ],
+      "sources": [
+        "https://github.com/microsoft/TRELLIS.2"
+      ],
+      "qualification": "Never independent ground truth. TRELLIS.2 documented Linux/24GB NVIDIA requirements are not Windows qualification; no GB10 dependency. Windows-local TripoSR experiment 969 completed explicit CUDA inference with pinned source/weights and preserved conditioning, tensors, density and raw mesh. Exact exported mesh inspection 970 finds 323 boundary edges and two face components; it is not watertight or adopted. Inspect flat geometry without texture so image color cannot masquerade as shape. A successful inference is not reference accuracy, native CAD, physical scale or print qualification. Keep original artifacts and reject a distorted hypothesis rather than repair it into an asserted truth.",
+      "wright_status": "candidate_not_qualified",
+      "new_targeted_local_candidate": {
+        "name": "TripoSR",
+        "official_source": "https://github.com/VAST-AI-Research/TripoSR",
+        "status": "not_installed_or_executed_at_this_checkpoint",
+        "purpose": "Optional reference mesh hypothesis for multiview CAD envelope comparison,not dimensional truth or editable native CAD replacement.",
+        "official_claim": "MITcode/weights;default single-image inference approximately6GBVRAM. LocalWindows qualification required.",
+        "local_hardware": "RTX A3000Laptop12GB/driver610.47;CUDA12.8/MSVCpresent;no existing environment modified.",
+        "alternate": "Pi3codeBSD3butweightsCCBYNC4.0perofficialREADME;notselectedforWrightdemo path.",
+        "plugin_discovery": "TargetedMeshy/Tripo3Ddirectory queryreturned0matches;existingconnectedtools have no3Dgeneration operation. No unrelated plugin suggested."
+      },
+      "local_evidence": [
+        "triposr-hypothesis-969/report.json",
+        "triposr-export-inspection-970/report.json",
+        "checkpoint-evidence-960/mesh-visual-inspection.json"
+      ]
+    },
+    {
+      "id": "bidirectional_surface_distance",
+      "priority": "first_when_independent_3d_reference_exists",
+      "inputs": [
+        "exact_candidate_surface",
+        "independent_reference_surface",
+        "fixed_datums",
+        "covered_regions",
+        "sampling_and_tolerance_profile"
+      ],
+      "outputs": [
+        "regional_distance_statistics",
+        "sampling_stability",
+        "coverage"
+      ],
+      "uses": [
+        "external_envelope",
+        "dimensional_reconstruction"
+      ],
+      "sources": [
+        "https://www.cloudcompare.org/doc/wiki/index.php/Cloud-to-Mesh_Distance"
+      ],
+      "qualification": "Two directions, area-aware sampling, missing recess and wrong-scale controls, signed-distance prerequisites; sampled max is not exact Hausdorff. A numerical projection can return a local stationary point rather than the true nearest distance. Check basic distance consistency: distance to a closed target set is1-Lipschitz, and a mesh-edge midpoint is no farther from the target than half the edge length plus an endpoint distance. Preserve violations as numerical-method failures rather than shape error. Locally seeded CAD evaluations provide upper bounds only when the evaluated points lie on the trimmed face or its original boundary. Retain failed memberships and all original observations; finite samples do not certify a continuous Hausdorff bound.",
+      "wright_status": "reuse_existing_validator_and_comparator_evidence; new_provider_not_qualified"
+    },
+    {
+      "id": "sections_features_and_continuity",
+      "priority": "first",
+      "inputs": [
+        "native_geometry",
+        "datums",
+        "feature_requirements",
+        "independent_sections_or_dimensions_where_required"
+      ],
+      "outputs": [
+        "section_dimensions",
+        "feature_presence",
+        "continuity_diagnostics"
+      ],
+      "uses": [
+        "dimensional_reconstruction",
+        "functional_replacement",
+        "surface_quality"
+      ],
+      "sources": [
+        "https://docs.mcneel.com/rhino/8/help/en-us/commands/zebra.htm"
+      ],
+      "qualification": "Known profiles and intentional sharp edges; numerical checks for numerical requirements; fairness is distinct from fidelity. Preserve complete boundary curves and parameter/orientation correspondence; endpoint matching alone is insufficient. Supported polynomial Jacobian bounds establish only local regularity. Independently check exact exported boundaries, intersections and retained geometry; do not equate smoothness with measured fidelity. Update the full shared-edge neighborhood when an interface changes; trimmed supports need explicit trim-aware reconstruction. Independently measure canonical boundary points against the underlying support, not only against a face carrying the supplied edge. Preserve changed-region held-out checks and regression evidence. Default surface area/centroid quadrature can change after representation operations. Investigate convergence before changing a guard:1009 adaptive integration1e-12 brings both original fender guards below unchanged limits,with identical support poles/weights and finite boundary differences<7e-11nominal. Do not turn support/sampling into complete trim identity. For topology visualization,explicitly handle degenerate edges and sample native curve parameters when arc-length solvers fail;retain original failures and label hidden-edge plots as X-rays. Check whole-support and finite-boundary evidence separately. Parameterized Coons boundaries require coherent junctions and longitudinal correspondence;changing parameterization alone cannot resolve an unsuitable projected perimeter. Distinguish sampled XY injectivity from3Dregularity or global self-intersection. B1roof has scoped tangent-control and regularity proofs;B2front has sampled evidence only. Whole-face distance solvers can miss a closest point on a C0composite curve;verify exact knot-span decomposition and preserve the failure instead of enlarging guards. Compare old and revised native section curves through the center, shoulders and pocket throats. Verify shared boundaries and attachment preservation independently of appearance. Align coplanar diagnostic region normals before set-union boundary extraction; opposed region normals can leave internal edges and produce a false outer-boundary failure. Preserve and diagnose the failure rather than widening its guard. A generic constrained filler can produce valid faces yet miss the unchanged boundary guard. Retain that failure;exact shared spline-control rows can preserve boundary curves while fitting a tangent field. Separate complete support/trim/regularity evidence from sampled tangent witnesses. Before copying a junction,intersect its footprint with actual neighboring owners and record unsupported depth regions. A source-visible end profile is an explicit modeled surface,not a viewport mask or permission for hidden backing. Preserve every positive retained face when an actual floor cut splits its domain;choose a boundary owner by its semantic full-span edge,not by largest area or nearest face. Restrict the transition to common supported depth and keep unsupported original geometry explicit. A CAD edge and its UV trim can differ numerically even on a valid face. Measure the edge against the actual support;when supported,replace only the approximate 3D curve with bounded-degree polynomial composition of the existing UV curve and surface,without moving the trimmed region or relaxing its guard. Unsupported degrees or surface types hold that method. Preserve inherited C0 creases and report one-sided tangent disagreement;an averaged tangent field is not a full G1 claim. Default face bounds may include unused support corners. A trim-boundary extrema observer needs a complete monotonic-control proof for each coordinate,plus a negative interior-extremum control;otherwise retain the conservative bounds and diagnose the mismatch. Verify actual face orientation separately from surface validity and coverage, especially after coordinate reflection. Double-sided renders can hide inward-facing exterior panels. Compare explicit one-sided views and mirrored normal parity, respecting cavity-wall intent; never flip every face by an axis rule. After correction, verify the exact native export preserves geometric records and effective appearance while changing only declared orientation senses. Keep genuine body openings and print closure as separate unfinished claims. For a manifold connected open-surface network, derive orientation constraints from opposite uses of each shared edge, anchor a known exterior face, and reject contradictory cycles. Pairwise reflection alone can propagate a wrong reference orientation. Treat disconnected sleeves separately; consistency does not establish closed-body topology, thickness or source fidelity. Use actual native ray intersections to distinguish backfaces from missing geometry before proposing caps. A curved trim can remove the visible return surfaces needed to represent a recess even when each remaining face passes CAD checks. Preserve all positive-area Boolean pieces with unique IDs before exporting; fail on duplicate IDs. A bounded C1 scalar inset field and a ruled visible-interior construction can pass complete model-space bounds yet fail the independent form comparison. Keep those trials held rather than relabeling their construction fit as source fidelity. Valid individual faces,coherent orientation and a connected G0 network do not prove internal spline continuity. Inspect exact exported surface knot jets and trim-qualified normal samples,then independently cross-check significant creases using the native derivative evaluator. A new depth field can amplify an inherited piecewise-plan kink. Preserve the failing candidate and derive any fairing from the actual slope jump;bound point movement and camera-projected movement separately from source fidelity. Complete coefficient continuity at one lower junction does not certify the upper transition,other joins,G2 continuity or a physical radius.",
+      "wright_status": "existing_CAD_inspection_is_reuse_candidate; selected_methods_not_qualified",
+      "local_evidence": [
+        "C25 actual native traces545 and control/section checks533/536/537 pass stated scope. C26 coupled14face trial: plate546 fails independent support549; algebraic546d/549d passes1e-6guard, visible frontal seam551 improves, but targeted side554 worsens. C26 held; no native C26 or whole-vehicle acceptance.",
+        "sewn-fender-properties-1009/report.json",
+        "body-boundary-audit-adaptive-1010/report.json",
+        "body-constraints-1016/failure.json",
+        "body-constraints-1020/report.json",
+        "b2-front-boundary-diagnosis-1044/report.json",
+        "b2-front-network-1045/failure.json",
+        "b2-front-network-1046/failure.json",
+        "b2-owned-front-1047/report.json",
+        "b2-representation-differences-1058/report.json",
+        "outer-root-native-owner-map-1506/report.json",
+        "outer-root-source-fit-1510/report.json",
+        "trim-bounds-qualification-1520/report.json",
+        "floor-pcurve-lift-test-1531/report.json",
+        "native-B12-STEP-qualification-1546/report.json",
+        "native-B12-root-network-proof-1547/report.json",
+        "native-B12-root-visibility-1548/report.json",
+        "body-one-sided-comparison-1598/report.json",
+        "native-B14-STEP-qualification-1599/report.json",
+        "native-B14-orientation-proof-1600/report.json",
+        "body-boundary-audit-1604/report.json",
+        "body-orientation-graph-1605/report.json",
+        "native-B15-STEP-qualification-1614/report.json",
+        "native-B15-orientation-graph-1616/report.json",
+        "native-B15-orientation-proof-1617/report.json",
+        "native-B15-rear-background-1618/report.json",
+        "pocket-aperture-local-1626/report.json",
+        "curved-return-control-proof-1632/report.json",
+        "visible-pocket-recess-local-1634/identity-failure.json",
+        "visible-pocket-orientation-graph-1636/report.json",
+        "visible-pocket-depth-proof-1638/report.json",
+        "rear-pocket-trial-disposition-1641/report.json",
+        "native-return-continuity-1705/report.json",
+        "native-return-crease-crosscheck-1706/report.json",
+        "lower-return-fairing-continuity-1708/report.json",
+        "lower-return-fairing-continuity-1713/report.json",
+        "lower-return-fairing-delta-proof-1717/report.json",
+        "lower-return-fairing-disposition-1718/report.json"
+      ]
+    },
+    {
+      "id": "bounded_inverse_rendering",
+      "priority": "experimental_after_projection_qualification",
+      "inputs": [
+        "editable_candidate_parameters",
+        "development_images",
+        "frozen_camera_basis",
+        "bounds"
+      ],
+      "outputs": [
+        "proposed_parameter_revision",
+        "sensitivity_diagnostics"
+      ],
+      "uses": [
+        "bounded_correction_proposal"
+      ],
+      "sources": [
+        "https://pytorch3d.org/tutorials/fit_textured_mesh"
+      ],
+      "qualification": "Identifiability, constrained native parameters, held-out audit and feature protection; no acceptance from fitting loss or texture optimization. Use both source-to-projected-curve and projected-curve-to-source distances when refining a boundary. One-sided nearest distances can hide overshoots. Freeze the evaluation camera and retain every source pick, active bound and residual. Small residuals do not establish corresponding feature identity or physical depth; inspect camera/triangulation conditioning before interpreting coordinates. Revalidate the exact revised native output.",
+      "wright_status": "candidate_not_qualified"
+    },
+    {
+      "id": "independent_dimensional_capture",
+      "priority": "when_physical_access_and_metric_claim_require_it",
+      "inputs": [
+        "authorized_capture",
+        "calibration",
+        "physical_object_state",
+        "measurement_plan"
+      ],
+      "outputs": [
+        "traceable_dimensions_or_scan",
+        "measurement_uncertainty",
+        "observed_coverage"
+      ],
+      "uses": [
+        "dimensional_reconstruction",
+        "functional_replacement"
+      ],
+      "sources": [
+        "https://docs.opencv.org/4.x/d1/d90/group__structured__light.html"
+      ],
+      "qualification": "Independent instrument/provider qualification and actual measurements; no physical action authorized by this research inventory.",
+      "wright_status": "future_capture_option_not_qualified"
+    },
+    {
+      "id": "cross_view_feature_interval_feasibility",
+      "priority": "after_evidence_reuse_and_feature_identity_before_repeated_CAD_fitting",
+      "inputs": [
+        "existing_original_images_and_hashes",
+        "explicit_component_and_feature_hypotheses",
+        "versioned_camera_hypotheses",
+        "unchanged_interpretation_bands",
+        "editable_native_reference_revision"
+      ],
+      "outputs": [
+        "conditional_cross_view_admissible_intervals",
+        "infeasible_sections_and_missing_observations",
+        "exact_native_geometry_and_visibility_evidence",
+        "separate_camera_configuration_and_feature_uncertainties"
+      ],
+      "uses": [
+        "visual_resemblance",
+        "reconstruction_feasibility_diagnosis",
+        "avoid_unproductive_geometry_iterations"
+      ],
+      "sources": [
+        "../../docs/workflows/reverse-engineering-methods.md"
+      ],
+      "qualification": "Separate adjacent component boundaries before correspondence. Propagate original source bands through validated camera equations and retain all intervals and missing data. For the tested fixed-X orthographic-side/perspective-front case, stripe-piece affine extrema bound the admissible top projection. Do not generalize to arbitrary cameras, call fixed X calibrated, widen requirements, mistake conditional inconsistency for physical impossibility, or promote two-view gains before held-out full-assembly checks. Exact native source/STEP/control/support checks remain separate from image fidelity and physical acceptance. Check fixed-camera epipolar incidence before forcing two proposed curve segments to be one shared edge. Nonoverlapping visible portions, source feature misassociation and unqualified cameras are different explanations. A failed fixed-camera incidence check is not physical infeasibility. Distinguish the white/black cheek junction from a lower side-panel highlight.",
+      "wright_status": "Local C27native trial577to584:exact175openfaces,16newcontrols<1.2e-10,underlying-support<4.52e-10,0sampledinteriorcrossings. Front/side means improve,top component placement fails;21of23Nconditional sections conflict after4px bands.12strictretaineddifferences unwaived;no runtime binding or whole-vehicle acceptance.",
+      "local_evidence": [
+        "c27-top-trim-569/report.json",
+        "native-c27-validation-577/report.json",
+        "native-c27-view-measurements-584/report.json",
+        "pillar-three-view-feasibility-583/report.json",
+        "front-junction-observations-1140/report.json",
+        "front-junction-epipolar-1142/report.json"
+      ],
+      "current_local_prototype": {
+        "evidence": [
+          "window-epipolar-triangulation-851/report.json",
+          "window-ray-depth-bands-852/report.json",
+          "I12-window-source-profiles-854/report.json",
+          "continuous-three-view-bands-856/report.json",
+          "three-view-observer-controls-865/report.json"
+        ],
+        "scope": "At a fixed original orthographic top column,continuous top-pixel band andraydepth form a plane. Positive-depth perspective feature bands become linear halfplanes;clip all adjacent qualified source segments,retain disconnected solutions/missing observations.",
+        "observed": "0/413upper and18/474lower near-side samples have witnesses in three traced bands under fixed conditional cameras.146independent LPcases and166forward witnesses checked.",
+        "limits": "Not physical impossibility,complete uncertainty/statistical confidence,unique reconstruction or new runtime binding. Untraced/uncertain/occluded cases separate. Preserve all observations/bands;revise shared camera/feature hypotheses before more CAD fits."
+      }
+    },
+    {
+      "id": "shared_landmark_camera_reconstruction",
+      "priority": "after_source_feature_identity_before_surface_patch_corrections",
+      "inputs": [
+        "existing_original_images_and_hashes",
+        "same_component_feature_tracks_and_endpoint_branches",
+        "explicit_camera_symmetry_coordinate_gauge_assumptions",
+        "bounded_editable_landmark_seeds",
+        "held_out_curves_or_views"
+      ],
+      "outputs": [
+        "calculated_shared_landmark_framework",
+        "versioned_camera_hypotheses_and_residuals",
+        "simple_shared_native_curve_sources",
+        "exact_output_and_capability_limits",
+        "source_identity_corrections_and_uncertainties"
+      ],
+      "uses": [
+        "visual_reconstruction",
+        "multiview_shape_consistency",
+        "coherent_surface_framework_preparation"
+      ],
+      "sources": [
+        "../../docs/workflows/reverse-engineering-methods.md"
+      ],
+      "qualification": "Do not assume CAD parametric corners denote observed manufactured-feature junctions. Distinguish inner/outer terminal endpoints before camera/geometry fitting. Preserve corrected observation revisions and wrong-branch fits. Declare coordinate gauges, symmetry, camera constraints and finite optimizer limits; retain all residuals and bound hits. Use independent source-only connected tracing/held-out views after fitting; same-image samples are not blind calibration. Sparse frameworks do not establish whole-body or dimensional accuracy. Qualify curve-only tool representations without inventing geometry merely to produce a body. Carry shared source curves into coherent minimal surfaces and verify actual exported boundary controls,trim,support and full-domain regularity. Keep interior inference distinct from observed curves. Rebind new coordinate gauges explicitly with independent camera anchors;do not use old camera placement as calibrated truth. A finite failed correction solve is not an infeasibility proof. Source-only curve intersections establish junction identity and component ownership before fitting. Preserve explicit camera revisions, test omitted-view predictions and conditional Jacobian sensitivity, and distinguish gauge assumptions from physical calibration. A polynomial tangent identity plus a complete analytic displacement bound can qualify a bounded local fairing hypothesis without widening source bands; native export remains mandatory. Tangent-only correction may worsen normal curvature: retain that finding. Calculate a minimal constrained fairing with exact Bernstein integrals, verify full first/second derivative jets against actual native controls, and certify complete displacement using subdivision hull bounds. Retain source boundaries, middle sections,original uncertainty bands and strict identity checks; physical continuity remains unverified. Identify component/edge ownership before fitting; retain virtual-corner and source-branch uncertainty. New source anchors require an explicit bounded camera revision and regression checks on prior passes. Check pointwise bands as well as least-squares objectives. A valid multi-edge filler can fail boundary support; retain that result and use a declared exact polynomial construction without relaxing numerical guards. Verify native G1 jets, sections and complete controls; construction spans are not physical panel seams, and G1 does not establish G2. Inspect true source feature identity before waiving a discrepancy. When separate bounded camera/geometry families fail, a declared joint family can be tested without widening observation bands; a failed finite solve is not infeasibility, and an LP that does not prove incompatibility must not be presented as proof. Preserve old cameras, frozen routing and source uncertainties. Recalculate dependent continuity/movement, consume declared source-profile axes, separate observer errors from product defects, then independently validate the actual native artifact and withheld observations. Inspect full-assembly compatibility before promoting regional proofs. Record reference component states. Choose source scan axes by local edge direction and verify material contact at original pixels; preserve a whole superseded source domain before refitting, never delete points by CAD residual. A failed wider camera fit can be caused by source association error. Full-domain subdivision can certify monotonicity despite negative coarse coefficients. Under tangent-jet reparameterization, distinguish transverse scale from longitudinal shear transport; verify all coefficients on exact native outputs and independent sections. Before nonlinear curve fitting, test algebraic image/camera identities for paired features. Distinguish upper canopy, roof rail, window and beltline; use original-pixel color-side contact to avoid rubber/reflection gradients and retain all superseded observations. Manual construction tips do not become measured corners. Match observer density to the exact accepted-artifact check before optimizing; all old constraints remain mandatory under a new camera hypothesis. Minimax slack diagnoses failure and never relaxes acceptance. Preserve held finite search and bounded sensitivity histories; revise pose/feature hypotheses instead of endlessly adding curve degree. Audit an integrated exact native assembly before polishing regional fits. Check competing-geometry visibility and ordered component interfaces, not only isolated curve residuals. Preserve historical candidates without freezing all proposed coordinates forever: explicit corrected versions may revise geometry/cameras and must revalidate affected requirements. Read paged source completely at an exact document revision; distinguish model-state changes from paging defects. Separate strict serialization, complete support comparisons and finite boundary samples. Show CAD-only views so photographic wheels in an overlay cannot be mistaken for actual geometry. New joint geometry/camera families must visibly preserve old source observations and identify newly proposed endpoint pairings and coordinate gauges. A low sparse residual can still protrude outside a withheld source silhouette. Preserve that native failure, condition a fresh bounded correction on the missing outline, then revalidate the exact export. If selection changes from minimum residual to feasibility/no-bound-hit/more-evidence criteria, record a new selection instead of rewriting the original result. Upper landmark fits, regional projection and whole-car visibility remain distinct.",
+      "wright_status": "Local corrected3viewstudy595to606:24observations<=2.731px,no bound hits;two quadratics442unusedsourcepathpoints<=2.125px. OneI20Nsample4.164pxunwaived. C28source r2 saved;Component.add rejects edge-only bodies;localSTEP2edges exactcontrols verified,0faces/0solids. No nativeC28STEP/fullcar/readiness/physicalacceptance. No generic runtime binding. C29r1native1face9controls620/624:1064qualifiedcrossprofilepoints<=2.046px,442unusedpathpoints<=2.125px;7uncertainpicks,one4.164pxsidepoint and top/sideglobalposedisagreements retained.625bfailedboundedcorrection not submitted;no wholevehicle acceptance. C30 native two-skin645: retained hood strict serialization equal, exact shared boundary,439cowl rear and251side samples pass4px;nonzero normal mismatch retained. Camera651 withheld I20 miss5.565px. C31 local653 tangent proposal certified displacement<=0.924nominal and251side samples pass;native save654 and read-only search655 timed out,remote outcome unknown and unreplayed. C31local666tangent improvement worsens curvature. C32standalone667held for movement>2nominal. C33native679quintic2-skin study passes numericalG2jet,strict retainedhood identity,and complete movement<=1.722nominal. Native682all439rear+251side source samples pass4px. Originalhoodedge4.1535px/cameras/globalvehicle remain held. C35r1 native718 has five valid open faces and exact retained C33 hood/cowl. Three glazing spans satisfy numerical G1; G2 not established. Native719 all2537 new source observations pass4px. Explicit40anchor camera696 max3.394px; both distance bounds active. Native697 retains2389 prior passes, one old hood miss4.256px. C34filler700 held for boundary support; quadratic705 held. I15 camera remains unbound; no wholevehicle/physical acceptance. C36r1 native743 retains3C35glass faces strictly; changed hood/cowl G2jets pass1e-6 with complete cowl movement1.8165<2nominal. Native744all4927points pass4px, including old hoodmiss;54top containment checks pass4px, maximum overrun7.6275->4.0000px. Explicit joint camera/hood family733 is conditional, with original geometry/u-camera bounds and declared uncalibratedv bounds. Separate attempts728/729/731/732 held;730b did not prove incompatibility. No physicalscale/sidecamera/wholevehicle acceptance. C37local749wholecar trial held:171valid openfaces,0strict serialization matches on local re-export,roof/side/fender joins unresolved;not a native candidate or proof of geometric change. Source758corrects near-horizontal I18arc extraction,retains48superseded points. C38r1native771/772extendsC36to rear-windowend with3G1uppercanopy spans;all5C36faces strictly retained,1701new points+4corners pass4px. Original4927points+54top checks inherited unchanged. Native front/internalG1/fullregularity/sections pass1e-6;G2newjoins,side/fullbody/physicalacceptance open. Research26:786proves27paired top roof-edge observations incompatible with4px under recorded camera/symmetry,while473beltline pairs are compatible. Sources782/790/793preserve all prior points.798-803localcamera/curve trials retain3578actual nativeI18source passes+16anchors butnew1746beltline observations still fail;no new camera or CAD candidate accepted.796/797observer undersampling and802guard refusal preserved,not provider defects. Research27:C39r1actual fullbuild/STEP has172valid openfaces,164C25context+8C38regions,nineoldfacesremoved.8/8C38strict unchanged;152/164C25strict unchanged,twelve serializationdifferences retained;815all12boundarysamples<9.66e-10nominal,11complete support checks.818same-Xside/canopyseparationmax215.151nominal;I15canopyvisible73/7562pixels,wholebodyheld.806widerposefitfails,noneadopted. Five817nativecomparisons inspected;I15has149ties,otherfourzero. No overall dimensional fidelity/acceptance claim.",
+      "local_evidence": [
+        "three-view-body-reconstruction-596/report.json",
+        "front-curves-connected-check-598/report.json",
+        "c28-local-step-validation-606/report.json",
+        "native-c29-validation-620/report.json",
+        "native-c29-profile-measurements-624/report.json",
+        "native-c29-heldout-envelopes-623/report.json",
+        "c29-bounded-correction-625b/report.json",
+        "cowl-source-intersections-631/report.json",
+        "body-cowl-camera-revision-632/report.json",
+        "central-cowl-profile-domain-635/profiles.json",
+        "native-c30-validation-645/report.json",
+        "native-c30-cowl-profiles-648b/report.json",
+        "camera-observability-651/report.json",
+        "c31-tangent-cowl-local-653/report.json",
+        "restored-runtime-657/report.json",
+        "local-c31-exchange-666/report.json",
+        "c32-curvature-cowl-local-667/report.json",
+        "c33-curvature-cowl-local-668/report.json",
+        "native-c33-validation-679/report.json",
+        "native-c33-source-profiles-682/report.json",
+        "native-c33-continuity-683/report.json",
+        "roof-source-junctions-687/report.json",
+        "roof-fixed-pose-test-688/report.json",
+        "outer-glass-source-intersections-693/report.json",
+        "roof-seam-source-continuity-693a/report.json",
+        "body-roof-outer-camera-revision-696/report.json",
+        "native-c33-full-frame-pose-revalidation-697/report.json",
+        "roof-front-cross-curve-fit-698/report.json",
+        "c34-glazing-local-700/report.json",
+        "glazing-boundary-source-profiles-703/report.json",
+        "glazing-boundary-constrained-fit-705/report.json",
+        "glazing-boundary-cubic-fit-706/report.json",
+        "c35-glazing-exact-local-708/report.json",
+        "c35-glazing-sections-709/report.json",
+        "c35-source-713/report.json",
+        "native-c35-validation-718/report.json",
+        "native-c35-source-boundaries-719/report.json",
+        "roof-rear-source-review-725/report.json",
+        "roof-dark-source-review-726/report.json",
+        "front-outline-source-review-727/report.json",
+        "top-camera-correction-728/report.json",
+        "top-pitch-camera-729/report.json",
+        "front-center-feasibility-730/observer-error.json",
+        "front-center-feasibility-730b/report.json",
+        "c36-front-correction-731/report.json",
+        "joint-front-top-correction-732/report.json",
+        "complete-top-front-correction-733/report.json",
+        "c36-local-qualification-734/observer-error.json",
+        "c36-local-qualification-735/report.json",
+        "c36-source-738/report.json",
+        "native-c36-validation-743/report.json",
+        "native-c36-source-744/report.json",
+        "front-assembly-audit-748/report.json",
+        "c37-whole-car-composition-749/report.json",
+        "full-canopy-source-review-751/report.json",
+        "full-canopy-source-profiles-752/report.json",
+        "full-canopy-source-profiles-753/report.json",
+        "full-canopy-curves-fit-754/report.json",
+        "full-canopy-curves-fit-755/report.json",
+        "global-canopy-camera-fit-756/report.json",
+        "canopy-fit-residual-review-757/report.json",
+        "full-canopy-source-profiles-758/report.json",
+        "full-canopy-curves-fit-759/report.json",
+        "c38-upper-canopy-local-761/construction-error.json",
+        "c38-upper-canopy-local-763/report.json",
+        "c38-source-766/report.json",
+        "native-c38-validation-771/report.json",
+        "native-c38-source-772/report.json",
+        "side-window-source-profiles-778/report.json",
+        "side-window-curves-fit-779/report.json",
+        "side-window-held-fit-review-780/report.json",
+        "side-window-source-detail-781/report.json",
+        "side-window-source-profiles-782/report.json",
+        "side-window-curves-fit-783/report.json",
+        "side-window-minimax-784/report.json",
+        "side-window-tip-diagnostic-785/report.json",
+        "side-window-source-symmetry-786/report.json",
+        "side-beltline-fit-787/report.json",
+        "side-window-front-tips-788/report.json",
+        "shaded-window-rear-review-789/report.json",
+        "side-window-source-profiles-790/report.json",
+        "side-beltline-fit-791/report.json",
+        "beltline-residual-review-792/report.json",
+        "side-window-source-profiles-793/report.json",
+        "side-beltline-fit-794/report.json",
+        "side-beltline-fit-795/report.json",
+        "beltline-camera-fit-797/initial-precheck.json",
+        "beltline-camera-fit-798/report.json",
+        "beltline-camera-fit-800/report.json",
+        "beltline-camera-fit-801/report.json",
+        "beltline-camera-fit-803/report.json",
+        "beltline-camera-pose-fit-806/report.json",
+        "c39-native-stage-807c/report.json",
+        "c39-native-stage-807c/report-correction.json",
+        "c39-source-809b/report.json",
+        "roadster-c39-assembly-813-artifact/download-receipt.json",
+        "native-c39-validation-814/report.json",
+        "c39-retention-differences-815/report.json",
+        "c39-global-interface-audit-818/report.json",
+        "joint-front-frame-1144/report.json",
+        "native-front-network-comparisons-1151/report.json",
+        "joint-front-frame-1152/report.json",
+        "front-frame-selection-1154/report.json"
+      ]
+    },
+    {
+      "id": "print_scale_derivative_and_exact_mesh_validation",
+      "priority": "after_supported_master_geometry_before_print_ready_claim",
+      "inputs": [
+        "exact_master_revision_and_export_hash",
+        "user_target_size_with_units_and_named_extent",
+        "explicit_print_geometry_changes",
+        "printer_process_and_minimum_feature_requirements_or_declared_pending_input"
+      ],
+      "outputs": [
+        "separate_editable_print_derivative",
+        "explicit_uniform_scale_and_coordinate_transform",
+        "exact_part_exports_and_hash_manifest",
+        "independent_mesh_topology_volume_extent_report",
+        "missing_closure_and_process_suitability_findings"
+      ],
+      "uses": [
+        "physical_scale_model_preparation",
+        "digital_printability_assessment"
+      ],
+      "sources": [
+        "../../docs/workflows/reverse-engineering-methods.md"
+      ],
+      "qualification": "Preserve the nominal or physically verified master and earlier candidates. Derive scale from the final exact assembly extent named by the user, not from each individual part; remeasure after configuration changes. A watertight wheel does not qualify an open vehicle body. Record underside closure, thickening and feature simplification as print-design changes rather than measured hidden geometry. Check actual exported solids and meshes, connected components, winding, positive volume, degeneracy, units and extent. Report untested self-intersection and process-specific features. Missing printer/process information follows the existing declared input wait; independent geometry work can continue. Source, configuration or geometry changes invalidate dependent export and validation evidence. Reuse existing CAD/export, validator, durable evidence and common working view; add no executor, vendor protocol or job-status authority. This descriptive proposal does not register a new capability or alter accepted workflow instructions; unavailable tools must be diagnosed before binding. Portable workflows need their versioned method instructions, input/validation dependencies and exact artifact subjects, without credentials or approval authority. A new shared implementation requires a substantially different existing workflow qualification. Current C48 wheel derivatives995 explicitly unite overlapping visual rim/tyre solids for single-piece display printing;do not claim separately exported visual parts have a mechanical fit. Preserve native source and rigid print-frame transforms. Compare STEP BRep bounds with triangulation explicitly disabled on both subjects;cached mesh deflection changes default bounds (994). Keep the original numerical guard. Independently inspect exact STL topology/volume/extents (993),without converting these into process or selfintersection qualification. Inventory actual boundary ownership and connected components before closure. A free loop can be an aperture,insert throat,window interface,decorative sheet or underside boundary;blind planar caps are not a body reconstruction. Separate solid-volume display derivatives require explicitly inferred wheelhouses,underside and aperture backings,then exact native/mesh validation. C48has11connectedbodycomponents and185freeedges in31boundarygraphs,not one missing bottom panel. Scale the completed selected assembly to the requested display length;never derive print scale from an incomplete construction core. Roadster target is about100mm overall. Existing four closed wheel derivatives pass bounded mesh checks;the open B2body does not yet establish a printable complete car. Keep underside,wheelhouse,attachment and minimum-feature assumptions explicit in a separate derivative. A valid closed BRep, STEP round trip and watertight STL can still fail independent triangle-intersection checks. Record absolute versus relative tessellation explicitly. Bound repair displacement and scope before invoking repair; reject changed candidates that exceed either bound or fail independent saved-output checks. Keep inferred underside, wheelhouses and backings separate from observed vehicle geometry. Before filling a topological free loop, test whether its proposed interior duplicates existing surface area or encloses a folded legacy transition. Nonzero edge sections and matching endpoints do not by themselves prove missing area, a shared full boundary or smooth continuity. Classify observed exterior gaps, intentional apertures, overlap/T-junctions and inferred hidden closures separately. Remove or repartition a proved overlap in a new source revision while preserving its historical artifact; do not add a second sheet or widen sewing tolerance to improve a free-edge count. Check exact native outputs again after source correction. Source links and reference revisions are part of the saved dependency identity and must accompany copied native construction code. Locate actual intersecting triangles before repeated remeshing. Check exact native support and export quantization cells. A recovered double-precision mesh can regress when a downstream tool uses float32. Revalidate the actual saved manufacturing encoding; preserve every unaffected triangle and coordinate. For a bounded local diagonal flip, record affected faces, unchanged vertices, topology/volume controls, an explicit surface-difference bound, ordinary serialization roundtrip and complete output intersection checks. Native support diagnosis or zero local collisions alone cannot release the full mesh. Rebase the final derivative onto the selected current master; an older qualifying body is not the final print package.",
+      "local_evidence": [
+        "native-c43-validation-893/report.json",
+        "c43-wheel-print-parts-894/manifest.json",
+        "c43-wheel-print-parts-894/mesh-validation.json",
+        "c48-100mm-wheel-derivatives-995/report.json",
+        "c48-100mm-wheel-derivatives-995/mesh-validation.json",
+        "wheel-roundtrip-diagnostic-994/report.json",
+        "body-boundary-audit-adaptive-1010/report.json",
+        "c48-100mm-wheel-derivatives-995/report.json",
+        "native-b2-interfaces-1056/report.json",
+        "rear-return-interface-checks-1254/report.json",
+        "B7-body-boundary-audit-1265/report.json",
+        "native-B7-return-overlaps-1271/report.json",
+        "local-B8-boundary-audit-1278/report.json",
+        "B8-wheelhouses-local-1305/report.json",
+        "B8-wheelhouse-boundary-audit-1306/report.json",
+        "B8-display-roof-trim-1307/report.json",
+        "B8-display-solid-interference-1311/report.json",
+        "B8-display-regularization-1313/report.json",
+        "B8-display-source-coverage-1315/report.json",
+        "B8-display-mesh-validation-1317/report.json",
+        "B8-display-double-mesh-validation-1319/report.json",
+        "P5-intersection-location-1933/report.json",
+        "P5-native-rounding-diagnosis-1934/native-projections.json",
+        "P5-local-quad-retriangulation-1942/receipt.json",
+        "P5-local-quad-validation-1943/report.json",
+        "P6-wheelhouse-floor-study-1954/report.json",
+        "P6-camera-all-pieces-1967/report.json",
+        "P6-cached-fault-location-1968/report.json",
+        "P6-material-cell-study-1970/report.json"
+      ],
+      "evidence_scope": "Roadster wheel parts only: eight actual native solids, uniformly scaled for a 100 mm vehicle, independently checked STL topology/volume/extents. Whole-body closure, self-intersection, printer-specific suitability and physical accuracy remain unverified.",
+      "measurement_example": {
+        "utility": "measure_mesh_geometry.py",
+        "schema": "wright.mesh_geometry_measurement/1",
+        "role": "Read-only exact-artifact measurement, not workflow execution, repair or acceptance authority",
+        "requires": [
+          "NumPy",
+          "Trimesh",
+          "PyMeshLab"
+        ],
+        "missing_capability": "capability_unavailable; no fabricated result",
+        "inputs": [
+          "exact artifact path",
+          "expected SHA-256",
+          "declared units",
+          "fresh report path"
+        ],
+        "invalidation": "Changed bytes, declarations or measurement implementation require a fresh measurement. Requirements and acceptance remain with existing workflow validation owners.",
+        "local_evidence": [
+          "mesh-checker-pocket-proof-1098/shared-utility-report.json",
+          "mesh-checker-pocket-proof-1098/shared-utility-negative-controls.json",
+          "P4-100mm-body-validation-1095/shared-utility-rear-positive.json",
+          "existing-print-wheels-1123/report.json"
+        ],
+        "automatic_runtime_binding_qualified": false
+      },
+      "construction_lessons": [
+        "Partition each opening into an owned exterior boundary, an explicitly inferred inboard return/backing and compatible floor/end joins. Transverse and longitudinal boundaries need compatible separate constructions;one global flattening map can fold or intersect.",
+        "Recompute topological shell closure instead of trusting an unset cached flag. Cache a positive result only after the actual closure checker proves it;do not waive free/nonmanifold-edge or solid-interference checks.",
+        "For exact contact regularization, preserve every bounded material cell and report the actual result. Recheck the protected original boundary with explicit per-subject coverage and unchanged numerical guards;matching volume alone is insufficient.",
+        "A valid closed interference-free CAD solid can still produce an invalid mesh. Preserve every failed saved mesh. More coordinate precision and removal of exact-zero-area triangles alone do not establish closure,manifoldness or intersection freedom.",
+        "Rebind every native owner/reference on a current-master print rebase. A closed BRep can still fail full interference and material-union checks; retain exact faulty subshape identities and assembly/void semantics.",
+        "Check boundary-envelope overshoot and actual positive-area output pieces. Preserve all pieces; do not silently keep the largest cell or increase numerical tolerances. Cache immutable shape measurements once per diagnostic subject."
+      ],
+      "current_master_rebase_status": "P6 held: camera backing corrected; current-master solid interference/material classification and native export remain unqualified."
+    },
+    {
+      "id": "source_edge_ownership_revision",
+      "priority": "before_forcing_a_geometric_fit_to_conflicting_features",
+      "inputs": [
+        "original_images_and_exact_pixel_coordinates",
+        "prior_observations_interpretation_bands_and_residuals",
+        "explicit_candidate_feature_subjects_and_review_windows"
+      ],
+      "outputs": [
+        "new_versioned_source_ownership_evidence",
+        "separate_candidate_branches_with_stencil_sensitivity",
+        "complete_prior_sample_to_candidate_mapping",
+        "unresolved_correspondence_and_occlusion_findings"
+      ],
+      "qualification": "Keep silhouette,material border,raised-looking highlight,inner ledge and reflection as distinct candidate subjects. Trace branches independently from source pixels before fitting CAD or imposing symmetry. A closest pixel branch within an old interpretation band is not physical correspondence. Preserve every prior observation,uncertainty band and failed residual;never delete outliers or widen bands to manufacture a pass. A revised source subject is a visible new evidence revision,not a rewrite of old acceptance. New CAD constraints must identify the bound source revision and actual subject. An AI review is advice and creates no approval,execution or evidence authority. Continue independent components when a region remains unresolved. A strongest directed intensity transition is only a source candidate;it can follow a caliper,reflection or bevel rather than the intended face border. Preserve that candidate branch and residuals when revising semantic ownership. Do not force repeated triangular regions by extrapolating unobserved inner corners:individually valid planes can overlap in their combined layout. Seeded appearance segmentation needs visual review for leakage and ROI clipping before conversion to CAD;it does not establish materials,part identity,depth or hidden construction. Classify an apparent pocket-return contour separately from the outer-corner silhouette and a material/highlight border. A low residual to manually read points in one image does not establish a physical trim edge, hidden interior or correspondence in another view. Keep all source picks, including those outside the current CAD trim; do not silently discard them to obtain a pass. Before moving a suspected hidden inset, inspect which exact CAD face actually owns the projected discrepancy. Existing reconstructed corner attachments are hypotheses, not measured constraints: revise coupled adjacent faces explicitly when evidence requires it, preserving protected interfaces. Source picks following highlights cannot certify a material edge or dimensional improvement. Unmatched endpoint lists do not prove missing geometry:a shared boundary point may lie inside an existing curved edge. Measure exact face/wire distances and section ownership before adding caps or rewriting a junction. A chord through convenient CAD endpoints is not a traced source appearance boundary;preserve failed cross-view correspondence before recoloring or repartitioning.",
+      "local_evidence": [
+        "lip-common-frame-1203/report.json",
+        "lip-residual-inspection-1204/report.json",
+        "lip-review-route-images-1205.json",
+        "lip-edge-ownership-1211/E_lip_ownership_r1.json",
+        "wheel-face-source-analysis-1576/report.json",
+        "wheel-sector-border-observations-1577/report.json",
+        "wheel-visible-face-trial-1578/report.json",
+        "wheel-visible-face-trial-1579/report.json",
+        "wheel-face-source-regions-1580/report.json",
+        "wheel-face-overlap-audit-1581/report.json",
+        "source-pocket-return-traces-1623/inputs.json",
+        "pocket-source-ownership-1624/report.json",
+        "pocket-observability-1640/report.json",
+        "quarter-face-ownership-1648/report.json",
+        "white-bowl-boundary-disposition-1654/report.json",
+        "negative-body-junctions-1735/report.json",
+        "negative-cheek-boundary-projection-1760/report.json",
+        "negative-corner-disposition-1762/report.json"
+      ],
+      "evidence_scope": "Six failed bounded lip fits preserved. New source-only index retains all802oldsamples unchanged and separates six branch candidates;physical edge ownership remains unresolved. No revised lip adopted.",
+      "runtime_binding_qualified": false
+    },
+    {
+      "id": "independent_conforming_CAD_tessellation",
+      "priority": "when_a_closed_CAD_export_yields_a_defective_or_nonconforming_display_mesh",
+      "inputs": [
+        "exact_closed_CAD_revision_and_hash",
+        "independently_provisioned_external_mesher_with_version_and_native_binary_identity",
+        "declared_units_geometric_deviation_and_resource_bounds"
+      ],
+      "outputs": [
+        "import_identity_and_topology_report",
+        "separate_exact_mesh_artifact_and_hash",
+        "independent_topology_winding_volume_intersection_and_deviation_checks",
+        "bounded_failure_or_capability_unavailable_evidence"
+      ],
+      "qualification": "Use an independently installed mesher such as Gmsh;Wright does not own its CAD protocol or package compatibility. Preserve source geometry and explicitly disable undocumented healing;do not infer geometry identity from file counts or a default volume calculation. Difficult trimmed spline geometry may require converged adaptive CAD integration;matching volume alone still does not prove full geometry equality. Qualify triangle orientation and saved-output measurement on a substantially different existing fixture. Record generated node and face ownership,shared-boundary conformity and serialization precision. Bound wall time and output size before launching,terminate only the owned local process tree on a declared bound,and preserve partial diagnostics without treating them as a successful mesh. Measure the exact saved mesh independently for components,closure,winding,positive volume,degeneracy,self-intersection and source deviation. A resource or missing-capability failure holds downstream work. Never accept a watertight mesh without intersection/deviation checks,or transfer a historical body proof to a changed master. Existing runtime,validator,evidence and human review remain owners;this recipe registers no executor,provider or automatic accepted-workflow upgrade.",
+      "sources": [
+        "https://gmsh.info/doc/texinfo/gmsh.html",
+        "../../docs/workflows/reverse-engineering-methods.md"
+      ],
+      "local_evidence": [
+        "gmsh-install-1206.json",
+        "gmsh-pocket-orientation-1208/report.json",
+        "gmsh-pocket-validation-1215/report.json",
+        "gmsh-P4-body-1209/report.json",
+        "P4-volume-integration-1210.json",
+        "gmsh-import-diagnosis-1212/independent-CAD.json",
+        "gmsh-P4-body-1214-control/report.json"
+      ],
+      "evidence_scope": "Existing pocket fixture passes exact33390triangleSTLchecks,including0independentintersections and volume5808. HistoricalRoadsterP4trial exceeded2millionoutputtrianglebound and was rejected. A separate hard-time-bounded changed-policy trial is not a Roadster qualification until its exact output passes independent checks. CurrentB4printbody remains unqualified. Timeout controller1214alsofailed while observing cleanup;later process audit finds owned workers absent,no mesh produced. Preflight and qualify process-tree termination on a harmless fixture before any future large mesher trial.",
+      "runtime_binding_qualified": false,
+      "local_timeout_control_qualified": false
+    },
+    {
+      "id": "camera_hypothesis_prediction_stability",
+      "priority": "before_shape_correction_from_camera_dependent_residuals",
+      "inputs": [
+        "original_reference_image_frame",
+        "original_calibration_observations_and_reading_bands",
+        "bounded_camera_hypotheses",
+        "one_exact_geometry_artifact",
+        "named_original_frame_predictions"
+      ],
+      "outputs": [
+        "feasible_hypothesis_witnesses",
+        "prediction_spread_and_missing_coverage",
+        "camera_geometry_ranking_instability",
+        "explicit_unobserved_degrees_of_freedom"
+      ],
+      "uses": [
+        "visual_resemblance",
+        "external_envelope",
+        "camera_and_geometry_uncertainty"
+      ],
+      "sources": [
+        "../../docs/workflows/reverse-engineering-methods.md",
+        "camera_hypothesis_stability.py"
+      ],
+      "qualification": "Retain original calibration observations and bands. Test several bounded camera hypotheses on the same exact geometry and original raster. Keep camera selection separate from body fitting; a low residual is not camera uniqueness or physical calibration. Compare prediction spread and model-ranking stability before editing shape. Record native nominal feature assumptions, ground/circularity hypotheses, Jacobian conditioning, bound hits and solver termination. Finite feasible witnesses need not be optimal but do not establish exhaustive uncertainty. Never transfer a wheel reading band into a new body tolerance. Preserve old cameras and dependent historical evidence; a newly adopted basis requires an explicit revision and revalidation. One feasible pose yields unknown spread, not zero uncertainty.",
+      "wright_status": "local_read_only_prediction_spread_helper_qualified_by_four_controls_and_exact_B20_B22_observations;no_runtime_gate_or_physical_camera_qualification",
+      "local_evidence": [
+        "rear-transition-diagnosis-1930/report.json",
+        "camera-pitch-sensitivity-1932/report.json",
+        "camera-stability-1936/summary.json"
+      ]
+    },
+    {
+      "id": "winding_number_material_surface_study",
+      "priority": "optional_bounded_print_representation_study_after_geometry_diagnosis",
+      "inputs": [
+        "exact_oriented_triangle_soup_and_hash",
+        "declared_material_interpretation_and_units",
+        "grid_memory_wall_time_and_output_bounds",
+        "independent_native_IN_OUT_ON_controls"
+      ],
+      "outputs": [
+        "separate_inferred_material_surface_candidate",
+        "exact_saved_mesh_and_source_identity",
+        "independent_topology_intersection_and_deviation_observations",
+        "preserved_failure_and_boundary_classification_evidence"
+      ],
+      "sources": [
+        "https://www.dgp.toronto.edu/projects/fast-winding-numbers/",
+        "https://libigl.github.io/libigl-python-bindings/api/igl/",
+        "winding_surface_study.py",
+        "stl_zero_area_derivative.py"
+      ],
+      "qualification": "Inside/outside classification is not cavity or geometric acceptance. Keep native IN,OUT and ON states separate; a point on a CAD boundary is not a strict interior test. Preserve all source observations when correcting a mistaken test label. Declare sign algorithm, contourer, grid and any offset as versioned candidate parameters, never as silently changed tolerances. Verify the exact serialized output: valid CAD, sensible scalar values or a watertight in-memory surface do not prove a conforming, nonintersecting saved STL. A bounded exact-zero derivative must preserve every positive-area record byte-for-byte and undergo fresh topology checks. Never delete positive-area components, choose the largest component or accept a generated hidden shape as observed vehicle geometry. Keep final editable CAD, exact-master correspondence and printer/process checks separate. A failed numerical control holds downstream use.",
+      "local_evidence": [
+        "libigl-install-2020.json",
+        "winding-fixture-controls-2021/CAD-controls.json",
+        "winding-control-boundary-addendum-2035/report.json",
+        "winding-control-boundary-addendum-2035/strict-sign-result.json",
+        "winding-fixture-validation-2026/mesh.json",
+        "winding-fixture-zero-validation-2027/report.json",
+        "winding-lewiner-validation-2029/mesh.json",
+        "winding-offset-validation-2031/mesh.json"
+      ],
+      "evidence_scope": "Libigl2.6.3 isolated Windows numerical study:99strict native pocket point labels match for closed and deliberately open source;1boundary point retained separately. Contouring/float32 STL controls remain HELD for topology/degeneracy. No Roadster reconstruction through this method, no qualified provider/runtime binding and no print acceptance.",
+      "runtime_binding_qualified": false
+    },
+    {
+      "id": "independent_exact_triangle_intersection_crosscheck",
+      "priority": "when_a_saved_mesh_has_conflicting_or_numerically_sensitive_intersection_flags",
+      "inputs": [
+        "exact_saved_mesh_and_hash",
+        "independently_provisioned_exact_predicate_bindings",
+        "positive_crossing_and_legitimate_contact_controls",
+        "separate_degeneracy_duplicate_and_topology_checks"
+      ],
+      "outputs": [
+        "complete_intersection_pair_observations_from_two_kernels",
+        "exact_coordinate_and_artifact_identity",
+        "conflicting_checker_results_retained_separately",
+        "runtime_binary_and_helper_identities"
+      ],
+      "sources": [
+        "https://libigl.github.io/libigl-python-bindings/api/igl_predicates/",
+        "https://github.com/libigl/libigl/blob/main/include/igl/copyleft/cgal/SelfIntersectMesh.h",
+        "exact_mesh_intersections.py"
+      ],
+      "qualification": "Use detect-only queries on unchanged saved triangles. Merge only exactly equal coordinates;do not move vertices,round,weld by tolerance,remesh or select a largest component. Check degeneracy and duplicate faces separately because intersection kernels can exclude them. Preserve raw selection counts from other checkers: selected faces and intersecting pairs are different quantities. Require positive crossing,coplanar-overlap,shared-edge and shared-vertex controls before interpreting a zero count. Cross-check a substantially different existing fixture. Checker disagreement creates no automatic approval and must not silently rewrite frozen validation profiles. Bind new report methods visibly through existing result/validator owners. Intersection checks alone do not establish CAD fidelity,source coverage,printable features or physical acceptance.",
+      "local_evidence": [
+        "forward-exact-intersection-crosscheck-2043/controls.json",
+        "forward-exact-intersection-crosscheck-2043/report.json",
+        "exact-checker-pocket-control-2050/report.json"
+      ],
+      "evidence_scope": "Local libigl2.6.3Windows:four analytic controls pass both predicates and CGAL;both report0pairs on unchanged263152triangleforward mesh and33390triangleexistingpocket. MeshLab34selectedfaces remain preserved as disagreement. No mesh or CAD change,no registered runtime provider and no full print acceptance.",
+      "runtime_binding_qualified": false
+    }
+  ]
+}

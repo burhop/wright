@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "intended_claim",
+    "object_revision",
+    "configuration",
+    "components",
+    "evidence_index",
+    "requirements_register",
+    "coordinate_and_scale_basis",
+    "unresolved_inputs"
+  ],
+  "properties": {
+    "intended_claim": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 16000,
+      "enum": [
+        "appearance",
+        "envelope",
+        "dimensional_reconstruction",
+        "functional_replacement"
+      ]
+    },
+    "object_revision": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 16000,
+      "description": "Object revision identifier, or an explicit statement that it is unknown."
+    },
+    "configuration": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 16000,
+      "description": "Applicable object configuration, or an explicit statement that it is unknown."
+    },
+    "components": {
+      "type": "array",
+      "maxItems": 100,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 16000
+      },
+      "description": "Known component names or identifiers; record unresolved component identification in unresolved_inputs."
+    },
+    "evidence_index": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 16000,
+      "description": "JSON text indexing evidence with IDs, sources, availability and provenance, or an explicit reason evidence is unavailable. Metadata does not establish media inspection."
+    },
+    "requirements_register": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 16000,
+      "description": "JSON text recording identified requirements, IDs and provenance, or explicit unknowns. Preserve original requirement wording and distinguish tolerances from measurement uncertainty."
+    },
+    "coordinate_and_scale_basis": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 16000,
+      "description": "Coordinate frame, units, scale basis and supporting evidence IDs; explicitly unknown is permitted."
+    },
+    "unresolved_inputs": {
+      "type": "array",
+      "maxItems": 100,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 16000
+      },
+      "description": "Named unresolved fields and dependencies, explicitly identifying critical gaps that hold dependent reconstruction. An empty array is not a readiness determination."
+    }
+  }
+}

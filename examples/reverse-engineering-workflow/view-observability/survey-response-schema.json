@@ -1,0 +1,187 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Feature evidence survey and comparison plan v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "features"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1"
+    },
+    "features": {
+      "type": "array",
+      "description": "Consequential named features or claims; empty only when none are supported by the supplied task.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "feature_claim",
+          "evidence_ids",
+          "observation",
+          "observable_aspects",
+          "unobservable_aspects",
+          "comparison_plan",
+          "sensitivity_plan",
+          "unresolved_inputs",
+          "plan_status"
+        ],
+        "properties": {
+          "feature_claim": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Named feature and consequential claim, preserving applicable existing requirements and tolerances."
+          },
+          "evidence_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "uniqueItems": true,
+            "description": "Existing evidence identifiers only; empty when evidence is unavailable."
+          },
+          "observation": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Facts versus hypotheses; observation type, actual or unknown sensitivity, coverage, correspondence, and configuration. State explicitly if no observation exists."
+          },
+          "observable_aspects": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Aspects supported by the available observation; may be empty."
+          },
+          "unobservable_aspects": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Claim aspects not established by this evidence; may be empty."
+          },
+          "comparison_plan": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "exact_artifact_ids",
+              "original_image_frame_ids",
+              "camera_crop_distortion",
+              "assumptions",
+              "fitting_regions",
+              "held_out_regions",
+              "dependence",
+              "planned_comparison"
+            ],
+            "properties": {
+              "exact_artifact_ids": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Existing exact-artifact identifiers; missing identity belongs in unresolved_inputs."
+              },
+              "original_image_frame_ids": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Existing original image/frame identifiers; empty if unavailable or inapplicable, with explanation in planned_comparison."
+              },
+              "camera_crop_distortion": {
+                "type": "string",
+                "description": "Known configuration, proposed treatment, uncertainty, and claim-specific scale/calibration needs; explicitly state inapplicability."
+              },
+              "assumptions": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Explicitly labeled proposed assumptions and their limits, not established facts; may be empty."
+              },
+              "fitting_regions": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Evidence-grounded region descriptions or existing region IDs; no invented masks or coordinates. Empty if none are identified."
+              },
+              "held_out_regions": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Evidence-grounded regions excluded from fitting; empty if none are available."
+              },
+              "dependence": {
+                "type": "string",
+                "description": "Shared-source and fitting dependencies; explicitly state absence or uncertainty of independent held-out evidence."
+              },
+              "planned_comparison": {
+                "type": "string",
+                "minLength": 1,
+                "description": "Proposed observable, correspondence, method, scope, limitations, and explanations for consequential empty fields; no execution claim."
+              }
+            }
+          },
+          "sensitivity_plan": {
+            "description": "Null when a bounded sensitivity check is not useful. Otherwise describe a proposal, not a result.",
+            "anyOf": [
+              {
+                "type": "null"
+              },
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "named_parameters",
+                  "bounds_and_basis",
+                  "camera_treatment",
+                  "method_and_limits"
+                ],
+                "properties": {
+                  "named_parameters": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "bounds_and_basis": {
+                    "type": "string",
+                    "description": "Evidence-supported proposed bounds or explicit missing-bound dependency; never invented tolerances."
+                  },
+                  "camera_treatment": {
+                    "type": "string",
+                    "description": "Fixed camera treatment or explicit uncertainty quantification; unresolved uncertainty must be identified."
+                  },
+                  "method_and_limits": {
+                    "type": "string",
+                    "description": "Bounded proposed check, expected observable, what it can establish, and residual limitations."
+                  }
+                }
+              }
+            ]
+          },
+          "unresolved_inputs": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Each entry names the missing dependency, affected claim, why it matters, and a targeted resolving input or research action. Empty when none are identified."
+          },
+          "plan_status": {
+            "type": "string",
+            "enum": [
+              "planned",
+              "partial",
+              "awaiting_input"
+            ],
+            "description": "Planning readiness only: planned means a comparison is specified; partial means useful planning remains possible despite gaps; awaiting_input means this feature's comparison depends on missing input. No validation or approval meaning."
+          }
+        }
+      }
+    }
+  }
+}
