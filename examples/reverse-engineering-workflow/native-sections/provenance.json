@@ -1,0 +1,32 @@
+{
+  "scope": "Optional read-only exact-artifact diagnostic example; not another workflow executor or acceptance authority",
+  "source_sha256": {
+    "section_diagnostic.py": "a45e999179def341cb6f6a72d3c9cee0b0914d6559caa5afac6cd92ecb8072f5",
+    "test_section_diagnostic.py": "d8673b91f8695cf2429e64aa4ad9d24d4b85a4dc81c4f71c98039cc234e7fc67"
+  },
+  "authoring": {
+    "model": "gpt-6-astra",
+    "reasoning": "high",
+    "actual_request_digests": [
+      "6e3d979eb31feb7c4d02ba6d03913a15f705eaac37534ec120a4287464ed9ddd",
+      "4ca7e437e9f8c58f8e68c4fe6d9cb4a9be22d56ca80e076488f5b12c04b1fc22"
+    ],
+    "scope": "Observed isolated Hermes SDK requests and reported model alias; no provider-internal model revision claim"
+  },
+  "qualified_runtime": {
+    "python": "3.13.5",
+    "cadquery": "2.8.0",
+    "matplotlib": "3.10.8"
+  },
+  "pilot_evidence": {
+    "controls": "native-section-diagnostic-01/controls.log",
+    "path_compatibility_repair": "native-section-diagnostic-02/repair-guard.json",
+    "different_existing_workflow_artifact": "native-section-pocket-results-03/report.json",
+    "roadster_surface_comparison": "continuous-windshield-sections-01/report.json"
+  },
+  "failures_retained": [
+    "Original Path-valued STEP import was rejected by native ReadFile; corrected solely with str(path).",
+    "First pocket plane was on the exterior x=15 face, not through the centered pocket. A fresh manifest uses the existing known y=0 section; source geometry and all tolerances unchanged."
+  ],
+  "data_policy": "No private source artifacts, credentials, live runs, user answers or approval authority copied into this example"
+}

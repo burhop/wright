@@ -1,0 +1,38 @@
+[
+  {
+    "asset": "research",
+    "request_digest": "5f228917b9dc4ab94d3d20e00978549f6586d5ec837aa69c2e4f6d7048207978",
+    "model": "gpt-6-astra",
+    "reasoning_effort": "high",
+    "route": {
+      "provider": "openai-codex",
+      "model_reference": "gpt-6-astra",
+      "profile": "windows-engineering-pilot",
+      "endpoint_digest": "9ab74da1d15bdc50a0f3fd1cfdab8a6cda45487d2b2774cb7631bd831331ad24",
+      "configuration_digest": "7a579dcb046910e8e086f2b4d53abe61d0b023c72a1bbd7b259161fdf7ca7769",
+      "adapter": "hermes-model-sdk",
+      "api_mode": "codex_responses",
+      "sdk_digest": "14888bf790d887512fa373e7f5417afcd1cee60833e49a0282635ebab4e3b157",
+      "reasoning_effort": "high"
+    },
+    "reported_model": "gpt-6-astra"
+  },
+  {
+    "asset": "clarification",
+    "request_digest": "4a74cdb7d99a2ba3f428df4fb4fbe249b46d7744e8158126992b7e016573bf91",
+    "model": "gpt-6-astra",
+    "reasoning_effort": "high",
+    "route": {
+      "provider": "openai-codex",
+      "model_reference": "gpt-6-astra",
+      "profile": "windows-engineering-pilot",
+      "endpoint_digest": "9ab74da1d15bdc50a0f3fd1cfdab8a6cda45487d2b2774cb7631bd831331ad24",
+      "configuration_digest": "7a579dcb046910e8e086f2b4d53abe61d0b023c72a1bbd7b259161fdf7ca7769",
+      "adapter": "hermes-model-sdk",
+      "api_mode": "codex_responses",
+      "sdk_digest": "14888bf790d887512fa373e7f5417afcd1cee60833e49a0282635ebab4e3b157",
+      "reasoning_effort": "high"
+    },
+    "reported_model": "gpt-6-astra"
+  }
+]

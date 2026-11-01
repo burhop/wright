@@ -1,0 +1,89 @@
+{
+  "preparation_instructions": "Author a preparation-only workflow using the existing source/compiler/runtime/portable instructions and common view; introduce no UI, executor, or hidden policy constants. The later workflow is evidence → requirements/observability → qualified editable CAD → exact artifact measurement → bounded correction → independent audit → human review. Stop this workflow at an evidence-gap and measurement plan.\n\nDeclare the first task as human-input version 2, with response_schema set to basis_response_schema and output_port named preparation_basis. Its structured answer is preparation input, never approval. Declare a subsequent AI-assisted task that reads that exact preparation_basis answer and produces a Markdown evidence/measurement plan for Wright to save. Freeze runtime to gpt-6-astra/high, capture actual requests, and prohibit silent fallback. Do not claim execution during authoring.\n\nPreserve original evidence and requirements unchanged; distinguish source records from interpretations. Organize the plan by component, feature, view, and source group, retaining traceable IDs, object revision, and configuration. Record availability and provenance; never imply media was inspected from metadata alone. Treat missing evidence and explicit unknowns as legitimate gaps. Classify each factual or quantitative statement as measured, published, calculated, inferred, assumed, or unknown. Label assumptions explicitly without silently supplying engineering requirements.\n\nMap intended claims and requirements to observable quantities and proposed measurements. Record units, coordinate frame, scale basis, formulas, input IDs, uncertainty, and correlation/shared-source dependencies. Keep requirement tolerances separate from measurement uncertainty. Explain which quantities are unobservable from available evidence. Photographs and generative meshes are not dimensional truth; silhouette agreement cannot establish depth acceptance.\n\nFor proposed image comparisons, specify fixed camera, crop, mask, and scale controls, or record their unresolved definitions. Identify independent audit source groups, explaining their independence; where unavailable, record the gap. List required methods and capability dependencies, distinguishing currently verified capabilities with supporting evidence from merely proposed capabilities. Do not invent thresholds or capability verification.\n\nExplicitly list critical unresolved fields as holding dependent reconstruction, naming each affected component, feature, requirement, or claim. Provide named pending questions assigned to future declared human-input or review steps, without simulating answers or approvals. Recommend the next informative observation by the uncertainty or ambiguity it would reduce, rather than maximizing photo count. Finish with a bounded measurement plan and dependency register. Perform no CAD, provider-tool calls, exports, mutations, review approvals, or physical actions.",
+  "basis_response_schema": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+      "intended_claim",
+      "object_revision",
+      "configuration",
+      "components",
+      "evidence_index",
+      "requirements_register",
+      "coordinate_and_scale_basis",
+      "unresolved_inputs"
+    ],
+    "properties": {
+      "intended_claim": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 16000,
+        "enum": [
+          "appearance",
+          "envelope",
+          "dimensional_reconstruction",
+          "functional_replacement"
+        ]
+      },
+      "object_revision": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 16000,
+        "description": "Object revision identifier, or an explicit statement that it is unknown."
+      },
+      "configuration": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 16000,
+        "description": "Applicable object configuration, or an explicit statement that it is unknown."
+      },
+      "components": {
+        "type": "array",
+        "maxItems": 100,
+        "items": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 16000
+        },
+        "description": "Known component names or identifiers; record unresolved component identification in unresolved_inputs."
+      },
+      "evidence_index": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 16000,
+        "description": "JSON text indexing evidence with IDs, sources, availability and provenance, or an explicit reason evidence is unavailable. Metadata does not establish media inspection."
+      },
+      "requirements_register": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 16000,
+        "description": "JSON text recording identified requirements, IDs and provenance, or explicit unknowns. Preserve original requirement wording and distinguish tolerances from measurement uncertainty."
+      },
+      "coordinate_and_scale_basis": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 16000,
+        "description": "Coordinate frame, units, scale basis and supporting evidence IDs; explicitly unknown is permitted."
+      },
+      "unresolved_inputs": {
+        "type": "array",
+        "maxItems": 100,
+        "items": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 16000
+        },
+        "description": "Named unresolved fields and dependencies, explicitly identifying critical gaps that hold dependent reconstruction. An empty array is not a readiness determination."
+      }
+    }
+  },
+  "acceptance_notes": [
+    "The instruction is under 450 words and declares only preparation tasks; Wright handles execution and saving the Markdown plan.",
+    "The bounded schema validates input structure, not evidence correctness, engineering sufficiency, embedded JSON semantics, readiness, or approval. It introduces no readiness checkbox or authorization field.",
+    "The AI-assisted task must consume the exact structured human-input answer through preparation_basis; missing evidence remains visible rather than being fabricated or silently repaired.",
+    "Acceptable preparation output preserves originals, traces claims and measurements to inputs, distinguishes evidence classes, separates tolerances from uncertainty, and names reconstruction-holding gaps and affected dependencies.",
+    "Proposed comparison controls and independent audit groups are planning artifacts, not executed measurements or audits. Unverified methods and capabilities remain explicitly proposed.",
+    "Runtime configuration and request capture are declared requirements, not claims of execution. Typed input never substitutes for later declared human review."
+  ]
+}

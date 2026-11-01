@@ -1,0 +1,26 @@
+{
+  "resolution_instructions": "Read the existing structured research brief, preserving original requirements, reused research, essential_questions, limitations, unavailable_evidence and more_research. This stage classifies clarification need only: do not answer essential questions, perform research, approve engineering or create CAD. Inspect essential_questions entries containing question, consequence and resolution. If any consequential essential question requires declared_user_input, return exactly {\"version\":\"wright.requirements-resolution/1\",\"unresolved_fields\":[\"clarification\"],\"resolved_values\":{}} through the existing response envelope. Otherwise return exactly {\"version\":\"wright.requirements-resolution/1\",\"unresolved_fields\":[],\"resolved_values\":{\"clarification\":\"No user clarification required by this research brief.\"}}. The latter value is an explicit skip marker, never a simulated human answer. Questions assigned targeted_research remain research matters; do not answer them or reassign them to the user merely because a research provider is unavailable. Provider absence remains a limitation, not an approval request. If the upstream brief is malformed or inaccessible, use the existing blocked/error outcome with a diagnostic; do not infer that no questions exist. Do not repeat dynamic question text: the human receives the original brief and resolution. Use only the existing validated conditional human-input contract; introduce no routing implementation or prompt-based branch.",
+  "clarification_instructions": "Using the original research brief shown alongside the resolution, answer only its consequential essential questions marked declared_user_input. Submit your response in clarification, a nonempty string of at most 8000 characters. Ordinary language is sufficient; you need not construct technical registers or duplicate research. This response supplies requirements input, not engineering approval, consent to external actions or authorization to create CAD.",
+  "clarification_response_schema": {
+    "type": "object",
+    "properties": {
+      "clarification": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 8000
+      }
+    },
+    "required": [
+      "clarification"
+    ],
+    "additionalProperties": false
+  },
+  "acceptance_notes": [
+    "Authoring only; no research, validation, human interaction, external action or CAD execution is claimed.",
+    "Retain the existing backend validation of the typed resolution object. Its only top-level fields are version, unresolved_fields and resolved_values; only the two specified successful combinations are permitted.",
+    "Reuse the version 3 human_input declaration with when={kind:\"unresolved_fields\",source:\"resolve.resolution\",fields:[\"clarification\"]}. The condition field exactly matches the sole field in the closed human response schema.",
+    "The existing backend asks only when validated clarification is unresolved; otherwise it skips and records the known skip-marker value. No manufactured human response or consent is permitted.",
+    "The user supplies text, images or data; the workflow researches and reuses that evidence. Preserve actual research and original requirements without speculative dimensions, fallback models, hidden CAD or external actions.",
+    "End the workflow after this conditional human-input boundary, pending later CAD readiness. Skipping clarification does not establish CAD readiness or engineering approval. Do not automatically rerun research."
+  ]
+}

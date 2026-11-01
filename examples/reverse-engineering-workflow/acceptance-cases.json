@@ -1,0 +1,100 @@
+[
+  {
+    "id": "AC-01",
+    "scope": "Authoring and deterministic synthetic baseline",
+    "setup": "Use pre-existing synthetic geometry, its original requirements, known scale and fixed cameras; bind the authored workflow through Wright's existing compiler.",
+    "expected": "Compilation and declared-input validation succeed only when supported bindings exist. Qualified executable measurement checks reproduce fixture-defined results within the fixture's own numerical rules. Repeat runs have identical discrete dispositions and numerically compliant results. No claim of real reconstruction or live-provider qualification follows.",
+    "status": "specified_not_executed"
+  },
+  {
+    "id": "AC-02",
+    "scope": "Wrong-scale negative control",
+    "setup": "Apply a fixture-defined scale error known to violate its existing scale requirement; prohibit scale-fitting registration.",
+    "expected": "The scale/dimension requirement fails even if an image silhouette could be made similar. The correct-scale control passes its original checks.",
+    "status": "specified_not_executed"
+  },
+  {
+    "id": "AC-03",
+    "scope": "Changed-hash negative control",
+    "setup": "Change evidence or export bytes after manifest freeze without updating the frozen identity.",
+    "expected": "Integrity validation rejects the mismatch before affected measurements or approvals are reused; dependent results are invalidated.",
+    "status": "specified_not_executed"
+  },
+  {
+    "id": "AC-04",
+    "scope": "Wrong-camera negative control",
+    "setup": "Substitute a camera, crop or distortion transform inconsistent with the frozen fixture manifest.",
+    "expected": "Identity validation rejects substitution. A separately declared adverse-camera fixture produces its specified residual failure rather than automatic camera refitting.",
+    "status": "specified_not_executed"
+  },
+  {
+    "id": "AC-05",
+    "scope": "Missing-depth negative control",
+    "setup": "Use the fixture's silhouette-compatible candidates with different hidden depth and no independent depth observation.",
+    "expected": "Visible silhouette checks may pass; the hidden-depth requirement remains unknown/unverified. No full dimensional-reconstruction pass is issued.",
+    "status": "specified_not_executed"
+  },
+  {
+    "id": "AC-06",
+    "scope": "Evidence independence and state separation",
+    "setup": "Present repeated video frames, crops, republications, two product generations and distinct configurations.",
+    "expected": "Many-to-many links and timestamps are preserved; correlated sources are grouped; generations/states are not merged. A crop from fitting evidence is rejected as an independent holdout.",
+    "status": "specified_not_executed"
+  },
+  {
+    "id": "AC-07",
+    "scope": "Uncertainty and requirement authority",
+    "setup": "Supply a calculated dimension with correlated uncertain inputs, an authority conflict and an unknown hidden dimension.",
+    "expected": "Formula and input IDs are retained; uncertainty is propagated without an unjustified independence assumption; unresolved authority blocks its dependent decision; the unknown is not assigned a production dimension.",
+    "status": "specified_not_executed"
+  },
+  {
+    "id": "AC-08",
+    "scope": "Observed request enforcement",
+    "setup": "Exercise supported gateway and MCP request paths, including helper, correction and recovery, with correct settings and attempted model/reasoning drift.",
+    "expected": "Every observed request is checked for gpt-6-astra/high before dispatch and captured under existing redaction. Drift or unavailable enforcement holds affected calls; no fallback occurs. Mock success qualifies only the mock path. Live-path qualification requires authorized actual execution and does not prove provider-internal behavior.",
+    "status": "specified_not_executed"
+  },
+  {
+    "id": "AC-09",
+    "scope": "Durable mutation and missing capability",
+    "setup": "Simulate uncertain producer completion and separately remove a required measurement tool after an earlier operation completed.",
+    "expected": "Runtime reconciles the mutation or holds without replay. Missing tooling holds dependent steps; completed upstream work is not retried merely to resolve the missing dependency.",
+    "status": "specified_not_executed"
+  },
+  {
+    "id": "AC-10",
+    "scope": "Bounded correction",
+    "setup": "Use supplied fixture parameter bounds, budget, protected constraints and non-improvement rule; propose an unnamed edit and a sequence that does not improve.",
+    "expected": "Unnamed edits are rejected. Attempts and deltas remain traceable; the configured budget or non-improvement stop terminates correction without hidden threshold changes or audit leakage.",
+    "status": "specified_not_executed"
+  },
+  {
+    "id": "AC-11",
+    "scope": "Exact export and revision invalidation",
+    "setup": "Measure one export, then change exported bytes or the native CAD revision; test a geometry-correct mesh lacking required CAD editability.",
+    "expected": "Stale export/geometry results cannot pass the new revision. Exact exported bytes are reopened and checked. Geometry fidelity does not conceal failed CAD-intent or export-integrity requirements.",
+    "status": "specified_not_executed"
+  },
+  {
+    "id": "AC-12",
+    "scope": "Independent audit and human boundary",
+    "setup": "Attempt to tune an audit camera to a candidate, reuse disclosed audit evidence for fitting, or treat a typed answer as approval.",
+    "expected": "Camera retuning violates the freeze; disclosed holdouts lose independence; fresh independent audit evidence or an explicit unresolved limitation is required. Typed answers never become review approvals.",
+    "status": "specified_not_executed"
+  },
+  {
+    "id": "AC-13",
+    "scope": "Storage and portability",
+    "setup": "Exceed configured retention bounds or import snapshots into an environment lacking a required kernel, license or evidence access.",
+    "expected": "The dependent step holds with a precise diagnostic; required provenance is not silently deleted. Imported source/snapshots do not confer executable qualification or credentials.",
+    "status": "specified_not_executed"
+  },
+  {
+    "id": "AC-14",
+    "scope": "Example reuse without claim transfer",
+    "setup": "Bind an existing time-series robot-tracking example and later a sheet-metal example, retaining each example's original requirements.",
+    "expected": "Tracking can support generic runtime/evidence qualification only. Sheet-metal drawing/section qualification is limited to its actual executed methods and supplied requirements. Neither example silently changes its acceptance rules or establishes general real-photo accuracy.",
+    "status": "specified_not_executed"
+  }
+]

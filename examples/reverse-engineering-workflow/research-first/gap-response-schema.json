@@ -1,0 +1,335 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CAD research brief and gaps v1.0.0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "what_is_being_modeled",
+    "reused_material",
+    "findings",
+    "limitations",
+    "unavailable_evidence",
+    "essential_questions",
+    "more_research",
+    "disposition",
+    "cad_readiness"
+  ],
+  "properties": {
+    "what_is_being_modeled": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1200,
+      "description": "Scope supported by the request and inspected references; explicitly state if the intended object remains ambiguous."
+    },
+    "reused_material": {
+      "type": "array",
+      "maxItems": 40,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "reference",
+          "origin",
+          "applicable_content"
+        ],
+        "properties": {
+          "reference": {
+            "$ref": "#/$defs/source"
+          },
+          "origin": {
+            "enum": [
+              "original_source",
+              "previous_research_or_experiment",
+              "earlier_generated_geometry"
+            ]
+          },
+          "applicable_content": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 800
+          }
+        }
+      }
+    },
+    "findings": {
+      "type": "array",
+      "maxItems": 40,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "finding",
+          "basis",
+          "sources",
+          "calculation"
+        ],
+        "properties": {
+          "finding": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1200,
+            "description": "One feature or value with units and relevant qualification. Split findings with different evidence bases."
+          },
+          "basis": {
+            "enum": [
+              "source_statement",
+              "measured",
+              "calculated",
+              "inferred",
+              "unknown"
+            ]
+          },
+          "sources": {
+            "type": "array",
+            "maxItems": 8,
+            "items": {
+              "$ref": "#/$defs/source"
+            }
+          },
+          "calculation": {
+            "anyOf": [
+              {
+                "type": "null"
+              },
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1600
+              }
+            ],
+            "description": "For calculated values, give sourced inputs, units and formula; otherwise null. A reused calculation must be identified as reused, not newly executed."
+          }
+        },
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "basis": {
+                  "const": "calculated"
+                }
+              },
+              "required": [
+                "basis"
+              ]
+            },
+            "then": {
+              "properties": {
+                "calculation": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 1600
+                }
+              }
+            },
+            "else": {
+              "properties": {
+                "calculation": {
+                  "type": "null"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "basis": {
+                  "enum": [
+                    "source_statement",
+                    "measured",
+                    "calculated",
+                    "inferred"
+                  ]
+                }
+              },
+              "required": [
+                "basis"
+              ]
+            },
+            "then": {
+              "properties": {
+                "sources": {
+                  "minItems": 1
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    "limitations": {
+      "type": "array",
+      "maxItems": 24,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 1000
+      }
+    },
+    "unavailable_evidence": {
+      "type": "array",
+      "maxItems": 40,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "reference",
+          "reason"
+        ],
+        "properties": {
+          "reference": {
+            "$ref": "#/$defs/source"
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 800,
+            "description": "Identify the unavailable content/tool and the actual access or capability limitation; do not speculate about an unobserved cause."
+          }
+        }
+      }
+    },
+    "essential_questions": {
+      "type": "array",
+      "maxItems": 12,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "question",
+          "consequence",
+          "resolution"
+        ],
+        "properties": {
+          "question": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 800
+          },
+          "consequence": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 800
+          },
+          "resolution": {
+            "enum": [
+              "targeted_research",
+              "declared_user_input"
+            ]
+          }
+        }
+      }
+    },
+    "more_research": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "useful",
+        "rationale",
+        "target_gaps"
+      ],
+      "properties": {
+        "useful": {
+          "type": "boolean"
+        },
+        "rationale": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000
+        },
+        "target_gaps": {
+          "type": "array",
+          "maxItems": 12,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 800
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "useful": {
+                "const": true
+              }
+            },
+            "required": [
+              "useful"
+            ]
+          },
+          "then": {
+            "properties": {
+              "target_gaps": {
+                "minItems": 1
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "target_gaps": {
+                "maxItems": 0
+              }
+            }
+          }
+        }
+      ]
+    },
+    "disposition": {
+      "enum": [
+        "research_report_complete",
+        "declared_input_required"
+      ]
+    },
+    "cad_readiness": {
+      "const": "not_established_by_research"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "essential_questions": {
+            "contains": {
+              "type": "object",
+              "properties": {
+                "resolution": {
+                  "const": "declared_user_input"
+                }
+              },
+              "required": [
+                "resolution"
+              ]
+            }
+          }
+        },
+        "required": [
+          "essential_questions"
+        ]
+      },
+      "then": {
+        "properties": {
+          "disposition": {
+            "const": "declared_input_required"
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "disposition": {
+            "const": "research_report_complete"
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "source": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 2400,
+      "pattern": "\\S",
+      "description": "Existing path, URL or durable-run identifier, with page, figure, section or result locator when available; never invent identifiers."
+    }
+  }
+}

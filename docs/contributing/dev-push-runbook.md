@@ -603,6 +603,13 @@ origin/peer checks, credential non-disclosure and denied-file/no-login assertion
 
 ### Windows run-record read contention
 
+Exact-record path resolution participates in the same bounded Windows read
+budget as opening the record. A transient missing/denied observation rechecks
+confinement and the same exact path; persistent absence, permanent denial,
+changed confinement and malformed records remain failures. This never recreates
+a record, replays an operation or returns a cached successful outcome. The normal
+owning suite includes controlled resolution failures in addition to native locks.
+
 The workspace-service suite exercises bounded retry of Windows access-denied
 reads during durable-record observation, plus permanent denial and malformed
 record failures. Native Windows tests hold actual exclusive file handles and

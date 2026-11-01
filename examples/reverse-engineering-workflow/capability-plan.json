@@ -1,0 +1,83 @@
+[
+  {
+    "id": "CP-01",
+    "capability": "Wright orchestration and artifact foundations",
+    "ownership": "Existing: accepted .wflow/compiler, durable runtime, gateway/independent MCP providers, EngineeringResult/provenance, revision-bound validator/rework, typed inputs/review, instruction snapshots and common workspace.",
+    "status": "existing_per_prompt_not_exercised_here",
+    "integration": "Bind this plan to supported existing contracts; add no replacement executor or UI.",
+    "qualification_evidence": "Compiler and runtime results for the actual binding, with revision/provenance assertions.",
+    "dependent_steps": "M0 and all runtime milestones; hold unsupported bindings."
+  },
+  {
+    "id": "CP-02",
+    "capability": "Evidence, requirements and freeze contracts",
+    "ownership": "Proposed engineering-specific bindings on existing provenance, input and validation facilities.",
+    "status": "integration_and_qualification_required",
+    "integration": "Implement or resolve lineage/source grouping, observability mapping, uncertainty inputs, immutable manifest checks and invalidation dependencies.",
+    "qualification_evidence": "Executed AC-03 through AC-07 plus revision and rights/access checks.",
+    "dependent_steps": "M2 onward; missing choices are input_required, missing executable checks are capability_unavailable."
+  },
+  {
+    "id": "CP-03",
+    "capability": "Per-request model guard and observable capture",
+    "ownership": "Existing gateway/MCP invocation, redaction and provenance own the execution path; the required engineering guard must be integrated there if absent.",
+    "status": "enforcement_and_live_availability_unverified",
+    "integration": "Reject drift before every observed request; bind gpt-6-astra/high, source instruction snapshot and exact accessible artifact hashes; preserve actual observable request records without claiming provider-internal visibility.",
+    "qualification_evidence": "AC-08 on each relevant actual path, including helper/recovery paths. Unknown support or inaccessible enforcement is a hold, not fallback permission.",
+    "dependent_steps": "All model-dependent production, measurement, correction and recovery."
+  },
+  {
+    "id": "CP-04",
+    "capability": "Deterministic synthetic measurement harness",
+    "ownership": "Proposed test bindings using pre-existing geometry and existing requirements.",
+    "status": "fixture_and_executable_tool_availability_unverified",
+    "integration": "Connect qualified readers, projection/dimension checks and negative controls to existing validators. Do not treat fixture metadata or an unexecuted schema as a runtime implementation.",
+    "qualification_evidence": "Executed AC-01 through AC-05 with repeatability records.",
+    "dependent_steps": "M1; scope limited to synthetic checks, not real-photo accuracy or live providers."
+  },
+  {
+    "id": "CP-05",
+    "capability": "Editable CAD producer and exact export reader",
+    "ownership": "Qualified gateway/MCP tools or other already-supported Wright integrations; no vendor workaround.",
+    "status": "required_capabilities_not_established_by_prompt",
+    "integration": "Resolve an actual producer for required native editability and export formats, plus an independent qualified reader for exact exports. Capture operation identities, versions and hashes.",
+    "qualification_evidence": "Native parameter/feature editability, topology/intent and format/unit/frame preservation tests on declared cases; producer and reader results with provenance.",
+    "dependent_steps": "M4-M6; unavailable required tooling yields capability_unavailable."
+  },
+  {
+    "id": "CP-06",
+    "capability": "Geometry measurements and conditional reconstruction methods",
+    "ownership": "Proposed method-specific integrations into existing measurement/result/validator facilities.",
+    "status": "qualification_required_per_method_and_scope",
+    "integration": "Qualify projection, silhouettes/landmarks, dimensions/sections and bidirectional surfaces separately. Enable visual hull or SfM/MVS only when their assumptions and required tools are satisfied; label learned output as hypothesis.",
+    "qualification_evidence": "Synthetic tests followed, when authorized evidence exists, by representative independently referenced real-observation validation with declared uncertainty and coverage. Fixtures alone are insufficient.",
+    "dependent_steps": "M3, M5 and M7; disable optional unsupported methods and hold required dependent checks."
+  },
+  {
+    "id": "CP-07",
+    "capability": "Bounded correction and audit isolation",
+    "ownership": "Existing revision-bound rework/runtime owns scheduling; proposed engineering guards own allowlists, budgets, objective checks and holdout isolation.",
+    "status": "integration_and_qualification_required",
+    "integration": "Bind supplied limits and stop rules, mutation reconciliation, dependency invalidation and separate audit evidence to supported Wright facilities.",
+    "qualification_evidence": "Executed AC-09 through AC-12; actual independent verifier and source-group checks for project audit.",
+    "dependent_steps": "M6-M7; missing limits are input_required and missing guards/verifier are capability_unavailable."
+  },
+  {
+    "id": "CP-08",
+    "capability": "Optional manufacturing and functional verification",
+    "ownership": "Separate qualified integrations and supplied engineering requirements, not implied by reconstruction.",
+    "status": "conditional_not_qualified",
+    "integration": "Enable only explicitly requested nonphysical checks with authorized rules and tools. Unsupported functional or manufacturing requirements remain unverified; do not invent process constants or authorize physical tests.",
+    "qualification_evidence": "Requirement-specific executed tests; later sheet-metal drawing/section evidence retains its original scope.",
+    "dependent_steps": "Only applicable checks and claims; no production release or automatic acceptance."
+  },
+  {
+    "id": "CP-09",
+    "capability": "Storage bounds, portable handoff and declared review",
+    "ownership": "Existing workspace, snapshots, runtime and review facilities, with run-specific binding/enforcement to verify.",
+    "status": "existing_foundations_run_configuration_required",
+    "integration": "Bind storage/retention limits and cleanup permissions; export authorized portable references and snapshots without credentials or environment guarantees; route exact-revision reports to declared review.",
+    "qualification_evidence": "Executed AC-12 through AC-14 and an actual review record only if later provided through Wright.",
+    "dependent_steps": "All retention-sensitive steps and M8; missing required configuration is input_required, unavailable enforcement is capability_unavailable."
+  }
+]

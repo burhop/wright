@@ -1,0 +1,14 @@
+{
+  "type": "object",
+  "properties": {
+    "clarification": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 8000
+    }
+  },
+  "required": [
+    "clarification"
+  ],
+  "additionalProperties": false
+}

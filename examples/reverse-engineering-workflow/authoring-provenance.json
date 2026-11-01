@@ -1,0 +1,19 @@
+{
+  "scope": "general authoring; no private vehicle evidence submitted",
+  "base_commit": "d6eda2b4e562da5304bb92588aff81b5c70fd415",
+  "adapter": "hermes-model-sdk",
+  "model": "gpt-6-astra",
+  "reasoning_effort": "high",
+  "sdk_digest": "14888bf790d887512fa373e7f5417afcd1cee60833e49a0282635ebab4e3b157",
+  "configuration_digest": "7a579dcb046910e8e086f2b4d53abe61d0b023c72a1bbd7b259161fdf7ca7769",
+  "provider_request_digest": "56a0dcb8972f313dbf9014abb3dafc5af2fb4c39a5bad83c85485fc516de35ad",
+  "upstream_reported_model": "gpt-6-astra",
+  "upstream_internal_revision": null,
+  "prompt_sha256": "cf3cfb113b772bf750967db93ab33c066849eb08b504d2f41150fdf052ece18f",
+  "assets": {
+    "acceptance-cases.json": "800d16735ef7b2b5147b1ae8613d9865042f9547aa5a755e5c86c5334c288a56",
+    "astra-plan-proposal.md": "011f78a165516fbe451d5e05cf620743553e0d63b0123a79fdb8198c2d513c70",
+    "capability-plan.json": "e114088f94e5440bb2501671ea4bd9cd1ee29d0ccf0c373ffdf48b1e96d4672c",
+    "instructions.json": "ee9548554d8cb5e910df113e844909f3a387a1ed1fdc94edc8be73eb59ced63d"
+  }
+}
