@@ -241,6 +241,9 @@ def test_fresh_split_storage_and_no_parent_mount(storage, monkeypatch):
     assert result["private_mount"]["fstype"] == "tmpfs"
     assert len(result["private_bindings"]) == 3
     assert len(calls) == 6 and all(call[-1] != str(profile) for call in calls)
+    assert [call[-1] for call in calls if any("remount" in part for part in call)] == [
+        str(target)
+    ]
 
 
 @pytest.mark.parametrize("wrong", ["noexec", "fstype", "target", "size", "uid"])
@@ -269,6 +272,9 @@ def test_existing_state_not_adopted_or_modified(storage, monkeypatch):
     retained = target / "installation.json"
     retained.write_text("preserved")
     monkeypatch.setattr(os, "getuid", lambda: 0)
+    monkeypatch.setattr(
+        os, "chown", lambda *_args: pytest.fail("existing state must not be chowned")
+    )
     with pytest.raises(RuntimeError, match="Existing Wright state"):
         guest.prepare_runtime_mount(profile)
     assert retained.read_text() == "preserved" and calls == []

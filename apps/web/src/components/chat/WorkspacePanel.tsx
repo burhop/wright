@@ -2201,6 +2201,7 @@ export function WorkspacePanel({
         error instanceof Error
           ? `Could not create a workflow: ${error.message}`
           : "Could not create a workflow. Existing files were kept.",
+        { cause: error },
       );
     } finally {
       creatingWorkflowRef.current = false;
