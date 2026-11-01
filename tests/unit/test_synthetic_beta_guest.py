@@ -1,6 +1,8 @@
 """Mock-only credential-minimization checks. No credentials or VM used."""
 
 import json
+import os
+from pathlib import Path
 import shlex
 from types import SimpleNamespace
 
@@ -162,110 +164,118 @@ def test_ssh_rejects_symlinked_lab_or_known_hosts(tmp_path):
         guest.ssh_command(actual, session_id="first")
 
 
-def mount_description(target, *, exact=True, noexec=False):
-    return {
-        "target": str(target) if exact else str(target.parent.parent),
-        "fstype": "tmpfs",
-        "size": 4 * 1024**3,
-        "options": "rw,nosuid,nodev,uid=1000,gid=1000,mode=700"
-        + (",noexec" if noexec else ""),
-    }
-
-
-def test_runtime_mount_is_nested_exec_tmpfs_and_never_remounts_parent(
-    tmp_path, monkeypatch
-):
-    profile = tmp_path / "profile"
+@pytest.fixture
+def storage(tmp_path, monkeypatch):
+    profile, disk = tmp_path / "profile", tmp_path / "disk"
     profile.mkdir()
-    target = profile / "wright-home"
-    replies = [
-        mount_description(target, exact=False, noexec=True),
-        mount_description(target),
-    ]
+    private, target = profile / "wright-private", profile / "wright-home"
+    provisioned, memory = tmp_path / "provisioned.json", tmp_path / "meminfo"
+    provisioned.write_text("{}")
+    memory.write_text(
+        "MemTotal: 1024 kB\nMemAvailable: 512 kB\nShmem: 0 kB\nSwapTotal: 0 kB\n"
+    )
+    mapped = {
+        "/run/hermes-beta": profile,
+        "/var/lib/wright-beta/native-software": disk,
+        "/var/lib/wright-beta/provisioned.json": provisioned,
+        "/proc/meminfo": memory,
+    }
+    monkeypatch.setattr(
+        guest, "Path", lambda value: mapped.get(str(value), Path(value))
+    )
+    aliases = {
+        target: disk,
+        **{target / n: private / n for n in ("data", "state", "logs")},
+    }
+    original = Path.stat
+
+    def stat(path, *args, **kwargs):
+        result = original(aliases.get(path, path), *args, **kwargs)
+        if path in {target, disk} or path.is_relative_to(profile):
+            fields = list(result)
+            fields[4] = 1000
+            return os.stat_result(fields)
+        return result
+
+    monkeypatch.setattr(Path, "stat", stat)
+    rows = {}
+    for path in (
+        profile,
+        private,
+        target,
+        disk,
+        *(target / n for n in ("data", "state", "logs")),
+    ):
+        rows[path] = {
+            "target": str(path),
+            "fstype": "ext4" if path in {target, disk} else "tmpfs",
+            "options": "rw,exec,nosuid,nodev,uid=1000,gid=1000,mode=700",
+            "size": 4 * 1024**3,
+        }
     calls = []
-    monkeypatch.setattr(
-        guest.subprocess,
-        "check_output",
-        lambda argv, **_: json.dumps({"filesystems": [replies.pop(0)]}),
-    )
-    monkeypatch.setattr(guest.subprocess, "run", lambda argv, **_: calls.append(argv))
-    receipt = guest.prepare_runtime_mount(profile)
-    assert len(calls) == 1
-    assert calls[0] == [
-        "mount",
-        "-t",
-        "tmpfs",
-        "-o",
-        "exec,nosuid,nodev,uid=1000,gid=1000,mode=0700,size=4G",
-        "wright-beta-runtime",
-        str(target),
-    ]
-    assert "remount" not in " ".join(calls[0])
-    assert receipt["target"] == str(target)
-    assert receipt["size_bytes"] == 4294967296
-    assert "noexec" not in receipt["options"]
+
+    def observe(argv, **kw):
+        if "-T" in argv:
+            return "ext4"
+        return json.dumps({"filesystems": [rows[Path(argv[-1])]]})
+
+    monkeypatch.setattr(guest.subprocess, "check_output", observe)
+    monkeypatch.setattr(guest.subprocess, "run", lambda argv, **kw: calls.append(argv))
+    monkeypatch.setattr(os, "chown", lambda *args: None)
+
+    def prepare_dirs():
+        for path in (target, disk, private):
+            path.mkdir()
+        for n in ("data", "state", "logs"):
+            (target / n).mkdir()
+            (private / n).mkdir()
+
+    return profile, disk, private, target, rows, calls, prepare_dirs
 
 
-def test_existing_nonempty_runtime_state_is_never_overmounted(tmp_path, monkeypatch):
-    target = tmp_path / "wright-home"
-    target.mkdir()
-    (target / "installation.json").write_text("preserved")
-    monkeypatch.setattr(
-        guest.subprocess, "run", lambda *_a, **_k: pytest.fail("mount reached")
-    )
-    monkeypatch.setattr(
-        guest.subprocess,
-        "check_output",
-        lambda *_a, **_k: pytest.fail("findmnt reached"),
-    )
-    with pytest.raises(RuntimeError, match="Existing Wright runtime state"):
-        guest.prepare_runtime_mount(tmp_path)
-    assert (target / "installation.json").read_text() == "preserved"
+def test_fresh_split_storage_and_no_parent_mount(storage, monkeypatch):
+    profile, disk, private, target, rows, calls, _ = storage
+    monkeypatch.setattr(os, "getuid", lambda: 0)
+    result = guest.prepare_runtime_mount(profile)
+    assert result["software_source"] == str(disk)
+    assert result["private_mount"]["fstype"] == "tmpfs"
+    assert len(result["private_bindings"]) == 3
+    assert len(calls) == 6 and all(call[-1] != str(profile) for call in calls)
 
 
 @pytest.mark.parametrize("wrong", ["noexec", "fstype", "target", "size", "uid"])
-def test_existing_dedicated_mount_must_match_without_remount(
-    tmp_path, monkeypatch, wrong
-):
-    target = tmp_path / "wright-home"
-    description = mount_description(target)
+def test_private_mount_tampering_is_rejected(storage, wrong):
+    profile, _, private, _, rows, calls, prepare = storage
+    prepare()
+    row = rows[private]
     if wrong == "noexec":
-        description["options"] += ",noexec"
-    elif wrong == "uid":
-        description["options"] = description["options"].replace("uid=1000", "uid=0")
-    elif wrong == "target":
-        description["target"] = str(tmp_path)
+        row["options"] += ",noexec"
     elif wrong == "fstype":
-        description["fstype"] = "ext4"
+        row["fstype"] = "ext4"
+    elif wrong == "target":
+        row["target"] = str(profile)
+    elif wrong == "size":
+        row["size"] = 512 * 1024**2
     else:
-        description["size"] = 800 * 1024**2
-    # A wrong parent target causes a new nested mount attempt; emulate its still
-    # wrong observed result, never an actual mount or parent remount.
-    calls = []
-    monkeypatch.setattr(
-        guest.subprocess,
-        "check_output",
-        lambda *_a, **_k: json.dumps({"filesystems": [description]}),
-    )
-    monkeypatch.setattr(guest.subprocess, "run", lambda argv, **_: calls.append(argv))
-    with pytest.raises(RuntimeError, match="tmpfs verification failed"):
-        guest.prepare_runtime_mount(tmp_path)
-    if wrong == "target":
-        assert len(calls) == 1 and calls[0][-1] == str(target)
-    else:
-        assert calls == []
+        row["options"] = row["options"].replace("uid=1000", "uid=0")
+    with pytest.raises(RuntimeError, match="dedicated tmpfs"):
+        guest.verify_runtime_storage(profile)
+    assert calls == []
 
 
-def test_empty_correct_dedicated_mount_is_idempotently_verified(tmp_path, monkeypatch):
-    target = tmp_path / "wright-home"
-    monkeypatch.setattr(
-        guest.subprocess,
-        "check_output",
-        lambda *_a, **_k: json.dumps({"filesystems": [mount_description(target)]}),
-    )
-    monkeypatch.setattr(
-        guest.subprocess,
-        "run",
-        lambda *_a, **_k: pytest.fail("must not remount verified child"),
-    )
-    assert guest.prepare_runtime_mount(tmp_path)["fstype"] == "tmpfs"
+def test_existing_state_not_adopted_or_modified(storage, monkeypatch):
+    profile, _, _, target, _, calls, prepare = storage
+    prepare()
+    retained = target / "installation.json"
+    retained.write_text("preserved")
+    monkeypatch.setattr(os, "getuid", lambda: 0)
+    with pytest.raises(RuntimeError, match="Existing Wright state"):
+        guest.prepare_runtime_mount(profile)
+    assert retained.read_text() == "preserved" and calls == []
+
+
+def test_verification_is_read_only(storage):
+    profile, _, _, target, _, calls, prepare = storage
+    prepare()
+    assert guest.verify_runtime_storage(profile)["target"] == str(target)
+    assert calls == []

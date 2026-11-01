@@ -675,3 +675,10 @@ all supported raster formats and hostile MIME rejection; CodeQL remains required
 for full data-flow analysis. Do not suppress rules or exclude maintained sources.
 
 Offline provider setup guides are frontend build inputs. The Docker source binding includes `docs/mcp-catalog/usage-guides` so guide changes cannot reuse an image built from older help content.
+
+The public-alpha leak checker preserves four deliberate negative-test canaries in
+`.github/public-alpha-fixture-exceptions.json`. Each reviewed exception matches
+only its exact relative path, scanner rule and SHA-256 of the entire source line.
+Changing the line, adding a secret beside it or moving it to another file remains
+blocking. Malformed policy fails closed. These exceptions do not change Gitleaks,
+TruffleHog, scanner patterns or the redaction tests that consume the canaries.

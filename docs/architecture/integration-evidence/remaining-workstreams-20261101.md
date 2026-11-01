@@ -87,15 +87,19 @@ Existing UI capabilities and usable common-view fallback remain required.
 ## Remaining candidate blockers
 
 The consolidated branch is not merge-qualified yet. The root preflight found
-older synthetic-VM storage fixtures that expect a whole-runtime tmpfs instead of
-the incoming fresh disk-software/private-tmpfs layout. Existing tests remain
-blocking; no skip or weaker production guard was added. Additional scratch-only
-checks of the current layout pass all 15 cases, including wrong mount identity,
-size/options/UID, existing-state preservation and root-owned verifier enforcement.
+older synthetic-VM storage fixtures that expected a whole-runtime tmpfs instead of
+the incoming fresh disk-software/private-tmpfs layout. The user approved the
+mapped test update on 1 November. All original protections are retained against
+the current layout: wrong mount identity, size/options/UID, existing-state
+preservation, no parent remount and immutable root-owned verifier enforcement.
+No production storage guard was changed and no real mount or guest was used.
 
-The public leak checker also reports four deliberate negative-test canaries.
-Their original literals and detector rules remain unchanged pending review of a
-strictly scoped fixture-policy proposal. No broad security exemption is applied.
+The user also approved four exact negative-test fixture exceptions for the public
+leak checker. Its policy matches the entire source-line hash, exact path and
+scanner rule; the original literals and detector rules remain unchanged. Changed
+values, adjacent secrets, another path or rule remain blocking. Malformed policy
+fails closed. Combined scanner, storage and original negative-test owners:
+**104 passed**. Gitleaks and other security scanners are unchanged.
 
 The full merge gate was stopped while these findings were reconciled. It and the
 normal pre-push gate must run to completion, followed by all current-head CI.

@@ -64,27 +64,67 @@ def test_install_guard_precedes_all_host_mutation(tmp_path, monkeypatch):
         installer.install(tmp_path / "missing.tar.gz", "a" * 64, "b" * 64)
 
 
-@pytest.mark.parametrize("kind", ["valid", "parent", "noexec", "small", "nonempty"])
-def test_installer_allows_only_empty_dedicated_executable_mount(
-    tmp_path, monkeypatch, kind
+# Share only the temporary mock storage observations, never guest operations.
+from test_synthetic_beta_guest import storage  # noqa: F401, E402
+
+
+@pytest.mark.parametrize(
+    "wrong",
+    [None, "parent", "noexec", "small", "nonempty", "guard_owner", "guard_writable"],
+)
+def test_installer_exact_fresh_scope_and_root_verifier(
+    storage,  # noqa: F811 - imported pytest fixture
+    tmp_path,
+    monkeypatch,
+    wrong,
 ):
     import json
+    import os
+    from types import SimpleNamespace
+    from scripts.synthetic_beta_testing import guest
 
-    if kind == "nonempty":
-        (tmp_path / "existing-state").write_text("preserve")
-    description = {
-        "target": str(tmp_path) if kind != "parent" else str(tmp_path.parent),
-        "fstype": "tmpfs",
-        "size": 4 * 1024**3 if kind != "small" else 800 * 1024**2,
-        "options": "rw,nosuid,nodev" + (",noexec" if kind == "noexec" else ""),
-    }
+    profile, _, private, target, rows, calls, prepare = storage
+    prepare()
+    guard = tmp_path / "root-owned-check.py"
+    guard.write_text("# Mock verifier, never executed")
+    guard.chmod(0o644)
+    if wrong == "nonempty":
+        (target / "data" / "retained").write_text("preserve")
+    if wrong == "noexec":
+        rows[private]["options"] += ",noexec"
+    if wrong == "small":
+        rows[private]["size"] = 512 * 1024**2
+    previous_stat = Path.stat
+
+    def stat(path, *args, **kwargs):
+        value = previous_stat(path, *args, **kwargs)
+        if path == guard:
+            fields = list(value)
+            fields[4] = 1000 if wrong == "guard_owner" else 0
+            if wrong == "guard_writable":
+                fields[0] |= 0o022
+            return os.stat_result(fields)
+        return value
+
+    monkeypatch.setattr(Path, "stat", stat)
     monkeypatch.setattr(
-        installer.subprocess,
-        "check_output",
-        lambda *_a, **_k: json.dumps({"filesystems": [description]}),
+        installer,
+        "Path",
+        lambda value: {
+            "/run/hermes-beta/wright-home": target,
+            "/usr/local/lib/wright-beta/check-runtime-storage.py": guard,
+        }.get(str(value), Path(value)),
     )
-    if kind == "valid":
-        installer.check_runtime_mount(tmp_path)
+
+    def verify(argv, **kwargs):
+        assert argv == ["python3", str(guard)]
+        return SimpleNamespace(stdout=json.dumps(guest.verify_runtime_storage(profile)))
+
+    monkeypatch.setattr(installer.subprocess, "run", verify)
+    if wrong is None:
+        assert installer.check_runtime_mount(target)["target"] == str(target)
     else:
-        with pytest.raises(RuntimeError, match="mount"):
-            installer.check_runtime_mount(tmp_path)
+        with pytest.raises(RuntimeError):
+            installer.check_runtime_mount(profile if wrong == "parent" else target)
+    if wrong == "nonempty":
+        assert (target / "data" / "retained").read_text() == "preserve"
