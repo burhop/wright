@@ -146,3 +146,24 @@ def test_malformed_exception_policy_fails_closed(tmp_path, monkeypatch) -> None:
         policy.write_text(json.dumps(value))
         with pytest.raises(ValueError):
             leak_scan.fixture_exceptions()
+
+
+def test_historical_canary_exceptions_reference_only_approved_canaries() -> None:
+    approved = leak_scan.fixture_exceptions()
+    # Introducing commit/path/rule/line verified against Git history in the
+    # integration evidence. CI's shallow checkout needs no historical objects.
+    expected = {
+        "c88f2721150a80bf26741d2af933d2f31142224f:packages/core/tests/test_workflow_trace.py:generic-api-key:113": (
+            "generic-secret-assignment",
+            "6b6f9b2f0b5b2d96ef6e70e0faedca377e526a80ea90db55d7fd6800be3b49c3",
+        ),
+        "b001bf6a93da855ccf5bebe92cc7d6d3627a5cf6:tests/unit/test_synthetic_beta_provision.py:private-key:427": (
+            "private-key",
+            "213a5e515b7cc336d265f64c12b43125fbbe41186a4c890d77806ef0265f71d9",
+        ),
+    }
+    entries = set((ROOT / ".gitleaksignore").read_text().splitlines())
+    for fingerprint, (public_rule, digest) in expected.items():
+        assert fingerprint in entries
+        _, path, _, _ = fingerprint.split(":")
+        assert (path, public_rule, digest) in approved
