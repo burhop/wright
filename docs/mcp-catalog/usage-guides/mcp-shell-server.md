@@ -275,7 +275,7 @@ inaccessible and misleadingly produces `ModuleNotFoundError: mcp`. Source/runtim
 are read-only, only the target workspace is writable, and credentials are absent.
 The guest network remains available; no domain-filtering qualification is claimed.
 Exact scoped command, failed attempts and native receipts are retained in
-[transfer setup125](../../../artifacts/first-contact/synthetic-beta-003/operator-retries/workflow-transfer-125/RESULT.md).
+transfer setup125 (retained local evidence: `artifacts/first-contact/synthetic-beta-003/operator-retries/workflow-transfer-125/RESULT.md`).
 This is a prepared candidate binding tied to runtime118, not out-of-box customer
 setup. Preserve private-ticket handling and require actual artifact handoff before
 claiming a saved CAD workflow is runnable.
@@ -286,7 +286,7 @@ The corrected binding completed a real saved Wright export→private-transfer→
 chain in1.914seconds on28October. It retained621,468bytes with SHA256
 `91b169b188c4c64534bd41e919adfc1f4a7994485c5ec4fd39aba094a86a5856`, matching
 the existing unapproved handle revision5 export. No CAD redesign or engineering
-approval occurred. [Actual run and failed attempts](../../../artifacts/first-contact/synthetic-beta-003/operator-retries/cad-handoff-127/RESULT.md).
+approval occurred. Actual run and failed attempts (retained local evidence: `artifacts/first-contact/synthetic-beta-003/operator-retries/cad-handoff-127/RESULT.md`).
 
 In addition to `/opt`, explicitly create sandbox `/etc` with0755 before its
 read-only SSL/resolver mounts. Otherwise private umask prevented curl DNS even
@@ -313,7 +313,7 @@ The guest lacked unzip. Installing the standard Ubuntu ARM64 package required
 171kB download/503kB disk. A proposed general Python allowlist expansion was
 rejected by automatic approval review and was not performed. The accepted narrow
 configuration admits curl,jq,sha256sum,unzip inside the existing scoped sandbox.
-[Actual evidence and integrated draft status](../../../artifacts/first-contact/synthetic-beta-003/operator-retries/mesh-handoff-128/RESULT.md).
+Actual evidence and integrated draft status (retained local evidence: `artifacts/first-contact/synthetic-beta-003/operator-retries/mesh-handoff-128/RESULT.md`).
 The full handle draft now declares CAD→exact export→STL and retains its original
 mesh port and downstream requirements. This dynamic integration is saved but not
 executed; geometry measurement/repair, analysis and print qualification remain.
@@ -322,4 +322,6 @@ executed; geometry measurement/repair, analysis and print qualification remain.
 
 Cached qualified Orca2.4.2 and independent shell1.1.12 now initialize through installed native Wright in the isolated handle workspace. Validation69e996769a3e49af9566ecd9bda73bcd passed; actual `/opt/orca/AppRun --help` returned OrcaSlicer2.4.2 through the public gateway. No model was sliced. Original profile preparation, independent inspection and full saved bindings remain pending.
 
-Retain networknone, read-only root/application, scoped workspace, AppRun-only allowlist and the explicit60-second provider limit. No general Python executable was added. Guest image OCI manifestf451b7d4… has the same layers and meaningful configuration as retained source71ac2d85…. See [setup evidence](../../../artifacts/first-contact/synthetic-beta-003/operator-retries/slicer-setup-136/RESULT.md).
+Retain networknone, read-only root/application, scoped workspace, AppRun-only allowlist and the explicit60-second provider limit. No general Python executable was added. Guest image OCI manifestf451b7d4… has the same layers and meaningful configuration as retained source71ac2d85…. See setup evidence (retained local evidence: `artifacts/first-contact/synthetic-beta-003/operator-retries/slicer-setup-136/RESULT.md`).
+
+Local evidence references identify preserved operator records; they are not included in the public documentation build.

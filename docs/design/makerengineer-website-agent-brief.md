@@ -243,10 +243,10 @@ Important limits of the retained handle demonstration:
 
 The portable packet supplied with this brief includes these observation assets:
 
-- [Website-start storyboard](../../artifacts/first-contact/golden-hour-002/storyboard.pdf).
-- [Actual arrival](../../artifacts/first-contact/golden-hour-002/tester/01-arrival.png).
-- [Visited CAD page](../../artifacts/first-contact/golden-hour-002/tester/03-cad-product-design.png).
-- [Getting Started stopping point](../../artifacts/first-contact/golden-hour-002/tester/05-stopping-point.png).
+- Website-start storyboard (retained local evidence: `artifacts/first-contact/golden-hour-002/storyboard.pdf`).
+- Actual arrival (retained local evidence: `artifacts/first-contact/golden-hour-002/tester/01-arrival.png`).
+- Visited CAD page (retained local evidence: `artifacts/first-contact/golden-hour-002/tester/03-cad-product-design.png`).
+- Getting Started stopping point (retained local evidence: `artifacts/first-contact/golden-hour-002/tester/05-stopping-point.png`).
 
 Those screenshots document the site observed on 25 October. They are not new
 designs. The packet preserves their bytes; it is for implementation context.
@@ -296,3 +296,5 @@ customer pilot are separate decisions; neither is needed for this first delivery
 
 The next milestone is a coherent, truthful starting experience for one useful
 job, with evidence for its claims and a clear handoff into Wright.
+
+Local evidence references identify preserved operator records; they are not included in the public documentation build.

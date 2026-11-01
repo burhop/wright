@@ -1,7 +1,7 @@
 # Goal prompt for a calibrated Wright beta tester
 
 **Prepared and submitted 25 October 2026.** Actual execution is tracked in the
-[single progress record](../../artifacts/first-contact/synthetic-beta-001/progress.md).
+single progress record (retained local evidence: `artifacts/first-contact/synthetic-beta-001/progress.md`).
 For reuse of this prompt, select **GPT-6.1 Sol with
 High reasoning**, standard speed, for the implementation agent. The complete
 [implementation plan](../design/synthetic-beta-testing-plan.md) defines B0–B5,
@@ -33,3 +33,5 @@ Use at most six hours wall time, finishing earlier if complete. Keep one checkli
 
 Finish with the reusable command sequence, beta report, independent audit, calibration comparison, short storyboard, resource cleanup state and the three most useful next Wright improvements supported by evidence. Stop owned services and preserve the resettable baseline. Commit only scoped code/docs and appropriate redacted evidence. Mark complete only when all acceptance items pass; a truthful product-blocked journey may satisfy observation, but missing VM evidence or unsuccessful calibration cannot. Report exactly what remains incomplete if the budget or a prerequisite prevents completion.
 ```
+
+Local evidence references identify preserved operator records; they are not included in the public documentation build.

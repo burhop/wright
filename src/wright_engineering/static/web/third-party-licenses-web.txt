@@ -1,5 +1,5 @@
 Name: react
-Version: 19.2.8
+Version: 19.3.1
 License: MIT
 Private: false
 Description: React is a JavaScript library for building user interfaces.
@@ -33,11 +33,11 @@ SOFTWARE.
 ---
 
 Name: scheduler
-Version: 0.27.0
+Version: 0.28.0
 License: MIT
 Private: false
 Description: Cooperative scheduler for the browser environment.
-Repository: https://github.com/facebook/react.git
+Repository: https://github.com/react/react.git
 Homepage: https://react.dev/
 License Text:
 ===
@@ -67,7 +67,7 @@ SOFTWARE.
 ---
 
 Name: react-dom
-Version: 19.2.8
+Version: 19.3.1
 License: MIT
 Private: false
 Description: React package for working with the DOM.
@@ -316,7 +316,7 @@ License Text:
 ---
 
 Name: @opentelemetry/core
-Version: 2.10.0
+Version: 2.12.0
 License: Apache-2.0
 Private: false
 Description: OpenTelemetry Core provides constants and utilities shared by all OpenTelemetry SDK packages.
@@ -531,7 +531,7 @@ License Text:
 ---
 
 Name: @opentelemetry/semantic-conventions
-Version: 1.43.0
+Version: 1.44.0
 License: Apache-2.0
 Private: false
 Description: OpenTelemetry semantic conventions
@@ -746,7 +746,7 @@ License Text:
 ---
 
 Name: @opentelemetry/resources
-Version: 2.10.0
+Version: 2.12.0
 License: Apache-2.0
 Private: false
 Description: OpenTelemetry SDK resources
@@ -961,7 +961,7 @@ License Text:
 ---
 
 Name: @opentelemetry/sdk-trace
-Version: 2.10.0
+Version: 2.12.0
 License: Apache-2.0
 Private: false
 Description: OpenTelemetry Tracing
@@ -1176,7 +1176,7 @@ License Text:
 ---
 
 Name: @opentelemetry/sdk-trace-base
-Version: 2.10.0
+Version: 2.12.0
 License: Apache-2.0
 Private: false
 Description: OpenTelemetry Tracing
@@ -1391,7 +1391,7 @@ License Text:
 ---
 
 Name: @opentelemetry/sdk-trace-web
-Version: 2.10.0
+Version: 2.12.0
 License: Apache-2.0
 Private: false
 Description: OpenTelemetry Web Tracer
@@ -1606,7 +1606,7 @@ License Text:
 ---
 
 Name: idb
-Version: 8.0.3
+Version: 8.0.4
 License: ISC
 Private: false
 Description: A small wrapper that makes IndexedDB usable
@@ -1625,7 +1625,7 @@ THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH RE
 ---
 
 Name: react-router
-Version: 7.18.2
+Version: 7.18.5
 License: MIT
 Private: false
 Description: Declarative routing for React
@@ -1955,7 +1955,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ---
 
 Name: inline-style-parser
-Version: 0.2.7
+Version: 0.2.9
 License: MIT
 Private: false
 Description: An inline style parser.
@@ -1976,7 +1976,7 @@ THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 ---
 
 Name: style-to-object
-Version: 1.0.14
+Version: 2.0.2
 License: MIT
 Private: false
 Description: Parse CSS inline style to JavaScript object.
@@ -1988,41 +1988,6 @@ License Text:
 The MIT License (MIT)
 
 Copyright (c) 2017 Menglin "Mark" Xu <mark@remarkablemark.org>
-
-Permission is hereby granted, free of charge, to any person obtaining
-a copy of this software and associated documentation files (the
-"Software"), to deal in the Software without restriction, including
-without limitation the rights to use, copy, modify, merge, publish,
-distribute, sublicense, and/or sell copies of the Software, and to
-permit persons to whom the Software is furnished to do so, subject to
-the following conditions:
-
-The above copyright notice and this permission notice shall be
-included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
-LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
-OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
----
-
-Name: style-to-js
-Version: 1.1.21
-License: MIT
-Private: false
-Description: Parses CSS inline style to JavaScript object (camelCased).
-Repository: git+https://github.com/remarkablemark/style-to-js.git
-Author: Mark <mark@remarkablemark.org>
-License Text:
-===
-
-The MIT License (MIT)
-
-Copyright (c) 2020 Menglin "Mark" Xu <mark@remarkablemark.org>
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
@@ -2157,7 +2122,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ---
 
 Name: hast-util-to-jsx-runtime
-Version: 2.3.6
+Version: 2.3.7
 License: MIT
 Private: false
 Description: hast utility to transform to preact, react, solid, svelte, vue, etc
@@ -2526,7 +2491,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ---
 
 Name: micromark-factory-space
-Version: 2.0.1
+Version: 2.1.0
 License: MIT
 Private: false
 Description: micromark factory to parse markdown space (found in lots of places)
@@ -2674,7 +2639,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ---
 
 Name: micromark-core-commonmark
-Version: 2.0.3
+Version: 2.0.4
 License: MIT
 Private: false
 Description: The CommonMark markdown constructs
@@ -2932,6 +2897,43 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ---
 
+Name: micromark-util-edit-map
+Version: 1.0.0
+License: MIT
+Private: false
+Description: micromark utility to batch changes to lists of events
+Repository: undefined
+Author: Titus Wormer <tituswormer@gmail.com> (https://wooorm.com)
+Contributors:
+  Titus Wormer <tituswormer@gmail.com> (https://wooorm.com)
+License Text:
+===
+
+(The MIT License)
+
+Copyright (c) Titus Wormer <tituswormer@gmail.com>
+
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files (the
+'Software'), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to
+the following conditions:
+
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+---
+
 Name: micromark-util-decode-string
 Version: 2.0.1
 License: MIT
@@ -2970,7 +2972,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ---
 
 Name: mdast-util-from-markdown
-Version: 2.0.3
+Version: 2.1.0
 License: MIT
 Private: false
 Description: mdast utility to parse markdown
@@ -3122,7 +3124,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ---
 
 Name: @ungap/structured-clone
-Version: 1.3.1
+Version: 1.4.0
 License: ISC
 Private: false
 Description: A structuredClone polyfill
@@ -3190,7 +3192,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ---
 
 Name: unist-util-visit-parents
-Version: 6.0.2
+Version: 6.1.0
 License: MIT
 Private: false
 Description: unist utility to recursively walk over nodes, with ancestral information
@@ -3203,7 +3205,7 @@ License Text:
 
 (The MIT License)
 
-Copyright (c) 2016 Titus Wormer <tituswormer@gmail.com>
+Copyright (c) Titus Wormer <tituswormer@gmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
@@ -3227,7 +3229,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ---
 
 Name: unist-util-visit
-Version: 5.1.0
+Version: 5.2.0
 License: MIT
 Private: false
 Description: unist utility to visit nodes
@@ -3242,7 +3244,7 @@ License Text:
 
 (The MIT License)
 
-Copyright (c) 2015 Titus Wormer <tituswormer@gmail.com>
+Copyright (c) Titus Wormer <tituswormer@gmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
@@ -3657,7 +3659,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 ---
 
 Name: mdast-util-find-and-replace
-Version: 3.0.2
+Version: 3.0.4
 License: MIT
 Private: false
 Description: mdast utility to find and replace text in a tree
@@ -3768,7 +3770,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ---
 
 Name: mdast-util-gfm-strikethrough
-Version: 2.0.0
+Version: 2.0.1
 License: MIT
 Private: false
 Description: mdast extension to parse and serialize GFM strikethrough
@@ -3781,7 +3783,7 @@ License Text:
 
 (The MIT License)
 
-Copyright (c) 2020 Titus Wormer <tituswormer@gmail.com>
+Copyright (c) Titus Wormer <tituswormer@gmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
@@ -3841,8 +3843,47 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ---
 
+Name: mdast-util-phrasing
+Version: 4.1.0
+License: MIT
+Private: false
+Description: mdast utility to check if a node is phrasing content
+Repository: undefined
+Author: Victor Felder <victor@draft.li> (https://draft.li)
+Contributors:
+  Victor Felder <victor@draft.li> (https://draft.li)
+  Titus Wormer <tituswormer@gmail.com> (https://wooorm.com)
+License Text:
+===
+
+(The MIT License)
+
+Copyright (c) 2017 Titus Wormer <tituswormer@gmail.com>
+Copyright (c) 2017 Victor Felder <victor@draft.li>
+
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files (the
+'Software'), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to
+the following conditions:
+
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+---
+
 Name: mdast-util-to-markdown
-Version: 2.1.2
+Version: 2.2.1
 License: MIT
 Private: false
 Description: mdast utility to serialize markdown
@@ -3893,45 +3934,6 @@ License Text:
 (The MIT License)
 
 Copyright (c) 2015 Titus Wormer <mailto:tituswormer@gmail.com>
-
-Permission is hereby granted, free of charge, to any person obtaining
-a copy of this software and associated documentation files (the
-'Software'), to deal in the Software without restriction, including
-without limitation the rights to use, copy, modify, merge, publish,
-distribute, sublicense, and/or sell copies of the Software, and to
-permit persons to whom the Software is furnished to do so, subject to
-the following conditions:
-
-The above copyright notice and this permission notice shall be
-included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND,
-EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
-CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
-TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
-SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
----
-
-Name: mdast-util-phrasing
-Version: 4.1.0
-License: MIT
-Private: false
-Description: mdast utility to check if a node is phrasing content
-Repository: undefined
-Author: Victor Felder <victor@draft.li> (https://draft.li)
-Contributors:
-  Victor Felder <victor@draft.li> (https://draft.li)
-  Titus Wormer <tituswormer@gmail.com> (https://wooorm.com)
-License Text:
-===
-
-(The MIT License)
-
-Copyright (c) 2017 Titus Wormer <tituswormer@gmail.com>
-Copyright (c) 2017 Victor Felder <victor@draft.li>
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
@@ -4177,7 +4179,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ---
 
 Name: micromark-extension-gfm-table
-Version: 2.1.1
+Version: 2.1.2
 License: MIT
 Private: false
 Description: micromark extension to support GFM tables
@@ -4636,11 +4638,11 @@ SOFTWARE.
 ---
 
 Name: use-sync-external-store
-Version: 1.6.0
+Version: 1.7.0
 License: MIT
 Private: false
 Description: Backwards compatible shim for React's useSyncExternalStore. Works with any React that supports hooks.
-Repository: https://github.com/facebook/react.git
+Repository: https://github.com/react/react.git
 License Text:
 ===
 

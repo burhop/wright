@@ -19,7 +19,7 @@ profile, an independent evidence review, and a small calibration comparison.
 Then return to improving Wright using the resulting findings. Do not expand this
 into a fleet, general QA service, automatic product-repair system or new dashboard.
 
-**Execution:** The user submitted the bounded goal on 25 October 2026 and later approved the isolated ARM64/KVM launcher and temporary access-token-only guest model setup. The [single implementation record](../../artifacts/first-contact/synthetic-beta-001/progress.md) owns live status and evidence; this plan remains the acceptance contract.
+**Execution:** The user submitted the bounded goal on 25 October 2026 and later approved the isolated ARM64/KVM launcher and temporary access-token-only guest model setup. The single implementation record (retained local evidence: `artifacts/first-contact/synthetic-beta-001/progress.md`) owns live status and evidence; this plan remains the acceptance contract.
 
 **User clarification during implementation:** Wright is displayed in a browser.
 The customer must interact with Wright's browser UI inside the guest using visible
@@ -274,16 +274,16 @@ preparation code or a convincing report was produced.
 
 Read the root AGENTS guidance and preserve V1–V7. Reuse:
 
-- [Native candidate builder](../../scripts/build-native-runtime.py),
-  [Hermes lifecycle harness](../../scripts/test-native-hermes-install.py),
-  [native candidate CI](../../.github/workflows/native-hermes-pr.yml) and
-  [runtime artifact contract](../../specs/050-native-hermes-install/contracts/runtime-artifact-contract.md).
+- [Native candidate builder](https://github.com/burhop/wright/blob/e9710f58596e8ed601e2cfd17267ec260f46017a/scripts/build-native-runtime.py),
+  [Hermes lifecycle harness](https://github.com/burhop/wright/blob/e9710f58596e8ed601e2cfd17267ec260f46017a/scripts/test-native-hermes-install.py),
+  [native candidate CI](https://github.com/burhop/wright/blob/e9710f58596e8ed601e2cfd17267ec260f46017a/.github/workflows/native-hermes-pr.yml) and
+  [runtime artifact contract](https://github.com/burhop/wright/blob/e9710f58596e8ed601e2cfd17267ec260f46017a/specs/050-native-hermes-install/contracts/runtime-artifact-contract.md).
 - [Public Hermes route](../getting-started/hermes-plugin.md),
   [MCP qualification process](../mcp-catalog/mcp-server-testing-process.md),
   [FreeCAD usage guide](../mcp-catalog/usage-guides/freecad-mcp.md) and its linked
   setup recipe/evidence. The VM session does not replace clean-container catalog
   qualification. Update the guide with scoped actual use, without broad promotion.
-- [Golden-hour-004](../../artifacts/first-contact/golden-hour-004/README.md)
+- Golden-hour-004 (retained local evidence: `artifacts/first-contact/golden-hour-004/README.md`)
   recording/report patterns and [existing usability walkthroughs](../testing/engineering-program-usability.md).
 
 Keep the lab outside Wright's runtime. Wright's backend owns execution, readiness,
@@ -328,3 +328,5 @@ the proposed feedback workflow, not an assurance of human equivalence.
 [Mind the Sim2Real Gap](https://arxiv.org/abs/2603.11245), studying conversational
 user simulation, reports excessive cooperation and positive feedback; this
 motivates separate evidence checks and narrow calibration claims here.
+
+Local evidence references identify preserved operator records; they are not included in the public documentation build.

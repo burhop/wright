@@ -5,7 +5,7 @@ This is the operating guide for the bounded lab in
 one real disposable customer VM, customer feedback, independent evidence review
 and one narrow calibration comparison. Commands below are a procedure, not claims
 of completed customer sessions. Actual status belongs to
-[the single progress record](../../artifacts/first-contact/synthetic-beta-001/progress.md).
+the single progress record (retained local evidence: `artifacts/first-contact/synthetic-beta-001/progress.md`).
 
 The implemented backend uses the explicitly approved local **ARM64/KVM** route:
 Ubuntu 24.04 ARM64, XFCE, Firefox and Hermes 0.19.0. It is a real QEMU guest with
@@ -30,8 +30,8 @@ earlier assignments and reports when changing future profiles.
 | Independent reviewer | A separate GPT-6.1 Sol High process receives the original report, event log and scoped retained captures/result receipts after observation. It returns a separate verification; it cannot guide or alter the live attempt. |
 
 Customer and evaluator instructions are versioned in
-[`assets/customer.md`](../../scripts/synthetic_beta_testing/assets/customer.md) and
-[`assets/evaluator.md`](../../scripts/synthetic_beta_testing/assets/evaluator.md).
+[`assets/customer.md`](https://github.com/burhop/wright/blob/e9710f58596e8ed601e2cfd17267ec260f46017a/scripts/synthetic_beta_testing/assets/customer.md) and
+[`assets/evaluator.md`](https://github.com/burhop/wright/blob/e9710f58596e8ed601e2cfd17267ec260f46017a/scripts/synthetic_beta_testing/assets/evaluator.md).
 The controller enforces the host/guest boundary, exposed tool set, resource
 limits and observation deadline outside these prompts. It does not semantically
 filter every guest keystroke: ordinary terminal access can reach guest commands
@@ -57,7 +57,7 @@ export WRIGHT_BETA_LAUNCHER=sha256:172e37d60f74c316521b1ff81d9d3d228e76809b3c917
 
 `init` requires an existing usable `/dev/kvm`, Docker access and the immutable
 local launcher image. It does not install host virtualization. The launcher build
-recipe is [`vm-launcher.Dockerfile`](../../scripts/synthetic_beta_testing/assets/vm-launcher.Dockerfile).
+recipe is [`vm-launcher.Dockerfile`](https://github.com/burhop/wright/blob/e9710f58596e8ed601e2cfd17267ec260f46017a/scripts/synthetic_beta_testing/assets/vm-launcher.Dockerfile).
 Rebuilding that recipe produces a separately identified launcher; freeze and
 qualify its resulting image ID before use. The OS download is dated and hash
 checked; inspect the saved download receipt rather than trusting its filename.
@@ -74,7 +74,7 @@ ssh-keygen -t ed25519 -N '' -f "$WRIGHT_BETA_LAB/private/provision-key"
 ```
 
 The first cloud-init recipe is
-[`hermes-baseline.cloud-init.yaml`](../../scripts/synthetic_beta_testing/assets/hermes-baseline.cloud-init.yaml).
+[`hermes-baseline.cloud-init.yaml`](https://github.com/burhop/wright/blob/e9710f58596e8ed601e2cfd17267ec260f46017a/scripts/synthetic_beta_testing/assets/hermes-baseline.cloud-init.yaml).
 It installs the desktop and pinned Hermes package. Package installation alone is
 not qualification. Before freezing, inspect the actual desktop/control, browser,
 Hermes executable and version, installed package/dependency inventory, and absence
@@ -137,7 +137,7 @@ technical preparation. Freeze a new baseline identity after any correction.
 This execution retained its inspected Hermes-only baseline and both frozen
 candidate bundles under ignored
 `.local-run/synthetic-beta-001-retained/`, identified by
-[`retained-baseline.json`](../../artifacts/first-contact/synthetic-beta-001/retained-baseline.json).
+`retained-baseline.json` (retained local evidence: `artifacts/first-contact/synthetic-beta-001/retained-baseline.json`).
 The baseline is `hermes-baseline-v2.qcow2`, SHA256
 `d04171fa45390d4698aadd03b66598080b3247f8c114575aaf56fe7117779cca`.
 It contains the desktop and Hermes, not Wright, engineering tools, authenticated
@@ -426,7 +426,7 @@ friction-free progression. Preserve this distinction between an accurate factual
 account and that original completion rule.
 
 The explicit v2 scope selects the versioned
-[evaluator-v5 instructions](../../scripts/synthetic_beta_testing/assets/evaluator-v5.md)
+[evaluator-v5 instructions](https://github.com/burhop/wright/blob/e9710f58596e8ed601e2cfd17267ec260f46017a/scripts/synthetic_beta_testing/assets/evaluator-v5.md)
 and adds a separately typed verification object, `checkpoint_accomplishment`:
 `claim_disposition` (`supported`, `unsupported` or `uncertain`),
 `final_state_reached` (boolean), `evidence_refs` (exact known event IDs) and
@@ -498,10 +498,10 @@ time is not human task time or a dollar estimate. Raw screenshots can contain
 private information: text-field redaction does not sanitize image pixels. Keep
 raw captures private and inspect selected exports before committing or sharing.
 
-The derived [resource ledger](../../artifacts/first-contact/synthetic-beta-001/resource-ledger.json)
+The derived resource ledger (retained local evidence: `artifacts/first-contact/synthetic-beta-001/resource-ledger.json`)
 retains available app-server token counters and process windows with their exact
 record sources. Regenerate it after the final sessions/reviews and cleanup using
-the [file-only accounting recipe](../../artifacts/first-contact/synthetic-beta-001/recipes/README.md).
+the file-only accounting recipe (retained local evidence: `artifacts/first-contact/synthetic-beta-001/recipes/README.md`).
 Count a cumulative thread total once; never add its `last` counter or add cached
 input/reasoning subsets again. Failed probes, failed customer attempts and rejected
 review attempts still consumed resources and remain included. Incomplete transport
@@ -540,7 +540,7 @@ retain their separate authorization.
 
 Use the [golden-hour improvement loop](golden-hour-improvement-loop.md) to register
 a benchmark, freeze the customer/environment, fix one supported obstacle and
-compare a fresh candidate. The [local operator dashboard](../../artifacts/first-contact/golden-hour-tracking/dashboard.html)
+compare a fresh candidate. The local operator dashboard (retained local evidence: `artifacts/first-contact/golden-hour-tracking/dashboard.html`)
 projects original reports and saved independent assessments. It keeps full
 journeys, checkpoint calibration and lab failures separate; it neither executes
 the loop nor changes Wright's runtime/engineering acceptance authority.
@@ -552,3 +552,5 @@ the normal evidence. The CLI records a partial clock if startup was not captured
 Track diagnosis/fix/check/reporting work, including outside-loop findings, through
 the existing development metrics activity owner. New timing instructions require
 a fresh baseline; old six-milestone results are not full workflow outcomes.
+
+Local evidence references identify preserved operator records; they are not included in the public documentation build.

@@ -66,10 +66,17 @@ or authentication fallback is introduced.
 
 ## Qualification and limitations
 
-Raw logs are retained in the local integration evidence directory. Focused API
+Four bounded CC0 fictional-handle proof files are included so the shipped
+recorded preview can verify its receipt, assessment and exact package hash. No
+broader campaign history is included. Public docs label private evidence paths
+as retained local records rather than offering broken download links.
+
+Raw logs are retained in the local integration evidence directory. Full API:
+846 passed. Core: 378 passed. Agent/registry: 1,147 passed, 21 skipped, with the
+single expected-version correction passing its 26-test owner suite. Focused API
 reconciliation: 80 passed. Focused frontend reconciliation: 173 passed; additional
 chat link/status checks: 14 passed. Native panel rebuilt with no external assets.
-These results are preliminary; full merge/pre-push gates and all current-head CI
+Remaining focused workspace regressions: 99 passed. These results are preliminary; full merge/pre-push gates and all current-head CI
 remain required before merge. No engineering process, protected campaign,
 physical operation, personal sign-in or production deployment was started.
 

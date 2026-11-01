@@ -50,7 +50,7 @@ original equipment mount's mesh/load/support or numerical compliance.
   `WRIGHT_MCP_OAUTH_FLOW=device_code` at startup and displays link/code in setup
   and Check connection. Native installed challenge, human
   approval and actual read-only tool use in VM106 are verified. This is not a release.
-  See the [native device observation](../../artifacts/first-contact/synthetic-beta-003/operator-retries/hosted-signin-107/DEVICE-CONNECTION-111.md).
+  See the native device observation (retained local evidence: `artifacts/first-contact/synthetic-beta-003/operator-retries/hosted-signin-107/DEVICE-CONNECTION-111.md`).
 - Browser: sign in with the intended SteveCAD account and authorize Wright. A
   browser session alone does not authorize the MCP client. Wright handles OAuth
   discovery, dynamic registration, PKCE and refresh using its existing transport.
@@ -2925,3 +2925,5 @@ to Wright's base image or claim catalog-wide validation.
 ## Bambu P1S MCP offline slicing
 
 Use the [offline slicing guide](usage-guides/bambu-p1s-mcp.md) and exact catalog provider revision. Keep selected native slicer software in its own environment/container. For the GB10 qualification, verify the official OrcaSlicer ARM64 release digest before installation and test the pinned MCP's CLI compatibility. Pin the actual P1S machine, PETG filament and process profiles; the provider's PLA defaults do not satisfy the handle requirements. Runtime containers have no network or printer credentials. Only bounded offline slicing is in scope. Existing Windows coupon evidence does not qualify this ARM64 setup; full catalog clean-container status remains incomplete.
+
+Local evidence references identify preserved operator records; they are not included in the public documentation build.

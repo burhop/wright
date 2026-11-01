@@ -10,16 +10,16 @@ convergence and a complete customer journey remain unverified.
 ## Identity and sources
 
 Fresh prepared customer066 also completed catalog onboarding and a real read-only
-`list_documents` call returning an empty list. Its [readable retained result](../../../artifacts/first-contact/synthetic-beta-003/run-details/gh3-handle-engineer-066/result.txt)
+`list_documents` call returning an empty list. Its readable retained result (retained local evidence: `artifacts/first-contact/synthetic-beta-003/run-details/gh3-handle-engineer-066/result.txt`)
 binds the matching call/result records. This establishes that connection only;
 it does not establish structural qualification or a completed handle journey.
 Manual Hermes reload and result-label clarity remain reported friction.
-In the matched connection-only [customer068 visit](../../../artifacts/first-contact/synthetic-beta-003/run-details/gh3-handle-engineer-068/result.txt),
+In the matched connection-only customer068 visit (retained local evidence: `artifacts/first-contact/synthetic-beta-003/run-details/gh3-handle-engineer-068/result.txt`),
 development candidate067 supplied the native-profile restart command successfully.
 Restart is still manual; discoverability of the retained call remains a Wright
 presentation issue, not an established provider defect. No time saving is claimed.
 
-In [customer070](../../../artifacts/first-contact/synthetic-beta-003/run-details/gh3-handle-engineer-070/result.txt),
+In customer070 (retained local evidence: `artifacts/first-contact/synthetic-beta-003/run-details/gh3-handle-engineer-070/result.txt`),
 Wright candidate069-r2 displayed the retained real request and empty response
 beside the answer. The customer found and opened it without developer hints.
 This is a prepared connection/use-visibility observation only; the original
@@ -27,7 +27,7 @@ feedback is unreviewed. Manual gateway restart remains. Guest notification
 preparation differed from066/068, so elapsed time does not establish a causal
 performance gain. No additional CAD/FEA qualification or provider defect follows.
 
-[Customer074](../../../artifacts/first-contact/synthetic-beta-003/run-details/gh3-handle-engineer-074/result.txt)
+Customer074 (retained local evidence: `artifacts/first-contact/synthetic-beta-003/run-details/gh3-handle-engineer-074/result.txt`)
 used a technically prepared local056 connection with14 actual discovered
 contracts. It confirmed the connection active, but Wright rejected a workflow
 operation-assignment edit before provider selection. No CAD/analysis operation
@@ -95,7 +95,7 @@ ARM64 build before continuing.
 
 The earlier observed installation used a cached, hash-checked application. The
 official URL, size and published digest were checked on 28 October 2026 in the
-[download metadata receipt](../../../artifacts/first-contact/synthetic-beta-003/receipts/freecad-download-metadata-103.json).
+download metadata receipt (retained local evidence: `artifacts/first-contact/synthetic-beta-003/receipts/freecad-download-metadata-103.json`).
 That check does not measure a customer's download time or qualify installation.
 Use a new installation directory so an existing setup remains intact:
 
@@ -162,7 +162,7 @@ Do not launch parallel GUI RPC calls while it runs. Solver summary values do not
 establish adequate mesh convergence, realistic support/material assumptions,
 compliance or physical strength.
 
-[Session 032 readiness receipt](../../../artifacts/first-contact/synthetic-beta-003/receipts/gh3-handle-prereqs-032-readiness.json)
+Session 032 readiness receipt (retained local evidence: `artifacts/first-contact/synthetic-beta-003/receipts/gh3-handle-prereqs-032-readiness.json`)
 retains exact identities, install timings and the display correction. No geometry,
 mesh or structural solve was created in that preparation, and the clean reusable
 Hermes baseline was not changed.
@@ -391,8 +391,8 @@ A fresh technical VM for synthetic-beta-001 installed the pinned provider 0.1.18
 MCP SDK 1.28.1, matching addon and exact cached ARM64 FreeCAD 1.1.1 AppImage.
 The actual direct MCP `execute_code` exported the predeclared 10×8×6 mm box;
 independent binary STL parsing measured 480 mm³, 12 triangles and closed edges.
-[Preparation and direct-call evidence](../../../artifacts/first-contact/synthetic-beta-001/technical-freecad-probe.json)
-and [independent output check](../../../artifacts/first-contact/synthetic-beta-001/technical-freecad-output-check.json)
+Preparation and direct-call evidence (retained local evidence: `artifacts/first-contact/synthetic-beta-001/technical-freecad-probe.json`)
+and independent output check (retained local evidence: `artifacts/first-contact/synthetic-beta-001/technical-freecad-output-check.json`)
 retain exact requests and identities. This preparation used an explicitly copied
 native cache and is not a normal customer installation, a Wright-gateway call,
 handle execution or new clean-container catalog qualification. The temporary
@@ -401,14 +401,14 @@ Hermes-only customer baseline.
 
 ## Prepared customer observation —27October2026
 
-[Attempt037](../../../artifacts/first-contact/synthetic-beta-003/run-details/gh3-handle-prepared-037/details.json)
+Attempt037 (retained local evidence: `artifacts/first-contact/synthetic-beta-003/run-details/gh3-handle-prepared-037/details.json`)
 reached normal registration after the host-label correction, but protocol
 validation failed and the server stayed disabled. Initialize passed; the saved
 evidence records CatalogVerificationError before the tools/list fingerprint
 completed. Actual provider output schemas contain finite annotation bounds0.0
 and1.0; the Wright validator used catalog-signing serialization that rejects
 floats. The local038 correction separates dynamic MCP evidence fingerprints
-from strict catalog signing. Its [direct installed operator retry](../../../artifacts/first-contact/synthetic-beta-003/operator-retries/schema-038/README.md)
+from strict catalog signing. Its direct installed operator retry (retained local evidence: `artifacts/first-contact/synthetic-beta-003/operator-retries/schema-038/README.md`)
 passed initialize, initialized notification and tools/list with14tools. The
 registered server stayed active; workspace enablement and a managed engineering
 run were not performed. Fresh customer confirmation is pending; no provider bug
@@ -424,7 +424,7 @@ strength, printing or human engineering approval followed.
 
 ## Original-handle preparation through Wright — 27 October 2026
 
-The [044 focused follow-up](../../../artifacts/first-contact/synthetic-beta-003/operator-retries/connect-044/README.md)
+The 044 focused follow-up (retained local evidence: `artifacts/first-contact/synthetic-beta-003/operator-retries/connect-044/README.md`)
 renewed stale protocol evidence normally and enabled the existing provider in the
 isolated workspace. Actual contracts came from wright__workflow_tool_contracts.
 Two UI-launched Wright preparation runs used the original native BREP. Native
@@ -444,7 +444,7 @@ operation failures. Fresh customer confirmation remains pending.
 
 ## Original handle CAD → native solve through Wright — 045
 
-[Focused result and evidence](../../../artifacts/first-contact/synthetic-beta-003/operator-retries/partition-045/README.md)
+Focused result and evidence (retained local evidence: `artifacts/first-contact/synthetic-beta-003/operator-retries/partition-045/README.md`)
 retain source3 preparation run6d06c9a3 and two-stage runb73a4604. Original CAD,
 96mm interface and material/load/support assumptions are unchanged. A Boolean
 surface split had inflated the maximum CAD tolerance to8.855mm; native parameter-
@@ -485,7 +485,7 @@ failed044attempts and the unrelated surrogate study remain separate.
 
 ### Separate local correction candidate — 046, bounded engineering use observed in 048
 
-[Correction status and retained patch](../../../artifacts/first-contact/synthetic-beta-003/operator-retries/output-046/README.md)
+Correction status and retained patch (retained local evidence: `artifacts/first-contact/synthetic-beta-003/operator-retries/output-046/README.md`)
 record the separately installed `0.1.18+beta046` candidate. It returns the actual
 final native working directory and file hashes, removes duplicate result loading,
 and adds an explicit `detailed_results` option to `run_fem_analysis`. The option
@@ -513,7 +513,7 @@ and a readable note in 84.32 s. Its collection step verified full node equality,
 one result object and file hashes. Native DAT includes per-node reactions and
 integration-point stress/coordinates plus element volumes. This qualifies that
 bounded handoff, not arbitrary provider operations, mesh convergence or strength.
-See [the actual result and remaining limits](../../../artifacts/first-contact/synthetic-beta-003/operator-retries/detailed-048/README.md).
+See the actual result and remaining limits (retained local evidence: `artifacts/first-contact/synthetic-beta-003/operator-retries/detailed-048/README.md`).
 Saved-response file handoffs require a workspace-file output and explicit
 publication policy; preserve the failed authoring requests rather than adding
 a hidden file lookup. The corrected run used `publish_overwrite` only under its
@@ -523,7 +523,7 @@ unique reserved run path. No existing output or review was replaced.
 assessment used the retained native integration-point fields and original CAD
 partitions to calculate volume-weighted regional stress values and numerical
 balance checks. The saved process completed in 20.77 s; its readable tables were
-observed in Wright. See [assessment and remaining checks](../../../artifacts/first-contact/synthetic-beta-003/operator-retries/assessment-050/README.md).
+observed in Wright. See assessment and remaining checks (retained local evidence: `artifacts/first-contact/synthetic-beta-003/operator-retries/assessment-050/README.md`).
 This does not establish mesh sensitivity, printed strength or review acceptance.
 
 The unchanged finer model (151,670 nodes, 94,874 quadratic tetrahedra) prepared
@@ -533,15 +533,15 @@ partial files count as a solver result. Native FreeCAD then displayed a blocking
 error notification, while passive document reads timed out. Retain native files
 and inspect the GUI before replaying a tool call. The notification was eventually
 acknowledged; successful recovery still needs observation. See the
-[failed attempt](../../../artifacts/first-contact/synthetic-beta-003/operator-retries/finer-051/README.md)
-and [guest memory repair](../../../artifacts/first-contact/synthetic-beta-003/operator-retries/memory-052/README.md).
+failed attempt (retained local evidence: `artifacts/first-contact/synthetic-beta-003/operator-retries/finer-051/README.md`)
+and guest memory repair (retained local evidence: `artifacts/first-contact/synthetic-beta-003/operator-retries/memory-052/README.md`).
 No provider protocol or timeout behavior was changed in this repair.
 
 ### Deadline and console-retention candidate — 056–057, 28 October UTC
 
 The memory-repaired finer solve produced native fields after Wright's 120-second
 limit, so its failed run was preserved and the exact native model copied before
-restarting CAD. See [retained late results](../../../artifacts/first-contact/synthetic-beta-003/operator-retries/input-055/README.md).
+restarting CAD. See retained late results (retained local evidence: `artifacts/first-contact/synthetic-beta-003/operator-retries/input-055/README.md`).
 Candidate `0.1.18+beta056` extends the separate 046 installation: a FEM call uses
 its explicit GUI wait plus 30 seconds for its own XML-RPC socket; native
 `start_ccx` still owns execution. Actual console streams, return code and timing
@@ -556,7 +556,7 @@ returned as text while `isError` remained false. Inspect native outcome text and
 actual identity before proceeding. The initial focused run failed before solving;
 the separately saved 057 retry is under observation. Original failed attempts,
 actual contracts, patch and installed identities are retained in
-[the focused retry record](../../../artifacts/first-contact/synthetic-beta-003/operator-retries/deadline-056/README.md).
+the focused retry record (retained local evidence: `artifacts/first-contact/synthetic-beta-003/operator-retries/deadline-056/README.md`).
 No external report, publication or renewed clean-container qualification occurred.
 
 **Observed 057–058:** the corrected native call returned success, actual exit code
@@ -571,8 +571,8 @@ verified inventory; its full delivery route is not yet re-observed.
 A separate declared passive assessment completed in 29.74 s over those exact
 fields, without another solve. Full native COORD/EVOL reconciliation checks the
 quadratic quadrature against this actual result. The readable working-view table
-was opened successfully. See [fine assessment](../../../artifacts/first-contact/synthetic-beta-003/operator-retries/assessment-058/assessment.md)
-and [two-mesh comparison](../../../artifacts/first-contact/synthetic-beta-003/engineering-cases/handle/mesh-comparison-059.md).
+was opened successfully. See fine assessment (retained local evidence: `artifacts/first-contact/synthetic-beta-003/operator-retries/assessment-058/assessment.md`)
+and two-mesh comparison (retained local evidence: `artifacts/first-contact/synthetic-beta-003/engineering-cases/handle/mesh-comparison-059.md`).
 The declared regional/displacement sensitivity limits are met; the raw stress
 peak remains mesh dependent near fixed bores. Coarse-run console review, exact
 geometry, engineering acceptance and a justified design revision remain separate.
@@ -583,7 +583,7 @@ retain authority. The temporary guest override was removed; actual gateway audit
 records330000ms for coarse061. That focused solve and complete native-file/report
 delivery completed in63.15s. The zero-byte stderr remains hash-bound in its native
 inventory and is not required as a nonempty deliverable. Readable report was
-opened in the working view. See [completed coarse delivery](../../../artifacts/first-contact/synthetic-beta-003/operator-retries/coarse-061/README.md).
+opened in the working view. See completed coarse delivery (retained local evidence: `artifacts/first-contact/synthetic-beta-003/operator-retries/coarse-061/README.md`).
 Its DAT and noncomment deck lines match the earlier assessed coarse evidence,
 allowing exact numerical evidence reuse. Current coarse and fine native consoles
 both identify CalculiX2.23, return0 and show no warning/error marker. This closes
@@ -592,7 +592,7 @@ historical. Engineering review and any changed-design evidence remain separate.
 
 ## Retained handle response-timeout observation — 28 October2026
 
-[Prepared reliability085](../../../artifacts/first-contact/synthetic-beta-003/operator-retries/reliability-085/README.md) used the unchanged coarse40N handle study and independent0.1.18+beta056 provider. Wright deliberately stopped waiting after5.206s; the native solver subsequently ran27.192s and returned0. One original request/solve was observed; actual DAT matches the retained original coarse result. Original Wright outcome remains unconfirmed and native files were recovered separately. [Corrected editor086](../../../artifacts/first-contact/synthetic-beta-003/operator-retries/reliability-086/README.md) restores that exact saved state on reopen and prevents a blind repeat.
+Prepared reliability085 (retained local evidence: `artifacts/first-contact/synthetic-beta-003/operator-retries/reliability-085/README.md`) used the unchanged coarse40N handle study and independent0.1.18+beta056 provider. Wright deliberately stopped waiting after5.206s; the native solver subsequently ran27.192s and returned0. One original request/solve was observed; actual DAT matches the retained original coarse result. Original Wright outcome remains unconfirmed and native files were recovered separately. Corrected editor086 (retained local evidence: `artifacts/first-contact/synthetic-beta-003/operator-retries/reliability-086/README.md`) restores that exact saved state on reopen and prevents a blind repeat.
 
 For diagnosis, inspect FreeCAD’s Report view and the actual solver working directory. `fea.run()` may replace the initial `/tmp/freecad_mcp_fem_*` directory with `/tmp/fcfem_*`; an empty initial directory does not establish failure. Retain the actual execution receipt, stdout/stderr, input deck and result identities before any new execution. Do not repeatedly call the GUI RPC while native work is active.
 
@@ -601,6 +601,8 @@ This provider has no durable job-ID/status/result contract for FEA. Wright’s s
 
 ### Prepared analysis customer089 and native result handoff090
 
-On28October a fresh prepared engineer ran the actual saved two-stage process once and reopened the report in10m09s. Workflow67.660s, native CalculiX27.168s/exit0; report0.482098mm maximum displacement and12.693470MPa peak nodal von Mises. This visit did not assess equilibrium/refinement or a revised design. [Actual prompt/report/screens](../../../artifacts/first-contact/synthetic-beta-003/run-details/gh3-handle-analysis-089/result.md). Original feedback remains unreviewed.
+On28October a fresh prepared engineer ran the actual saved two-stage process once and reopened the report in10m09s. Workflow67.660s, native CalculiX27.168s/exit0; report0.482098mm maximum displacement and12.693470MPa peak nodal von Mises. This visit did not assess equilibrium/refinement or a revised design. Actual prompt/report/screens (retained local evidence: `artifacts/first-contact/synthetic-beta-003/run-details/gh3-handle-analysis-089/result.md`). Original feedback remains unreviewed.
 
-FCStd is a native archive, not text. Wright090 now shows download/open guidance instead of decoding it as text. Its UI download matched the39,648,431-byte actual native file. Open it in FreeCAD; use Fit All and the appropriate FEM result view as needed. This correction does not add native CAD rendering or launch FreeCAD automatically. [Installed affected observation](../../../artifacts/first-contact/synthetic-beta-003/operator-retries/native-file-090/RESULT.md).
+FCStd is a native archive, not text. Wright090 now shows download/open guidance instead of decoding it as text. Its UI download matched the39,648,431-byte actual native file. Open it in FreeCAD; use Fit All and the appropriate FEM result view as needed. This correction does not add native CAD rendering or launch FreeCAD automatically. Installed affected observation (retained local evidence: `artifacts/first-contact/synthetic-beta-003/operator-retries/native-file-090/RESULT.md`).
+
+Local evidence references identify preserved operator records; they are not included in the public documentation build.

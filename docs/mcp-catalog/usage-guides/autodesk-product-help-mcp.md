@@ -62,7 +62,7 @@ The clean disposable ARM64 technical probe initialized the hosted service as
 `autodesk-knowledge-public-v1-mcp-server` version 1.0.12 and called
 `get_available_products({})`, returning a non-error product list including Fusion.
 This is an observed service identity, not a claim about its latest release.
-[Exact provider contract and returned data](../../../artifacts/first-contact/synthetic-beta-002/receipts/hosted-readiness-001.json)
+Exact provider contract and returned data (retained local evidence: `artifacts/first-contact/synthetic-beta-002/receipts/hosted-readiness-001.json`)
 remain separate from customer outcomes.
 
 The original private native wheel `3593ac77443b…` also listed and called the provider
@@ -71,7 +71,7 @@ discovery initially returned no tools because its optional MCP SDK was absent;
 installing the same-version `hermes-agent[mcp]` extra supplied MCP 1.26.0. Its stdio
 subprocess also needed the existing nonsecret WRIGHT_HOME binding. With that
 binding, actual Hermes discovered 14 tools and invoked the read-only product-list
-handler. [Technical setup and source receipts](../../../artifacts/first-contact/synthetic-beta-002/receipts/hermes-mcp-call-001.json)
+handler. Technical setup and source receipts (retained local evidence: `artifacts/first-contact/synthetic-beta-002/receipts/hermes-mcp-call-001.json`)
 record the actual tool, arguments, response hash and scope. These post-observation
 operations are not customer success, CAD validation or human publisher acceptance.
 
@@ -90,8 +90,8 @@ The human independently confirmed publisher completion for Autodesk Product Help
 for this testing. A fresh customer truthfully recorded that fact, obtained
 Validation passed, and reopened the workspace with the provider active. It also
 inspected displayed product excerpts including Fusion/FSN. Its
-[original report](../../../artifacts/first-contact/synthetic-beta-002/session-records/gh2-authorized-beginner-web/report.json)
-and [independent assessment](../../../artifacts/first-contact/synthetic-beta-002/session-records/gh2-authorized-beginner-web/verification.json)
+original report (retained local evidence: `artifacts/first-contact/synthetic-beta-002/session-records/gh2-authorized-beginner-web/report.json`)
+and independent assessment (retained local evidence: `artifacts/first-contact/synthetic-beta-002/session-records/gh2-authorized-beginner-web/verification.json`)
 are retained. The overall audit is REJECTED because no identifiable invocation /
 result trace independently proves the claimed provider call. Displayed excerpts
 alone do not establish provider provenance; not_reached is an evidence gap, not
@@ -121,8 +121,8 @@ imaginary Autodesk writer or infer a provider defect. The prospective1.2.9
 instruction clarification keeps old accepted instructions and the original
 failure unchanged; its installed behavior remains unobserved.
 
-[Exact native-run/call/timing reconciliation](../../../artifacts/first-contact/synthetic-beta-003/receipts/gh3-docs-newcomer-080-run-reconciliation.json)
-and [readable customer outcome](../../../artifacts/first-contact/synthetic-beta-003/run-details/gh3-docs-newcomer-080/result.md)
+Exact native-run/call/timing reconciliation (retained local evidence: `artifacts/first-contact/synthetic-beta-003/receipts/gh3-docs-newcomer-080-run-reconciliation.json`)
+and readable customer outcome (retained local evidence: `artifacts/first-contact/synthetic-beta-003/run-details/gh3-docs-newcomer-080/result.md`)
 retain the full-visit scope and limitations. Five successful tool intervals total
 10.417 seconds inside a297.614-second failed run; the remainder includes model,
 recording and orchestration, not isolated provider latency. The original beta
@@ -140,10 +140,12 @@ workspace reopening. All eight Markdown citation URLs occur in the retained
 provider response text; this does not independently verify every procedural
 claim or upstream publication/revision date.
 
-[Exact source/run/publication reconciliation](../../../artifacts/first-contact/synthetic-beta-003/receipts/gh3-docs-prepared-082-run-reconciliation.json)
-and the [actual published reference](../../../artifacts/first-contact/synthetic-beta-003/run-details/gh3-docs-prepared-082/fusion-print-preparation-reference.md)
+Exact source/run/publication reconciliation (retained local evidence: `artifacts/first-contact/synthetic-beta-003/receipts/gh3-docs-prepared-082-run-reconciliation.json`)
+and the actual published reference (retained local evidence: `artifacts/first-contact/synthetic-beta-003/run-details/gh3-docs-prepared-082/fusion-print-preparation-reference.md`)
 preserve this narrow scope. The599.354-second prepared visit excludes install
 preparation, remains unreviewed and is not a causal timing comparison, full
 first-contact journey or CAD/engineering acceptance. Chat-to-Run navigation and
 missing retrieval dating remain. The old080 failed record and1.2.8 source remain
 unchanged; do not overwrite them with this success.
+
+Local evidence references identify preserved operator records; they are not included in the public documentation build.

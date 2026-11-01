@@ -5,9 +5,9 @@ observations and track improvement over time. The initial implementation here is
 a local read-only operator dashboard. It does not publish the website, launch
 customer sessions, repair Wright or change engineering requirements.
 
-Open the [dashboard](../../artifacts/first-contact/golden-hour-tracking/dashboard.html).
+Open the dashboard (retained local evidence: `artifacts/first-contact/golden-hour-tracking/dashboard.html`).
 It is generated from existing original reports, controller manifests, independent
-audits and immutable record indexes. The [campaign registry](../../artifacts/first-contact/golden-hour-tracking/campaign.json)
+audits and immutable record indexes. The campaign registry (retained local evidence: `artifacts/first-contact/golden-hour-tracking/campaign.json`)
 lists inputs and identities, not manually maintained pass/fail status. Existing
 [lab commands](synthetic-beta-testing.md) own preparation, observation and review;
 the dashboard adds no runner, scheduler, runtime status owner or approval path.
@@ -92,7 +92,7 @@ prove the engineering is right or that Wright beats a competent direct LLM promp
 After a session finishes, preserve its original report and **every** review attempt
 using the established lab procedure. Export small record files with their exact
 hashes and an immutable index, as demonstrated by synthetic-beta-001's
-[session records](../../artifacts/first-contact/synthetic-beta-001/session-records/README.md).
+session records (retained local evidence: `artifacts/first-contact/synthetic-beta-001/session-records/README.md`).
 Append that index reference/hash and `intended_candidate_sha256` to a new registry
 revision. Use campaign-unique session IDs, such as `gh-002-customer-01`; repeated
 IDs are rejected. Never overwrite an old run or edit its verdict. An installed
@@ -435,7 +435,7 @@ passwords, tokens, private context or unrelated typed text as prompts.
 
 For an engineering case, update the hash-bound `case_sources` checkpoint and
 `current_case_id` in the registry. The
-[case guidance](../../artifacts/first-contact/synthetic-beta-003/engineering-cases/README.md)
+case guidance (retained local evidence: `artifacts/first-contact/synthetic-beta-003/engineering-cases/README.md`)
 describes its editorial scope, original-output bindings and ownership. Refresh the
 case after a consequential visit or fix; use a new explicit `as_of` with its evidence.
 A dated case checkpoint is reporting context, not another execution/status or
@@ -470,3 +470,5 @@ For this reporting change, necessary viewer building and direct inspection of th
 changed LAN page/controls are separate from synthetic-customer evidence. Earlier
 suggestions in this document to run suites or calibration do not override that
 instruction.
+
+Local evidence references identify preserved operator records; they are not included in the public documentation build.

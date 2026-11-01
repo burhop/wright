@@ -31,14 +31,14 @@ recorded example evidence, available capabilities, and current-host readiness.
 The website introduces the job and hands off to Wright; accepted processes and
 the existing backend retain execution, validation, state and review authority.
 
-Feature 084 is [complete in its authorized local scope](../../specs/084-first-contact-experience/progress.md).
+Feature 084 is [complete in its authorized local scope](https://github.com/burhop/wright/blob/e9710f58596e8ed601e2cfd17267ec260f46017a/specs/084-first-contact-experience/progress.md).
 Earlier paragraphs below retain the planning discussion as history; their draft
 or not-started descriptions do not supersede that completion record.
 
-The [first bounded observation](../../artifacts/first-contact/golden-hour-001/README.md)
+The first bounded observation (retained local evidence: `artifacts/first-contact/golden-hour-001/README.md`)
 started at GitHub. Its native-guide prerequisite finding applies to that route,
 not to the MakerEngineer.com entry. It also exposed incomplete tester-context
-isolation. The [website-entry observation](../../artifacts/first-contact/golden-hour-002/README.md)
+isolation. The website-entry observation (retained local evidence: `artifacts/first-contact/golden-hour-002/README.md`)
 records the newly authorized single attempt from the public website. Keep actual
 screenshots, visited links and stopping reasons separate from inferred confusion
 or satisfaction; synthetic behavior does not establish human usability or adoption.
@@ -58,17 +58,17 @@ asset references and review criteria for the separate website project.
 
 ## Website return and next local increment — 25 October 2026
 
-The separate website project's [return handoff](../../artifacts/website-handoff/2026-10-25/website-return-handoff/HANDOFF.md)
+The separate website project's return handoff (retained local evidence: `artifacts/website-handoff/2026-10-25/website-return-handoff/HANDOFF.md`)
 reports its updated site live at source `e0325cee`. A new
-[bounded synthetic observation](../../artifacts/first-contact/golden-hour-004/website-tester/report.md)
+bounded synthetic observation (retained local evidence: `artifacts/first-contact/golden-hour-004/website-tester/report.md`)
 reached homepage → handle example → setup requirements → Hermes guide and
 understood the recorded-development versus public-base boundary. This does not
 verify installation, engineering execution or customer acceptance. The original
 Coming Soon screenshots and reports remain unchanged.
 
-The user submitted the [unattended local goal](../../artifacts/first-contact/golden-hour-next-unattended-prompt.md)
+The user submitted the unattended local goal (retained local evidence: `artifacts/first-contact/golden-hour-next-unattended-prompt.md`)
 to make missing-tool setup actionable and test the result. Its sole
-[checklist and evidence entry](../../artifacts/first-contact/golden-hour-004/checklist.md)
+checklist and evidence entry (retained local evidence: `artifacts/first-contact/golden-hour-004/checklist.md`)
 tracks this follow-on; Feature 084 remains complete. Reuse the existing MCP
 selector/registry and exact saved-process scope. Configuration navigation creates
 no install, enablement, source-acceptance, readiness, execution or review grant.
@@ -78,7 +78,7 @@ independent providers retain native tool ownership.
 Draft selections belong to the current setup. Returning refreshes actual choices
 and invalidates any old proposal; a different exact source resets the draft.
 Unavailable configuration views retain bundled provider help and a usable setup.
-The editor remains available. The [availability handback](../../artifacts/first-contact/golden-hour-004/availability-and-release-gaps.md)
+The editor remains available. The availability handback (retained local evidence: `artifacts/first-contact/golden-hour-004/availability-and-release-gaps.md`)
 separates local verification from the still-unqualified public handle route.
 No push, merge, release, publication, provider installation or customer pilot is
 authorized by this increment. Synthetic testing does not establish user acceptance.
@@ -363,3 +363,5 @@ second full implementation or paid experiment inside 084. The first handle
 journey should retain exact inputs, outputs, corrections and costs so it can
 also be evaluated fairly. No generic superiority over every Astra prompt is
 claimed from one favorable comparison.
+
+Local evidence references identify preserved operator records; they are not included in the public documentation build.

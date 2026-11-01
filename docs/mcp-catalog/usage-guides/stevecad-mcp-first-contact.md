@@ -21,9 +21,9 @@ candidate, discovered SteveCAD after changing the catalog's Curated filter to
 All records, and reached its OAuth sign-in page. That page offered Google/X and
 said first sign-in creates an account and continuing agrees to terms. No account
 completion fact or sign-in was available; the customer stopped. Its original
-[report](../../../artifacts/first-contact/synthetic-beta-002/session-records/gh2-base-beginner/report.json)
+report (retained local evidence: `artifacts/first-contact/synthetic-beta-002/session-records/gh2-base-beginner/report.json`)
 and independent
-[assessment](../../../artifacts/first-contact/synthetic-beta-002/session-records/gh2-base-beginner/verification.json)
+assessment (retained local evidence: `artifacts/first-contact/synthetic-beta-002/session-records/gh2-base-beginner/verification.json`)
 retain those observations. Installed/inactive is not connected or ready CAD.
 
 A later prepared checkpoint could read Wright workspace status through actual
@@ -68,13 +68,13 @@ this is not a requirement to install a CAD application or create an SSH tunnel.
 The shared OAuth runner correction surfaces a failed browser launch rather than
 waiting for a callback that cannot arrive. That was the initial diagnosis;
 the later installed observations and remaining limits are below. See the
-[campaign issue](../../../artifacts/first-contact/synthetic-beta-003/issues.md#hosted-sign-in-no-browser-107-observed-during-preparation).
+campaign issue (retained local evidence: `artifacts/first-contact/synthetic-beta-003/issues.md#hosted-sign-in-no-browser-107-observed-during-preparation`).
 
 ## Current recovery checklist — 28 October 2026
 
 **Later reconciliation:** the existing desktop Wright connection completed two
 live read-only SteveCAD calls and its saved inspection workflow at14:07EDT.
-See the [connection verification](../../../artifacts/first-contact/synthetic-beta-003/operator-retries/hosted-signin-107/DESKTOP-CONNECTION-VERIFIED.md).
+See the connection verification (retained local evidence: `artifacts/first-contact/synthetic-beta-003/operator-retries/hosted-signin-107/DESKTOP-CONNECTION-VERIFIED.md`).
 Existing device-code support is implemented in the desktop integration's shared
 OAuth client, with its own device-grant registration and server-scoped keys.
 The older VM candidate lacks that path. A device request using its browser-flow
@@ -116,8 +116,8 @@ After an actual authorization completes, verify protocol/tool discovery and a
 safe read-only call through Wright before marking the connection ready. The later device connection and safe read-only gateway call are verified below.
 No CAD result or engineering qualification was established by connection preparation.
 
-Evidence: [readable preparation result](../../../artifacts/first-contact/synthetic-beta-003/operator-retries/hosted-signin-107/RESULT.md),
-[retained observations](../../../artifacts/first-contact/synthetic-beta-003/operator-retries/hosted-signin-107/observation.json),
+Evidence: readable preparation result (retained local evidence: `artifacts/first-contact/synthetic-beta-003/operator-retries/hosted-signin-107/RESULT.md`),
+retained observations (retained local evidence: `artifacts/first-contact/synthetic-beta-003/operator-retries/hosted-signin-107/observation.json`),
 and the existing account-authorization receipt. Sources: `48b115aa` (browser error
 and lab display), `ba4ebe9f` (connection retry), `be82df1e` (hosted wording).
 Candidate109 is a local private build, not a published Wright release.
@@ -144,7 +144,7 @@ candidate correction, not a release or verified fresh first-hour outcome.
 Candidate111 onVM106 completed real human device approval. Native validation
 `validation-feae649f67f74fb29d2c98b18888d09d` passed with29tools; the provider is
 active. Wright's actual public gateway returned `api_reference(name="Model.box")`
-in a separate operator workspace. See the [readable native proof](../../../artifacts/first-contact/synthetic-beta-003/operator-retries/hosted-signin-107/NATIVE-CONNECTED-112.md).
+in a separate operator workspace. See the readable native proof (retained local evidence: `artifacts/first-contact/synthetic-beta-003/operator-retries/hosted-signin-107/NATIVE-CONNECTED-112.md`).
 Do not ask for another login while this connection works. The failed first check
 and late human reply remain separate; the next check was explicit after terminal
 state was observed. Generic RuntimeError failure feedback is still an open defect.
@@ -159,7 +159,7 @@ During prepared customer116, the native assistant created a separate unapproved
 handle document, generated and inspected its geometry, and subsequently completed
 two revision-bound40N studies using SteveCAD's CalculiX path. Actual provider
 receipts, STEP/STL, model/dimension image and solver contour images are retained in
-[the readable late-result record](../../../artifacts/first-contact/synthetic-beta-003/operator-retries/late-handle-121/RESULT.md).
+the readable late-result record (retained local evidence: `artifacts/first-contact/synthetic-beta-003/operator-retries/late-handle-121/RESULT.md`).
 
 | Observed result | Boundary |
 |---|---|
@@ -203,8 +203,10 @@ establish the saved workflow's capabilities. Analysis also needs an explicit
 saved stage consuming the exact upstream CAD identity; it was absent from the
 inspected customer116 source. Original measurement, slicing and human-review
 requirements remain. No additional login or solver refinement addresses this gap.
-See [observed readiness](../../../artifacts/first-contact/synthetic-beta-003/operator-retries/workflow-readiness-124/RESULT.md).
+See observed readiness (retained local evidence: `artifacts/first-contact/synthetic-beta-003/operator-retries/workflow-readiness-124/RESULT.md`).
 
 ### Connection restored — 30 October, 9:16 a.m. EDT
 
 After the user indicated readiness, normal native connection validation/device authorization completed with real Windows-browser approval. Initialization and 29-tool discovery passed; a separate read-only `list_designs` call through Wright succeeded. Browser login alone had not restored this MCP session. Preserve failed attempts and do not cycle codes without user readiness. Evidence: `artifacts/first-contact/synthetic-beta-003/operator-retries/stevecad-recheck-161/CONNECTED-173.md`. No CAD or engineering acceptance is established by this check.
+
+Local evidence references identify preserved operator records; they are not included in the public documentation build.
