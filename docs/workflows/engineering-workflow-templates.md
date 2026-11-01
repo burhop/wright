@@ -1,5 +1,11 @@
 # Engineering Workflow Templates
 
+For photo/data-based reconstruction preparation, see the separate
+[reverse-engineering example bundle](https://github.com/burhop/wright/blob/dev/examples/reverse-engineering-workflow/README.md)
+and [qualification scope](https://github.com/burhop/wright/blob/dev/examples/reverse-engineering-workflow/delivery-qualification.md).
+It is source for inspection and explicit import, not an eleventh catalog template
+or a qualified automatic CAD reconstruction process.
+
 Wright includes ten versioned engineering workflow templates in the workspace **Workflows** editor. Open the workflow file menu, choose **Start from template**, inspect readiness and expected outputs, enter a name, and choose **Create editable workflow**. Wright creates a new canonical `.workflow.wflow` file, layout, immutable template-origin record, and any distributable supplied fixture files inside the current workspace. Supplied files live under an instance-specific `inputs/` directory and their digests are recorded in the origin record. It does not overwrite an existing workflow or copy credentials, runs, or approvals.
 
 The initial catalog contains:

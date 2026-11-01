@@ -1,0 +1,15 @@
+{
+  "id": "re-numerical-projection-controls",
+  "version": "1",
+  "scope": "Synthetic numerical qualification only; no CAD, photo, vehicle or manufacturing acceptance",
+  "checks": [
+    {"id":"vtk-pinhole-agreement","selector":"/cases/0/observation","unit":"px","constraint":{"operator":"within","target":0.0,"tolerance":1e-9}},
+    {"id":"fixed-camera-scale-error-visible","selector":"/cases/1/observation","unit":"px","constraint":{"operator":"range","minimum":1.0,"inclusive":false}},
+    {"id":"camera-error-visible","selector":"/cases/2/observation","unit":"px","constraint":{"operator":"range","minimum":100.0,"inclusive":false}},
+    {"id":"mirrored-frame-visible","selector":"/cases/3/observation","unit":"px","constraint":{"operator":"range","minimum":100.0,"inclusive":false}},
+    {"id":"scale-distance-ambiguity","selector":"/cases/4/observation","unit":"px","constraint":{"operator":"within","target":0.0,"tolerance":1e-9}},
+    {"id":"hidden-depth-outline-ambiguity","selector":"/cases/5/observation/outline_residual_px","unit":"px","constraint":{"operator":"within","target":0.0,"tolerance":1e-9}},
+    {"id":"reference-depth","selector":"/cases/5/observation/reference_depth_mm","unit":"mm","constraint":{"operator":"within","target":9.0,"tolerance":1e-9}},
+    {"id":"changed-depth","selector":"/cases/5/observation/changed_depth_mm","unit":"mm","constraint":{"operator":"within","target":18.0,"tolerance":1e-9}}
+  ]
+}

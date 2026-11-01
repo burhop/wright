@@ -1,0 +1,731 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Wright reverse-engineering evidence survey 1.0.0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "report_version",
+    "instruction_version",
+    "survey_status",
+    "scope",
+    "sources",
+    "images",
+    "evidence",
+    "constraints",
+    "scale",
+    "dependency_groups",
+    "projection_comparison_plan",
+    "material_gaps",
+    "user_choices",
+    "assumptions",
+    "diagnostics"
+  ],
+  "properties": {
+    "report_version": {
+      "const": "1.0.0"
+    },
+    "instruction_version": {
+      "const": "1.0.0"
+    },
+    "survey_status": {
+      "enum": [
+        "complete",
+        "partial",
+        "blocked"
+      ]
+    },
+    "scope": {
+      "type": "string",
+      "description": "Supplied object/task scope and selected evidence; no invented engineering requirements."
+    },
+    "sources": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/source"
+      }
+    },
+    "images": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/image"
+      }
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/evidence"
+      }
+    },
+    "constraints": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/constraint"
+      }
+    },
+    "scale": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "scope_and_basis",
+        "anchor_refs",
+        "unresolved_physical_dimensions"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "unknown",
+            "dimensionless_only",
+            "metric_supported",
+            "mixed"
+          ]
+        },
+        "scope_and_basis": {
+          "type": "string",
+          "description": "State where scale support applies; distinguish projected ratios from physical ratios."
+        },
+        "anchor_refs": {
+          "$ref": "#/$defs/refs"
+        },
+        "unresolved_physical_dimensions": {
+          "$ref": "#/$defs/strings"
+        }
+      }
+    },
+    "dependency_groups": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "group_id",
+          "image_source_refs",
+          "relationship",
+          "role",
+          "independence_basis"
+        ],
+        "properties": {
+          "group_id": {
+            "type": "string"
+          },
+          "image_source_refs": {
+            "$ref": "#/$defs/refs"
+          },
+          "relationship": {
+            "type": "string",
+            "description": "Original/crop/duplicate/near-identical/shared-experiment relationship, or why treated as separate."
+          },
+          "role": {
+            "enum": [
+              "fitting",
+              "independent_validation_candidate",
+              "diagnostic_only",
+              "unassigned"
+            ]
+          },
+          "independence_basis": {
+            "type": "string",
+            "description": "Dependencies on other groups and limitations; candidate status does not mean validated."
+          }
+        }
+      }
+    },
+    "projection_comparison_plan": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "comparison_status",
+        "fitting_group_refs",
+        "validation_group_refs",
+        "camera_model_and_unknowns",
+        "configuration_handling",
+        "mask_and_exclusion_rules",
+        "fitting_objectives_and_landmarks",
+        "heldout_camera_protocol",
+        "freeze_before_validation",
+        "validation_metrics_and_threshold_basis",
+        "leakage_and_failure_rules",
+        "missing_input_refs"
+      ],
+      "properties": {
+        "comparison_status": {
+          "enum": [
+            "plan_only",
+            "diagnostic_only",
+            "not_yet_specifiable"
+          ]
+        },
+        "fitting_group_refs": {
+          "$ref": "#/$defs/refs"
+        },
+        "validation_group_refs": {
+          "$ref": "#/$defs/refs"
+        },
+        "camera_model_and_unknowns": {
+          "type": "string"
+        },
+        "configuration_handling": {
+          "type": "string"
+        },
+        "mask_and_exclusion_rules": {
+          "type": "string"
+        },
+        "fitting_objectives_and_landmarks": {
+          "type": "string",
+          "description": "Proposed objectives and landmarks, not invented measurements."
+        },
+        "heldout_camera_protocol": {
+          "type": "string"
+        },
+        "freeze_before_validation": {
+          "$ref": "#/$defs/strings"
+        },
+        "validation_metrics_and_threshold_basis": {
+          "type": "string",
+          "description": "Proposed metrics; thresholds only if supplied or justified, otherwise unresolved."
+        },
+        "leakage_and_failure_rules": {
+          "type": "string"
+        },
+        "missing_input_refs": {
+          "$ref": "#/$defs/refs"
+        }
+      }
+    },
+    "material_gaps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "gap_id",
+          "missing_evidence",
+          "impact",
+          "existing_source_refs_checked",
+          "next_action",
+          "targeted_request_or_research_scope",
+          "blocks_cad"
+        ],
+        "properties": {
+          "gap_id": {
+            "type": "string"
+          },
+          "missing_evidence": {
+            "type": "string"
+          },
+          "impact": {
+            "type": "string"
+          },
+          "existing_source_refs_checked": {
+            "$ref": "#/$defs/refs"
+          },
+          "next_action": {
+            "enum": [
+              "inspect_supplied_source",
+              "measure_existing_evidence",
+              "reuse_previous_experiment",
+              "request_missing_input",
+              "targeted_research",
+              "remain_unresolved"
+            ]
+          },
+          "targeted_request_or_research_scope": {
+            "type": "string",
+            "description": "Smallest useful next action and why existing evidence is insufficient; not a claim of execution."
+          },
+          "blocks_cad": {
+            "type": "boolean"
+          }
+        }
+      }
+    },
+    "user_choices": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "choice_id",
+          "essential_question",
+          "why_needed",
+          "affected_refs",
+          "blocks_cad",
+          "status"
+        ],
+        "properties": {
+          "choice_id": {
+            "type": "string"
+          },
+          "essential_question": {
+            "type": "string",
+            "description": "Field for a later Wright input step, not a runtime question asked here."
+          },
+          "why_needed": {
+            "type": "string"
+          },
+          "affected_refs": {
+            "$ref": "#/$defs/refs"
+          },
+          "blocks_cad": {
+            "type": "boolean"
+          },
+          "status": {
+            "const": "unresolved"
+          }
+        }
+      }
+    },
+    "assumptions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "assumption_id",
+          "kind",
+          "parameter",
+          "value",
+          "units",
+          "basis_refs",
+          "rationale",
+          "affected_refs"
+        ],
+        "properties": {
+          "assumption_id": {
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "supplied_default",
+              "explicitly_permitted_assumption"
+            ]
+          },
+          "parameter": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          },
+          "units": {
+            "type": "string"
+          },
+          "basis_refs": {
+            "$ref": "#/$defs/refs"
+          },
+          "rationale": {
+            "type": "string"
+          },
+          "affected_refs": {
+            "$ref": "#/$defs/refs"
+          }
+        }
+      }
+    },
+    "diagnostics": {
+      "$ref": "#/$defs/strings"
+    }
+  },
+  "$defs": {
+    "strings": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "refs": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string"
+      }
+    },
+    "identifiers": {
+      "type": "object",
+      "description": "Copy every supplied ID/path/hash exactly as a string under its supplied label or an unambiguous equivalent key. Include no invented identifiers. Empty object only if none were supplied; diagnose that limitation.",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source_ref",
+        "kind",
+        "supplied_identifiers",
+        "access",
+        "relevance_and_limitations"
+      ],
+      "properties": {
+        "source_ref": {
+          "type": "string",
+          "description": "Local bookkeeping key, not an original identifier."
+        },
+        "kind": {
+          "enum": [
+            "image",
+            "text",
+            "document",
+            "data",
+            "previous_experiment",
+            "other"
+          ]
+        },
+        "supplied_identifiers": {
+          "$ref": "#/$defs/identifiers"
+        },
+        "access": {
+          "enum": [
+            "inspected",
+            "partially_inspected",
+            "unavailable",
+            "not_inspected"
+          ]
+        },
+        "relevance_and_limitations": {
+          "type": "string"
+        }
+      }
+    },
+    "image": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source_ref",
+        "supplied_identifiers",
+        "inspection_status",
+        "view",
+        "configuration",
+        "configuration_comparisons",
+        "evidence_refs",
+        "uncertainties",
+        "regions",
+        "dependency_group_ref"
+      ],
+      "properties": {
+        "source_ref": {
+          "type": "string"
+        },
+        "supplied_identifiers": {
+          "$ref": "#/$defs/identifiers"
+        },
+        "inspection_status": {
+          "enum": [
+            "original_visually_inspected",
+            "partially_inspected",
+            "substitute_only",
+            "unavailable",
+            "not_inspected"
+          ]
+        },
+        "view": {
+          "type": "string",
+          "description": "Observed view description; uncertain orientation/camera explicitly unknown."
+        },
+        "configuration": {
+          "type": "string",
+          "description": "Observed state of components, or unknown; no assumed movement."
+        },
+        "configuration_comparisons": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "other_image_ref",
+              "difference",
+              "basis",
+              "evidence_refs"
+            ],
+            "properties": {
+              "other_image_ref": {
+                "type": "string"
+              },
+              "difference": {
+                "type": "string"
+              },
+              "basis": {
+                "enum": [
+                  "visible_difference",
+                  "source_reported",
+                  "hypothesis",
+                  "ambiguous"
+                ]
+              },
+              "evidence_refs": {
+                "$ref": "#/$defs/refs"
+              }
+            }
+          }
+        },
+        "evidence_refs": {
+          "$ref": "#/$defs/refs",
+          "description": "Includes the image's observable features and relevant unknowns."
+        },
+        "uncertainties": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "kind",
+              "region",
+              "effect"
+            ],
+            "properties": {
+              "kind": {
+                "enum": [
+                  "occlusion",
+                  "reflection",
+                  "shadow",
+                  "blur_resolution",
+                  "perspective_distortion",
+                  "scale",
+                  "configuration",
+                  "other"
+                ]
+              },
+              "region": {
+                "type": "string"
+              },
+              "effect": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "regions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "region_id",
+              "locator",
+              "locator_basis",
+              "role",
+              "use_and_limitations",
+              "evidence_refs"
+            ],
+            "properties": {
+              "region_id": {
+                "type": "string"
+              },
+              "locator": {
+                "type": "string",
+                "description": "Qualitative location unless real coordinates and their provenance exist."
+              },
+              "locator_basis": {
+                "enum": [
+                  "qualitative",
+                  "supplied_coordinates",
+                  "actually_measured_coordinates"
+                ]
+              },
+              "role": {
+                "enum": [
+                  "fitting_candidate",
+                  "validation_candidate",
+                  "within_fit_diagnostic",
+                  "exclude"
+                ]
+              },
+              "use_and_limitations": {
+                "type": "string"
+              },
+              "evidence_refs": {
+                "$ref": "#/$defs/refs"
+              }
+            }
+          }
+        },
+        "dependency_group_ref": {
+          "type": "string"
+        }
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "evidence_id",
+        "component",
+        "feature",
+        "view_refs",
+        "configuration",
+        "class",
+        "statement",
+        "source_refs",
+        "source_locator",
+        "limitations_or_conflicts"
+      ],
+      "properties": {
+        "evidence_id": {
+          "type": "string"
+        },
+        "component": {
+          "type": "string"
+        },
+        "feature": {
+          "type": "string"
+        },
+        "view_refs": {
+          "$ref": "#/$defs/refs"
+        },
+        "configuration": {
+          "type": "string"
+        },
+        "class": {
+          "enum": [
+            "directly_visible",
+            "source_reported",
+            "actual_measurement",
+            "hypothesis",
+            "hidden_unobservable_geometry",
+            "unknown_scale_camera"
+          ]
+        },
+        "statement": {
+          "type": "string",
+          "description": "Actual measurements must include value, units, method and provenance; hypotheses and hidden geometry must not be presented as facts."
+        },
+        "source_refs": {
+          "$ref": "#/$defs/refs"
+        },
+        "source_locator": {
+          "type": "string",
+          "description": "Image region, document page/section, data field or experiment record; unknown if unavailable."
+        },
+        "limitations_or_conflicts": {
+          "type": "string"
+        }
+      }
+    },
+    "constraint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "constraint_id",
+        "target",
+        "status",
+        "relation",
+        "conditions",
+        "inputs",
+        "result",
+        "units",
+        "uncertainty_and_limits",
+        "evidence_refs"
+      ],
+      "properties": {
+        "constraint_id": {
+          "type": "string"
+        },
+        "target": {
+          "type": "string",
+          "description": "Component/feature/configuration and quantity constrained."
+        },
+        "status": {
+          "enum": [
+            "planned",
+            "computable",
+            "evaluated",
+            "blocked"
+          ]
+        },
+        "relation": {
+          "type": "string",
+          "description": "Equation, inequality or reproducible calculation method with symbols defined by inputs."
+        },
+        "conditions": {
+          "$ref": "#/$defs/strings"
+        },
+        "inputs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "symbol",
+              "required_input",
+              "availability",
+              "value",
+              "units",
+              "source_refs"
+            ],
+            "properties": {
+              "symbol": {
+                "type": "string"
+              },
+              "required_input": {
+                "type": "string"
+              },
+              "availability": {
+                "enum": [
+                  "available",
+                  "needs_measurement",
+                  "missing",
+                  "unverified"
+                ]
+              },
+              "value": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "units": {
+                "type": "string",
+                "description": "Use 1 for dimensionless; unknown when unresolved."
+              },
+              "source_refs": {
+                "$ref": "#/$defs/refs"
+              }
+            }
+          }
+        },
+        "result": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Null unless evaluated; otherwise include the actual value, bound or relation, not a proposed result."
+        },
+        "units": {
+          "type": "string"
+        },
+        "uncertainty_and_limits": {
+          "type": "string"
+        },
+        "evidence_refs": {
+          "$ref": "#/$defs/refs"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "evaluated"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "result": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "result": {
+                "type": "null"
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

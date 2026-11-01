@@ -1,0 +1,30 @@
+{
+  "version": "1.0.0",
+  "status": "locally qualified optional measurement; no automatic geometry acceptance",
+  "model": "gpt-6-astra",
+  "reasoning_effort": "high",
+  "provider": "openai-codex",
+  "api_mode": "codex_responses",
+  "actual_request_digest": "f0eaff913c9a7b593aa348522c4c8d976a8ad2795dc8e5508d9323d62fa71ac3",
+  "source_files": {
+    "audit_two_view_correspondences.py": "2089460fefc710462f810c1bb237cbb284e5357c780d5f19682b0d3c5340e804",
+    "test_two_view_correspondences.py": "111fa7472890f75c47b76f84314793065a25bca392cec5ed7313ba90521eff04"
+  },
+  "source_change_from_authored_response": "none",
+  "pilot_evidence_relative_to_goal_root": [
+    "author-two-view-audit-01-model.json",
+    "two-view-audit-01/qualification.json",
+    "front-two-view-disposition-01.json",
+    "rear-two-view-disposition-01.json",
+    "two-view-pocket-handoff-02/qualification.json"
+  ],
+  "different_example_artifact": {
+    "description": "Existing pocket correction revision2 STEP,16native vertices, one valid solid",
+    "sha256": "d97c834c4bfb549884551a7832b60b0c9a495cb91de691dab14b76dbbf93addf",
+    "control": "Known synthetic camera coordinates including hidden vertices; no new provider or workflow run",
+    "numerical_bound_px": 0.000001,
+    "physical_tolerance_claim": false
+  },
+  "private_inputs_and_credentials_included": false,
+  "upstream_internal_model_revision": null
+}

@@ -1,0 +1,19 @@
+{
+  "status": "exact_tested_bytes_promoted",
+  "source_sha256": "22d05cbe6c976811e070b818ae7a17b97e42e12fb4024959c90767ea67717331",
+  "lf_normalized_source_text_sha256": "57d34a1b408f3a0810aedd193222c134f2c225ca89d6a37a5066a93de7e61007",
+  "hash_clarification": "Earlier source guard and checkpoint used normalized text SHA. Native controls and actual diagnostics recorded raw CRLF file SHA. Both are retained and explicitly distinguished here; no source changed.",
+  "source_commit": "560add597c67bede1c0bfd06c7e35b5ad0712361",
+  "model": "gpt-6-astra",
+  "reasoning": "high",
+  "route_receipts": [
+    "native-ray-support-route-01.json",
+    "native-ray-support-correction-route-02.json"
+  ],
+  "pilot_evidence_root": "D:\\repos\\wright\\.local-run\\windows-engineering-pilot\\state\\research\\20261020-roadster-goal",
+  "controls": "native-ray-support-controls-02/report.json",
+  "control_count": 19,
+  "different_existing_workflow": "native-ray-pocket-verification-01.json",
+  "roadster_evidence": "native-ray-lamp-support-01-checkpoint.json",
+  "limits": "Read-only finite native ray diagnostic; no CAD mutation, physical acceptance, provider integration or completed automatic reconstruction loop."
+}

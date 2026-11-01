@@ -1,0 +1,71 @@
+{
+  "schema_version": "research-example-1",
+  "status": "proposed_annotation_shape_not_registered_runtime_schema",
+  "purpose": "Illustrate reusable component-indexed observations and traceable calculations; all sample values below are placeholders, not measurements.",
+  "components": [
+    {"id": "assembly", "parent_id": null, "name": "Target assembly", "object_revision": null, "configuration": null},
+    {"id": "component-A", "parent_id": "assembly", "name": "Selected component", "object_revision": null, "configuration": null}
+  ],
+  "observations": [
+    {
+      "id": "observation-placeholder",
+      "asset_sha256": null,
+      "source_uri": null,
+      "capture_group_id": null,
+      "publication_lineage_id": null,
+      "component_ids": ["component-A"],
+      "feature_ids": [],
+      "video_timestamp_seconds": null,
+      "video_frame_index": null,
+      "video_timebase": null,
+      "shot_segment_id": null,
+      "image_dimensions_px": null,
+      "camera_revision": null,
+      "preprocessing_transform": null,
+      "object_state": null,
+      "mask_revision": null,
+      "visible_regions": [],
+      "occluded_regions": [],
+      "quality_findings": [],
+      "evidence_role": "unassigned",
+      "review_status": "unreviewed"
+    }
+  ],
+  "measurements": [
+    {
+      "id": "measurement-placeholder",
+      "component_id": "component-A",
+      "feature_id": null,
+      "property": "width",
+      "evidence_class": "unknown",
+      "value": null,
+      "units": "mm",
+      "datum_frame": null,
+      "object_state": null,
+      "observation_ids": [],
+      "derivation": {"input_measurement_ids": [], "equation_or_method": null, "implementation_version": null, "assumptions": []},
+      "uncertainty": {"value": null, "units": "mm", "basis": null, "correlation_group_ids": []},
+      "limitations": ["No measurement has been supplied."]
+    }
+  ],
+  "requirements": [
+    {
+      "id": "requirement-placeholder",
+      "component_id": "component-A",
+      "property": "width",
+      "authority": null,
+      "target_or_interval": null,
+      "units": "mm",
+      "datum_frame": null,
+      "object_state": null,
+      "tolerance": null,
+      "conformity_decision_rule": null,
+      "verification_method": null,
+      "evidence_measurement_ids": [],
+      "exact_candidate_revision": null,
+      "exact_candidate_artifact_sha256": null,
+      "evaluation_revision": null,
+      "result": "not_evaluated"
+    }
+  ]
+}

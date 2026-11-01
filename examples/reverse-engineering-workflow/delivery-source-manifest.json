@@ -1,0 +1,597 @@
+{
+  "schema_version": 1,
+  "historical_pilot_commit": "560add597c67bede1c0bfd06c7e35b5ad0712361",
+  "delivery_base": "3116c2d928a894ba059aac03e950dace716f87bc",
+  "historical_routing_rewritten": false,
+  "scope": "Original preserved pilot bytes versus formatted reusable source delivery; no new model request or engineering acceptance.",
+  "files": [
+    {
+      "original_path": "docs/workflows/reverse-engineering-implementation-plan.md",
+      "original_sha256": "560d22c785df510fbfcae32a2991dbb7735440d761beaa87122be6ed1f93e067",
+      "delivered_path": "docs/workflows/reverse-engineering-implementation-plan.md",
+      "delivered_git_blob_sha256": "148be1807452dbe69fc36e817e8f49c6ef5971631c987a27c72f6e1d1b1dc7bb",
+      "byte_identical": false
+    },
+    {
+      "original_path": "docs/workflows/reverse-engineering-methods.md",
+      "original_sha256": "c59ee69abba8c0c2cc1e6e58572b98ea2a71304bfc7710606aaa457d1cdf51a0",
+      "delivered_path": "docs/workflows/reverse-engineering-methods.md",
+      "delivered_git_blob_sha256": "a85d931caf3276607ff30381b3d4bca9c9a579c292d2a3cebbd2a959f52d31ea",
+      "byte_identical": false
+    },
+    {
+      "original_path": "examples/reverse-engineering-research/camera_hypothesis_stability.py",
+      "original_sha256": "39cf4b5b87e4c9776ea8817f43a104245c82f6ba3acaa27aea81bb07aa2d5ada",
+      "delivered_path": "examples/reverse-engineering-research/camera_hypothesis_stability.py",
+      "delivered_git_blob_sha256": "39cf4b5b87e4c9776ea8817f43a104245c82f6ba3acaa27aea81bb07aa2d5ada",
+      "byte_identical": true
+    },
+    {
+      "original_path": "examples/reverse-engineering-research/certify_projected_control_hull.py",
+      "original_sha256": "3ca8e98505686a79f078dfe24eeb62b96f5934e226cb00b675b7c33150d9302d",
+      "delivered_path": "examples/reverse-engineering-research/certify_projected_control_hull.py",
+      "delivered_git_blob_sha256": "0a85432c9b14e77953be32fe595ccc8808347ed98dd9b116c96b501c27586899",
+      "byte_identical": false
+    },
+    {
+      "original_path": "examples/reverse-engineering-research/compare_native_faces.py",
+      "original_sha256": "c4cddfa7500aebef18aa46ffbc8d769b9fea131393aea67ab65e1940a4ae2587",
+      "delivered_path": "examples/reverse-engineering-research/compare_native_faces.py",
+      "delivered_git_blob_sha256": "6476a604933504bc4432fd0b935def5cefdf7f45faece3b2bdbf603a2ae9c8b7",
+      "byte_identical": false
+    },
+    {
+      "original_path": "examples/reverse-engineering-research/contact_topology.py",
+      "original_sha256": "59d30f9b005bc39914c4346a94be2d3411996f245a87b93d141e142036056490",
+      "delivered_path": "examples/reverse-engineering-research/contact_topology.py",
+      "delivered_git_blob_sha256": "941228d4c472e1b7f42a73f4b44e7637b1918956c9321351a735ca2ce23f1aca",
+      "byte_identical": false
+    },
+    {
+      "original_path": "examples/reverse-engineering-research/edge-profiles.md",
+      "original_sha256": "c06910425edb00d8034d87babc870cf4bb71f712c0a52f2f5718873e8e44ec9b",
+      "delivered_path": "examples/reverse-engineering-research/edge-profiles.md",
+      "delivered_git_blob_sha256": "c06910425edb00d8034d87babc870cf4bb71f712c0a52f2f5718873e8e44ec9b",
+      "byte_identical": true
+    },
+    {
+      "original_path": "examples/reverse-engineering-research/evidence-contract.example.json",
+      "original_sha256": "ab9266b1041d8543b2f0d9b5a7b7f70685d3e276e9957122b431e4e331947ed6",
+      "delivered_path": "examples/reverse-engineering-research/evidence-contract.example.json",
+      "delivered_git_blob_sha256": "ab9266b1041d8543b2f0d9b5a7b7f70685d3e276e9957122b431e4e331947ed6",
+      "byte_identical": true
+    },
+    {
+      "original_path": "examples/reverse-engineering-research/exact_mesh_intersections.py",
+      "original_sha256": "e6d61a1f9760d1e6b25d5f73343e4735eda5fde655a49118cba22a9201d40697",
+      "delivered_path": "examples/reverse-engineering-research/exact_mesh_intersections.py",
+      "delivered_git_blob_sha256": "39ee9ec9bce8dd3ee6efe29e5969baa694e1a58c393779a017a711a4e0054d57",
+      "byte_identical": false
+    },
+    {
+      "original_path": "examples/reverse-engineering-research/fair_bezier_join.py",
+      "original_sha256": "df9ba83e39ab4d7c1a963c6b6c4596c7ce0707319462d0547410875cba344794",
+      "delivered_path": "examples/reverse-engineering-research/fair_bezier_join.py",
+      "delivered_git_blob_sha256": "72504ed578cc7b4aa4dad576c5f02255c8abbd18214eb3b94a69bba604b3b8cd",
+      "byte_identical": false
+    },
+    {
+      "original_path": "examples/reverse-engineering-research/fixed-camera-projection.md",
+      "original_sha256": "27ba1d11f2cf79bf95119cc55d493d0662b197e15a5d4cf554b4e54a957b95b6",
+      "delivered_path": "examples/reverse-engineering-research/fixed-camera-projection.md",
+      "delivered_git_blob_sha256": "27ba1d11f2cf79bf95119cc55d493d0662b197e15a5d4cf554b4e54a957b95b6",
+      "byte_identical": true
+    },
+    {
+      "original_path": "examples/reverse-engineering-research/image-dependency.md",
+      "original_sha256": "1f0e4f957fa3986dc8d262e43e2662ff857df69e80b212f718360f5d4903e9d8",
+      "delivered_path": "examples/reverse-engineering-research/image-dependency.md",
+      "delivered_git_blob_sha256": "1f0e4f957fa3986dc8d262e43e2662ff857df69e80b212f718360f5d4903e9d8",
+      "byte_identical": true
+    },
+    {
+      "original_path": "examples/reverse-engineering-research/index_evidence.py",
+      "original_sha256": "3a99d6af07787a64860958e2609ebbac3232215f37a30c8f8f5ff749143ecf1b",
+      "delivered_path": "examples/reverse-engineering-research/index_evidence.py",
+      "delivered_git_blob_sha256": "e9e207ec17be779e29c28f1bab5a440a78e2722bd3cd2d113eb3a878cd879f25",
+      "byte_identical": false
+    },
+    {
+      "original_path": "examples/reverse-engineering-research/inspect_step_rays.py",
+      "original_sha256": "a226167b0333f6795609acaadc08fa638477a0bf09a219fc672ce53cb08de4f7",
+      "delivered_path": "examples/reverse-engineering-research/inspect_step_rays.py",
+      "delivered_git_blob_sha256": "665fe4390c8fff38619ea717ae3f92159529cd157f6a055acbb056e16015fc59",
+      "byte_identical": false
+    },
+    {
+      "original_path": "examples/reverse-engineering-research/measure_edge_profiles.py",
+      "original_sha256": "82366edaae4ba67609d6da0ee2fac19b76bbedcb28c57d0a709094e5b9aed6e3",
+      "delivered_path": "examples/reverse-engineering-research/measure_edge_profiles.py",
+      "delivered_git_blob_sha256": "82366edaae4ba67609d6da0ee2fac19b76bbedcb28c57d0a709094e5b9aed6e3",
+      "byte_identical": true
+    },
+    {
+      "original_path": "examples/reverse-engineering-research/measure_image_dependency.py",
+      "original_sha256": "f40906e2613e73b3db359b83417dd5f97726736f04f501826b163c63b4957018",
+      "delivered_path": "examples/reverse-engineering-research/measure_image_dependency.py",
+      "delivered_git_blob_sha256": "f40906e2613e73b3db359b83417dd5f97726736f04f501826b163c63b4957018",
+      "byte_identical": true
+    },
+    {
+      "original_path": "examples/reverse-engineering-research/measure_mesh_geometry.py",
+      "original_sha256": "90cdcc4b0aa20ff4ef78394d9611e1d3b176efaf32100b8c5b211e6af72294ad",
+      "delivered_path": "examples/reverse-engineering-research/measure_mesh_geometry.py",
+      "delivered_git_blob_sha256": "aa3e2a2a9a0b980d2745ad659fcb4298afda90d4f0573813725752094af1c737",
+      "byte_identical": false
+    },
+    {
+      "original_path": "examples/reverse-engineering-research/methods.json",
+      "original_sha256": "ec165663e3077dc463d9221b4851e9542d2c12bd81e2bd3a8f2d7703407ae43e",
+      "delivered_path": "examples/reverse-engineering-research/methods.json",
+      "delivered_git_blob_sha256": "c7752ff06237ee572c818d492505e9ce3db54cd9e002aad2d2d45ced4e3f48b8",
+      "byte_identical": false
+    },
+    {
+      "original_path": "examples/reverse-engineering-research/owner_visibility.py",
+      "original_sha256": "a84d651a1674b44cbf93948225598d940c68c680067a59b439eaa3fb08eac3cf",
+      "delivered_path": "examples/reverse-engineering-research/owner_visibility.py",
+      "delivered_git_blob_sha256": "57f7124700733bade32257df379801356b3a984827b853a4219942ae673c9073",
+      "byte_identical": false
+    },
+    {
+      "original_path": "examples/reverse-engineering-research/prepare_visualization_mesh.py",
+      "original_sha256": "758ca9c366b736d31de5324443d7581e09a76c377af2f9d0743c7de97d947d5d",
+      "delivered_path": "examples/reverse-engineering-research/prepare_visualization_mesh.py",
+      "delivered_git_blob_sha256": "4ad63b7ab56c54af9bf343e22ee435189d6107b09d8efdef34d97b7a120d0aaa",
+      "byte_identical": false
+    },
+    {
+      "original_path": "examples/reverse-engineering-research/project_mesh_to_photo.py",
+      "original_sha256": "9717ce3453e88f816c2597f1576118486cebc998113b32fa9f6b137efaa2d6b9",
+      "delivered_path": "examples/reverse-engineering-research/project_mesh_to_photo.py",
+      "delivered_git_blob_sha256": "2dc6e19b09bea025ab2bbc9ec5747284c27273841f70cbddc05353b24c377f28",
+      "byte_identical": false
+    },
+    {
+      "original_path": "examples/reverse-engineering-research/projected_envelope.py",
+      "original_sha256": "7c17e003883bc5e7ff9582c0933f9e444fefca5ac517c5a72520bad7727e6943",
+      "delivered_path": "examples/reverse-engineering-research/projected_envelope.py",
+      "delivered_git_blob_sha256": "4f8cae51c529689ec8c4b7b50d0f6cbb97728059a0fdaa3f9c690ac6d088d2c9",
+      "byte_identical": false
+    },
+    {
+      "original_path": "examples/reverse-engineering-research/qualify_projection.py",
+      "original_sha256": "afde360c07fcbb7f1bffb7f23f492c9167d78366c32dab0edfae672f32a59838",
+      "delivered_path": "examples/reverse-engineering-research/qualify_projection.py",
+      "delivered_git_blob_sha256": "0e0b5d93ddbfbaf55e064b1cc51f1ddeb85cfbadf616dbf496acba5c3809bf73",
+      "byte_identical": false
+    },
+    {
+      "original_path": "examples/reverse-engineering-research/qualify_validation.py",
+      "original_sha256": "ccbb822988f3e4b72ae6850004f7428f9aaaadec6c3a00ac44b68669b4b42c15",
+      "delivered_path": "examples/reverse-engineering-research/qualify_validation.py",
+      "delivered_git_blob_sha256": "77f70d12c95babe548f343a81d276bce0d4fd8cdab7f497e0c26747fad7cd86d",
+      "byte_identical": false
+    },
+    {
+      "original_path": "examples/reverse-engineering-research/stl_zero_area_derivative.py",
+      "original_sha256": "f06e2aad4186d6b0a50b4b8f1a56c02602ab7799416b3813c507f3620920dbbf",
+      "delivered_path": "examples/reverse-engineering-research/stl_zero_area_derivative.py",
+      "delivered_git_blob_sha256": "32c133b8ca03bc990f6736e2488553109177c22ff260307ac59eb127c4cfa348",
+      "byte_identical": false
+    },
+    {
+      "original_path": "examples/reverse-engineering-research/test_camera_hypothesis_stability.py",
+      "original_sha256": "4f2be81f27a960d451a085fbd82f7e86978ad33d0e62ebafd943b7dc1c8c72a7",
+      "delivered_path": "tests/reverse_engineering/test_camera_hypothesis_stability.py",
+      "delivered_git_blob_sha256": "4f2be81f27a960d451a085fbd82f7e86978ad33d0e62ebafd943b7dc1c8c72a7",
+      "byte_identical": true
+    },
+    {
+      "original_path": "examples/reverse-engineering-research/test_compare_native_faces.py",
+      "original_sha256": "315425e32e064e30f263fd93c9941578db32d8e5401946c9473ea092a319452e",
+      "delivered_path": "examples/reverse-engineering-research/test_compare_native_faces.py",
+      "delivered_git_blob_sha256": "24a2696320772ce59759a8b76a64a0bf6f4c2e603969c9a2815d5fab1f87e0b6",
+      "byte_identical": false
+    },
+    {
+      "original_path": "examples/reverse-engineering-research/test_fair_bezier_join.py",
+      "original_sha256": "d2961e1b264ed3f4b07d4eed4fc730f71b145eb9f0206760b6e84dcd928cf374",
+      "delivered_path": "examples/reverse-engineering-research/test_fair_bezier_join.py",
+      "delivered_git_blob_sha256": "8d707bf96bed0c5238314abd97aca9a835efbac2a48dc15188573431df2057a1",
+      "byte_identical": false
+    },
+    {
+      "original_path": "examples/reverse-engineering-research/test_inspect_step_rays.py",
+      "original_sha256": "b0c78ba17731de5b70d8ab2507552540d060f4d3821b31c38fca3189ac40012d",
+      "delivered_path": "examples/reverse-engineering-research/test_inspect_step_rays.py",
+      "delivered_git_blob_sha256": "75e8e8e7fd1bc8f3645ea497ae6dd6614ce6e636be69888d5b850b5d789736d9",
+      "byte_identical": false
+    },
+    {
+      "original_path": "examples/reverse-engineering-research/test_owner_visibility.py",
+      "original_sha256": "e6af536c213d7b435f7708ec853b648202d39ebc5ebb35336446ea345ffab40c",
+      "delivered_path": "examples/reverse-engineering-research/test_owner_visibility.py",
+      "delivered_git_blob_sha256": "d729d54ce5863ae8f7df19ca5d1ee601786445225c54a208dc85d2cf2dc576a5",
+      "byte_identical": false
+    },
+    {
+      "original_path": "examples/reverse-engineering-research/test_preparation_assets.py",
+      "original_sha256": "6f8748338768f0771e78bb8d2756ef9411d67935ade4f1a99c1ed14eb0780578",
+      "delivered_path": "tests/reverse_engineering/test_preparation_assets.py",
+      "delivered_git_blob_sha256": "c9497e07505d79a78660259369bed7f864f32bb68053640160d37735b1fd441a",
+      "byte_identical": false
+    },
+    {
+      "original_path": "examples/reverse-engineering-research/test_prepare_visualization_mesh.py",
+      "original_sha256": "ec0505dbeef05f2f4246b66a67f4d4f52c8b52266d7a3bb21eddb06e29c279e2",
+      "delivered_path": "examples/reverse-engineering-research/test_prepare_visualization_mesh.py",
+      "delivered_git_blob_sha256": "f9cd006b7701f931c3457453bb562cb37d011bec3822dee1db86f60ddc802e40",
+      "byte_identical": false
+    },
+    {
+      "original_path": "examples/reverse-engineering-research/test_projected_envelope.py",
+      "original_sha256": "238223756d1c413de2267e29342cbf86cd8f5f9b04056414a01bc99e84d07f3d",
+      "delivered_path": "examples/reverse-engineering-research/test_projected_envelope.py",
+      "delivered_git_blob_sha256": "eefcf379e87a815661ed4d5499c1ad1b1797d0503a0086619f267f293bad76e0",
+      "byte_identical": false
+    },
+    {
+      "original_path": "examples/reverse-engineering-research/winding_surface_study.py",
+      "original_sha256": "e10b739f67df7074bc5ef19931c7bbcb415345f9570a247789443d9d60c59b52",
+      "delivered_path": "examples/reverse-engineering-research/winding_surface_study.py",
+      "delivered_git_blob_sha256": "590806961f150f1b5503552060bb90e42de03c90247e52767d5cb1768a9d6f7b",
+      "byte_identical": false
+    },
+    {
+      "original_path": "examples/reverse-engineering-workflow/README.md",
+      "original_sha256": "244f07e5f881abd1b366618f631e0fab67cc6129f99bbd3bb2c57c33a1ccb8ec",
+      "delivered_path": "examples/reverse-engineering-workflow/README.md",
+      "delivered_git_blob_sha256": "aecf45b2576f5656b8b0245177650469d9cb0b5d4c3f3d141f7d35f92288b516",
+      "byte_identical": false
+    },
+    {
+      "original_path": "examples/reverse-engineering-workflow/acceptance-cases.json",
+      "original_sha256": "800d16735ef7b2b5147b1ae8613d9865042f9547aa5a755e5c86c5334c288a56",
+      "delivered_path": "examples/reverse-engineering-workflow/acceptance-cases.json",
+      "delivered_git_blob_sha256": "f23579792306101cb94a5a2ea4db33604cd8073b35be41f43c37cca5ae8d4f69",
+      "byte_identical": false
+    },
+    {
+      "original_path": "examples/reverse-engineering-workflow/astra-plan-proposal.md",
+      "original_sha256": "011f78a165516fbe451d5e05cf620743553e0d63b0123a79fdb8198c2d513c70",
+      "delivered_path": "examples/reverse-engineering-workflow/astra-plan-proposal.md",
+      "delivered_git_blob_sha256": "5b7587495edef4118c7a7b831a9314a943142dfa56023ca9afb93c2270bb7430",
+      "byte_identical": false
+    },
+    {
+      "original_path": "examples/reverse-engineering-workflow/authoring-provenance.json",
+      "original_sha256": "31792152493c24b9f92962753ed3fa4ecb51df6f1409c47c07b5879244906c2d",
+      "delivered_path": "examples/reverse-engineering-workflow/authoring-provenance.json",
+      "delivered_git_blob_sha256": "7f8030cf5b2e1d43621bbdd02fe9bf5dcbe1f31fe4cf1fd17139e09424c2bb1d",
+      "byte_identical": false
+    },
+    {
+      "original_path": "examples/reverse-engineering-workflow/capability-plan.json",
+      "original_sha256": "e114088f94e5440bb2501671ea4bd9cd1ee29d0ccf0c373ffdf48b1e96d4672c",
+      "delivered_path": "examples/reverse-engineering-workflow/capability-plan.json",
+      "delivered_git_blob_sha256": "aceb3a202cc9b8e1d4dec1fdd53b632a831abe08fcf3eda21e2c62b4dd511c2a",
+      "byte_identical": false
+    },
+    {
+      "original_path": "examples/reverse-engineering-workflow/evidence-survey/README.md",
+      "original_sha256": "82d4f7947549bac9cf1771606029d4204a81ffbc0817c9bf194485e406411c69",
+      "delivered_path": "examples/reverse-engineering-workflow/evidence-survey/README.md",
+      "delivered_git_blob_sha256": "82d4f7947549bac9cf1771606029d4204a81ffbc0817c9bf194485e406411c69",
+      "byte_identical": true
+    },
+    {
+      "original_path": "examples/reverse-engineering-workflow/evidence-survey/build_workflow.py",
+      "original_sha256": "e77a529abdc84567fa585b86aaf095fd29dbda8bc01c6dc009b05d48f9beca8b",
+      "delivered_path": "examples/reverse-engineering-workflow/evidence-survey/build_workflow.py",
+      "delivered_git_blob_sha256": "cb329e8238b79b97e449d35af251fa5c43b08e591b8bda8f9b9656332b846a0c",
+      "byte_identical": false
+    },
+    {
+      "original_path": "examples/reverse-engineering-workflow/evidence-survey/survey-instruction.json",
+      "original_sha256": "af1a71d6d55f057fafbd88bc9a7165833cf33927d3baa6c597bcf07fcbdbb758",
+      "delivered_path": "examples/reverse-engineering-workflow/evidence-survey/survey-instruction.json",
+      "delivered_git_blob_sha256": "26f50a612f960a46912285104b98c17206fa98831453f76610b8ef2e1af16bf7",
+      "byte_identical": false
+    },
+    {
+      "original_path": "examples/reverse-engineering-workflow/evidence-survey/survey-response-schema.json",
+      "original_sha256": "2f1f6c38184eb57a962ebe401a8c54bee43d3c5a32b1a84b109be56add4fe891",
+      "delivered_path": "examples/reverse-engineering-workflow/evidence-survey/survey-response-schema.json",
+      "delivered_git_blob_sha256": "cd18ffda2a0224991a2d5f4e478984d46f0a809e1edca287e8de0d738c37c58f",
+      "byte_identical": false
+    },
+    {
+      "original_path": "examples/reverse-engineering-workflow/instructions.json",
+      "original_sha256": "ee9548554d8cb5e910df113e844909f3a387a1ed1fdc94edc8be73eb59ced63d",
+      "delivered_path": "examples/reverse-engineering-workflow/instructions.json",
+      "delivered_git_blob_sha256": "0218410587290bcd9c3699f2dd48f069d422bb6ac158c3dc14b7149ed90feb9b",
+      "byte_identical": false
+    },
+    {
+      "original_path": "examples/reverse-engineering-workflow/native-inspection/README.md",
+      "original_sha256": "e3da3e2635b83ed13cb3c28014afc7effad65e979c4235ad9ea446d22c516910",
+      "delivered_path": "examples/reverse-engineering-workflow/native-inspection/README.md",
+      "delivered_git_blob_sha256": "e3da3e2635b83ed13cb3c28014afc7effad65e979c4235ad9ea446d22c516910",
+      "byte_identical": true
+    },
+    {
+      "original_path": "examples/reverse-engineering-workflow/native-inspection/build_workflow.py",
+      "original_sha256": "9e2b6ae700a17856f41b43515d2b2ae8c2804e3ad40c2cb8858ba9b33a521440",
+      "delivered_path": "examples/reverse-engineering-workflow/native-inspection/build_workflow.py",
+      "delivered_git_blob_sha256": "67d7cf440c96c4652b4d411991360240603a41bb9bd1872d5c88326877c1d7fc",
+      "byte_identical": false
+    },
+    {
+      "original_path": "examples/reverse-engineering-workflow/native-rays/README.md",
+      "original_sha256": "eb99953528e68aa31c6a0efc2ee6e0055fa9c3f4da5443ed075a638e6f17011d",
+      "delivered_path": "examples/reverse-engineering-workflow/native-rays/README.md",
+      "delivered_git_blob_sha256": "eb99953528e68aa31c6a0efc2ee6e0055fa9c3f4da5443ed075a638e6f17011d",
+      "byte_identical": true
+    },
+    {
+      "original_path": "examples/reverse-engineering-workflow/native-rays/native_ray_support.py",
+      "original_sha256": "22d05cbe6c976811e070b818ae7a17b97e42e12fb4024959c90767ea67717331",
+      "delivered_path": "examples/reverse-engineering-workflow/native-rays/native_ray_support.py",
+      "delivered_git_blob_sha256": "ebef1b4bb532d608f12083c43e59c89dc39949618ff97074d368fd607fb83711",
+      "byte_identical": false
+    },
+    {
+      "original_path": "examples/reverse-engineering-workflow/native-rays/provenance.json",
+      "original_sha256": "99a2f7c35b189b31bef080321a8c5cfabd4676f47dd686400d113589fbc052ab",
+      "delivered_path": "examples/reverse-engineering-workflow/native-rays/provenance.json",
+      "delivered_git_blob_sha256": "ecd14dbfc7de5f88c6378e9b65b59e571b4e7523cf3940e51b1066b435d7f401",
+      "byte_identical": false
+    },
+    {
+      "original_path": "examples/reverse-engineering-workflow/native-sections/README.md",
+      "original_sha256": "8ae479dc296d801dea6e7b22f169f1a4e7a2cbfbf6d1619c91bb9c985e48ac4d",
+      "delivered_path": "examples/reverse-engineering-workflow/native-sections/README.md",
+      "delivered_git_blob_sha256": "d8831f07660a8fe5863166a3049fa214a9845f2407c2de3b82c982436cc3ec45",
+      "byte_identical": false
+    },
+    {
+      "original_path": "examples/reverse-engineering-workflow/native-sections/provenance.json",
+      "original_sha256": "58f9ec95f723327b4f3ed7f7ac956d71029db6f0e0aba68ab7a2b9f7798f68ee",
+      "delivered_path": "examples/reverse-engineering-workflow/native-sections/provenance.json",
+      "delivered_git_blob_sha256": "19e4afb84dfce7d6ef73db5b214d1c3a8afc055b96cd0ade54aa2aa359cfcaaf",
+      "byte_identical": false
+    },
+    {
+      "original_path": "examples/reverse-engineering-workflow/native-sections/section_diagnostic.py",
+      "original_sha256": "a45e999179def341cb6f6a72d3c9cee0b0914d6559caa5afac6cd92ecb8072f5",
+      "delivered_path": "examples/reverse-engineering-workflow/native-sections/section_diagnostic.py",
+      "delivered_git_blob_sha256": "773fa315c55fbf93711b8d65e9357f5aa9c032301182c4d0aa2608c9ad288551",
+      "byte_identical": false
+    },
+    {
+      "original_path": "examples/reverse-engineering-workflow/native-sections/test_section_diagnostic.py",
+      "original_sha256": "d8673b91f8695cf2429e64aa4ad9d24d4b85a4dc81c4f71c98039cc234e7fc67",
+      "delivered_path": "examples/reverse-engineering-workflow/native-sections/test_section_diagnostic.py",
+      "delivered_git_blob_sha256": "7e90cb9c18aa2b84382cf28c9d9a594274e4f3ee0699a32219e35361fb31cffd",
+      "byte_identical": false
+    },
+    {
+      "original_path": "examples/reverse-engineering-workflow/preparation-basis.schema.json",
+      "original_sha256": "328b178bca4284ec5f2952ffc3269751e6822a919438b5b62b2ca02445be80ae",
+      "delivered_path": "examples/reverse-engineering-workflow/preparation-basis.schema.json",
+      "delivered_git_blob_sha256": "a246b96e6dde4f1f7118224a18c776e8822c8830e4e9d6d5f1dac6d3d88a2e68",
+      "byte_identical": false
+    },
+    {
+      "original_path": "examples/reverse-engineering-workflow/preparation-instruction.json",
+      "original_sha256": "6e5aabcf2453c53398170b6596b576dee7768aa6b6419ba108d2ca600a5db35c",
+      "delivered_path": "examples/reverse-engineering-workflow/preparation-instruction.json",
+      "delivered_git_blob_sha256": "17968b388da05e4c466d3c86d9964ff54a9a070c1b7307d919d1002e2fa471bd",
+      "byte_identical": false
+    },
+    {
+      "original_path": "examples/reverse-engineering-workflow/preparation-proposal.json",
+      "original_sha256": "7c09320b64e6c48d4cf4601e5cacb8c52c86d65bdb2d3bd96856abfa534660de",
+      "delivered_path": "examples/reverse-engineering-workflow/preparation-proposal.json",
+      "delivered_git_blob_sha256": "6108f709dac8a06eb3fa41866ddc078944320ba0c21a210939c65f4a0715dc81",
+      "byte_identical": false
+    },
+    {
+      "original_path": "examples/reverse-engineering-workflow/preparation.workflow.wflow",
+      "original_sha256": "757391c1971b43b7812a1310068032e1058a798fc04274b68d7bfe9c3be5ae3b",
+      "delivered_path": "examples/reverse-engineering-workflow/preparation.workflow.wflow",
+      "delivered_git_blob_sha256": "15264785cdd0bcadf9ca6ddbca24f9600e4f47fbe136a05364d8e9d613ee616e",
+      "byte_identical": false
+    },
+    {
+      "original_path": "examples/reverse-engineering-workflow/projection-qualification-basis.json",
+      "original_sha256": "e95dc4a8f0653c64dc77e99a68444d7d20c3875da4d39b4a96431821ad352ed4",
+      "delivered_path": "examples/reverse-engineering-workflow/projection-qualification-basis.json",
+      "delivered_git_blob_sha256": "e95dc4a8f0653c64dc77e99a68444d7d20c3875da4d39b4a96431821ad352ed4",
+      "byte_identical": true
+    },
+    {
+      "original_path": "examples/reverse-engineering-workflow/research-first/README.md",
+      "original_sha256": "ed66e30c02768a15f8f43475f2286fa1a3a3081fbc7d0e9dc5d6ba00595d6cd3",
+      "delivered_path": "examples/reverse-engineering-workflow/research-first/README.md",
+      "delivered_git_blob_sha256": "ed66e30c02768a15f8f43475f2286fa1a3a3081fbc7d0e9dc5d6ba00595d6cd3",
+      "byte_identical": true
+    },
+    {
+      "original_path": "examples/reverse-engineering-workflow/research-first/authoring-provenance.json",
+      "original_sha256": "354805db61ec98582931f80885608a56b928a9544d76369e8d6fa46663647f1f",
+      "delivered_path": "examples/reverse-engineering-workflow/research-first/authoring-provenance.json",
+      "delivered_git_blob_sha256": "663542c3cf307d7d162b40d6199e0c506bd64512c99c0b0aa7ae300774138545",
+      "byte_identical": false
+    },
+    {
+      "original_path": "examples/reverse-engineering-workflow/research-first/build_workflow.py",
+      "original_sha256": "bc150b9ed398a2c2aafce7bce604183a8e3754fffac01e6b1a634ec05e7b04f9",
+      "delivered_path": "examples/reverse-engineering-workflow/research-first/build_workflow.py",
+      "delivered_git_blob_sha256": "cd7f2f1cb03334206a55a33e2a29e5d8dce9ebf29430e6d96bfbede98820b956",
+      "byte_identical": false
+    },
+    {
+      "original_path": "examples/reverse-engineering-workflow/research-first/clarification-instruction.json",
+      "original_sha256": "43d15239a6955a09fcaa9c75e9bfc31072e8448e356dbf48333729b6bc2a6848",
+      "delivered_path": "examples/reverse-engineering-workflow/research-first/clarification-instruction.json",
+      "delivered_git_blob_sha256": "47f915855a5e490717c7e279e6e54ff43d48b289aa5f74b301f4821d3719a072",
+      "byte_identical": false
+    },
+    {
+      "original_path": "examples/reverse-engineering-workflow/research-first/clarification-proposal.json",
+      "original_sha256": "2cae62490ffc107c48f43ee5e7fee768db2491841fc378ab878b7d2fa81703fc",
+      "delivered_path": "examples/reverse-engineering-workflow/research-first/clarification-proposal.json",
+      "delivered_git_blob_sha256": "dbbf63811b6c6bf3f1ade193833dcf2039ec0dd7b75451117906ae2a149f8d24",
+      "byte_identical": false
+    },
+    {
+      "original_path": "examples/reverse-engineering-workflow/research-first/clarification-response-schema.json",
+      "original_sha256": "d9452532b79051ce1346b01c60a0a0e17b460fca5a2757f4effc64279f0b0419",
+      "delivered_path": "examples/reverse-engineering-workflow/research-first/clarification-response-schema.json",
+      "delivered_git_blob_sha256": "0232cbe23824f3609d812de6cd26c283ed8dc51bdc8c15e60f2a99f8fc6c32be",
+      "byte_identical": false
+    },
+    {
+      "original_path": "examples/reverse-engineering-workflow/research-first/gap-response-schema.json",
+      "original_sha256": "cebe45c7bbda88c160a0ce235291c420d7055b26ecfd659db8997deee3a7dfc3",
+      "delivered_path": "examples/reverse-engineering-workflow/research-first/gap-response-schema.json",
+      "delivered_git_blob_sha256": "a5542f6d5d40ec9a2b2831660d257a96366b82051b8cba22f362ba09adfed9e4",
+      "byte_identical": false
+    },
+    {
+      "original_path": "examples/reverse-engineering-workflow/research-first/research-first-v2.workflow.wflow",
+      "original_sha256": "8a89b562f6b85ce78ba312d8e69f97153e656725889e0d2fbcf2158884b453aa",
+      "delivered_path": "examples/reverse-engineering-workflow/research-first/research-first-v2.workflow.wflow",
+      "delivered_git_blob_sha256": "659c7a4935187148ab6317cd07a93c425b6a3ba0e46bafa61fcda59176be6b9a",
+      "byte_identical": false
+    },
+    {
+      "original_path": "examples/reverse-engineering-workflow/research-first/research-first.workflow.wflow",
+      "original_sha256": "7e66a028bf20bb5068a3add1c5aa2ff26a224fded966b4d51c591ecfcbe3fd3b",
+      "delivered_path": "examples/reverse-engineering-workflow/research-first/research-first.workflow.wflow",
+      "delivered_git_blob_sha256": "2472f0683f52912c5e994913f82df8d1c7812fd900cc5cf1961783b3c8dc62a3",
+      "byte_identical": false
+    },
+    {
+      "original_path": "examples/reverse-engineering-workflow/research-first/research-instruction.json",
+      "original_sha256": "55369e154b45008fb0be28eef3011af92381c340a9e807d7f5a4281903ce4e1f",
+      "delivered_path": "examples/reverse-engineering-workflow/research-first/research-instruction.json",
+      "delivered_git_blob_sha256": "6e5577f18c6e9855009cc0a0aed5cac8a34aa2e8290b9d46423de7e1306b44fd",
+      "byte_identical": false
+    },
+    {
+      "original_path": "examples/reverse-engineering-workflow/research-first/research-proposal.json",
+      "original_sha256": "65fbfc98be54bf4e673f572f3872364183397c121457eb862d4496c1e9c9fd2b",
+      "delivered_path": "examples/reverse-engineering-workflow/research-first/research-proposal.json",
+      "delivered_git_blob_sha256": "2a7666482fbb35ff8b15d8d4dc6ff085679235c853494d4117b52456dbbba657",
+      "byte_identical": false
+    },
+    {
+      "original_path": "examples/reverse-engineering-workflow/research-first/test_research_source.py",
+      "original_sha256": "535f2d0cce3ea567f5a9a861218acaadf3eba8ebe786c69f89dd3a2d3350e6ea",
+      "delivered_path": "tests/reverse_engineering/test_research_source.py",
+      "delivered_git_blob_sha256": "7c9c17e826e62fbef1fcf9d7d8a0967c48f8754406309c377bf573dca4b92a25",
+      "byte_identical": false
+    },
+    {
+      "original_path": "examples/reverse-engineering-workflow/research-first/user-input-schema.json",
+      "original_sha256": "c1c6258b4564647ebe8471676db537defc3c666f19003e46f9192be7cea7744e",
+      "delivered_path": "examples/reverse-engineering-workflow/research-first/user-input-schema.json",
+      "delivered_git_blob_sha256": "5fb32f8bfb88c7cafa657f56fd36fd680f64771e27fbc9850af32d89b1fff177",
+      "byte_identical": false
+    },
+    {
+      "original_path": "examples/reverse-engineering-workflow/two-view-consistency/README.md",
+      "original_sha256": "2101d63cb92ed1b28e0418ccc11cc2ca3e261be0749eb3da06964acbd0f0a9fc",
+      "delivered_path": "examples/reverse-engineering-workflow/two-view-consistency/README.md",
+      "delivered_git_blob_sha256": "2101d63cb92ed1b28e0418ccc11cc2ca3e261be0749eb3da06964acbd0f0a9fc",
+      "byte_identical": true
+    },
+    {
+      "original_path": "examples/reverse-engineering-workflow/two-view-consistency/audit_two_view_correspondences.py",
+      "original_sha256": "2089460fefc710462f810c1bb237cbb284e5357c780d5f19682b0d3c5340e804",
+      "delivered_path": "examples/reverse-engineering-workflow/two-view-consistency/audit_two_view_correspondences.py",
+      "delivered_git_blob_sha256": "72a93b52725a6fb41d2fb7575e424d4b1432a8ce6cc90d01d41a0717561c26b0",
+      "byte_identical": false
+    },
+    {
+      "original_path": "examples/reverse-engineering-workflow/two-view-consistency/provenance.json",
+      "original_sha256": "f7a4a10e9c834db16f43422425eb47efd44c500ca86c638b8da0729e35380122",
+      "delivered_path": "examples/reverse-engineering-workflow/two-view-consistency/provenance.json",
+      "delivered_git_blob_sha256": "f7a4a10e9c834db16f43422425eb47efd44c500ca86c638b8da0729e35380122",
+      "byte_identical": true
+    },
+    {
+      "original_path": "examples/reverse-engineering-workflow/two-view-consistency/test_two_view_correspondences.py",
+      "original_sha256": "111fa7472890f75c47b76f84314793065a25bca392cec5ed7313ba90521eff04",
+      "delivered_path": "examples/reverse-engineering-workflow/two-view-consistency/test_two_view_correspondences.py",
+      "delivered_git_blob_sha256": "4805e0e11070430ba89912c83dcfb78a21fc29b241d22ba293bf3c01feaaedef",
+      "byte_identical": false
+    },
+    {
+      "original_path": "examples/reverse-engineering-workflow/view-observability/README.md",
+      "original_sha256": "529c97f7ea9661b9e9a024ccf2987a315e2df5150d1dea25cbfb6333e8b21765",
+      "delivered_path": "examples/reverse-engineering-workflow/view-observability/README.md",
+      "delivered_git_blob_sha256": "529c97f7ea9661b9e9a024ccf2987a315e2df5150d1dea25cbfb6333e8b21765",
+      "byte_identical": true
+    },
+    {
+      "original_path": "examples/reverse-engineering-workflow/view-observability/survey-instruction.json",
+      "original_sha256": "dd6b66a1730cd78588d2b46338eda604297ac87d7733950a25fbb318fa6eee29",
+      "delivered_path": "examples/reverse-engineering-workflow/view-observability/survey-instruction.json",
+      "delivered_git_blob_sha256": "33f4dd3d6deed070fcad1b567d7a775a5d151240b83b261b549159f359b68f63",
+      "byte_identical": false
+    },
+    {
+      "original_path": "examples/reverse-engineering-workflow/view-observability/survey-response-schema.json",
+      "original_sha256": "b52ea4de631dd91ba07d09e67bde437943955bc77b871053d578ab575b119718",
+      "delivered_path": "examples/reverse-engineering-workflow/view-observability/survey-response-schema.json",
+      "delivered_git_blob_sha256": "c33e17f219591463710b5784961031e7467da0ecc389f1782060a7332dcb2bf4",
+      "byte_identical": false
+    },
+    {
+      "original_path": "examples/reverse-engineering-workflow/whole-object-pass/README.md",
+      "original_sha256": "480aaa649c14afb251d18034f54ca3d72c85d148b311a850615dc0a12d55d33f",
+      "delivered_path": "examples/reverse-engineering-workflow/whole-object-pass/README.md",
+      "delivered_git_blob_sha256": "29a0e4faad8d6a4f8a16a7dda78ec63fca9054dc790148822925a0413cf885bd",
+      "byte_identical": false
+    },
+    {
+      "original_path": "examples/reverse-engineering-workflow/whole-object-pass/instruction-v1.1.json",
+      "original_sha256": "52f771d619d25ac3267ed18459f07b8683be6aa7de76e1c6fb5f8a4d76d9b637",
+      "delivered_path": "examples/reverse-engineering-workflow/whole-object-pass/instruction-v1.1.json",
+      "delivered_git_blob_sha256": "a0ae24f5fdd96e4c0e77e69b953df8204ee5e648972cf25e55f61fe239150c54",
+      "byte_identical": false
+    },
+    {
+      "original_path": "examples/reverse-engineering-workflow/whole-object-pass/instruction-v1.2.json",
+      "original_sha256": "2507651043d2320523cf10331c22e7cf2c3e2e2b070c14b7a27c49736cb20dc7",
+      "delivered_path": "examples/reverse-engineering-workflow/whole-object-pass/instruction-v1.2.json",
+      "delivered_git_blob_sha256": "3fb27785a9962e5189779c2da4e2c01b53b4ad92b39cd99e5089a69221dd120e",
+      "byte_identical": false
+    },
+    {
+      "original_path": "examples/reverse-engineering-workflow/whole-object-pass/instruction.json",
+      "original_sha256": "8f985294b8901c398384b156a802d47cebb98f8d59cdbca01553c4df564cef73",
+      "delivered_path": "examples/reverse-engineering-workflow/whole-object-pass/instruction.json",
+      "delivered_git_blob_sha256": "2145bebdf3f49a13e1eaad991d0fd48d9452ea4a5a9a38fd7168494128ad9688",
+      "byte_identical": false
+    },
+    {
+      "original_path": "examples/reverse-engineering-workflow/whole-object-pass/qualification-notes.md",
+      "original_sha256": "afb602f4124d525efb5dbd6d2e653c70fff8eedec0a91eb6d49516f27b15445f",
+      "delivered_path": "examples/reverse-engineering-workflow/whole-object-pass/qualification-notes.md",
+      "delivered_git_blob_sha256": "cb5733a05b76990ad560fefff333345146b10a6df0a2c1f8933ae0052ab042c4",
+      "byte_identical": false
+    },
+    {
+      "original_path": "examples/reverse-engineering-workflow/windows-qualification-notes.md",
+      "original_sha256": "85bb5c96d9bb7c506cc3b4c8ccd8e0f6eebc67abea7d95d970ed58f41f2710b7",
+      "delivered_path": "examples/reverse-engineering-workflow/windows-qualification-notes.md",
+      "delivered_git_blob_sha256": "85bb5c96d9bb7c506cc3b4c8ccd8e0f6eebc67abea7d95d970ed58f41f2710b7",
+      "byte_identical": true
+    }
+  ]
+}

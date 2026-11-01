@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Research-first CAD input v1.0.0",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "request": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 8000,
+      "pattern": "\\S",
+      "description": "Plain-language request. Not engineering approval."
+    },
+    "references": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 32,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 2048,
+        "pattern": "\\S"
+      },
+      "description": "Paths or links supplied through the existing workspace; no inline file payloads or access grants."
+    }
+  },
+  "anyOf": [
+    {
+      "required": [
+        "request"
+      ]
+    },
+    {
+      "required": [
+        "references"
+      ]
+    }
+  ]
+}

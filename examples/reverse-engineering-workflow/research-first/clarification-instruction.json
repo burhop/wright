@@ -1,0 +1,11 @@
+{
+  "schema_version": "wright.instruction-asset/1",
+  "id": "re-clarification",
+  "role": "workflow-task",
+  "version": "1.0.0",
+  "body": "Read the existing structured research brief, preserving original requirements, reused research, essential_questions, limitations, unavailable_evidence and more_research. This stage classifies clarification need only: do not answer essential questions, perform research, approve engineering or create CAD. Inspect essential_questions entries containing question, consequence and resolution. If any consequential essential question requires declared_user_input, return exactly {\"version\":\"wright.requirements-resolution/1\",\"unresolved_fields\":[\"clarification\"],\"resolved_values\":{}} through the existing response envelope. Otherwise return exactly {\"version\":\"wright.requirements-resolution/1\",\"unresolved_fields\":[],\"resolved_values\":{\"clarification\":\"No user clarification required by this research brief.\"}}. The latter value is an explicit skip marker, never a simulated human answer. Questions assigned targeted_research remain research matters; do not answer them or reassign them to the user merely because a research provider is unavailable. Provider absence remains a limitation, not an approval request. If the upstream brief is malformed or inaccessible, use the existing blocked/error outcome with a diagnostic; do not infer that no questions exist. Do not repeat dynamic question text: the human receives the original brief and resolution. Use only the existing validated conditional human-input contract; introduce no routing implementation or prompt-based branch.",
+  "body_digest": "81d7db36a725c8db6d66d301b0a9cdfbad6e8612b5926340c09f8bc43ffb97b7",
+  "origin": "astra-research-first-20261020",
+  "variables": [],
+  "execution_contract": "wright.workflow-instructions/1"
+}
