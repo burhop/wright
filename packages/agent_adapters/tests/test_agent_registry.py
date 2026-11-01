@@ -95,6 +95,8 @@ def test_unavailable_pi_never_falls_back_to_default(selection, monkeypatch):
     assert "pi" not in registry.supported_names()
     with pytest.raises(UnsupportedAgentRuntimeError, match="known but not implemented"):
         registry.create_engine(selection, db_path="test.db")
+
+
 def test_codex_chat_is_experimental_and_requires_explicit_opt_in(monkeypatch, tmp_path):
     monkeypatch.delenv("WRIGHT_CODEX_CHAT_EXPERIMENTAL", raising=False)
     registry = default_agent_registry()

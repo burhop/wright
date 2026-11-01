@@ -6,13 +6,23 @@ export class WorkspaceWorkflowRunError extends Error {
   readonly phase: "request" | "execution";
   readonly traceId: string;
 
-  constructor(first: string, second: string, correction?: string | null, phase?: "request" | "execution", traceId = "") {
+  constructor(
+    first: string,
+    second: string,
+    correction?: string | null,
+    phase?: "request" | "execution",
+    traceId = "",
+  ) {
     const description = phase === undefined ? second : first;
-    super(phase === undefined ? description : [description, correction].filter(Boolean).join(" "));
+    super(
+      phase === undefined
+        ? description
+        : [description, correction].filter(Boolean).join(" "),
+    );
     this.name = "WorkspaceWorkflowRunError";
     this.description = description;
     this.code = phase === undefined ? first : second;
-    this.correction = correction ?? null;
+    this.correction = correction || null;
     this.phase = phase ?? "execution";
     this.traceId = traceId;
   }

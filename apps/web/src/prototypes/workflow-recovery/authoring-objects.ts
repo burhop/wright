@@ -440,20 +440,38 @@ export function canAssignMcpWorkOperation(block: RecoveryBlock): boolean {
     block.executionKind !== "human" &&
     block.bindingId === null &&
     block.componentRef === null &&
-    !["mcp-task", "mcp-tool", "ai-prompt", "manual-review", "human-input",
-      "external-action-approval", "process-validator"].includes(String(settings.authoring_template)) &&
-    ![RECOVERY_AUTHORING_APPROVAL_OBJECTS_KEY, "approval_binding", "action_kind",
-      "validation", "interaction_input", "cad", "application_resource",
-      "mcp_server", "mcp_tool"].some((key) => settings[key] !== undefined)
+    ![
+      "mcp-task",
+      "mcp-tool",
+      "ai-prompt",
+      "manual-review",
+      "human-input",
+      "external-action-approval",
+      "process-validator",
+    ].includes(String(settings.authoring_template)) &&
+    ![
+      RECOVERY_AUTHORING_APPROVAL_OBJECTS_KEY,
+      "approval_binding",
+      "action_kind",
+      "validation",
+      "interaction_input",
+      "cad",
+      "application_resource",
+      "mcp_server",
+      "mcp_tool",
+    ].some((key) => settings[key] !== undefined)
   );
 }
 
 export function assignMcpWorkOperation(block: RecoveryBlock): RecoveryBlock {
   if (!canAssignMcpWorkOperation(block))
-    throw new Error("Only an unassigned work step can be configured here. Keep reviews and existing operations intact.");
+    throw new Error(
+      "Only an unassigned work step can be configured here. Keep reviews and existing operations intact.",
+    );
   const next = structuredClone(block);
   const settings = next.configuration;
-  const activeField = settings[RECOVERY_AUTHORING_INSTRUCTION_FIELD_KEY] ??
+  const activeField =
+    settings[RECOVERY_AUTHORING_INSTRUCTION_FIELD_KEY] ??
     (block.executionKind === "ai_capable" ? "prompt" : "instructions");
   if (activeField === "instructions") {
     // Keep an explicitly authored instructions field as well as the task prompt.

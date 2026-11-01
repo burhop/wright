@@ -419,4 +419,3 @@ def test_native_profile_root_binding_preserves_existing_environment(
     assert not wright_gateway_sync.write_gateway_profile_config(
         profile, [str(config_path)]
     )
-

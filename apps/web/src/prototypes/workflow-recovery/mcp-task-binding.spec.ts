@@ -88,9 +88,8 @@ it("binds a template task atomically, retaining instructions, ports, identity an
   expect(reopened.workflow!.blocks[1]).toEqual(task);
   const commands = textEditCommands(workflow, reopened.workflow!, layout);
   expect(commands).toContainEqual({
-    kind: "set_block_execution_kind",
+    kind: "assign_mcp_work_operation",
     blockId: block.id,
-    executionKind: "ai_capable",
   });
   const undone = applyRecoveryBatch(
     updated,

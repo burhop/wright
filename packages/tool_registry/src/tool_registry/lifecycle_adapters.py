@@ -208,7 +208,6 @@ class DatabaseLifecycleAdapter:
                 oauth_enabled=not bool(header_definitions),
                 ui_enabled=os.getenv("WRIGHT_SURFACES_MCP_APPS_ENABLED") == "1",
                 server_id=server_id,
-                device_authorization_presenter=self.device_authorization_presenter,
                 operation_timeout=self.operation_timeout,
                 authorization_presenter=self.authorization_presenter,
                 device_authorization_presenter=self.device_authorization_presenter,

@@ -49,7 +49,10 @@ def instruction_summary(instructions):
         "digest": instructions.digest,
         "policy": instructions.policy.model_dump(mode="json"),
         "assets": [
-            {key: getattr(asset, key) for key in ("id", "role", "version", "body_digest")}
+            {
+                key: getattr(asset, key)
+                for key in ("id", "role", "version", "body_digest")
+            }
             for asset in instructions.assets
         ],
         "bodies_included": False,
@@ -61,14 +64,22 @@ def authoring_source_view(source, view="process"):
     if view == "complete":
         return {"source_view": "complete", "source": source}
     try:
-        header = next((item for item in _parse(source) if item["kind"] == "workflow"), None)
+        header = next(
+            (item for item in _parse(source) if item["kind"] == "workflow"), None
+        )
     except WorkflowSourceExecutionError:
-        return {"source_view": "complete", "source": source,
-                "projection_unavailable": "Source could not be parsed; exact text returned."}
+        return {
+            "source_view": "complete",
+            "source": source,
+            "projection_unavailable": "Source could not be parsed; exact text returned.",
+        }
     saved = header["fields"].get("instructions") if header else None
     if saved is None:
-        return {"source_view": "process", "editable_source": source,
-                "saved_instructions": None}
+        return {
+            "source_view": "process",
+            "editable_source": source,
+            "saved_instructions": None,
+        }
     instructions = WorkflowInstructionSet.model_validate(saved)
     lines = source.splitlines(keepends=True)
     in_header = False
@@ -150,7 +161,11 @@ def workflow_source_authoring_tools(service_factory, gateway_factory):
         include_bodies = arguments.get("include_instruction_bodies", False)
         if not include_bodies:
             defaults = {
-                **{key: value for key, value in defaults.items() if key != "instructions"},
+                **{
+                    key: value
+                    for key, value in defaults.items()
+                    if key != "instructions"
+                },
                 "instruction_summary": instruction_summary(
                     WorkflowInstructionSet.model_validate(defaults["instructions"])
                 ),
@@ -200,11 +215,16 @@ def workflow_source_authoring_tools(service_factory, gateway_factory):
                     for item in available
                     if item["server_id"] == arguments["server_id"]
                 ]
-            include_schemas = arguments.get("include_schemas", bool(arguments.get("server_id")))
+            include_schemas = arguments.get(
+                "include_schemas", bool(arguments.get("server_id"))
+            )
             if not include_schemas:
                 available = [
-                    {key: value for key, value in item.items()
-                     if key not in {"input_schema", "output_schema"}}
+                    {
+                        key: value
+                        for key, value in item.items()
+                        if key not in {"input_schema", "output_schema"}
+                    }
                     for item in available
                 ]
             return {
@@ -230,7 +250,9 @@ def workflow_source_authoring_tools(service_factory, gateway_factory):
             created_by=session.principal_id,
         )
         return {
-            **document(session, result.document, arguments.get("source_view", "process")),
+            **document(
+                session, result.document, arguments.get("source_view", "process")
+            ),
             "workflow_id": result.workflow_id,
             "template_origin": {
                 "template_id": result.template_id,
@@ -245,7 +267,8 @@ def workflow_source_authoring_tools(service_factory, gateway_factory):
     async def read(session, arguments):
         service, root = bound(session)
         return document(
-            session, await service.workflow_sources.read(root, arguments["path"]),
+            session,
+            await service.workflow_sources.read(root, arguments["path"]),
             arguments.get("source_view", "process"),
         )
 
@@ -330,16 +353,21 @@ def workflow_source_authoring_tools(service_factory, gateway_factory):
             validate_workspace_authoring_shape(source)
             headers = [item for item in _parse(source) if item["kind"] == "workflow"]
             if len(headers) != 1:
-                raise ValueError("Source requires exactly one workflow declaration. No source was written.")
+                raise ValueError(
+                    "Source requires exactly one workflow declaration. No source was written."
+                )
             if "instructions" in headers[0]["fields"]:
-                WorkflowInstructionSet.model_validate(headers[0]["fields"]["instructions"])
+                WorkflowInstructionSet.model_validate(
+                    headers[0]["fields"]["instructions"]
+                )
             try:
                 compile_prompt_workflow(source)
             except WorkflowSourceExecutionError as error:
                 if (
                     creating
                     or arguments.get("save_as_draft") is not True
-                    or error.code not in {"WORKFLOW_NOT_READY", "WORKFLOW_DISCONNECTED_PROCESS"}
+                    or error.code
+                    not in {"WORKFLOW_NOT_READY", "WORKFLOW_DISCONNECTED_PROCESS"}
                 ):
                     raise
                 # The existing storage owner can retain an unaccepted source
@@ -373,12 +401,17 @@ def workflow_source_authoring_tools(service_factory, gateway_factory):
         return {
             **document(session, result, arguments.get("source_view", "process")),
             "validation_scope": (
-                "authoring_shape_only" if execution_diagnostic else "supported_source_shape"
+                "authoring_shape_only"
+                if execution_diagnostic
+                else "supported_source_shape"
             ),
-            "source_status": "saved_draft" if execution_diagnostic else "checked_definition",
+            "source_status": "saved_draft"
+            if execution_diagnostic
+            else "checked_definition",
             **(
                 {"execution_diagnostic": execution_diagnostic}
-                if execution_diagnostic is not None else {}
+                if execution_diagnostic is not None
+                else {}
             ),
             **(
                 {"instruction_preservation": instruction_preservation}
@@ -390,10 +423,18 @@ def workflow_source_authoring_tools(service_factory, gateway_factory):
     async def task_prompt(session, arguments):
         service, root = bound(session)
         previous = await service.workflow_sources.read(root, arguments["path"])
-        task = next((item for item in _parse(previous.source)
-                     if item["kind"] == "task" and item["id"] == arguments["task_id"]), None)
+        task = next(
+            (
+                item
+                for item in _parse(previous.source)
+                if item["kind"] == "task" and item["id"] == arguments["task_id"]
+            ),
+            None,
+        )
         if task is None or not isinstance(task["fields"].get("prompt"), str):
-            raise ValueError("The selected task has no editable prompt. No source was written.")
+            raise ValueError(
+                "The selected task has no editable prompt. No source was written."
+            )
         prompt = task["fields"]["prompt"]
         return {
             "path": previous.path,
@@ -409,16 +450,33 @@ def workflow_source_authoring_tools(service_factory, gateway_factory):
     async def update_task_prompt(session, arguments):
         service, root = bound(session)
         previous = await service.workflow_sources.read(root, arguments["path"])
-        if (previous.storage_revision != arguments["expected_storage_revision"]
-                or previous.storage_digest != arguments["expected_storage_digest"]):
-            raise WorkflowSourceConflictError(previous.storage_revision, previous.storage_digest)
-        task = next((item for item in _parse(previous.source)
-                     if item["kind"] == "task" and item["id"] == arguments["task_id"]), None)
+        if (
+            previous.storage_revision != arguments["expected_storage_revision"]
+            or previous.storage_digest != arguments["expected_storage_digest"]
+        ):
+            raise WorkflowSourceConflictError(
+                previous.storage_revision, previous.storage_digest
+            )
+        task = next(
+            (
+                item
+                for item in _parse(previous.source)
+                if item["kind"] == "task" and item["id"] == arguments["task_id"]
+            ),
+            None,
+        )
         if task is None or not isinstance(task["fields"].get("prompt"), str):
-            raise ValueError("The selected task has no editable prompt. No source was written.")
+            raise ValueError(
+                "The selected task has no editable prompt. No source was written."
+            )
         old_prompt = task["fields"]["prompt"]
-        if hashlib.sha256(old_prompt.encode("utf-8")).hexdigest() != arguments["expected_prompt_digest"]:
-            raise ValueError("The task prompt changed. Read it again before editing. No source was written.")
+        if (
+            hashlib.sha256(old_prompt.encode("utf-8")).hexdigest()
+            != arguments["expected_prompt_digest"]
+        ):
+            raise ValueError(
+                "The task prompt changed. Read it again before editing. No source was written."
+            )
         lines = previous.source.splitlines(keepends=True)
         in_task = False
         replaced = False
@@ -428,26 +486,49 @@ def workflow_source_authoring_tools(service_factory, gateway_factory):
             elif in_task and line.strip() == "end":
                 break
             elif in_task and line.lstrip().startswith("prompt:"):
-                indentation = line[:len(line) - len(line.lstrip())]
-                ending = "\r\n" if line.endswith("\r\n") else "\n" if line.endswith("\n") else ""
-                lines[index] = indentation + "prompt: " + json.dumps(arguments["prompt"], ensure_ascii=False) + ending
+                indentation = line[: len(line) - len(line.lstrip())]
+                ending = (
+                    "\r\n"
+                    if line.endswith("\r\n")
+                    else "\n"
+                    if line.endswith("\n")
+                    else ""
+                )
+                lines[index] = (
+                    indentation
+                    + "prompt: "
+                    + json.dumps(arguments["prompt"], ensure_ascii=False)
+                    + ending
+                )
                 replaced = True
                 break
         if not replaced:
-            raise ValueError("Task prompt source field was not found. No source was written.")
+            raise ValueError(
+                "Task prompt source field was not found. No source was written."
+            )
         # The existing save path repeats CAS, validates the whole definition and
         # preserves its instruction collection. No run or review is transferred.
-        result = await save(session, {
-            "path": arguments["path"], "source": "".join(lines),
-            "expected_storage_revision": arguments["expected_storage_revision"],
-            "expected_storage_digest": arguments["expected_storage_digest"],
-            "save_as_draft": arguments.get("save_as_draft", False),
-        }, creating=False)
+        result = await save(
+            session,
+            {
+                "path": arguments["path"],
+                "source": "".join(lines),
+                "expected_storage_revision": arguments["expected_storage_revision"],
+                "expected_storage_digest": arguments["expected_storage_digest"],
+                "save_as_draft": arguments.get("save_as_draft", False),
+            },
+            creating=False,
+        )
         result.pop("editable_source", None)
         result.pop("source", None)
-        result.update(task_id=arguments["task_id"], prompt=arguments["prompt"],
-                      prompt_digest=hashlib.sha256(arguments["prompt"].encode("utf-8")).hexdigest(),
-                      source_included=False)
+        result.update(
+            task_id=arguments["task_id"],
+            prompt=arguments["prompt"],
+            prompt_digest=hashlib.sha256(
+                arguments["prompt"].encode("utf-8")
+            ).hexdigest(),
+            source_included=False,
+        )
         return result
 
     def guarded(handler):
@@ -520,8 +601,13 @@ def workflow_source_authoring_tools(service_factory, gateway_factory):
         tool(
             "tool_contracts",
             "List actual workspace-enabled workflow MCP tool identities and descriptions. Filter one exact server_id to include its schemas, or explicitly set include_schemas. Unfiltered listing omits large schemas by default. No provider startup or tool call; at most64 contracts with an explicit truncation flag.",
-            {"server_id": {"type": "string", "minLength": 1, "maxLength": 256},
-             "include_schemas": {"type": "boolean", "description": "Default true when filtering server_id, otherwise false. Read actual schemas before binding arguments."}},
+            {
+                "server_id": {"type": "string", "minLength": 1, "maxLength": 256},
+                "include_schemas": {
+                    "type": "boolean",
+                    "description": "Default true when filtering server_id, otherwise false. Read actual schemas before binding arguments.",
+                },
+            },
             [],
             tool_contracts,
         ),
@@ -579,19 +665,36 @@ def workflow_source_authoring_tools(service_factory, gateway_factory):
         tool(
             "read_task_prompt",
             "Read one task prompt with exact source revision/digest and prompt digest, without returning the whole workflow. Use before a bounded prompt edit.",
-            {"path": _PATH, "task_id": {"type": "string", "minLength": 1, "maxLength": 256}},
-            ["path", "task_id"], task_prompt,
+            {
+                "path": _PATH,
+                "task_id": {"type": "string", "minLength": 1, "maxLength": 256},
+            },
+            ["path", "task_id"],
+            task_prompt,
         ),
         tool(
             "update_task_prompt",
             "Replace only one task prompt using the exact source and prompt digests from read_task_prompt. Reuses checked source save, preserves all other fields and saved instructions, and returns a compact saved receipt. Does not run work or transfer approval. Inspect after an uncertain save before retrying.",
-            {"path": _PATH, "task_id": {"type": "string", "minLength": 1, "maxLength": 256},
-             "prompt": {"type": "string", "minLength": 1, "maxLength": 262144},
-             "expected_storage_revision": {"type": "integer", "minimum": 1},
-             "expected_storage_digest": _DIGEST, "expected_prompt_digest": _DIGEST,
-             "save_as_draft": {"type": "boolean", "default": False}},
-            ["path", "task_id", "prompt", "expected_storage_revision", "expected_storage_digest", "expected_prompt_digest"],
-            update_task_prompt, read_only=False, idempotent=False,
+            {
+                "path": _PATH,
+                "task_id": {"type": "string", "minLength": 1, "maxLength": 256},
+                "prompt": {"type": "string", "minLength": 1, "maxLength": 262144},
+                "expected_storage_revision": {"type": "integer", "minimum": 1},
+                "expected_storage_digest": _DIGEST,
+                "expected_prompt_digest": _DIGEST,
+                "save_as_draft": {"type": "boolean", "default": False},
+            },
+            [
+                "path",
+                "task_id",
+                "prompt",
+                "expected_storage_revision",
+                "expected_storage_digest",
+                "expected_prompt_digest",
+            ],
+            update_task_prompt,
+            read_only=False,
+            idempotent=False,
         ),
         tool(
             "update_source",

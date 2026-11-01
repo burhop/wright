@@ -52,6 +52,7 @@ async def test_lifespan_orders_migration_secret_catalog_before_runtimes(
     from tool_registry import catalog_reconcile
 
     events: list[str] = []
+    monkeypatch.setenv("WRIGHT_MCP_MAX_TIMEOUT", "120")
 
     monkeypatch.setattr(migrate, "run_migrations", lambda: events.append("migration"))
     monkeypatch.setattr(
@@ -87,6 +88,7 @@ async def test_lifespan_orders_migration_secret_catalog_before_runtimes(
     class FakeMcpEngine:
         def __init__(self, *args, **kwargs):
             events.append("mcp")
+            self.db_path = args[0]
             # Per-call gateway deadlines may exceed the 30-second default.
             assert kwargs["operation_timeout"] == 120.0
 

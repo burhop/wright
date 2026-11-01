@@ -94,17 +94,21 @@ function HostRepresentationDownload({ blob, name, request }: { blob: Blob; name:
 }
 function BrowserRepresentationDownload({ blob, name }: { blob: Blob; name: string }) {
   const [link, setLink] = useState<{ blob: Blob; url: string }>();
+  const [error, setError] = useState(false);
   useEffect(() => {
-    const url = URL.createObjectURL(blob);
-    setLink({ blob, url });
-    return () => URL.revokeObjectURL(url);
+    setError(false);
+    setLink(undefined);
+    try {
+      const url = URL.createObjectURL(blob);
+      setLink({ blob, url });
+      return () => URL.revokeObjectURL(url);
+    } catch {
+      setError(true);
+    }
   }, [blob]);
+  if (error) return <p role="status">File download is unavailable in this view.</p>;
   return link?.blob === blob ? (
-    <a
-      className="wp-link"
-      href={link.url}
-      download={name.split("/").at(-1) || "representation"}
-    >
+    <a className="wp-link" href={link.url} download={name.replaceAll("\\", "/").split("/").at(-1) || "representation"}>
       Download exact file
     </a>
   ) : null;
@@ -558,9 +562,14 @@ export function RepresentationViewer({
               try {
                 record = JSON.parse(text);
               } catch {
-                return { message: "This data file could not be read as a table. Download the exact file for inspection." };
+                return { text };
               }
               if (isAssessmentRecord(record)) return { assessment: text };
+              // Historical or incomplete assessment data remains inspectable;
+              // this raw view supplies no assessment or approval authority.
+              if (record && typeof record === "object" && !Array.isArray(record) &&
+                  (record as Record<string, unknown>).schema_version === "wright.process-validation/1")
+                return { text: readableJson(text) };
               if (
                 record &&
                 typeof record === "object" &&
@@ -574,10 +583,10 @@ export function RepresentationViewer({
                   toolpaths: parseRecordedToolpaths(record, sourceSha256),
                 };
               }
-              if (blob.size > 1024 * 1024)
+              if (blob.size > 65536)
                 return {
                   message:
-                    "This data file exceeds the supported table preview size. Download it to inspect the complete file.",
+                    "This representation exceeds the supported text preview size. Download it to inspect the complete file.",
                 };
               // Undefined means parsing failed; malformed evidence stays verbatim.
               if (record !== undefined) return { text: readableJson(text) };

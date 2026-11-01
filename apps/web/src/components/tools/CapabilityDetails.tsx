@@ -133,9 +133,15 @@ export function CapabilityDetails({
             aria-label="Setup summary"
           >
             <section className="capability-dialog__fit">
-              <h3>{capability.locality === "remote" ? "Connection setup" : "Installation"}</h3>
+              <h3>
+                {capability.locality === "remote"
+                  ? "Connection setup"
+                  : "Installation"}
+              </h3>
               {capabilitySetupGuides[capability.canonical_id] && (
-                <ProviderSetupGuide text={capabilitySetupGuides[capability.canonical_id]} />
+                <ProviderSetupGuide
+                  text={capabilitySetupGuides[capability.canonical_id]}
+                />
               )}
               <p>{facts.method}</p>
               {capability.source_records
@@ -169,12 +175,14 @@ export function CapabilityDetails({
                     <p>
                       <strong>Computer check complete</strong>
                       {" · "}
-                      {{
-                        compatible: "Known requirements match",
-                        incompatible: "Requirements missing",
-                        uncertain: "Setup needs confirmation",
-                        blocked: "Setup blocked",
-                      }[capability.compatibility.status]}
+                      {
+                        {
+                          compatible: "Known requirements match",
+                          incompatible: "Requirements missing",
+                          uncertain: "Setup needs confirmation",
+                          blocked: "Setup blocked",
+                        }[capability.compatibility.status]
+                      }
                     </p>
                     {capability.compatibility.reasons.map((reason, index) => (
                       <div key={`${reason.code}-${index}`}>
@@ -403,7 +411,9 @@ export function CapabilityDetails({
               data-testid="capability-plan"
               onClick={onPlan}
             >
-              {capability.locality === "remote" ? "Connect MCP server" : "Install MCP server"}
+              {capability.locality === "remote"
+                ? "Connect MCP server"
+                : "Install MCP server"}
             </button>
           ) : null}
         </footer>

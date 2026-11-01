@@ -200,9 +200,7 @@ describe("OnboardingWizard", () => {
     fireEvent.change(screen.getByLabelText("MCP configuration JSON"), {
       target: { value: '{"command":"python"}' },
     });
-    await user.click(
-      screen.getByRole("button", { name: "Review install plan" }),
-    );
+    await user.click(screen.getByRole("button", { name: "Review setup plan" }));
     expect(
       screen.getByText(/Normalizing the source and checking this machine/),
     ).toBeVisible();
@@ -229,7 +227,7 @@ describe("OnboardingWizard", () => {
     const source = screen.getByLabelText("Source");
     expect(source.closest("section")).toHaveClass("wright-form");
     expect(
-      screen.getByRole("button", { name: "Review install plan" }),
+      screen.getByRole("button", { name: "Review setup plan" }),
     ).toHaveClass("wright-form__primary");
   });
 
@@ -248,7 +246,7 @@ describe("OnboardingWizard", () => {
         value === "remote" ? "https://example.invalid/mcp" : "python",
       );
       await user.click(
-        screen.getByRole("button", { name: "Review install plan" }),
+        screen.getByRole("button", { name: "Review setup plan" }),
       );
       await screen.findByText("Confirm this installation");
       expect(mcpService.previewImport).toHaveBeenCalledOnce();
@@ -272,9 +270,7 @@ describe("OnboardingWizard", () => {
     render(<OnboardingWizard isOpen onClose={vi.fn()} />);
     await user.selectOptions(screen.getByLabelText("Source"), "host");
     await user.type(screen.getByLabelText("MCP server ID"), "desktop-cad-mcp");
-    await user.click(
-      screen.getByRole("button", { name: "Review install plan" }),
-    );
+    await user.click(screen.getByRole("button", { name: "Review setup plan" }));
     expect(await screen.findByRole("alert")).toHaveTextContent(
       "Desktop CAD was not found",
     );
@@ -297,11 +293,9 @@ describe("OnboardingWizard", () => {
         onCompleted={completed}
       />,
     );
+    await user.click(screen.getByRole("button", { name: "Review setup plan" }));
     await user.click(
-      screen.getByRole("button", { name: "Review install plan" }),
-    );
-    await user.click(
-      await screen.findByRole("button", { name: "Continue to installation" }),
+      await screen.findByRole("button", { name: "Continue to setup" }),
     );
     expect(screen.getByText(/secure credential flow/)).toHaveTextContent(
       "API_TOKEN",
@@ -336,11 +330,9 @@ describe("OnboardingWizard", () => {
         onClose={vi.fn()}
       />,
     );
+    await user.click(screen.getByRole("button", { name: "Review setup plan" }));
     await user.click(
-      screen.getByRole("button", { name: "Review install plan" }),
-    );
-    await user.click(
-      await screen.findByRole("button", { name: "Continue to installation" }),
+      await screen.findByRole("button", { name: "Continue to setup" }),
     );
     await user.click(
       screen.getByRole("button", { name: "Install MCP server" }),
@@ -375,11 +367,9 @@ describe("OnboardingWizard", () => {
         onClose={vi.fn()}
       />,
     );
+    await user.click(screen.getByRole("button", { name: "Review setup plan" }));
     await user.click(
-      screen.getByRole("button", { name: "Review install plan" }),
-    );
-    await user.click(
-      await screen.findByRole("button", { name: "Continue to installation" }),
+      await screen.findByRole("button", { name: "Continue to setup" }),
     );
     await user.click(
       screen.getByRole("button", { name: "Install MCP server" }),
@@ -408,7 +398,7 @@ describe("OnboardingWizard", () => {
     expect(closeButton).toHaveFocus();
     await user.tab({ shift: true });
     expect(
-      screen.getByRole("button", { name: "Review install plan" }),
+      screen.getByRole("button", { name: "Review setup plan" }),
     ).toHaveFocus();
     await user.tab();
     expect(closeButton).toHaveFocus();
@@ -429,7 +419,7 @@ describe("OnboardingWizard", () => {
 
     expect(
       screen.getByRole("heading", {
-        name: "Install MCP server",
+        name: "Set up MCP server",
       }),
     ).toBeVisible();
     expect(screen.queryByLabelText("Source")).not.toBeInTheDocument();
@@ -438,7 +428,7 @@ describe("OnboardingWizard", () => {
     );
     expect(screen.queryByTestId("onboarding-scope")).not.toBeInTheDocument();
     expect(
-      screen.getByRole("button", { name: "Review install plan" }),
+      screen.getByRole("button", { name: "Review setup plan" }),
     ).toBeEnabled();
     expect(
       screen.queryByText(
@@ -450,29 +440,66 @@ describe("OnboardingWizard", () => {
   it("never invents publisher completion and requires an explicit new plan", async () => {
     const user = userEvent.setup();
     vi.mocked(mcpService.createInstallPlan)
-      .mockResolvedValueOnce({ ...plan, state: "blocked", blocking_reasons: [{
-        code: "external_license_incomplete", message: "Publisher requirements incomplete.",
-        recovery: "Complete independently.",
-      }] })
-      .mockResolvedValueOnce({ ...plan, plan_id: "new-plan", plan_digest: "c".repeat(64) });
-    render(<OnboardingWizard isOpen initialCapabilityId="hosted-provider" onClose={vi.fn()} />);
-    await user.click(screen.getByRole("button", { name: "Review install plan" }));
-    expect(await screen.findByRole("alert")).toHaveTextContent("Publisher requirements incomplete");
-    expect(mcpService.createInstallPlan).toHaveBeenNthCalledWith(1, expect.objectContaining({
-      capability_id: "hosted-provider", independently_completed_license: false,
-    }));
-    const record = screen.getByRole("button", { name: "Create a new plan with my recorded completion" });
+      .mockResolvedValueOnce({
+        ...plan,
+        state: "blocked",
+        requirements: {
+          ...plan.requirements,
+          license: {
+            ...plan.requirements.license,
+            independent_completion_required: true,
+          },
+        },
+        blocking_reasons: [
+          {
+            code: "external_license_incomplete",
+            message: "Publisher requirements incomplete.",
+            recovery: "Complete independently.",
+          },
+        ],
+      })
+      .mockResolvedValueOnce({
+        ...plan,
+        plan_id: "new-plan",
+        plan_digest: "c".repeat(64),
+      });
+    render(
+      <OnboardingWizard
+        isOpen
+        initialCapabilityId="hosted-provider"
+        onClose={vi.fn()}
+      />,
+    );
+    await user.click(screen.getByRole("button", { name: "Review setup plan" }));
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      "Publisher requirements incomplete",
+    );
+    expect(mcpService.createInstallPlan).toHaveBeenNthCalledWith(
+      1,
+      expect.objectContaining({
+        capability_id: "hosted-provider",
+        independently_completed_license: false,
+      }),
+    );
+    const record = screen.getByRole("button", {
+      name: "Create a new plan with my recorded completion",
+    });
     expect(record).toBeDisabled();
     expect(mcpService.approveInstallPlan).not.toHaveBeenCalled();
-    await user.click(screen.getByRole("checkbox", { name: /I have independently completed/ }));
+    await user.click(
+      screen.getByRole("checkbox", { name: /I have independently completed/ }),
+    );
     await user.click(record);
-    await screen.findByRole("button", { name: "Continue to installation" });
-    expect(mcpService.createInstallPlan).toHaveBeenNthCalledWith(2, expect.objectContaining({
-      capability_id: "hosted-provider", independently_completed_license: true,
-    }));
+    await screen.findByRole("button", { name: "Continue to setup" });
+    expect(mcpService.createInstallPlan).toHaveBeenNthCalledWith(
+      2,
+      expect.objectContaining({
+        capability_id: "hosted-provider",
+        independently_completed_license: true,
+      }),
+    );
     expect(mcpService.approveInstallPlan).not.toHaveBeenCalled();
   });
-
 });
 
 it("binds explicit imported publisher review to unchanged source", async () => {
@@ -491,7 +518,7 @@ it("binds explicit imported publisher review to unchanged source", async () => {
   fireEvent.change(input, { target: { value: '{"command":"different"}' } });
   expect(checkbox).not.toBeChecked();
   fireEvent.click(checkbox);
-  fireEvent.click(screen.getByRole("button", { name: "Review install plan" }));
+  fireEvent.click(screen.getByRole("button", { name: "Review setup plan" }));
   await waitFor(() =>
     expect(mcpService.createInstallPlan).toHaveBeenCalledWith(
       expect.objectContaining({ independently_completed_license: true }),

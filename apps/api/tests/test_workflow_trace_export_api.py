@@ -16,8 +16,12 @@ def _features(monkeypatch):
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("size,included", [(100, True), (2 * 1024 * 1024 + 1, False), (None, False)])
-async def test_report_only_includes_size_bounded_svg_evidence(monkeypatch, size, included):
+@pytest.mark.parametrize(
+    "size,included", [(100, True), (2 * 1024 * 1024 + 1, False), (None, False)]
+)
+async def test_report_only_includes_size_bounded_svg_evidence(
+    monkeypatch, size, included
+):
     reads = []
     inspection = {"run": {"run_id": "run-1"}, "steps": [], "final_outputs": []}
 
@@ -29,17 +33,31 @@ async def test_report_only_includes_size_bounded_svg_evidence(monkeypatch, size,
         return b'<svg xmlns="http://www.w3.org/2000/svg"/>'
 
     monkeypatch.setattr(workspace_router, "_canonical_trace_record", scoped_record)
-    monkeypatch.setattr(workspace_router, "canonical_artifact_paths", lambda _: [{
-        "artifact_id": "drawing", "label": "support-preview.svg", "media_type": "image/svg+xml",
-        "bytes": size, "workspace_path": "outputs/support-preview.svg",
-    }])
+    monkeypatch.setattr(
+        workspace_router,
+        "canonical_artifact_paths",
+        lambda _: [
+            {
+                "artifact_id": "drawing",
+                "label": "support-preview.svg",
+                "media_type": "image/svg+xml",
+                "bytes": size,
+                "workspace_path": "outputs/support-preview.svg",
+            }
+        ],
+    )
     response = await workspace_router.workflow_source_run_trace_export_endpoint(
-        "session-1", "runs/run.json", "report_only", SimpleNamespace(files=SimpleNamespace(read_reference=read_reference)),
+        "session-1",
+        "runs/run.json",
+        "report_only",
+        SimpleNamespace(files=SimpleNamespace(read_reference=read_reference)),
     )
     with zipfile.ZipFile(io.BytesIO(response.body)) as archive:
         entry = json.loads(archive.read("manifest.json"))["entries"][0]
         assert bool(entry["package_path"]) is included
-    assert reads == ([("/workspace", "outputs/support-preview.svg")] if included else [])
+    assert reads == (
+        [("/workspace", "outputs/support-preview.svg")] if included else []
+    )
 
 
 @pytest.mark.asyncio
@@ -200,7 +218,9 @@ async def test_canonical_saved_run_trace_and_full_export_are_workspace_scoped() 
 
 
 @pytest.mark.asyncio
-async def test_campaign_run_trace_exports_sibling_artifact_not_original_host_path() -> None:
+async def test_campaign_run_trace_exports_sibling_artifact_not_original_host_path() -> (
+    None
+):
     import hashlib
 
     artifact = b"solid retained campaign output"

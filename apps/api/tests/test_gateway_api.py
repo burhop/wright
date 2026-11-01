@@ -180,13 +180,18 @@ def test_legacy_call_does_not_expose_gateway_exception_details(
     assert sensitive_detail not in response.text
 
 
-def test_mcp_router_uses_generic_wright_gateway_sync():
-    from api.services import mcp_services
+def test_mcp_router_syncs_through_the_shared_workspace_owner(tmp_path):
+    from types import SimpleNamespace
+    from unittest.mock import Mock
+    from api.services.mcp_services import McpApiService
 
-    assert (
-        mcp_services.sync_mcp_server_to_wright_gateway.__module__
-        == "api.services.wright_gateway_sync"
+    sync = Mock()
+    service = McpApiService(
+        SimpleNamespace(db_path=str(tmp_path / "gateway.db")),
+        SimpleNamespace(agent_sync_manager=SimpleNamespace(sync_workspace_tools=sync)),
     )
+    service._sync_workspace_tools("workspace-session")
+    sync.assert_called_once_with("workspace-session")
 
 
 def test_rivet_management_writes_use_only_the_scoped_rivet_grant() -> None:

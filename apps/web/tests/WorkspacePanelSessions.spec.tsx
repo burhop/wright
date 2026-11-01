@@ -1154,6 +1154,10 @@ describe("WorkspacePanel session selection", () => {
     );
 
     fireEvent.click(await screen.findByTestId("activity-bar-workflows-btn"));
+    expect(
+      await screen.findByTestId("workspace-workflow-picker"),
+    ).toBeVisible();
+    fireEvent.click(screen.getByRole("button", { name: "New workflow" }));
 
     expect(
       await screen.findByTestId("workspace-workflow-fixture"),
@@ -1235,6 +1239,10 @@ describe("WorkspacePanel session selection", () => {
       display: "flex",
     });
     fireEvent.click(screen.getByTestId("activity-bar-workflows-btn"));
+    expect(
+      await screen.findByTestId("workspace-workflow-picker"),
+    ).toBeVisible();
+    fireEvent.click(screen.getByRole("button", { name: "New workflow" }));
 
     expect(
       await screen.findByTestId("workspace-workflow-fixture"),

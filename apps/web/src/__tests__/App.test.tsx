@@ -66,9 +66,7 @@ describe("App route compatibility", () => {
     );
 
     expect(screen.getByTestId("page-dashboard")).toBeVisible();
-    expect(
-      screen.getByRole("heading", { name: "Wright Design Hub" }),
-    ).toBeVisible();
+    expect(screen.getByRole("heading", { name: "Wright" })).toBeVisible();
     await waitFor(() =>
       expect(workspaceService.getRecentWorkspaces).toHaveBeenCalled(),
     );
@@ -132,7 +130,7 @@ describe("App route compatibility", () => {
 
     expect(await screen.findByText("Bracket Program")).toBeVisible();
     expect(screen.getByTestId("card-telemetry")).toHaveTextContent(
-      /Total Workspaces Indexed:\s*1/,
+      /Workspaces:\s*1/,
     );
     expect(screen.queryByText(/No workspaces yet/)).not.toBeInTheDocument();
   });
@@ -184,7 +182,7 @@ describe("App route compatibility", () => {
     ).toBeVisible();
     expect(screen.queryByText(/No workspaces yet/)).not.toBeInTheDocument();
     expect(screen.getByTestId("card-telemetry")).toHaveTextContent(
-      /Total Workspaces Indexed:\s*Unavailable/,
+      /Workspaces:\s*Unavailable/,
     );
     expect(screen.getByTestId("retry-workspaces-btn")).toBeVisible();
   });
@@ -216,7 +214,7 @@ describe("App route compatibility", () => {
       /showing recent workspaces/i,
     );
     expect(screen.getByTestId("card-telemetry")).toHaveTextContent(
-      /Total Workspaces Indexed:\s*Unavailable/,
+      /Workspaces:\s*Unavailable/,
     );
     expect(screen.getByTestId("view-all-workspaces-btn")).toHaveTextContent(
       /Retry full workspace list/,

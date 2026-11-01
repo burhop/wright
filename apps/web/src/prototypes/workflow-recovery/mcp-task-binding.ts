@@ -21,9 +21,8 @@ export function configureMcpTaskServer(
   if (isUnboundToolTask(block)) {
     if (!serverId) return [];
     commands.push({
-      kind: "set_block_execution_kind",
+      kind: "assign_mcp_work_operation",
       blockId: block.id,
-      executionKind: "ai_capable",
     });
     for (const [key, value] of Object.entries({
       authoring_template: "mcp-task",

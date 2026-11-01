@@ -113,7 +113,7 @@ it("reports an interrupted operation without restarting and opens its existing l
     />,
   );
   expect(fetch).not.toHaveBeenCalled();
-  fireEvent.click(screen.getByText("Trace: previous runs"));
+  fireEvent.click(screen.getByText("Previous runs"));
   await waitFor(() => expect(screen.getByText(/Interrupted ·/)).toBeVisible());
   expect(screen.getByText(/nothing has been restarted/)).toBeVisible();
   expect(screen.getByText(/Remote job submitted/)).toBeVisible();
@@ -150,7 +150,7 @@ it("opens a results-first Trace review from normal workflow history", async () =
       refreshKey=""
     />,
   );
-  fireEvent.click(screen.getByText("Trace: previous runs"));
+  fireEvent.click(screen.getByText("Previous runs"));
   const run = await screen.findByText(/Completed ·/);
   fireEvent.click(run);
   expect(

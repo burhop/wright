@@ -49,6 +49,7 @@ __all__ = [
     "AgentChatRequest",
     "AgentSessionInfo",
     "AgentChatMessage",
+    "AgentToolCallEvidence",
     "HermesAdapter",
     "OpenClawStubEngine",
     "HermesApiSettings",

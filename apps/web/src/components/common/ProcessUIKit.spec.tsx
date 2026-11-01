@@ -415,7 +415,7 @@ describe("public kit presentation and authority", () => {
       expect(
         screen.getByText("Physical fit has not been tested."),
       ).toBeInTheDocument();
-      expect(screen.getByText(observation.observed_at)).toBeInTheDocument();
+      expect(screen.getByTitle(observation.observed_at)).toBeInTheDocument();
     },
   );
   it.each<Observation["state"]>([
@@ -453,7 +453,7 @@ describe("public kit presentation and authority", () => {
       act(() => vi.advanceTimersByTime(31_000));
       expect(screen.queryByRole("progressbar")).not.toBeInTheDocument();
       expect(screen.getByText(/needs a fresh observation/)).toBeInTheDocument();
-      expect(screen.getByText(observation.observed_at)).toBeInTheDocument();
+      expect(screen.getByTitle(observation.observed_at)).toBeInTheDocument();
     } finally {
       cleanup();
       vi.useRealTimers();

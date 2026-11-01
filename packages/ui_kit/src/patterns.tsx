@@ -416,7 +416,7 @@ export function ProgressPanel({
             )}
             <p className="wp-muted">
               Last observed{" "}
-              <time dateTime={observation.observed_at}>
+              <time dateTime={observation.observed_at} title={observation.observed_at}>
                 {Number.isFinite(observed)
                   ? new Date(observed).toLocaleString()
                   : "Time unavailable"}
@@ -502,7 +502,7 @@ export function ResultCard({
       data-result-id={output.result_id}
       tabIndex={-1}
     >
-      <h3>{title}</h3>
+      <h3 title={output.title}>{title}</h3>
       {output.role === "previous_attempt" && <p className="wp-muted">Historical evidence · superseded output</p>}
       {children}
       {(output.representations ?? []).map((reference) => (

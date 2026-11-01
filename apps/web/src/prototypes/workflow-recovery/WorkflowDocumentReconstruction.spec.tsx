@@ -88,11 +88,10 @@ it("still rejects a changed kind or moved port against its own accepted document
     ),
   ).toBe(true);
   const wrongOwner = demo
-    .replace('"key":"comparison_out"', '"key":"report_out"')
-    .replace(
-      '"key":"report_out","name":"report_out"',
-      '"key":"other_out","name":"report_out"',
-    );
+    .replace('"key":"comparison_out"', '"key":"__swap__"')
+    .replace('"key":"report_out"', '"key":"comparison_out"')
+    .replace('"key":"__swap__"', '"key":"report_out"');
+  expect(wrongOwner).not.toBe(demo);
   expect(
     parseRecoveryAuthoringSource(wrongOwner, accepted).diagnostics.some(
       (d) => d.code === "WFR-SOURCE-PORT-OWNER",

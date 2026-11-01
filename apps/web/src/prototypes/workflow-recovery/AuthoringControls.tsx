@@ -4,8 +4,6 @@ import {
   useWorkflowToolManagement,
 } from "./workflow-tool-discovery";
 import { useEffect, useRef, useState, type RefObject } from "react";
-import { McpTaskOptions } from "./McpTaskOptions";
-import { isUnboundToolTask } from "./mcp-task-binding";
 
 import {
   AUTHORING_GROUPS,
@@ -36,35 +34,55 @@ export interface AuthoringWorkspaceFile {
   name: string;
 }
 
-export function UnboundWorkOperation({ block, readOnly, onApply }: {
+export function UnboundWorkOperation({
+  block,
+  readOnly,
+  onApply,
+}: {
   block: RecoveryBlock;
   readOnly: boolean;
   onApply: (commands: RecoveryCommand[]) => boolean;
 }) {
   if (!canAssignMcpWorkOperation(block)) return null;
   return (
-    <section aria-label="Operation" data-testid="workflow-recovery-unbound-operation">
+    <section
+      aria-label="Operation"
+      data-testid="workflow-recovery-unbound-operation"
+    >
       <h3>Operation: not assigned</h3>
-      <p>Change this step to an AI task using connected tools. This creates an unsaved change; its requirements, inputs, outputs and review connections stay attached.</p>
+      <p>
+        Change this step to an AI task using connected tools. This creates an
+        unsaved change; its requirements, inputs, outputs and review connections
+        stay attached.
+      </p>
       <button
         type="button"
         className="recovery-button recovery-button--secondary"
         disabled={readOnly}
         onClick={() => {
-          const defaults = AUTHORING_TEMPLATES.find((item) => item.id === "mcp-task")!.configuration!;
+          const defaults = AUTHORING_TEMPLATES.find(
+            (item) => item.id === "mcp-task",
+          )!.configuration!;
           onApply([
             { kind: "assign_mcp_work_operation", blockId: block.id },
             ...Object.entries({ prompt_source: "inline", ...defaults })
               .filter(([key]) => block.configuration[key] === undefined)
               .map(([key, value]): RecoveryCommand => ({
-                kind: "set_block_configuration", blockId: block.id, key, value,
+                kind: "set_block_configuration",
+                blockId: block.id,
+                key,
+                value,
               })),
           ]);
         }}
       >
         Change step to AI with tools
       </button>
-      <p>Then choose a connected server and review the task instructions. Save to keep the change, or use Undo to restore the previous operation. Check readiness before running.</p>
+      <p>
+        Then choose a connected server and review the task instructions. Save to
+        keep the change, or use Undo to restore the previous operation. Check
+        readiness before running.
+      </p>
     </section>
   );
 }
@@ -175,7 +193,9 @@ export function AuthoringRunReadiness({
   const unavailableMcpCount = mcpTasks.filter((block) =>
     ["unavailable", "check unavailable"].includes(mcpStatus(block)),
   ).length;
-  const sourceDiagnostic = saved ? templateReadiness?.execution_diagnostic : null;
+  const sourceDiagnostic = saved
+    ? templateReadiness?.execution_diagnostic
+    : null;
   const attentionCount =
     inputs.inputs.filter((item) => item.status !== "configured").length +
     unbound.length +
@@ -260,7 +280,13 @@ export function AuthoringRunReadiness({
           />
           <ReadinessItem
             label="Saved definition"
-            value={saved ? (sourceDiagnostic ? "Saved draft · setup needed" : "Saved") : "Unsaved changes"}
+            value={
+              saved
+                ? sourceDiagnostic
+                  ? "Saved draft · setup needed"
+                  : "Saved"
+                : "Unsaved changes"
+            }
             status={saved && !sourceDiagnostic ? "good" : "attention"}
           />
           <ReadinessItem
@@ -286,20 +312,24 @@ export function AuthoringRunReadiness({
             <b>Saved draft: first setup issue</b>
             <span>{sourceDiagnostic.message}</span>
             <span>{sourceDiagnostic.correction}</span>
-            {sourceDiagnostic.block_id && findBlock(workflow, sourceDiagnostic.block_id) && (
-              <button
-                type="button"
-                onClick={() => onSelect(sourceDiagnostic.block_id!)}
-              >
-                Configure this step
-              </button>
-            )}
+            {sourceDiagnostic.block_id &&
+              findBlock(workflow, sourceDiagnostic.block_id) && (
+                <button
+                  type="button"
+                  onClick={() => onSelect(sourceDiagnostic.block_id!)}
+                >
+                  Configure this step
+                </button>
+              )}
             {onRefreshTemplateReadiness && (
               <button type="button" onClick={onRefreshTemplateReadiness}>
                 Recheck saved workflow
               </button>
             )}
-            <span>Further setup may be needed after this issue is resolved. Tools, inputs, model access and reviews are checked separately.</span>
+            <span>
+              Further setup may be needed after this issue is resolved. Tools,
+              inputs, model access and reviews are checked separately.
+            </span>
           </div>
         )}
         {tasks.length === 0 && (
@@ -915,7 +945,6 @@ export function AuthoringSettings({
   workflow,
   readOnly,
   onApply,
-  sessionId,
   direct = false,
 }: {
   direct?: boolean;
@@ -1077,15 +1106,6 @@ export function AuthoringSettings({
   ) : null;
   return (
     <section className="recovery-authoring-settings">
-      {isUnboundToolTask(block) && (
-        <McpTaskOptions
-          block={block}
-          workflow={workflow}
-          sessionId={sessionId}
-          readOnly={readOnly}
-          onApply={onApply}
-        />
-      )}
       {direct
         ? instructionsField
         : isPromptFirst

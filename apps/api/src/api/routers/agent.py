@@ -110,7 +110,9 @@ def _restart_hermes_gateway_process() -> None:
         # Native users may run a foreground gateway without a system service.
         # Hermes's own CLI retains profile scoping and its supervision guard.
         # Readiness and replacement identity are checked by the existing owner.
-        log_dir = Path(os.environ.get("HERMES_HOME", str(Path.home() / ".hermes"))) / "logs"
+        log_dir = (
+            Path(os.environ.get("HERMES_HOME", str(Path.home() / ".hermes"))) / "logs"
+        )
         log_dir.mkdir(parents=True, exist_ok=True)
         with (log_dir / "wright-gateway-reconnect.log").open("ab") as log:
             subprocess.Popen(
@@ -122,7 +124,9 @@ def _restart_hermes_gateway_process() -> None:
                 creationflags=(
                     getattr(subprocess, "CREATE_NO_WINDOW", 0)
                     | getattr(subprocess, "DETACHED_PROCESS", 0)
-                ) if os.name == "nt" else 0,
+                )
+                if os.name == "nt"
+                else 0,
             )
         return
     _run_gateway_restart_command(
@@ -1154,7 +1158,9 @@ async def chat(
                         "Check the installed Hermes API compatibility before reconnecting tools."
                     )
                 if hermes_gateway_start_command(HERMES_API_BASE_URL) is not None:
-                    replacement_idle = getattr(engine, "gateway_replacement_is_idle", None)
+                    replacement_idle = getattr(
+                        engine, "gateway_replacement_is_idle", None
+                    )
                     if not callable(replacement_idle) or not await replacement_idle():
                         raise RuntimeError(
                             "Hermes is still working, or its work state is unavailable. "

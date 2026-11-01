@@ -358,10 +358,11 @@ async def test_multihour_budget_does_not_hold_a_stalled_status_call_open():
         return await original(*args, **kwargs)
 
     g.call_tool = call
-    with pytest.raises(TimeoutError):
+    with pytest.raises(WorkflowSourceExecutionError) as stopped:
         await asyncio.wait_for(runtime.call(step, {}), 2)
     assert [name for name, _ in g.calls].count("fea__submit") == 1
-    assert [name for name, _ in g.calls].count("fea__cancel") == 1
+    assert [name for name, _ in g.calls].count("fea__cancel") == 0
+    assert stopped.value.code == "APPLICATION_OUTCOME_UNKNOWN"
 
 
 @pytest.mark.asyncio
@@ -375,15 +376,16 @@ async def test_explicit_observation_timeout_retains_uncertainty_and_single_submi
         if kind == "operation_progress":
             events.append(data)
 
-    with pytest.raises(TimeoutError):
+    with pytest.raises(WorkflowSourceExecutionError) as stopped:
         await runtime.call(step, {}, on_event=emit)
     assert [name for name, _ in g.calls].count("fea__submit") == 1
-    assert [name for name, _ in g.calls].count("fea__cancel") == 1
-    assert events[-1]["state"] == "cancellation_unconfirmed"
+    assert [name for name, _ in g.calls].count("fea__cancel") == 0
+    assert events[-1]["state"] == "reconciliation_required"
     assert not any(data["state"] == "completed" for data in events)
+    assert stopped.value.code == "APPLICATION_OUTCOME_UNKNOWN"
 
 
-def test_timeout_requests_cancel_without_resubmission_or_false_completion():
+def test_timeout_requires_reconciliation_without_cancel_or_resubmission():
     g, r, s, _ = remote(("working",))
     events = []
 
@@ -391,11 +393,12 @@ def test_timeout_requests_cancel_without_resubmission_or_false_completion():
         if kind == "operation_progress":
             events.append(kw)
 
-    with pytest.raises(TimeoutError):
+    with pytest.raises(WorkflowSourceExecutionError) as stopped:
         asyncio.run(r.call(replace(s, timeout_seconds=0.07), {}, on_event=emit))
     assert [n for n, a in g.calls].count("fea__submit") == 1
-    assert [n for n, _ in g.calls].count("fea__cancel") == 1
-    assert events[-1]["state"] == "cancellation_unconfirmed"
+    assert [n for n, _ in g.calls].count("fea__cancel") == 0
+    assert events[-1]["state"] == "reconciliation_required"
+    assert stopped.value.code == "APPLICATION_OUTCOME_UNKNOWN"
 
 
 def test_missing_status_capability_rejected_before_submission():
@@ -536,10 +539,10 @@ async def test_interrupting_monitor_does_not_send_a_remote_cancellation():
 
 
 @pytest.mark.asyncio
-async def test_timeout_cancellation_reads_actual_terminal_outcome_without_resubmission():
+async def test_explicit_cancellation_reads_actual_terminal_outcome_without_resubmission():
     g, runtime, step, tools = remote(("working",))
     tools[0].upstream_meta["wright/operation"]["cancel_confirm_seconds"] = 0.2
-    step = replace(step, schema_digest=schema_digest(tools[0]), timeout_seconds=0.06)
+    step = replace(step, schema_digest=schema_digest(tools[0]), timeout_seconds=5)
     original = g.call_tool
     cancelled = False
 
@@ -559,8 +562,21 @@ async def test_timeout_cancellation_reads_actual_terminal_outcome_without_resubm
         if kind == "operation_progress":
             events.append(payload)
 
-    with pytest.raises(TimeoutError):
-        await runtime.call(step, {}, on_event=emit)
+    from workspace_service.workflow_async_operations import operation_cancellation
+
+    pending = asyncio.create_task(runtime.call(step, {}, on_event=emit))
+
+    async def ready():
+        while operation_cancellation(runtime) is None:
+            await asyncio.sleep(0.005)
+
+    await asyncio.wait_for(ready(), 2)
+    barrier = operation_cancellation(runtime, reserve=True)
+    assert barrier is not None
+    barrier.activate()  # Stand-in for the already tested durable command owner.
+    with pytest.raises(WorkflowSourceExecutionError) as stopped:
+        await asyncio.wait_for(pending, 2)
+    assert stopped.value.code == "APPLICATION_CANCELLED"
     assert [n for n, _ in g.calls].count("fea__submit") == 1
     assert [e["state"] for e in events][-2:] == ["cancellation_requested", "cancelled"]
     assert events[-1]["observation_source"] == "provider_status"

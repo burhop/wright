@@ -1,5 +1,5 @@
 import { StrictMode } from "react";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, afterEach, describe, expect, it, vi } from "vitest";
 import {
   act,
   cleanup,
@@ -28,6 +28,17 @@ import {
   type ProcessViewRecoveryStore,
   type ProcessViewMutation,
 } from "../../services/process-view-recovery";
+
+// JSDOM object URLs do not accept the Blob shim used by these unit fixtures.
+// Exercise the exact supplied Blob and link lifecycle; browser suites cover delivery.
+beforeEach(() => {
+  vi.spyOn(URL, "createObjectURL").mockImplementation((blob) => {
+    if (!(blob instanceof Blob))
+      throw new TypeError("Expected exact representation Blob");
+    return "blob:representation-fixture";
+  });
+  vi.spyOn(URL, "revokeObjectURL").mockImplementation(() => undefined);
+});
 
 const hash = "a".repeat(64);
 const process = {
@@ -2036,7 +2047,7 @@ describe("common process request recovery and observer lifetime", () => {
         canReadRepresentations
       />,
     );
-    await screen.findByText("Measured geometry");
+    await screen.findByRole("heading", { name: "Measured geometry" });
     expect(scroll).not.toHaveBeenCalled();
     fireEvent.click(screen.getByRole("button", { name: "Open assessment" }));
     expect(client.navigate).toHaveBeenCalledWith({
@@ -2147,7 +2158,7 @@ describe("common process request recovery and observer lifetime", () => {
         canReadRepresentations
       />,
     );
-    await screen.findByText("Exact part");
+    await screen.findByRole("heading", { name: "Exact part" });
     const opener = screen.getByRole("button", { name: "Open file" });
     opener.focus();
     fireEvent.click(opener);
@@ -2203,7 +2214,7 @@ describe("common process request recovery and observer lifetime", () => {
         canReadRepresentations
       />,
     );
-    await screen.findByText("Original recorded part");
+    await screen.findByRole("heading", { name: "Original recorded part" });
     fireEvent.click(screen.getByRole("button", { name: "Open file" }));
     await screen.findByText("The recorded part file is no longer available.");
     expect(client.getRepresentation).toHaveBeenCalledExactlyOnceWith(artifact, {

@@ -75,7 +75,9 @@ def initialize_sdk_profile():
         os.environ["HERMES_HOME"] = str(home.resolve(strict=True))
     else:
         profile = (
-            os.getenv("WRIGHT_HERMES_PROFILE") or os.getenv("HERMES_PROFILE") or "wright"
+            os.getenv("WRIGHT_HERMES_PROFILE")
+            or os.getenv("HERMES_PROFILE")
+            or "wright"
         ).strip() or "wright"
         os.environ["HERMES_HOME"] = resolve_profile_env(profile)
     from hermes_cli.env_loader import load_hermes_dotenv

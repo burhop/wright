@@ -1113,7 +1113,11 @@ function parsePortList(
           section.startLine,
         ),
       );
-    const basePort = basePortsByKey.get(key);
+    // Prefer the accepted owner-scoped key. A globally identified existing
+    // connection point must still retain its owner and direction on source edits.
+    const basePort =
+      basePortsByKey.get(key) ??
+      base.ports.find((port) => port.id === canonicalId("port", key));
     if (
       basePort &&
       (basePort.ownerBlockId !== ownerBlockId ||

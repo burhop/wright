@@ -306,7 +306,8 @@ describe("WorkflowTracePage", () => {
           artifact: {
             artifact_id: "preview-1",
             media_type: "image/png",
-            preview_url: "/api/workspace/workflow-sources/run-trace/artifact?id=preview-1",
+            preview_url:
+              "/api/workspace/workflow-sources/run-trace/artifact?id=preview-1",
           },
         }}
       />,

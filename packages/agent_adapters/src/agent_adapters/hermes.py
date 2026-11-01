@@ -141,7 +141,7 @@ def _display_tool_response(raw: str, tool_name: str) -> str:
     opening = re.match(r'^<untrusted_tool_result source="([^"]+)">\r?\n', text)
     closing = "</untrusted_tool_result>"
     if opening and opening[1] == tool_name and text.endswith(closing):
-        _, separator, body = text[:-len(closing)].partition("\n\n")
+        _, separator, body = text[: -len(closing)].partition("\n\n")
         if separator:
             text = body.strip()
     try:
@@ -152,7 +152,9 @@ def _display_tool_response(raw: str, tool_name: str) -> str:
         value = value["result"]
     if isinstance(value, dict) and isinstance(value.get("content"), list):
         blocks = value["content"]
-        if blocks and all(isinstance(x, dict) and x.get("type") == "text" for x in blocks):
+        if blocks and all(
+            isinstance(x, dict) and x.get("type") == "text" for x in blocks
+        ):
             return "\n".join(str(x.get("text", "")) for x in blocks)
     return value if isinstance(value, str) else json.dumps(value, ensure_ascii=False)
 
@@ -163,11 +165,13 @@ def _redact_retained_tool_response(raw: str, tool_name: str) -> str:
     opening = re.match(r'^<untrusted_tool_result source="([^"]+)">\r?\n', text)
     closing = "</untrusted_tool_result>"
     if opening and opening[1] == tool_name and text.endswith(closing):
-        prefix, separator, body = text[:-len(closing)].partition("\n\n")
+        prefix, separator, body = text[: -len(closing)].partition("\n\n")
         if separator:
-            clean = redact_evidence(prefix) + separator + redact_evidence(body) + closing
+            clean = (
+                redact_evidence(prefix) + separator + redact_evidence(body) + closing
+            )
             offset = raw.index(text)
-            return raw[:offset] + clean + raw[offset + len(text):]
+            return raw[:offset] + clean + raw[offset + len(text) :]
     return redact_evidence(raw)
 
 
@@ -215,14 +219,18 @@ def _attach_retained_tool_evidence(
                     continue
                 name = function.get("name")
                 if (
-                    not isinstance(call_id, str) or not call_id
-                    or not isinstance(name, str) or not name
+                    not isinstance(call_id, str)
+                    or not call_id
+                    or not isinstance(name, str)
+                    or not name
                 ):
                     continue
                 if call_id in pending:
                     entry = pending[call_id]
                     entry.record_note = "Multiple retained requests use this call ID; no response selected."
-                    entry.response = entry.display_response = entry.response_message_id = None
+                    entry.response = entry.display_response = (
+                        entry.response_message_id
+                    ) = None
                     continue
                 arguments = function.get("arguments")
                 if isinstance(arguments, str):
@@ -258,19 +266,28 @@ def _attach_retained_tool_evidence(
             continue
         returned_name = message.get("tool_name")
         if (
-            returned_name is not None and returned_name != ""
+            returned_name is not None
+            and returned_name != ""
             and returned_name != entry.tool_name
         ):
             entry.record_note = "Retained response tool name differs from the request."
             continue
         if entry.response is not None:
-            entry.record_note = "Multiple retained responses use this call ID; no response selected."
+            entry.record_note = (
+                "Multiple retained responses use this call ID; no response selected."
+            )
             entry.response = entry.display_response = entry.response_message_id = None
             continue
         content = message.get("content")
-        raw = content if isinstance(content, str) else json.dumps(content, ensure_ascii=False)
+        raw = (
+            content
+            if isinstance(content, str)
+            else json.dumps(content, ensure_ascii=False)
+        )
         entry.response = _redact_retained_tool_response(raw, entry.tool_name)
-        entry.display_response = redact_evidence(_display_tool_response(raw, entry.tool_name))
+        entry.display_response = redact_evidence(
+            _display_tool_response(raw, entry.tool_name)
+        )
         entry.response_message_id = native_id or None
         entry.timestamp = _message_timestamp_ms(message)
     flush()
@@ -700,10 +717,20 @@ class HermesAdapter(BaseAgentEngine):
             "GET", "/health/detailed", timeout=5.0
         )
         data = response.json()
-        queues = data.get("readiness", {}).get("checks", {}).get("background_queues", {})
-        counts = [data.get("active_agents"), *(queues.get(key) for key in (
-            "active_api_runs", "process_completions", "active_delegations"
-        ))]
+        queues = (
+            data.get("readiness", {}).get("checks", {}).get("background_queues", {})
+        )
+        counts = [
+            data.get("active_agents"),
+            *(
+                queues.get(key)
+                for key in (
+                    "active_api_runs",
+                    "process_completions",
+                    "active_delegations",
+                )
+            ),
+        ]
         return data.get("gateway_busy") is False and all(
             type(value) is int and value == 0 for value in counts
         )

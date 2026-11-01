@@ -959,6 +959,8 @@ describe("ChatProvider session state", () => {
       resolveHistory([]);
       await history;
     });
-    expect(screen.getByText(/Hermes ended the chat turn/i)).toBeInTheDocument();
+    expect(
+      screen.getByText(/The agent ended the chat turn/i),
+    ).toBeInTheDocument();
   });
 });

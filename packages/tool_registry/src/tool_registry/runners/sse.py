@@ -20,7 +20,7 @@ from core.redaction import redact_mapping, redact_text
 from .device_oauth import DeviceCodeAuth
 from .base import BaseRunner, ProgressCallback
 from .protocol import ChildProtocolState, NotificationHandler
-from .device_oauth import DeviceCodeAuth, DevicePresentation
+from .device_oauth import DevicePresentation
 from ..secrets import read_secrets, write_secrets
 from ..models import validate_mcp_header_name
 
@@ -534,7 +534,10 @@ class SseRunner(BaseRunner):
                     "Device sign-in currently requires a Streamable HTTP MCP endpoint"
                 )
 
-            if self.device_authorization_presenter is not None and not self._is_streamable_http:
+            if (
+                self.device_authorization_presenter is not None
+                and not self._is_streamable_http
+            ):
                 await self._stop_locked()
                 raise RuntimeError("Device sign-in requires a Streamable HTTP endpoint")
 

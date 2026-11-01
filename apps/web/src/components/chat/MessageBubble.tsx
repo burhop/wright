@@ -321,11 +321,13 @@ export function MessageBubble({
           <span>{new Date(message.timestamp).toLocaleTimeString()}</span>
         </div>
       </div>
-      {!!message.toolEvidence?.length && <ToolCallEvidence
-        records={message.toolEvidence}
-        sessionId={activeSessionId}
-        forRequest={isUser}
-      />}
+      {!!message.toolEvidence?.length && (
+        <ToolCallEvidence
+          records={message.toolEvidence}
+          sessionId={activeSessionId}
+          forRequest={isUser}
+        />
+      )}
     </div>
   );
 }

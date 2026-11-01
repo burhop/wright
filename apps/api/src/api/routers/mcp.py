@@ -654,7 +654,9 @@ async def validate_server_endpoint(
     "/servers/{server_id}/signin",
     dependencies=[Depends(require_engineer_or_admin)],
 )
-async def read_mcp_signin_endpoint(server_id: str, request: Request, response: Response):
+async def read_mcp_signin_endpoint(
+    server_id: str, request: Request, response: Response
+):
     """Read transient approval instructions; never return OAuth tokens or dispatch."""
     response.headers["Cache-Control"] = "no-store"
     presenter = getattr(request.app.state, "mcp_oauth_presentation", None)

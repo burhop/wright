@@ -159,6 +159,8 @@ def _configured_gateway_binding(config_path: str) -> tuple[str, str] | None:
         return _gateway_binding(config.get("mcp_servers", {}).get("wrightgateway", {}))
     except (OSError, TypeError, AttributeError, yaml.YAMLError):
         return None
+
+
 def workspace_gateway_status(
     workspace: dict,
     db_path: str,

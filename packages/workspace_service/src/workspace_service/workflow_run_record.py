@@ -1024,7 +1024,11 @@ async def _record_run(
                     "Final workflow checkpoint exceeded its cleanup deadline"
                 )
         except Exception:
-            if record["status"] not in {"cancelled", "failed", "reconciliation_required"}:
+            if record["status"] not in {
+                "cancelled",
+                "failed",
+                "reconciliation_required",
+            }:
                 raise
             # Preserve the original cancellation/failure. If storage cannot finish,
             # the read-only lease probe still reports interrupted/unknown, not live.

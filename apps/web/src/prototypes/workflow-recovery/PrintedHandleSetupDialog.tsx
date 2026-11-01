@@ -588,7 +588,7 @@ export function PrintedHandleSetupDialog({
         >
           Close
         </button>
-        {proposal && <button
+        <button
           type="button"
           className="recovery-button recovery-button--primary"
           data-testid="handle-setup-accept"
@@ -598,7 +598,7 @@ export function PrintedHandleSetupDialog({
           {state === "accepting"
             ? "Accepting revision…"
             : "Accept prepared revision"}
-        </button>}
+        </button>
       </footer>
     </dialog>
   );

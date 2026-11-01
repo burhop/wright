@@ -134,7 +134,7 @@ export function EngineeringTemplateDialog({
   useEffect(() => {
     setDetail(undefined);
     setDetailError("");
-    if (!open || !selected) return;
+    if (!open || !selected || !setupShown) return;
     let current = true;
     void workspaceService
       .getEngineeringWorkflowTemplate(selected.template_id, selected.version)
@@ -161,7 +161,7 @@ export function EngineeringTemplateDialog({
     return () => {
       current = false;
     };
-  }, [open, selected, detailRequest]);
+  }, [open, selected, detailRequest, setupShown]);
 
   const choose = (template: EngineeringWorkflowTemplate) => {
     setSelectedId(template.template_id);
@@ -344,7 +344,9 @@ export function EngineeringTemplateDialog({
                 {previewUrl(selected) ? (
                   <img src={previewUrl(selected)!} alt={selected.preview.alt} />
                 ) : (
-                  <p>Template image preview is not available in this host yet.</p>
+                  <p>
+                    Template image preview is not available in this host yet.
+                  </p>
                 )}
                 <figcaption>
                   <strong>

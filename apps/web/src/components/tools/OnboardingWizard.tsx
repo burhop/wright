@@ -177,7 +177,10 @@ export function OnboardingWizard({
       const created = await mcpService.createInstallPlan({
         ...sourceRequest,
         requested_scope: "global_registered",
-        independently_completed_license: licenseCompleted,
+        independently_completed_license:
+          sourceKind === "catalog" || sourceKind === "host"
+            ? licenseCompleted
+            : reviewedImport === normalizedConfiguration,
       });
       setPlan(created);
       setStep("review");
@@ -250,7 +253,9 @@ export function OnboardingWizard({
             <div className="mcp-onboarding__eyebrow">MCP server setup</div>
             <h2 id="onboarding-wizard-title">
               {catalogSelection
-                ? plan?.backend_kind === "remote_endpoint" ? "Connect MCP server" : "Set up MCP server"
+                ? plan?.backend_kind === "remote_endpoint"
+                  ? "Connect MCP server"
+                  : "Set up MCP server"
                 : "Add custom MCP server"}
             </h2>
             <p>
@@ -447,7 +452,11 @@ export function OnboardingWizard({
                   <div className="mcp-onboarding__eyebrow">
                     Ready for review
                   </div>
-                  <h3>{plan.backend_kind === "remote_endpoint" ? "Confirm this connection" : "Confirm this installation"}</h3>
+                  <h3>
+                    {plan.backend_kind === "remote_endpoint"
+                      ? "Confirm this connection"
+                      : "Confirm this installation"}
+                  </h3>
                 </div>
                 <span className={`mcp-plan-review__state ${plan.state}`}>
                   {plan.state === "reviewable" ? "Ready" : "Needs attention"}
@@ -505,24 +514,43 @@ export function OnboardingWizard({
               )}
               {plan.requirements.license.independent_completion_required &&
                 plan.blocking_reasons.some((reason) =>
-                  ["external_license_incomplete", "license_unknown"].includes(reason.code),
+                  ["external_license_incomplete", "license_unknown"].includes(
+                    reason.code,
+                  ),
                 ) && (
-                <section aria-label="Publisher requirements">
-                  <p>Wright cannot accept publisher terms or complete a subscription for you.</p>
-                  {plan.requirements.license.state === "unknown" && (
-                    <p>Check the source and license for this exact server before recording your review. Wright has not verified its license.</p>
-                  )}
-                  <label>
-                    <input type="checkbox" checked={licenseCompleted} onChange={(event) => setLicenseCompleted(event.target.checked)} />
-                    {plan.requirements.license.state === "unknown"
-                      ? "I have independently reviewed the source and license and completed any publisher requirements for this server."
-                      : "I have independently completed the publisher requirements for this server."}
-                  </label>
-                  <button type="button" disabled={!licenseCompleted} onClick={buildPlan}>
-                    Create a new plan with my recorded completion
-                  </button>
-                </section>
-              )}
+                  <section aria-label="Publisher requirements">
+                    <p>
+                      Wright cannot accept publisher terms or complete a
+                      subscription for you.
+                    </p>
+                    {plan.requirements.license.state === "unknown" && (
+                      <p>
+                        Check the source and license for this exact server
+                        before recording your review. Wright has not verified
+                        its license.
+                      </p>
+                    )}
+                    <label>
+                      <input
+                        type="checkbox"
+                        checked={licenseCompleted}
+                        onChange={(event) =>
+                          setLicenseCompleted(event.target.checked)
+                        }
+                      />
+                      {plan.requirements.license.state === "unknown"
+                        ? "I have independently reviewed the source and license and completed any publisher requirements for this server."
+                        : "I have independently completed the publisher requirements for this server."}
+                    </label>
+                    <button
+                      type="button"
+                      disabled={!licenseCompleted}
+                      onClick={buildPlan}
+                    >
+                      Create a new plan with my recorded completion
+                    </button>
+                  </section>
+                )}
               <footer className="mcp-onboarding__footer">
                 {plan.state !== "reviewable" ? (
                   <button
@@ -594,7 +622,9 @@ export function OnboardingWizard({
                 data-testid="onboarding-apply-plan"
                 onClick={applyPlan}
               >
-                {plan?.backend_kind === "remote_endpoint" ? "Connect MCP server" : "Install MCP server"}
+                {plan?.backend_kind === "remote_endpoint"
+                  ? "Connect MCP server"
+                  : "Install MCP server"}
               </button>
             </div>
           )}
@@ -605,7 +635,10 @@ export function OnboardingWizard({
             </p>
           )}
 
-          <McpDeviceSignIn serverId={plan?.capability_id || ""} active={step === "validating"} />
+          <McpDeviceSignIn
+            serverId={plan?.capability_id || ""}
+            active={step === "validating"}
+          />
           {step === "validating" && (
             <p role="status">
               Connecting and checking available tools. Complete sign-in in the

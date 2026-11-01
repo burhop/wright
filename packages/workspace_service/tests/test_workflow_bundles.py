@@ -187,6 +187,19 @@ def test_handle_starter_bundle_preserves_all_supplied_dependencies_without_run_a
     text = materialize_new_workflow_instructions(
         instance.source, load_default_workflow_instructions()
     )
+    from workspace_service.workflow_bundles import _dependency_inventory
+
+    declared = {
+        d.identity for d in _dependency_inventory(text) if d.category == "reference"
+    }
+    # The starter also keeps the original SVG alongside its consumed PNG. It is
+    # not a declared process input; arbitrary workspace files are not portable
+    # dependencies and must not acquire authority through a caller's selection.
+    assert set(reference_paths) - declared == {
+        f"inputs/{instance.workflow_id.removeprefix('workflow.')}/concept.svg"
+    }
+    reference_paths = [path for path in reference_paths if path in declared]
+    assert set(reference_paths) == declared
     exported = export(
         case, text, mode="bundle", selected_reference_paths=reference_paths
     )

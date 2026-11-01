@@ -234,12 +234,18 @@ async def _large_file_identity(service, workspace_dir, path, limits):
     """Reuse streamed artifact identity without loading native files as content."""
     target = WorkspacePath(workspace_dir).resolve(path, must_exist=True)
     before = target.stat()
-    if not target.is_file() or not 0 < before.st_size <= limits.maximum_representation_bytes:
+    if (
+        not target.is_file()
+        or not 0 < before.st_size <= limits.maximum_representation_bytes
+    ):
         raise ValueError("The file exceeds the supported artifact reference size.")
     digest = await service.files.hash_reference(workspace_dir, path)
     after = WorkspacePath(workspace_dir).resolve(path, must_exist=True).stat()
     if (before.st_dev, before.st_ino, before.st_size, before.st_mtime_ns) != (
-        after.st_dev, after.st_ino, after.st_size, after.st_mtime_ns
+        after.st_dev,
+        after.st_ino,
+        after.st_size,
+        after.st_mtime_ns,
     ):
         raise ValueError("The input file changed while its identity was prepared.")
     return digest, after.st_size
@@ -466,7 +472,9 @@ async def prepare_inputs(
         ):
             default_path = fields["settings"]["workspace_file"]
             try:
-                target = WorkspacePath(workspace_dir).resolve(default_path, must_exist=True)
+                target = WorkspacePath(workspace_dir).resolve(
+                    default_path, must_exist=True
+                )
                 if (
                     review_snapshots is None
                     and target.stat().st_size > limits.maximum_upload_bytes

@@ -69,7 +69,7 @@ def test_large_host_envelope_respects_saved_budget_and_old_guard(tmp_path, budge
         messages.append(conversation)
         if len(messages) == 1:
             return call()
-        assert kwargs["context_budget_bytes"] == 400_000
+        assert kwargs.get("context_budget_bytes") == budget
         result = json.loads(conversation[-1]["content"])
         assert result["result"] == native
         return done("Retained all native failures")

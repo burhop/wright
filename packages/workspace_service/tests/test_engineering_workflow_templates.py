@@ -47,7 +47,7 @@ def test_catalog_preserves_ten_reviewed_templates_and_appends_handle_starter():
 
     assert tuple(item.template_id for item in templates) == TEMPLATE_IDS
     assert all(item.version == "1.0.0" for item in templates[:-1])
-    assert templates[-1].version == "1.0.1"
+    assert templates[-1].version == "1.0.3"
     assert all(item.definition_status == "reviewed" for item in templates)
     assert len({item.title for item in templates}) == len(TEMPLATE_IDS)
 
@@ -115,7 +115,7 @@ def test_handle_recorded_exploration_preserves_inputs_without_live_qualification
     )
     assert supplied["validation-profile.json"] == profile_path.read_bytes()
     # Presentation embeds the original input and exact actual mesh image bytes.
-    preview, media_type = catalog.preview(template.template_id, "1.0.1")
+    preview, media_type = catalog.preview(template.template_id, "1.0.3")
     assert media_type == "image/svg+xml"
     svg = ET.fromstring(preview)
     namespace = {"svg": "http://www.w3.org/2000/svg"}
@@ -340,7 +340,7 @@ def test_catalog_rejects_unknown_or_credential_valued_fields(tmp_path, mutation,
 
 def test_handle_preview_version_changes_without_replacing_old_saved_source():
     catalog = EngineeringWorkflowTemplateCatalog()
-    current = catalog.get("replacement-drawer-handle", "1.0.1").template
+    current = catalog.get("replacement-drawer-handle", "1.0.3").template
     for lookup in (
         lambda: catalog.get(current.template_id, "1.0.0"),
         lambda: catalog.preview(current.template_id, "1.0.0"),

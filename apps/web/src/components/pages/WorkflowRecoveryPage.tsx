@@ -85,7 +85,13 @@ export function WorkflowRecoveryPage({
     return () => {
       workingViewRequest.current += 1;
     };
-  }, [workspaceId, sessionId, visiblePath, document?.storage_digest, editorUnsaved]);
+  }, [
+    workspaceId,
+    sessionId,
+    visiblePath,
+    document?.storage_digest,
+    editorUnsaved,
+  ]);
   const handleUnsavedChange = useCallback(
     (unsaved: boolean) => {
       setEditorUnsaved(unsaved);
@@ -659,7 +665,8 @@ export function WorkflowRecoveryPage({
           )}
         {templateReadiness?.template_id === "replacement-drawer-handle" &&
           templateReadiness.starter_unchanged === false &&
-          templateReadiness.accepted_source_digest === currentDocument?.storage_digest && (
+          templateReadiness.accepted_source_digest ===
+            currentDocument?.storage_digest && (
             <button
               type="button"
               className="recovery-button recovery-button--secondary"
@@ -668,11 +675,14 @@ export function WorkflowRecoveryPage({
               title="Inspect setup issues and configure the existing steps. Your edits stay in this process."
               style={{ padding: "5px 12px", marginRight: 8 }}
               onClick={() => {
-                const readiness = page.current?.querySelector<HTMLDetailsElement>(
-                  '[data-testid="workflow-recovery-run-readiness"]',
-                );
+                const readiness =
+                  page.current?.querySelector<HTMLDetailsElement>(
+                    '[data-testid="workflow-recovery-run-readiness"]',
+                  );
                 if (!readiness) {
-                  setSetupNotice("Open this process in the editor to inspect its step setup.");
+                  setSetupNotice(
+                    "Open this process in the editor to inspect its step setup.",
+                  );
                   return;
                 }
                 readiness.open = true;
@@ -698,9 +708,15 @@ export function WorkflowRecoveryPage({
             type="button"
             className="recovery-button recovery-button--secondary"
             data-testid="workflow-working-view-open"
-            disabled={state !== "ready" || !currentDocument || editorUnsaved || workingViewPending}
+            disabled={
+              state !== "ready" ||
+              !currentDocument ||
+              editorUnsaved ||
+              workingViewPending
+            }
             onClick={async () => {
-              if (!currentDocument || editorUnsaved || workingViewPending) return;
+              if (!currentDocument || editorUnsaved || workingViewPending)
+                return;
               const request = ++workingViewRequest.current;
               const process = {
                 workspace_id: currentDocument.workspace_id,
@@ -712,11 +728,12 @@ export function WorkflowRecoveryPage({
               try {
                 // Reconcile through the same durable history as the editor.
                 // Opening a view never starts or repeats a process.
-                const [latest] = await workspaceService.getWorkspaceWorkflowRuns(
-                  sessionId,
-                  process.source_path,
-                  { latestOnly: true, workspaceId: process.workspace_id },
-                );
+                const [latest] =
+                  await workspaceService.getWorkspaceWorkflowRuns(
+                    sessionId,
+                    process.source_path,
+                    { latestOnly: true, workspaceId: process.workspace_id },
+                  );
                 if (request !== workingViewRequest.current) return;
                 if (
                   latest?.source_digest === process.source_digest &&
@@ -729,9 +746,10 @@ export function WorkflowRecoveryPage({
                 const runId =
                   latest?.source_digest === process.source_digest &&
                   latest.source_matches_current !== false
-                    ? latest.run_id ?? undefined
+                    ? (latest.run_id ?? undefined)
                     : undefined;
-                onOpenProcess(process, runId);
+                if (runId) onOpenProcess(process, runId);
+                else onOpenProcess(process);
               } catch (error) {
                 if (request !== workingViewRequest.current) return;
                 setWorkingViewError(

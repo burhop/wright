@@ -353,7 +353,9 @@ def canonical_artifact_paths(inspection: Mapping[str, Any]) -> Sequence[dict]:
             results.extend(step.get("outputs") or ())
             results.extend(step.get("inputs") or ())
     for item in results:
-        if not isinstance(item, Mapping) or not isinstance(item.get("artifact"), Mapping):
+        if not isinstance(item, Mapping) or not isinstance(
+            item.get("artifact"), Mapping
+        ):
             continue
         artifact = dict(item["artifact"])
         artifact_id = artifact.get("artifact_id")

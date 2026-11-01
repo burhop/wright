@@ -415,23 +415,52 @@ export function MessageComposer({
                 Your tool selection is saved. Finish any current request, then:
               </p>
               <ol style={{ margin: "4px 0", paddingLeft: 20 }}>
-                <li>Wait for active Hermes requests to finish. This command replaces the existing gateway.</li>
-                <li>Open a terminal on the computer running Hermes, run this command, and leave that terminal open.</li>
+                <li>
+                  Wait for active Hermes requests to finish. This command
+                  replaces the existing gateway.
+                </li>
+                <li>
+                  Open a terminal on the computer running Hermes, run this
+                  command, and leave that terminal open.
+                </li>
               </ol>
-              <div>{mcpStatus.restart_command_shell === "powershell" ? "PowerShell" : "Terminal"}</div>
-              <pre style={{ whiteSpace: "pre-wrap", overflowWrap: "anywhere", margin: "6px 0", userSelect: "text" }}>
+              <div>
+                {mcpStatus.restart_command_shell === "powershell"
+                  ? "PowerShell"
+                  : "Terminal"}
+              </div>
+              <pre
+                style={{
+                  whiteSpace: "pre-wrap",
+                  overflowWrap: "anywhere",
+                  margin: "6px 0",
+                  userSelect: "text",
+                }}
+              >
                 <code>{mcpStatus.restart_command}</code>
               </pre>
-              <button type="button" onClick={async () => {
-                try {
-                  await navigator.clipboard.writeText(mcpStatus.restart_command!);
-                  setRestartCopyNotice("Command copied.");
-                } catch {
-                  setRestartCopyNotice("Select and copy the command above.");
-                }
-              }}>Copy reconnect command</button>
-              <span role="status" style={{ marginLeft: 8 }}>{restartCopyNotice}</span>
-              <p style={{ margin: "6px 0 0" }}>Return here and send your request. Wright checks the connection before sending it.</p>
+              <button
+                type="button"
+                onClick={async () => {
+                  try {
+                    await navigator.clipboard.writeText(
+                      mcpStatus.restart_command!,
+                    );
+                    setRestartCopyNotice("Command copied.");
+                  } catch {
+                    setRestartCopyNotice("Select and copy the command above.");
+                  }
+                }}
+              >
+                Copy reconnect command
+              </button>
+              <span role="status" style={{ marginLeft: 8 }}>
+                {restartCopyNotice}
+              </span>
+              <p style={{ margin: "6px 0 0" }}>
+                Return here and send your request. Wright checks the connection
+                before sending it.
+              </p>
             </>
           ) : (
             <p style={{ margin: "4px 0 0" }}>{mcpStatus.message}</p>
@@ -761,7 +790,9 @@ export function MessageComposer({
                 }}
                 title={mcpStatus.message}
               >
-                {mcpStatus.status === "refresh_required" ? "MCP · Restart" : "MCP"}
+                {mcpStatus.status === "refresh_required"
+                  ? "MCP · Restart"
+                  : "MCP"}
               </button>
 
               {showStatusPopup && (

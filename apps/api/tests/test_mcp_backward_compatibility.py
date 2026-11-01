@@ -52,8 +52,8 @@ def migrated_legacy_client(tmp_path, monkeypatch):
     )
     write_secrets(LEGACY_CATALOG_SERVER_ID, {"APS_CLIENT_ID": "never-return-this"})
     monkeypatch.setattr(
-        "api.services.mcp_services.sync_mcp_server_to_wright_gateway",
-        lambda _server: None,
+        "api.services.mcp_services.McpApiService._sync_workspace_tools",
+        lambda _self, _session: None,
     )
     service = McpApiService(
         McpEngine(str(database)),
@@ -187,7 +187,7 @@ async def test_explicit_activation_reuses_recorded_server_approvals(
         "api.services.mcp_services.registry_services.toggle_server_activation", toggle
     )
     monkeypatch.setattr(
-        "api.services.mcp_services.sync_mcp_server_to_wright_gateway", lambda *_: None
+        "api.services.mcp_services.McpApiService._sync_workspace_tools", lambda *_: None
     )
     service = McpApiService(SimpleNamespace(db_path="state.db"), SimpleNamespace())
 

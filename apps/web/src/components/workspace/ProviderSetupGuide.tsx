@@ -13,10 +13,16 @@ export function ProviderSetupGuide({ text }: { text: string }) {
   useEffect(() => {
     const node = dialog.current;
     if (!node) return;
-    if (open && !node.open) node.showModal();
-    else if (!open && node.open) node.close();
+    const close = () => {
+      if (node.close) node.close();
+      else node.removeAttribute("open");
+    };
+    if (open && !node.open) {
+      if (node.showModal) node.showModal();
+      else node.setAttribute("open", "");
+    } else if (!open && node.open) close();
     return () => {
-      if (node.open) node.close();
+      if (node.open) close();
     };
   }, [open]);
   return (

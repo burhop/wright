@@ -156,7 +156,7 @@ export function WorkflowRunHistory({
       data-testid="workflow-run-history"
       onToggle={(event) => setOpen(event.currentTarget.open)}
     >
-      <summary>Trace: previous runs</summary>
+      <summary>Previous runs</summary>
       {open && (
         <>
           <button

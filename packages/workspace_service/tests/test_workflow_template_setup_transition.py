@@ -240,14 +240,14 @@ def test_cosmetic_edit_or_copy_does_not_make_placeholder_starter_runnable(
     asyncio.run(check())
 
 
-def test_revised_saved_100_handle_uses_current_source_qualification_after_catalog_101(
+def test_revised_saved_100_handle_uses_current_source_qualification_after_catalog_103(
     tmp_path,
 ):
     async def check():
         service, initial = await starter(tmp_path)
         origin_path = tmp_path / ".wright/workflow-sources/handle/template-origin.json"
         origin = json.loads(origin_path.read_text())
-        assert origin["template_version"] == "1.0.1"
+        assert origin["template_version"] == "1.0.3"
         origin["template_version"] = "1.0.0"
         origin_path.write_text(json.dumps(origin))
         current = await revise(service, tmp_path, initial, configured_source(task()))

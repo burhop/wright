@@ -873,7 +873,7 @@ export function DashboardPage() {
                 <strong>
                   {sessionsLoading
                     ? "Loading…"
-                    : activeSessionsCount ?? "Unavailable"}
+                    : (activeSessionsCount ?? "Unavailable")}
                 </strong>
               </span>
             </div>

@@ -305,7 +305,9 @@ class ProcessRunSupervisor:
                         )
 
                     try:
-                        from ..workflow_trace.canonical import project_prompt_workflow_trace
+                        from ..workflow_trace.canonical import (
+                            project_prompt_workflow_trace,
+                        )
                         from ..workflow_execution_continuation import input_identities
 
                         return await record_workflow_run(
@@ -319,7 +321,9 @@ class ProcessRunSupervisor:
                             run_id=receipt.run_id,
                             run_log_path=receipt.run_log_path,
                             cancellation_status=owned.cancellation_outcome,
-                            trace_definition=project_prompt_workflow_trace(prepared.plan),
+                            trace_definition=project_prompt_workflow_trace(
+                                prepared.plan
+                            ),
                             trace_inputs=input_identities(prepared.values),
                             required_step_ids=[step.id for step in prepared.plan.steps],
                         )

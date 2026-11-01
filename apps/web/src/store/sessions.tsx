@@ -189,20 +189,39 @@ function normalizeMessages(messages: ChatMessage[] = []): ChatMessage[] {
       content: stripWorkspaceContext(message.content),
     }))
     .filter(
-      (message) => message.content && (!looksLikeToolPayload(message.content) || !!message.toolEvidence?.length),
+      (message) =>
+        message.content &&
+        (!looksLikeToolPayload(message.content) ||
+          !!message.toolEvidence?.length),
     );
 }
 
 async function reconcileRetainedAnswer(
-  session: ChatSession, prompt: string, answer: ChatMessage,
+  session: ChatSession,
+  prompt: string,
+  answer: ChatMessage,
 ): Promise<void> {
   try {
     const history = await agentService.getSessionHistory(session.sessionId);
     let lastUserIndex = history.length - 1;
-    while (lastUserIndex >= 0 && history[lastUserIndex].role !== "user") lastUserIndex -= 1;
-    if (lastUserIndex < 0 || stripWorkspaceContext(history[lastUserIndex].content) !== stripWorkspaceContext(prompt)) return;
+    while (lastUserIndex >= 0 && history[lastUserIndex].role !== "user")
+      lastUserIndex -= 1;
+    if (
+      lastUserIndex < 0 ||
+      stripWorkspaceContext(history[lastUserIndex].content) !==
+        stripWorkspaceContext(prompt)
+    )
+      return;
     const messages = [...history];
-    if (!history.slice(lastUserIndex + 1).some((message) => message.role === "assistant" && message.content.trim() === answer.content.trim())) {
+    if (
+      !history
+        .slice(lastUserIndex + 1)
+        .some(
+          (message) =>
+            message.role === "assistant" &&
+            message.content.trim() === answer.content.trim(),
+        )
+    ) {
       messages.push(answer);
     }
     session.messages = messages;

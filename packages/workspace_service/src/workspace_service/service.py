@@ -572,7 +572,9 @@ class WorkspaceService:
                 error=redact_text(exc),
             )
 
-        row = self.repository.create_dashboard(name, workspace_path, session_id, agent_id=agent_id)
+        row = self.repository.create_dashboard(
+            name, workspace_path, session_id, agent_id=agent_id
+        )
         self.repository.associate_session(
             row["workspace_id"], session_id, agent_id=agent_id, title=name
         )

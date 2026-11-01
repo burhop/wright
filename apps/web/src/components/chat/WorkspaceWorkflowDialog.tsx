@@ -27,10 +27,12 @@ export function WorkspaceWorkflowDialog({
   useEffect(() => {
     mounted.current = true;
     const element = dialog.current;
-    element?.showModal();
+    if (typeof element?.showModal === "function") element.showModal();
+    else element?.setAttribute("open", "");
     return () => {
       mounted.current = false;
-      element?.close();
+      if (typeof element?.close === "function") element.close();
+      else element?.removeAttribute("open");
     };
   }, []);
 
@@ -97,8 +99,12 @@ export function WorkspaceWorkflowDialog({
       <h2 id={titleId}>Workflows</h2>
       <p>{workspaceName}</p>
       {loading && <p role="status">Loading saved workflows…</p>}
-      {!loading && !error && files.length === 0 && <p>No saved workflows yet.</p>}
-      <div style={{ display: "grid", gap: 8, maxHeight: "45vh", overflow: "auto" }}>
+      {!loading && !error && files.length === 0 && (
+        <p>No saved workflows yet.</p>
+      )}
+      <div
+        style={{ display: "grid", gap: 8, maxHeight: "45vh", overflow: "auto" }}
+      >
         {files.map((file) => (
           <button
             type="button"

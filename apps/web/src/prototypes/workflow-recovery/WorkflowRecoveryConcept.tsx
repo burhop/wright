@@ -6,9 +6,7 @@ import { StepInstructionsEditor } from "./StepInstructionsEditor";
 import { RunInstructionsEvidence } from "./RunInstructionsEvidence";
 import { disconnectedProcessDiagnostic } from "./run-readiness";
 import { workflowRunIssue } from "./workflow-run-issue";
-import {
-  unconfiguredMcpDiagnostics,
-} from "./run-readiness";
+import { unconfiguredMcpDiagnostics } from "./run-readiness";
 import { mcpTaskLabel } from "./mcp-task-binding";
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { createPortal } from "react-dom";
@@ -626,11 +624,17 @@ function WorkflowExternalApprovalPanel({
   const outcome = checkpoint.external_action?.outcome;
   const isLocalReview = checkpoint.action_kind === "local_review";
   const reviewSettings = recordValue(checkpoint.subject.settings);
-  const isValidationReview = isLocalReview && (
-    !reviewSettings ||
-    Object.prototype.hasOwnProperty.call(reviewSettings, "validation_review") ||
-    Object.prototype.hasOwnProperty.call(reviewSettings, "validation_review_requirements")
-  );
+  const isValidationReview =
+    isLocalReview &&
+    (!reviewSettings ||
+      Object.prototype.hasOwnProperty.call(
+        reviewSettings,
+        "validation_review",
+      ) ||
+      Object.prototype.hasOwnProperty.call(
+        reviewSettings,
+        "validation_review_requirements",
+      ));
   const validationReview = validationReviewDetails(checkpoint);
   const reviewStatus = approvalPresentation(checkpoint);
   return (
@@ -642,7 +646,9 @@ function WorkflowExternalApprovalPanel({
       <h3 id={`workflow-approval-${checkpoint.checkpoint_id}`}>
         {isValidationReview
           ? "Review results against the requirements"
-          : isLocalReview ? "Review supplied information" : "External action approval"}
+          : isLocalReview
+            ? "Review supplied information"
+            : "External action approval"}
       </h3>
       {typeof checkpoint.continuation.step_title === "string" && (
         <p>
@@ -773,9 +779,13 @@ function WorkflowExternalApprovalPanel({
       {isValidationReview && checkpoint.state !== "pending" && (
         <p role="status">{reviewStatus?.detail}</p>
       )}
-      {isLocalReview && !isValidationReview && checkpoint.state !== "pending" && (
-        <p role="status">Review status: {checkpoint.state.replaceAll("_", " ")}</p>
-      )}
+      {isLocalReview &&
+        !isValidationReview &&
+        checkpoint.state !== "pending" && (
+          <p role="status">
+            Review status: {checkpoint.state.replaceAll("_", " ")}
+          </p>
+        )}
       {checkpoint.state === "pending" && (
         <>
           <label
@@ -802,7 +812,9 @@ function WorkflowExternalApprovalPanel({
             >
               {isValidationReview
                 ? "Approve reviewed requirements"
-                : isLocalReview ? "Approve reviewed inputs" : "Approve exact action"}
+                : isLocalReview
+                  ? "Approve reviewed inputs"
+                  : "Approve exact action"}
             </button>
             <button
               type="button"
@@ -1059,11 +1071,13 @@ function NativeRunPanel({
                   : result
                     ? "Workflow completed"
                     : error
-                      ? issue ? issue.title : error.startsWith("Workflow cancelled.")
-                        ? "Workflow cancelled"
-                        : error.startsWith("Run blocked")
-                          ? "Run blocked"
-                          : "Workflow failed"
+                      ? issue
+                        ? issue.title
+                        : error.startsWith("Workflow cancelled.")
+                          ? "Workflow cancelled"
+                          : error.startsWith("Run blocked")
+                            ? "Run blocked"
+                            : "Workflow failed"
                       : "Not started"}
         </b>
         <span>
@@ -1195,9 +1209,10 @@ function NativeRunPanel({
         >
           <h3>Check the submitted operation</h3>
           <p>
-            Wright recorded a submitted operation but cannot confirm its outcome.
-            It may still be running in the engineering application. Inspect that
-            application and this saved run before requesting another execution.
+            Wright recorded a submitted operation but cannot confirm its
+            outcome. It may still be running in the engineering application.
+            Inspect that application and this saved run before requesting
+            another execution.
           </p>
           {reconciliationIssue && <p>Recorded issue: {reconciliationIssue}</p>}
           <button
@@ -2959,36 +2974,35 @@ function WorkflowRecoveryReadyConcept({
     presentedRun,
     presentedError,
   );
-  const observedStatus =
-    presentedReconciliation
+  const observedStatus = presentedReconciliation
+    ? {
+        label: "Operation status unconfirmed",
+        detail:
+          "The submitted operation may still be running. Its recorded activity and results are retained; check its outcome before starting another run.",
+      }
+    : observed?.status === "interrupted"
       ? {
-          label: "Operation status unconfirmed",
+          label: "Execution interrupted",
           detail:
-            "The submitted operation may still be running. Its recorded activity and results are retained; check its outcome before starting another run.",
+            "The connection to the running workflow was interrupted. An operation already submitted to another application may still be running; check that application and the saved run before retrying.",
         }
-      : observed?.status === "interrupted"
+      : observed?.status === "unknown"
         ? {
-            label: "Execution interrupted",
+            label: "Execution status unknown",
             detail:
-              "The connection to the running workflow was interrupted. An operation already submitted to another application may still be running; check that application and the saved run before retrying.",
+              "Wright cannot confirm whether the workflow is still running. Its last recorded activity and results are preserved. Check before starting another run.",
           }
-        : observed?.status === "unknown"
+        : observer.enabled && !observer.checked && !nativeRunStartedAt
           ? {
-              label: "Execution status unknown",
-              detail:
-                "Wright cannot confirm whether the workflow is still running. Its last recorded activity and results are preserved. Check before starting another run.",
+              label: "Checking run status…",
+              detail: "Checking the saved workflow for existing execution.",
             }
-          : observer.enabled && !observer.checked && !nativeRunStartedAt
+          : observer.error && !observer.record && !nativeRunStartedAt
             ? {
-                label: "Checking run status…",
-                detail: "Checking the saved workflow for existing execution.",
+                label: "Execution status unavailable",
+                detail: "Refresh status before starting another run.",
               }
-            : observer.error && !observer.record && !nativeRunStartedAt
-              ? {
-                  label: "Execution status unavailable",
-                  detail: "Refresh status before starting another run.",
-                }
-              : null;
+            : null;
   const validationStatus = validationRunPresentation(
     observed?.execution?.last_progress ?? nativeValidationProgress,
   );
@@ -3885,16 +3899,20 @@ function WorkflowRecoveryReadyConcept({
       return;
     }
     const sourceDiagnostic =
-      !semanticDirty && !sourceDirty && currentMatchesPersistedSubject &&
-      templateReadiness?.accepted_source_digest === persistedSubject?.storageDigest
+      !semanticDirty &&
+      !sourceDirty &&
+      currentMatchesPersistedSubject &&
+      templateReadiness?.accepted_source_digest ===
+        persistedSubject?.storageDigest
         ? templateReadiness?.execution_diagnostic
         : null;
     if (
       onRun &&
       templateReadiness &&
-      (sourceDiagnostic || ["reference", "setup_required", "unavailable"].includes(
-        templateReadiness.state,
-      ))
+      (sourceDiagnostic ||
+        ["reference", "setup_required", "unavailable"].includes(
+          templateReadiness.state,
+        ))
     ) {
       const reason =
         (sourceDiagnostic
@@ -4149,11 +4167,15 @@ function WorkflowRecoveryReadyConcept({
           },
         ]);
       } catch (error) {
-        const failure = !runAbort.current?.signal.aborted && error instanceof WorkspaceWorkflowRunError ? error : null;
+        const failure =
+          !runAbort.current?.signal.aborted &&
+          error instanceof WorkspaceWorkflowRunError
+            ? error
+            : null;
         setWorkflowRunFailure(failure);
         const outcomeUnconfirmed =
           error instanceof WorkspaceWorkflowRunError &&
-          error.code === "APPLICATION_OUTCOME_UNKNOWN";
+          error.code.toUpperCase() === "APPLICATION_OUTCOME_UNKNOWN";
         setWorkflowRunErrorCode(
           error instanceof WorkspaceWorkflowRunError ? error.code : "",
         );
@@ -4727,7 +4749,7 @@ function WorkflowRecoveryReadyConcept({
                       ? "Answer the pending question in the working view to continue this run"
                       : onReadReasoningStatus
                         ? "Start the saved workflow. AI steps wait for a reply in this desktop conversation."
-                      : "Run the saved workspace workflow"
+                        : "Run the saved workspace workflow"
                   : simulationPreview
                     ? canRun
                       ? "Run the fixed local example. No AI, CAD, or external tool is executed."
@@ -4743,14 +4765,14 @@ function WorkflowRecoveryReadyConcept({
                 : presentedReconciliation
                   ? "Status unconfirmed"
                   : onRun
-                  ? semanticDirty || layoutDirty
-                    ? "Save & run"
-                    : "▶ Run"
-                  : !simulationPreview
-                    ? "▶ Run"
-                    : runStage === 0
-                      ? "▶ Simulate"
-                      : `Simulation · ${runStateLabel[run.state]}`}
+                    ? semanticDirty || layoutDirty
+                      ? "Save & run"
+                      : "▶ Run"
+                    : !simulationPreview
+                      ? "▶ Run"
+                      : runStage === 0
+                        ? "▶ Simulate"
+                        : `Simulation · ${runStateLabel[run.state]}`}
             </button>
           </div>
         </div>
@@ -5308,7 +5330,8 @@ function WorkflowRecoveryReadyConcept({
                 />
               )}
               {selectedBlock &&
-                (inspectorTab === "definition" || inspectorTab === "overview") && (
+                (inspectorTab === "definition" ||
+                  inspectorTab === "overview") && (
                   <UnboundWorkOperation
                     block={selectedBlock}
                     readOnly={blockEditorReadOnly}
@@ -5655,10 +5678,10 @@ function WorkflowRecoveryReadyConcept({
                           ? presentedIssue
                             ? presentedIssue.title
                             : presentedError.startsWith("Workflow cancelled.")
-                            ? "Run cancelled"
-                            : presentedError.startsWith("Run blocked")
-                              ? "Run blocked"
-                              : "Run failed"
+                              ? "Run cancelled"
+                              : presentedError.startsWith("Run blocked")
+                                ? "Run blocked"
+                                : "Run failed"
                           : "Not started"
                 : runStage > 0
                   ? `Simulation · ${runStateLabel[run.state]}`

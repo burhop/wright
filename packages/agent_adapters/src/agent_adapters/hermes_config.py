@@ -95,6 +95,7 @@ def hermes_gateway_start_command(
     ):
         return None
     if os.name == "nt":
+
         def quote(value: str) -> str:
             return "'" + value.replace("'", "''") + "'"
 

@@ -73,7 +73,7 @@ async def test_unchanged_reference_view_returns_catalog_guidance_without_effects
     before = files(tmp_path)
 
     # Both actual shipped references contain unbound review placeholders.
-    with pytest.raises(WorkflowSourceExecutionError, match="supported execution type"):
+    with pytest.raises(WorkflowSourceExecutionError, match="not configured to run"):
         compile_prompt_workflow(document.source)
     with pytest.raises(ProcessInterfaceError) as error:
         await app.get_snapshot(
@@ -103,9 +103,7 @@ async def test_unchanged_reference_view_returns_catalog_guidance_without_effects
     )
     assert navigation.process == reference(document)
     assert navigation.target == target
-    with pytest.raises(
-        ProcessInterfaceError, match="supported execution type"
-    ) as inputs:
+    with pytest.raises(ProcessInterfaceError, match="not configured to run") as inputs:
         await app.set_inputs(scope("process.inputs"), reference(document))
     assert inputs.value.reason.code == "READINESS_UNSUPPORTED"
     assert files(tmp_path) == before
@@ -172,9 +170,7 @@ async def test_accepted_revision_reaches_current_compiler_and_input_readiness(
                 scope("process.read"), reference(document), gateway=gateway
             )
         assert error.value.reason.code == "READINESS_UNSUPPORTED"
-        assert "Revised visual review needs a supported execution type" in str(
-            error.value
-        )
+        assert "Create the handle geometry is not configured to run" in str(error.value)
     gateway.assert_not_called()
     assert files(tmp_path) == before
 

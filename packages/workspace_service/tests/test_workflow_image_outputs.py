@@ -296,7 +296,7 @@ def test_native_image_readiness_checks_and_pins_the_configured_connection(
                     port.update(
                         item=None,
                         quantity="one",
-                        description="",
+                        description="Image readiness fixture",
                         required=port.get("required", False),
                     )
                 line = prefix + ": " + json.dumps(ports)

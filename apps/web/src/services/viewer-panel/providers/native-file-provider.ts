@@ -12,8 +12,14 @@ const FORMATS: Record<string, { label: string; application: string }> = {
   fcstd1: { label: "FreeCAD backup", application: "FreeCAD" },
   blend: { label: "Blender document", application: "Blender" },
   blend1: { label: "Blender backup", application: "Blender" },
-  "3mf": { label: "3MF model or preparation package", application: "a compatible CAD application or slicer" },
-  glb: { label: "Binary glTF model", application: "a compatible 3D application" },
+  "3mf": {
+    label: "3MF model or preparation package",
+    application: "a compatible CAD application or slicer",
+  },
+  glb: {
+    label: "Binary glTF model",
+    application: "a compatible 3D application",
+  },
   zip: { label: "ZIP archive", application: "an archive application" },
 };
 
@@ -67,12 +73,15 @@ export class NativeFileProvider implements ViewerProvider<NativeFileDocument> {
     download.className = "recovery-button recovery-button--primary";
     download.setAttribute("data-testid", "native-file-download");
     const reports = window.document.createElement("p");
-    reports.textContent = "Open the workflow’s report or exported images for a readable view inside Wright.";
+    reports.textContent =
+      "Open the workflow’s report or exported images for a readable view inside Wright.";
     section.append(title, filename, guidance, download, reports);
     panel.container.replaceChildren(section);
   }
 
-  disposeDocument(document: NativeFileDocument) { document.dispose(); }
+  disposeDocument(document: NativeFileDocument) {
+    document.dispose();
+  }
   async save() {}
   async saveAs() {}
   async revert() {}

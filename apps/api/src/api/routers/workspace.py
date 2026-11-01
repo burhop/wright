@@ -68,7 +68,6 @@ from workspace_service.workflow_trace import (
     build_canonical_trace,
     build_trace_export,
     canonical_artifact_paths,
-    project_prompt_workflow_trace,
 )
 from api.schemas.workspace import (
     WorkspaceNodeResponse,
@@ -1079,7 +1078,9 @@ async def read_workflow_source_readiness_endpoint(
     response.headers["Cache-Control"] = "no-store"
     try:
         document = await service.workflow_sources.read(scope.workspace_dir, path)
-        from workspace_service.workflow_source_execution import source_execution_diagnostic
+        from workspace_service.workflow_source_execution import (
+            source_execution_diagnostic,
+        )
 
         diagnostic = await service.executor.run(
             "workspace.workflow_sources.execution_diagnostic",
@@ -1095,7 +1096,9 @@ async def read_workflow_source_readiness_endpoint(
             scope.workspace_dir, path
         )
         if origin is None:
-            return WorkflowSourceReadinessResponse(state="not_template", **source_status)
+            return WorkflowSourceReadinessResponse(
+                state="not_template", **source_status
+            )
         template_id = origin.get("template_id")
         template_version = origin.get("template_version")
         source_digest = origin.get("template_source_digest")

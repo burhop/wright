@@ -437,7 +437,9 @@ def test_uncertain_provider_effect_stops_desktop_decision_loop_without_replay(
         )
         with pytest.raises(WorkflowSourceExecutionError) as failed:
             await asyncio.wait_for(running, 10)
-        assert failed.value.code == "MCP_CALL_FAILED"
+        assert failed.value.code == (
+            "MCP_CALL_TIMEOUT" if error_code == "timeout" else "MCP_CALL_FAILED"
+        )
 
     asyncio.run(run())
     assert marker.read_text() == "One controlled digital effect happened"

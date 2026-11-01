@@ -20,21 +20,81 @@ const digest = "d".repeat(64);
 describe("structured workflow run errors", () => {
   beforeEach(() => mocks.fetch.mockReset());
   it.each([
-    { error_code: "workflow_template_setup_required", message: "Template blocked", details: { correction: "Qualify the integration" }, trace_id: "trace-test" },
-    { detail: { code: "WORKFLOW_TEMPLATE_SETUP_REQUIRED", message: "Template blocked", correction: "Qualify the integration" }, trace_id: "trace-test" },
-  ])("retains the cause, correction, and trace from either HTTP envelope", async (payload) => {
-    mocks.fetch.mockResolvedValue(response(payload, 409));
-    await expect(workspaceService.runWorkspaceWorkflowSource("session", "test.wflow", digest, vi.fn())).rejects.toMatchObject({
-      name: "WorkspaceWorkflowRunError", code: "workflow_template_setup_required", description: "Template blocked", correction: "Qualify the integration", traceId: "trace-test", phase: "request",
-    });
-  });
+    {
+      error_code: "workflow_template_setup_required",
+      message: "Template blocked",
+      details: { correction: "Qualify the integration" },
+      trace_id: "trace-test",
+    },
+    {
+      detail: {
+        code: "WORKFLOW_TEMPLATE_SETUP_REQUIRED",
+        message: "Template blocked",
+        correction: "Qualify the integration",
+      },
+      trace_id: "trace-test",
+    },
+  ])(
+    "retains the cause, correction, and trace from either HTTP envelope",
+    async (payload) => {
+      mocks.fetch.mockResolvedValue(response(payload, 409));
+      await expect(
+        workspaceService.runWorkspaceWorkflowSource(
+          "session",
+          "test.wflow",
+          digest,
+          vi.fn(),
+        ),
+      ).rejects.toMatchObject({
+        name: "WorkspaceWorkflowRunError",
+        code: "workflow_template_setup_required",
+        description: "Template blocked",
+        correction: "Qualify the integration",
+        traceId: "trace-test",
+        phase: "request",
+      });
+    },
+  );
   it("keeps streamed tool errors distinct from pre-run rejections", async () => {
-    mocks.fetch.mockResolvedValue(new Response(JSON.stringify({ kind: "failed", code: "MCP_CALL_FAILED", message: "Connection lost", correction: "Check the tool" }) + "\n", { headers: { "Content-Type": "application/x-ndjson" } }));
-    await expect(workspaceService.runWorkspaceWorkflowSource("session", "test.wflow", digest, vi.fn())).rejects.toMatchObject({ code: "mcp_call_failed", phase: "execution", description: "Connection lost", correction: "Check the tool" });
+    mocks.fetch.mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          kind: "failed",
+          code: "MCP_CALL_FAILED",
+          message: "Connection lost",
+          correction: "Check the tool",
+        }) + "\n",
+        { headers: { "Content-Type": "application/x-ndjson" } },
+      ),
+    );
+    await expect(
+      workspaceService.runWorkspaceWorkflowSource(
+        "session",
+        "test.wflow",
+        digest,
+        vi.fn(),
+      ),
+    ).rejects.toMatchObject({
+      code: "mcp_call_failed",
+      phase: "execution",
+      description: "Connection lost",
+      correction: "Check the tool",
+    });
   });
   it("does not invent a cause when the server returns a non-JSON error", async () => {
     mocks.fetch.mockResolvedValue(new Response("Bad gateway", { status: 502 }));
-    await expect(workspaceService.runWorkspaceWorkflowSource("session", "test.wflow", digest, vi.fn())).rejects.toMatchObject({ code: "", phase: "request", description: "The workflow could not run." });
+    await expect(
+      workspaceService.runWorkspaceWorkflowSource(
+        "session",
+        "test.wflow",
+        digest,
+        vi.fn(),
+      ),
+    ).rejects.toMatchObject({
+      code: "",
+      phase: "request",
+      description: "The workflow could not run.",
+    });
   });
 });
 
@@ -42,7 +102,10 @@ describe("BREP panel startup", () => {
   beforeEach(() => mocks.fetch.mockReset());
 
   it.each([
-    { message: "The visible-application BREP MCP is not installed.", error_code: "INTERNAL_ERROR" },
+    {
+      message: "The visible-application BREP MCP is not installed.",
+      error_code: "INTERNAL_ERROR",
+    },
     { detail: "The visible-application BREP MCP is not installed." },
   ])("preserves the actionable startup error: %j", async (body) => {
     mocks.fetch.mockResolvedValue(response(body, 503));
@@ -53,7 +116,9 @@ describe("BREP panel startup", () => {
 
   it("uses a stable fallback for non-JSON failures", async () => {
     mocks.fetch.mockResolvedValue(new Response("Unavailable", { status: 503 }));
-    await expect(workspaceService.openBrepPanel("session")).rejects.toThrow("BREP is unavailable");
+    await expect(workspaceService.openBrepPanel("session")).rejects.toThrow(
+      "BREP is unavailable",
+    );
   });
 });
 

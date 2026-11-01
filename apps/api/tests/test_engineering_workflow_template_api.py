@@ -19,7 +19,8 @@ class _Service:
         from apps.api.tests.process_interface_fixtures import bind_process_interfaces
 
         bind_process_interfaces(self, root, "workspace-1")
-        self.workflow_sources = WorkspaceWorkflowSourceUseCases(BoundedExecutor())
+        self.executor = BoundedExecutor()
+        self.workflow_sources = WorkspaceWorkflowSourceUseCases(self.executor)
         self.engineering_workflow_templates = EngineeringWorkflowTemplateService(
             self.workflow_sources
         )
@@ -92,7 +93,7 @@ def test_template_list_detail_readiness_and_instance_contract(sync_client, tmp_p
     assert listing.json()["catalog_version"] == "1.0.0"
     assert len(templates) == 11
     assert templates[-1]["template_id"] == "replacement-drawer-handle"
-    assert templates[-1]["version"] == "1.0.1"
+    assert templates[-1]["version"] == "1.0.3"
     assert templates[-1]["exploration"]["outcome_status"] == "recorded"
     assert detail.status_code == 200
     assert detail.json()["template"]["source"].startswith("# Built-in")
@@ -214,12 +215,12 @@ def test_recorded_handle_preview_is_versioned_and_does_not_grant_readiness(
     app.dependency_overrides[get_workspace_service] = lambda: service
     try:
         prefix = "/api/workspace/workflow-source-templates/replacement-drawer-handle"
-        current = sync_client.get(prefix, params={"version": "1.0.1"})
-        preview = sync_client.get(prefix + "/preview", params={"version": "1.0.1"})
+        current = sync_client.get(prefix, params={"version": "1.0.3"})
+        preview = sync_client.get(prefix + "/preview", params={"version": "1.0.3"})
         old = sync_client.get(prefix + "/preview", params={"version": "1.0.0"})
         readiness = sync_client.post(
             prefix + "/readiness",
-            json={"session_id": "session-1", "template_version": "1.0.1"},
+            json={"session_id": "session-1", "template_version": "1.0.3"},
         )
     finally:
         app.dependency_overrides.pop(get_workspace_service, None)
@@ -244,7 +245,7 @@ def test_recorded_handle_preview_is_versioned_and_does_not_grant_readiness(
 
 
 @pytest.mark.parametrize("revised", [False, True])
-def test_saved_handle_100_origin_remains_readable_with_101_catalog(
+def test_saved_handle_100_origin_remains_readable_with_103_catalog(
     sync_client, tmp_path, revised
 ):
     service = _Service(tmp_path)
@@ -257,7 +258,7 @@ def test_saved_handle_100_origin_remains_readable_with_101_catalog(
             prefix + "/instances",
             json={
                 "session_id": "session-1",
-                "template_version": "1.0.1",
+                "template_version": "1.0.3",
                 "expected_source_digest": detail["source_digest"],
                 "workflow_path": path,
                 "request_id": "old-handle-fixture-0001",

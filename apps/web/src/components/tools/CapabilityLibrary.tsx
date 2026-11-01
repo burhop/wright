@@ -180,9 +180,12 @@ export function CapabilityLibrary({
     setSelected(capability);
   };
 
-  useEffect(() => () => {
-    observationRequest.current += 1;
-  }, []);
+  useEffect(
+    () => () => {
+      observationRequest.current += 1;
+    },
+    [],
+  );
 
   const observeSelected = async () => {
     if (!selected) return;
@@ -507,20 +510,30 @@ export function CapabilityLibrary({
               capability={capability}
               onOpen={selectCapability}
               onInstall={onPlanOnboarding}
-              onConnectionChecked={(evidence) => setResult((current) => current ? {
-                ...current,
-                capabilities: current.capabilities.map((item) =>
-                  item.capability_id === capability.capability_id ? {
-                    ...item,
-                    local_validation: {
-                      evidence_id: evidence.evidence_id,
-                      state: evidence.state,
-                      observed_at: evidence.observed_at,
-                      reason_codes: evidence.reason_codes,
-                      limitation: evidence.read_only_probe?.limitation,
-                    },
-                  } : item),
-              } : current)}
+              onConnectionChecked={(evidence) =>
+                setResult((current) =>
+                  current
+                    ? {
+                        ...current,
+                        capabilities: current.capabilities.map((item) =>
+                          item.capability_id === capability.capability_id
+                            ? {
+                                ...item,
+                                local_validation: {
+                                  evidence_id: evidence.evidence_id,
+                                  state: evidence.state,
+                                  observed_at: evidence.observed_at,
+                                  reason_codes: evidence.reason_codes,
+                                  limitation:
+                                    evidence.read_only_probe?.limitation,
+                                },
+                              }
+                            : item,
+                        ),
+                      }
+                    : current,
+                )
+              }
             />
           ))}
         </div>

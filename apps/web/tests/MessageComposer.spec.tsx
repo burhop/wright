@@ -203,7 +203,9 @@ describe("MessageComposer", () => {
     fireEvent.click(indicator);
 
     expect(screen.getByTestId("mcp-status-popup")).toBeInTheDocument();
-    expect(screen.getByText("MCP Status: Needs attention")).toBeInTheDocument();
+    expect(
+      screen.getByText("Tool connection: Needs attention"),
+    ).toBeInTheDocument();
     expect(screen.getByText("Jarvis OnShape MCP")).toBeInTheDocument();
     expect(screen.getByText("inactive")).toBeInTheDocument();
     expect(screen.getByTestId("message-composer")).toHaveStyle({

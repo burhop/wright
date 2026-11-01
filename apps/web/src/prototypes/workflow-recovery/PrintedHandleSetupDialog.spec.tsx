@@ -301,7 +301,9 @@ it.each(["missing view", "failed opening"])(
     fireEvent.click(
       screen.getByText("Read provider setup guide (bundled copy)"),
     );
-    expect(screen.getByText(/# FreeCAD MCP usage guide/)).toBeVisible();
+    expect(
+      screen.getByRole("heading", { name: "FreeCAD MCP usage guide" }),
+    ).toBeVisible();
     expect(screen.getByTestId("handle-setup-profile-machine")).toHaveValue(
       "profiles/machine.json",
     );

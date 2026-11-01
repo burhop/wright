@@ -1,5 +1,5 @@
 import { logger } from "./logger";
-import { WorkspaceWorkflowRunError } from "./workflow-run-error";
+import { workflowRunErrorFromPayload } from "./workflow-run-error";
 export { WorkspaceWorkflowRunError } from "./workflow-run-error";
 import { hostAdapter } from "./host-adapter";
 import type { SelectOptions } from "./host-adapter/wright-desktop";
@@ -509,7 +509,6 @@ export class WorkspaceWorkflowSourceConflictError extends Error {
     this.currentStorageDigest = currentStorageDigest;
   }
 }
-
 
 function workflowRunFailurePrefix(code: string): string {
   const templateCodes = new Set([
@@ -1955,39 +1954,15 @@ export class WorkspaceService {
       },
     );
     if (!response.ok) {
-      let message = "The workflow could not run.";
-      let code = "workflow_run_failed";
-      let correction: string | null = null;
+      let payload: unknown;
       try {
-        const payload = (await response.json()) as {
-          error_code?: unknown;
-          message?: unknown;
-          details?: { code?: unknown; correction?: unknown };
-          detail?: { code?: unknown; message?: unknown; correction?: unknown };
-        };
-        // API middleware normalizes HTTPException bodies; also accept the
-        // original envelope for older hosts and test adapters.
-        const detail = payload.detail ?? {
-          code: payload.error_code ?? payload.details?.code,
-          message: payload.message,
-          correction: payload.details?.correction,
-        };
-        if (typeof detail?.code === "string") code = detail.code;
-        if (typeof detail?.message === "string") {
-          message = detail.message;
-          if (typeof detail.correction === "string") {
-            correction = detail.correction;
-            message += ` ${detail.correction}`;
-          }
-        }
+        payload = await response.json();
       } catch {
-        // Keep the safe fallback; backend error bodies may be non-JSON.
+        /* Keep the bounded fallback. */
       }
-      throw new WorkspaceWorkflowRunError(
-        code,
-        `${workflowRunFailurePrefix(code)} ${message}`,
-        correction,
-      );
+      const failure = workflowRunErrorFromPayload(payload, "request");
+      failure.message = `${workflowRunFailurePrefix(failure.code)} ${failure.message}`;
+      throw failure;
     }
     let run: WorkspaceWorkflowSourceRun | undefined;
     if (
@@ -2009,13 +1984,11 @@ export class WorkspaceService {
           event.kind === "waiting_human"
         )
           run = event.result;
-        else if (event.kind === "failed")
-          throw new WorkspaceWorkflowRunError(
-            typeof event.code === "string" ? event.code : "workflow_run_failed",
-            `${workflowRunFailurePrefix(typeof event.code === "string" ? event.code : "workflow_run_failed")} ${event.message}${typeof event.correction === "string" ? ` ${event.correction}` : ""}`,
-            typeof event.correction === "string" ? event.correction : null,
-          );
-        else onEvent(event as WorkspaceWorkflowRunEvent);
+        else if (event.kind === "failed") {
+          const failure = workflowRunErrorFromPayload(event, "execution");
+          failure.message = `${workflowRunFailurePrefix(failure.code)} ${failure.message}`;
+          throw failure;
+        } else onEvent(event as WorkspaceWorkflowRunEvent);
       };
       try {
         while (true) {
@@ -2096,7 +2069,10 @@ export class WorkspaceService {
     if (!response.ok) {
       let message = "BREP is unavailable";
       try {
-        const body = (await response.json()) as { detail?: unknown; message?: unknown };
+        const body = (await response.json()) as {
+          detail?: unknown;
+          message?: unknown;
+        };
         if (typeof body.detail === "string" && body.detail.trim()) {
           message = body.detail;
         } else if (typeof body.message === "string" && body.message.trim()) {

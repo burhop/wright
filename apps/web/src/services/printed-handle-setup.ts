@@ -109,16 +109,19 @@ async function request(operation: string, body: Record<string, unknown>) {
   if (!response.ok) {
     const detail = record(value) ? (value.details ?? value.detail) : null;
     // The shared API error envelope keeps its public message at the top level.
-    const message = record(value) && typeof value.message === "string"
-      ? value.message
-      : record(detail) && typeof detail.message === "string"
-        ? detail.message
-        : null;
+    const message =
+      record(value) && typeof value.message === "string"
+        ? value.message
+        : record(detail) && typeof detail.message === "string"
+          ? detail.message
+          : null;
     throw new Error(
       message
         ? [
             message,
-            record(detail) && typeof detail.correction === "string" ? detail.correction : "",
+            record(detail) && typeof detail.correction === "string"
+              ? detail.correction
+              : "",
           ]
             .filter(Boolean)
             .join(" ")

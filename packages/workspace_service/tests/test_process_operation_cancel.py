@@ -170,7 +170,7 @@ async def test_provider_cancel_is_durable_once_and_observed_outcome_is_separate(
             app.runs.wait(scope(), reference, receipt.run_id), 15
         )
         assert actual["status"] == (
-            "failed"
+            "reconciliation_required"
             if publication_fails
             else "reconciliation_required"
             if outcome == "working"

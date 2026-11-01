@@ -460,7 +460,9 @@ def build_api_gateway_service(
     proxy_brep_via_api: bool = False,
 ) -> GatewayService:
     from api.capability_gateway import capability_discovery_tools
-    from workspace_service.workflow_source_gateway import workflow_source_authoring_tools
+    from workspace_service.workflow_source_gateway import (
+        workflow_source_authoring_tools,
+    )
 
     @lru_cache(maxsize=1)
     def authoring_service():

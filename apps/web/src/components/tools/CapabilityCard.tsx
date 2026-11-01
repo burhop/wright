@@ -1,6 +1,11 @@
 import { McpDeviceSignIn } from "./McpDeviceSignIn";
 import { useState } from "react";
-import { CapabilityApiError, mcpService, type CapabilityView, type CapabilityValidationEvidence } from "../../services/mcp-service";
+import {
+  CapabilityApiError,
+  mcpService,
+  type CapabilityView,
+  type CapabilityValidationEvidence,
+} from "../../services/mcp-service";
 import { CompatibilityBadge, EvidenceBadge } from "./CapabilityBadges";
 import { capabilitySetupGuides } from "../../services/provider-setup-guides";
 import { capabilityFacts } from "./CapabilityFacts";
@@ -17,7 +22,8 @@ export function CapabilityCard({
   onConnectionChecked?: (evidence: CapabilityValidationEvidence) => void;
 }) {
   const [checking, setChecking] = useState(false);
-  const [connection, setConnection] = useState<CapabilityValidationEvidence | null>(null);
+  const [connection, setConnection] =
+    useState<CapabilityValidationEvidence | null>(null);
   const [connectionError, setConnectionError] = useState<string | null>(null);
   const checkConnection = async () => {
     if (checking) return;
@@ -31,9 +37,11 @@ export function CapabilityCard({
       setConnection(evidence);
       onConnectionChecked?.(evidence);
     } catch (error) {
-      setConnectionError(error instanceof CapabilityApiError
-        ? `${error.message}${error.recovery ? ` ${error.recovery}` : ""}`
-        : "The connection result could not be retrieved. Inspect the server's current status before retrying.");
+      setConnectionError(
+        error instanceof CapabilityApiError
+          ? `${error.message}${error.recovery ? ` ${error.recovery}` : ""}`
+          : "The connection result could not be retrieved. Inspect the server's current status before retrying.",
+      );
     } finally {
       setChecking(false);
     }
@@ -130,14 +138,18 @@ export function CapabilityCard({
           </span>
         ))}
       </div>
-      <McpDeviceSignIn serverId={capability.user_state.server_id || capability.capability_id} active={checking} />
+      <McpDeviceSignIn
+        serverId={capability.user_state.server_id || capability.capability_id}
+        active={checking}
+      />
       {(checking || connection || connectionError) && (
         <p role={connectionError ? "alert" : "status"} style={{ margin: 0 }}>
           {checking
             ? "Checking the connection. Complete sign-in in the browser if prompted."
-            : connectionError || (connection?.state === "passed"
-              ? `Connection checked: ${connection.tool_count ?? 0} tools discovered. Enable this server in your workspace to use it.`
-              : `Connection check: ${connection?.state.replaceAll("_", " ")}. ${connection?.missing_requirements.join(" ") || "Review the server details and setup guide before retrying."}`)}
+            : connectionError ||
+              (connection?.state === "passed"
+                ? `Connection checked: ${connection.tool_count ?? 0} tools discovered. Enable this server in your workspace to use it.`
+                : `Connection check: ${connection?.state.replaceAll("_", " ")}. ${connection?.missing_requirements.join(" ") || "Review the server details and setup guide before retrying."}`)}
         </p>
       )}
       <div
@@ -156,9 +168,13 @@ export function CapabilityCard({
         {capability.user_state.installed &&
           capability.protocol_family === "mcp" &&
           capability.available_actions.includes("manage_installation") && (
-            <button type="button" disabled={checking} onClick={checkConnection}
+            <button
+              type="button"
+              disabled={checking}
+              onClick={checkConnection}
               aria-label={`Check connection to ${capability.name}`}
-              style={{ color: "var(--color-secondary)", padding: "8px 12px" }}>
+              style={{ color: "var(--color-secondary)", padding: "8px 12px" }}
+            >
               {checking ? "Checking connection…" : "Check connection"}
             </button>
           )}

@@ -4110,7 +4110,10 @@ export function WorkspacePanel({
               }}
             >
               {/* Model Select */}
-              <AgentPlatformPicker value={defaultAgent} onChange={handlePlatformChange} />
+              <AgentPlatformPicker
+                value={defaultAgent}
+                onChange={handlePlatformChange}
+              />
               <label htmlFor="llm-model-select" style={{ fontSize: "0.65rem" }}>
                 Model
               </label>

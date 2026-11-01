@@ -94,7 +94,15 @@ export function McpTaskOptions({
           value={current}
           disabled={readOnly || loading}
           data-testid="workflow-recovery-task-server"
-          onChange={(e) => onApply(configureMcpTaskServer(block, e.target.value, names[e.target.value] ?? e.target.value))}
+          onChange={(e) =>
+            onApply(
+              configureMcpTaskServer(
+                block,
+                e.target.value,
+                names[e.target.value] ?? e.target.value,
+              ),
+            )
+          }
         >
           <option value="">Choose server later</option>
           {current && !servers.some((server) => server.id === current) && (
@@ -119,10 +127,23 @@ export function McpTaskOptions({
         </small>
       </label>
       {isUnboundToolTask(block) && block.configuration.candidate && (
-        <p className="recovery-field-help">Template candidate: {String(block.configuration.candidate)}. No server is bound.</p>
+        <p className="recovery-field-help">
+          Template candidate: {String(block.configuration.candidate)}. No server
+          is bound.
+        </p>
       )}
       {children}
       {error && <p role="alert">{error}</p>}
+      {current &&
+        !loading &&
+        !error &&
+        !servers.some((server) => server.id === current) && (
+          <p role="alert">
+            The selected server is unavailable in this workspace. Its saved
+            binding is retained; select an available server or restore the
+            connection before running.
+          </p>
+        )}
       <button
         type="button"
         className="recovery-button recovery-button--secondary"

@@ -189,8 +189,14 @@ def test_installed_customer_setup_proposes_then_cas_accepts_without_execution(tm
                     assert check in derived_profile["checks"]
             assert '"tool":"test_handoff"' not in proposal["source"]
             assert '"tool":"local_simulate_handoff"' in proposal["source"]
-            assert "write_text_document" not in proposal["source"]
-            assert "inspect_file" not in proposal["source"]
+            from workspace_service.workflow_source_execution import _parse
+
+            selected_tools = {
+                section["fields"].get("settings", {}).get("mcp_tool")
+                for section in _parse(proposal["source"])
+            }
+            assert "write_text_document" not in selected_tools
+            assert "inspect_file" not in selected_tools
             original_prompt = (
                 resources.PACKAGE
                 / "engineering_workflow_templates/inputs/replacement-drawer-handle/prompt.txt"

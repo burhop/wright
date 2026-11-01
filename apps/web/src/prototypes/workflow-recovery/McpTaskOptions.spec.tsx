@@ -45,14 +45,14 @@ it("exposes empty and failed discovery, retries, and selects a workspace server 
     />,
   );
   expect(await screen.findByRole("alert")).toHaveTextContent(
-    "Could not load servers",
+    "Could not load workspace MCP servers",
   );
-  expect(screen.getByRole("combobox", { name: /MCP server/ })).toBeDisabled();
-  fireEvent.click(screen.getByRole("button", { name: "Refresh MCP servers" }));
+  expect(screen.getByRole("combobox", { name: /MCP server/ })).toBeEnabled();
+  fireEvent.click(screen.getByRole("button", { name: "Refresh servers" }));
   expect(
-    await screen.findByText("No MCP servers are enabled for this workspace."),
+    await screen.findByText(/No MCP servers are available to this workspace/),
   ).toBeVisible();
-  fireEvent.click(screen.getByRole("button", { name: "Refresh MCP servers" }));
+  fireEvent.click(screen.getByRole("button", { name: "Refresh servers" }));
   await screen.findByRole("option", { name: "CAD server" });
   fireEvent.change(screen.getByRole("combobox", { name: /MCP server/ }), {
     target: { value: "cad" },
@@ -176,6 +176,12 @@ it("lists configured MCPs without internal services and records an explicit late
       blockId: block.id,
       key: "mcp_server_name",
       value: "CAD application",
+    },
+    {
+      kind: "set_block_configuration",
+      blockId: block.id,
+      key: "binding_state",
+      value: "configured",
     },
   ]);
 });

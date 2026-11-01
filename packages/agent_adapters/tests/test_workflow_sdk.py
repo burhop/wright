@@ -36,7 +36,13 @@ def sdk(monkeypatch):
     native["configuration_digest"] = hashlib.sha256(
         json.dumps(native, sort_keys=True).encode()
     ).hexdigest()
-    state = SimpleNamespace(native=native, calls=[], fail=False, replies=[], response_model="reported-provider-revision")
+    state = SimpleNamespace(
+        native=native,
+        calls=[],
+        fail=False,
+        replies=[],
+        response_model="reported-provider-revision",
+    )
 
     class Transport:
         async def probe(self):

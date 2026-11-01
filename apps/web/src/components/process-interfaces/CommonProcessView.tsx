@@ -75,17 +75,42 @@ const terminal = (state: InteractionSnapshot["state"]) =>
 // Presentation only. The scoped reader still decides whether exact bytes have
 // a supported preview; file types never imply engineering acceptance.
 function resultDisplayOrder(output: OutputRef): number {
-  return Math.min(3, ...(output.representations ?? []).map((reference) => {
-    const extension = reference.artifact_ref.split(".").at(-1)?.toLowerCase();
-    if (["md", "markdown", "pdf", "csv", "txt"].includes(extension ?? "")) return 0;
-    if (["png", "jpg", "jpeg", "webp", "gif", "svg"].includes(extension ?? "")) return 1;
-    if (["stl", "step", "stp", "iges", "igs", "fcstd", "3mf", "obj", "glb", "gltf"].includes(extension ?? "")) return 2;
-    return 3;
-  }));
+  return Math.min(
+    3,
+    ...(output.representations ?? []).map((reference) => {
+      const extension = reference.artifact_ref.split(".").at(-1)?.toLowerCase();
+      if (["md", "markdown", "pdf", "csv", "txt"].includes(extension ?? ""))
+        return 0;
+      if (
+        ["png", "jpg", "jpeg", "webp", "gif", "svg"].includes(extension ?? "")
+      )
+        return 1;
+      if (
+        [
+          "stl",
+          "step",
+          "stp",
+          "iges",
+          "igs",
+          "fcstd",
+          "3mf",
+          "obj",
+          "glb",
+          "gltf",
+        ].includes(extension ?? "")
+      )
+        return 2;
+      return 3;
+    }),
+  );
 }
 function primaryResult(output: OutputRef): boolean {
   // Never bury linked assessments or outputs lacking a file representation.
-  return resultDisplayOrder(output) < 3 || !!output.assessments?.length || !output.representations?.length;
+  return (
+    resultDisplayOrder(output) < 3 ||
+    !!output.assessments?.length ||
+    !output.representations?.length
+  );
 }
 const clientIdentities = new WeakMap<ProcessClient, number>();
 let nextClientIdentity = 0;
@@ -830,7 +855,11 @@ function CommonProcessController({
           : element.dataset.resultId === target.result_id),
     );
     // Exact evidence navigation must also reveal a result in a collapsed group.
-    for (let parent = destination?.parentElement; parent; parent = parent.parentElement) {
+    for (
+      let parent = destination?.parentElement;
+      parent;
+      parent = parent.parentElement
+    ) {
       if (parent instanceof HTMLDetailsElement) parent.open = true;
     }
     destination?.focus();
@@ -1200,7 +1229,9 @@ function CommonProcessController({
     .filter((output) => output.role !== "previous_attempt")
     .sort((a, b) => resultDisplayOrder(a) - resultDisplayOrder(b));
   const primaryOutputs = currentOutputs.filter(primaryResult);
-  const technicalOutputs = currentOutputs.filter((output) => !primaryResult(output));
+  const technicalOutputs = currentOutputs.filter(
+    (output) => !primaryResult(output),
+  );
 
   return (
     <ProcessUI theme={theme} className="common-process-view">
@@ -1256,12 +1287,22 @@ function CommonProcessController({
           </button>
         )}
         {onOpenDefinition &&
-          [reason, navigationReason].some((item) => item?.code === "SOURCE_CHANGED") && (
+          [reason, navigationReason].some(
+            (item) => item?.code === "SOURCE_CHANGED",
+          ) && (
             <div className="wp-row">
-              <button type="button" className="wp-button" onClick={onOpenDefinition}>
+              <button
+                type="button"
+                className="wp-button"
+                onClick={onOpenDefinition}
+              >
                 Open workflow editor
               </button>
-              <p>Reload the saved workflow there, then prepare its current version. Existing runs and reviews stay with their original version.</p>
+              <p>
+                Reload the saved workflow there, then prepare its current
+                version. Existing runs and reviews stay with their original
+                version.
+              </p>
             </div>
           )}
         {busy === "start" && (
@@ -1545,13 +1586,13 @@ function CommonProcessController({
               description="Inspect the exact output revisions and their linked assessments."
             >
               {primaryOutputs.map((output) => (
-                  <ResultCard
-                    key={output.result_id}
-                    output={output}
-                    onNavigate={navigate}
-                    onOpen={openRepresentation}
-                  />
-                ))}
+                <ResultCard
+                  key={output.result_id}
+                  output={output}
+                  onNavigate={navigate}
+                  onOpen={openRepresentation}
+                />
+              ))}
               {!!technicalOutputs.length && (
                 <details className="wp-technical-results">
                   <summary>Technical files ({technicalOutputs.length})</summary>
@@ -1566,7 +1607,10 @@ function CommonProcessController({
                 </details>
               )}
               {!primaryOutputs.length && !!technicalOutputs.length && (
-                <p className="wp-muted">Only technical files are available on this page. Open them above to inspect the saved data.</p>
+                <p className="wp-muted">
+                  Only technical files are available on this page. Open them
+                  above to inspect the saved data.
+                </p>
               )}
               {!currentOutputs.length && (
                 <p className="wp-muted">

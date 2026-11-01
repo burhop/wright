@@ -134,6 +134,9 @@ class _WorkflowSources:
 
 class _Service:
     def __init__(self):
+        from workspace_service.executor import BoundedExecutor
+
+        self.executor = BoundedExecutor()
         self.workflow_sources = _WorkflowSources()
         self.session_lookups = 0
 

@@ -45,7 +45,11 @@ def _mcp_digest(value: Any) -> str:
     # MCP schemas and probe values permit finite fractional JSON numbers.
     # Signed catalog metadata has a separate, intentionally stricter contract.
     encoded = json.dumps(
-        value, sort_keys=True, separators=(",", ":"), ensure_ascii=False, allow_nan=False
+        value,
+        sort_keys=True,
+        separators=(",", ":"),
+        ensure_ascii=False,
+        allow_nan=False,
     ).encode("utf-8")
     return hashlib.sha256(encoded).hexdigest()
 

@@ -68,6 +68,7 @@ vi.mock("../../services/workspace-service", async (importOriginal) => {
     ...actual,
     workspaceService: {
       getWorkspaceWorkflowSource: mocks.get,
+      getWorkspaceWorkflowRuns: vi.fn().mockResolvedValue([]),
       getWorkspaceWorkflowSourceReadiness: mocks.readiness,
       createWorkspaceWorkflowSource: mocks.create,
       updateWorkspaceWorkflowSource: mocks.update,
