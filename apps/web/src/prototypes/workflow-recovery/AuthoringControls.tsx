@@ -4,6 +4,8 @@ import {
   useWorkflowToolManagement,
 } from "./workflow-tool-discovery";
 import { useEffect, useRef, useState, type RefObject } from "react";
+import { McpTaskOptions } from "./McpTaskOptions";
+import { isUnboundToolTask } from "./mcp-task-binding";
 
 import {
   AUTHORING_GROUPS,
@@ -913,6 +915,7 @@ export function AuthoringSettings({
   workflow,
   readOnly,
   onApply,
+  sessionId,
   direct = false,
 }: {
   direct?: boolean;
@@ -920,6 +923,7 @@ export function AuthoringSettings({
   readonly workflow: RecoveryWorkflow;
   readonly readOnly: boolean;
   readonly onApply: (commands: RecoveryCommand[]) => boolean;
+  readonly sessionId?: string;
   readonly onListWorkspaceFiles?: () => Promise<AuthoringWorkspaceFile[]>;
 }) {
   const [title, setTitle] = useState(block.title);
@@ -944,8 +948,9 @@ export function AuthoringSettings({
     !isInput && (block.executionKind === "ai_capable" || isReview);
   const promptRef = useRef<HTMLTextAreaElement>(null);
   useEffect(() => {
-    (isPromptFirst ? promptRef.current : titleRef.current)?.focus();
-  }, [block.id, isPromptFirst]);
+    if (!direct)
+      (isPromptFirst ? promptRef.current : titleRef.current)?.focus();
+  }, [block.id, isPromptFirst, direct]);
   const inputMode =
     configuration.input_mode === "workspace-file" ? "workspace-file" : "text";
   const isWorkspaceFileInput = isInput && inputMode === "workspace-file";
@@ -1072,6 +1077,15 @@ export function AuthoringSettings({
   ) : null;
   return (
     <section className="recovery-authoring-settings">
+      {isUnboundToolTask(block) && (
+        <McpTaskOptions
+          block={block}
+          workflow={workflow}
+          sessionId={sessionId}
+          readOnly={readOnly}
+          onApply={onApply}
+        />
+      )}
       {direct
         ? instructionsField
         : isPromptFirst
@@ -1255,7 +1269,7 @@ export function AuthoringSettings({
           Editing is unavailable while a run, save, or suggestion review is in
           progress.
         </p>
-      ) : (
+      ) : !direct ? (
         <div className="recovery-inspector__actions">
           {!direct && (
             <button
@@ -1268,7 +1282,7 @@ export function AuthoringSettings({
             </button>
           )}
         </div>
-      )}
+      ) : null}
     </section>
   );
 }

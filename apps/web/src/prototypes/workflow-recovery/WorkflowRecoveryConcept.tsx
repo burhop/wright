@@ -5,6 +5,11 @@ import { WorkflowInstructionsEditor } from "./WorkflowInstructionsEditor";
 import { StepInstructionsEditor } from "./StepInstructionsEditor";
 import { RunInstructionsEvidence } from "./RunInstructionsEvidence";
 import { disconnectedProcessDiagnostic } from "./run-readiness";
+import { workflowRunIssue } from "./workflow-run-issue";
+import {
+  unconfiguredMcpDiagnostics,
+} from "./run-readiness";
+import { mcpTaskLabel } from "./mcp-task-binding";
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 
@@ -904,6 +909,7 @@ function NativeRunPanel({
   pending,
   result,
   error,
+  failure,
   prompt,
   taskTitle,
   executionKind,
@@ -935,6 +941,7 @@ function NativeRunPanel({
   readonly pending: boolean;
   readonly result: WorkflowRecoveryRunResult | null;
   readonly error: string;
+  readonly failure?: WorkspaceWorkflowRunError | null;
   readonly prompt: string;
   readonly taskTitle: string;
   readonly executionKind?: "ai" | "mcp" | "mcp_task";
@@ -962,6 +969,8 @@ function NativeRunPanel({
   readonly onOpenRunWorkingView?: (runId: string, sourceDigest: string) => void;
   readonly currentSourceDigest?: string;
 }) {
+  const issue = workflowRunIssue(failure ?? null);
+  const [copyStatus, setCopyStatus] = useState("");
   const reviewPresentation = reviewRunPresentation(
     reviews.reviews,
     result,
@@ -1050,7 +1059,7 @@ function NativeRunPanel({
                   : result
                     ? "Workflow completed"
                     : error
-                      ? error.startsWith("Workflow cancelled.")
+                      ? issue ? issue.title : error.startsWith("Workflow cancelled.")
                         ? "Workflow cancelled"
                         : error.startsWith("Run blocked")
                           ? "Run blocked"
@@ -1070,10 +1079,83 @@ function NativeRunPanel({
                     ? result.results?.length
                       ? `${result.results.length} engineering result(s) ready.`
                       : `${result.outputs?.length ?? 1} output file(s) ready in this workspace.`
-                    : error ||
-                      "No run has started. Review the setup checks before starting this workflow."}
+                    : issue?.cause ||
+                      error ||
+                      "Run the saved workflow to create its responses and output files."}
         </span>
       </div>
+      {issue && (
+        <section
+          className="recovery-run-issue"
+          data-testid="workflow-run-issue"
+          aria-label="Run blocker and next steps"
+        >
+          {issue.notStarted && (
+            <p>
+              <strong>
+                No workflow steps ran. No prompt was sent to an AI model and no
+                engineering tool was called.
+              </strong>
+            </p>
+          )}
+          <dl>
+            <div>
+              <dt>Blocked by</dt>
+              <dd>{issue.owner}</dd>
+            </div>
+            <div>
+              <dt>Your inputs</dt>
+              <dd>{issue.inputs}</dd>
+            </div>
+            {issue.tools && (
+              <div>
+                <dt>MCP setup</dt>
+                <dd>{issue.tools}</dd>
+              </div>
+            )}
+            <div>
+              <dt>Next step</dt>
+              <dd>{issue.nextStep}</dd>
+            </div>
+          </dl>
+          <div className="recovery-run-issue__actions">
+            <button
+              type="button"
+              className="recovery-button recovery-button--secondary"
+              onClick={async () => {
+                try {
+                  if (!navigator.clipboard?.writeText)
+                    throw new Error("Clipboard unavailable");
+                  await navigator.clipboard.writeText(
+                    [
+                      issue.title,
+                      `Workflow: ${workflowPath}`,
+                      `Blocked by: ${issue.owner}`,
+                      `Code: ${failure?.code || "unknown"}`,
+                      failure?.message,
+                      failure?.traceId ? `Trace: ${failure.traceId}` : "",
+                      `Next step: ${issue.nextStep}`,
+                    ]
+                      .filter(Boolean)
+                      .join("\n"),
+                  );
+                  setCopyStatus("Diagnostic copied.");
+                } catch {
+                  setCopyStatus(
+                    "Clipboard unavailable. The diagnostic is in Technical log and telemetry below.",
+                  );
+                }
+              }}
+            >
+              Copy diagnostic
+            </button>
+            <a href="/tool-registry" target="_blank" rel="noopener noreferrer">
+              Check available MCP servers
+            </a>
+            {copyStatus && <span role="status">{copyStatus}</span>}
+          </div>
+        </section>
+      )}
       {!statusPresentation &&
         !pending &&
         !reviewPresentation &&
@@ -1320,7 +1402,7 @@ function NativeRunPanel({
           onOpenFile={onOpenFile}
         />
       )}
-      {startedAt && dispatchConfirmed && !observed && (
+      {startedAt && dispatchConfirmed && !observed && !issue?.notStarted && (
         <details
           className="recovery-native-run__input"
           data-testid="workflow-recovery-native-run-input"
@@ -1363,10 +1445,17 @@ function NativeRunPanel({
           ) : (
             <>
               <h2>
-                {executionKind === "mcp" ? "Tool inputs for" : "Prompt sent to"}{" "}
+                {executionKind === "mcp"
+                  ? "Tool inputs for"
+                  : "Saved prompt for"}{" "}
                 {taskTitle}
               </h2>
-              <p>{prompt || "Preparing the saved inputs…"}</p>
+              <p>
+                {prompt ||
+                  (pending
+                    ? "Preparing the saved inputs…"
+                    : "No prompt was recorded for an active step.")}
+              </p>
             </>
           )}
         </details>
@@ -1389,6 +1478,23 @@ function NativeRunPanel({
               ? " · Open the saved log for full evidence."
               : ""}
           </p>
+        )}
+        {failure && (
+          <div
+            className="recovery-native-run__metadata"
+            data-testid="workflow-run-error-diagnostic"
+          >
+            <span>
+              Error code: <code>{failure.code || "unknown"}</code>
+            </span>
+            <span>{failure.description}</span>
+            {failure.correction && <span>{failure.correction}</span>}
+            {failure.traceId && (
+              <span>
+                Trace: <code>{failure.traceId}</code>
+              </span>
+            )}
+          </div>
         )}
         {(result?.runLogPath || runLogPath) && onOpenFile && (
           <button
@@ -2675,6 +2781,8 @@ function WorkflowRecoveryReadyConcept({
     useState<WorkflowApprovalCheckpoint | null>(null);
   const [workflowRunError, setWorkflowRunError] = useState("");
   const [workflowRunErrorCode, setWorkflowRunErrorCode] = useState("");
+  const [workflowRunFailure, setWorkflowRunFailure] =
+    useState<WorkspaceWorkflowRunError | null>(null);
   const runAbort = useRef<AbortController | null>(null);
   const runStartInFlight = useRef(false);
   useEffect(() => () => runAbort.current?.abort(), []);
@@ -2800,6 +2908,8 @@ function WorkflowRecoveryReadyConcept({
     : presentedReconciliation
       ? ""
       : workflowRunError;
+  const presentedFailure = observed ? null : workflowRunFailure;
+  const presentedIssue = workflowRunIssue(presentedFailure);
   const presentedStartedAt = observed?.started_at ?? nativeRunStartedAt;
   const presentedCompletedAt = observed
     ? (observed.execution_ended_at ?? observed.completed_at ?? "")
@@ -3720,6 +3830,7 @@ function WorkflowRecoveryReadyConcept({
   const currentMatchesPersistedSubject =
     persistedSubject !== null &&
     contentIdentity(persistedSubject.workflow) === contentIdentity(workflow);
+  const mcpSetupIssues = onRun ? unconfiguredMcpDiagnostics(workflow) : [];
   const canRun =
     sourceValid &&
     !sourceDirty &&
@@ -3763,6 +3874,11 @@ function WorkflowRecoveryReadyConcept({
     );
   };
   const startRun = async () => {
+    if (mcpSetupIssues.length) {
+      setDiagnostics(mcpSetupIssues);
+      selectObject(mcpSetupIssues[0]!.semanticId!);
+      return;
+    }
     const connectivityIssue = disconnectedProcessDiagnostic(workflow);
     if (connectivityIssue) {
       setDiagnostics([connectivityIssue]);
@@ -3849,6 +3965,7 @@ function WorkflowRecoveryReadyConcept({
         setNativeRunEvents([]);
         setWorkflowRunError("Save the valid workflow file before running it.");
         runStartInFlight.current = false;
+        setWorkflowRunFailure(null);
         setRunDetailsOpen(true);
         return;
       }
@@ -3856,6 +3973,7 @@ function WorkflowRecoveryReadyConcept({
       setWorkflowRunError("");
       setWorkflowRunErrorCode("");
       setNativeValidationProgress(null);
+      setWorkflowRunFailure(null);
       // Source `prompt` maps to canonical block.instructions. Capture the saved
       // subject now so later edits cannot rewrite the input shown for this run.
       const savedBlock = subject.workflow.blocks.find(
@@ -4031,6 +4149,8 @@ function WorkflowRecoveryReadyConcept({
           },
         ]);
       } catch (error) {
+        const failure = !runAbort.current?.signal.aborted && error instanceof WorkspaceWorkflowRunError ? error : null;
+        setWorkflowRunFailure(failure);
         const outcomeUnconfirmed =
           error instanceof WorkspaceWorkflowRunError &&
           error.code === "APPLICATION_OUTCOME_UNKNOWN";
@@ -4058,7 +4178,7 @@ function WorkflowRecoveryReadyConcept({
               : runAbort.current?.signal.aborted
                 ? "Run cancelled"
                 : executionConfirmed
-                  ? "Run failed"
+                  ? (workflowRunIssue(failure)?.title ?? "Run failed")
                   : "Run blocked",
             detail: message,
           },
@@ -4545,7 +4665,10 @@ function WorkflowRecoveryReadyConcept({
                 setDiagnostics([
                   ...parsed.diagnostics,
                   ...(parsed.ok && parsed.workflow
-                    ? [disconnectedProcessDiagnostic(parsed.workflow)].filter(
+                    ? [
+                        disconnectedProcessDiagnostic(parsed.workflow),
+                        ...unconfiguredMcpDiagnostics(parsed.workflow),
+                      ].filter(
                         (issue): issue is RecoveryDiagnostic => issue !== null,
                       )
                     : []),
@@ -4867,6 +4990,12 @@ function WorkflowRecoveryReadyConcept({
                   saveState === "saving",
                 run: canvasRun,
                 blockIcons,
+                blockTools: Object.fromEntries(
+                  candidateWorkflow.blocks.flatMap((block) => {
+                    const label = mcpTaskLabel(block);
+                    return label ? [[block.id, label]] : [];
+                  }),
+                ),
                 focusPath,
                 runSubject:
                   runStage > 0 && runSubject !== null
@@ -5268,6 +5397,7 @@ function WorkflowRecoveryReadyConcept({
                     ) : (
                       <AuthoringSettings
                         direct
+                        sessionId={workspaceSessionId}
                         key={selectedBlock.id}
                         block={selectedBlock}
                         workflow={inspectionWorkflow}
@@ -5522,7 +5652,9 @@ function WorkflowRecoveryReadyConcept({
                                   ? "External action was not dispatched"
                                   : `Completed · ${presentedRun.outputPath ? fileName(presentedRun.outputPath) : "results available"}`
                         : presentedError
-                          ? presentedError.startsWith("Workflow cancelled.")
+                          ? presentedIssue
+                            ? presentedIssue.title
+                            : presentedError.startsWith("Workflow cancelled.")
                             ? "Run cancelled"
                             : presentedError.startsWith("Run blocked")
                               ? "Run blocked"
@@ -5559,6 +5691,7 @@ function WorkflowRecoveryReadyConcept({
                 pending={presentedPending}
                 result={presentedRun}
                 error={presentedError}
+                failure={presentedFailure}
                 prompt={nativeRunInput?.prompt ?? ""}
                 executionKind={
                   observed?.execution?.last_progress?.execution_kind ??

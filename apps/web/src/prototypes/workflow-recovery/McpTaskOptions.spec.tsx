@@ -1,5 +1,6 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, expect, it, vi } from "vitest";
+import * as discovery from "./mcp-settings";
 import { McpTaskOptions } from "./McpTaskOptions";
 import { createAuthoringObject } from "./authoring-objects";
 import {
@@ -12,6 +13,87 @@ import {
   formatRecoveryAuthoringSource,
   parseRecoveryAuthoringSource,
 } from "./recovery-authoring";
+
+afterEach(() => vi.restoreAllMocks());
+
+it("exposes empty and failed discovery, retries, and selects a workspace server with its name", async () => {
+  const { workflow, block } = fixture();
+  const apply = vi.fn(() => true);
+  const load = vi
+    .spyOn(discovery, "listWorkflowMcpTools")
+    .mockRejectedValueOnce(new Error("offline"))
+    .mockResolvedValueOnce([])
+    .mockResolvedValueOnce([
+      {
+        name: "cad__create",
+        server_id: "cad",
+        server_name: "CAD server",
+        tool_name: "create",
+        title: "Create",
+        description: "",
+        input_schema: {},
+        schema_digest: "schema",
+      },
+    ]);
+  render(
+    <McpTaskOptions
+      block={block}
+      workflow={workflow}
+      sessionId="session"
+      readOnly={false}
+      onApply={apply}
+    />,
+  );
+  expect(await screen.findByRole("alert")).toHaveTextContent(
+    "Could not load servers",
+  );
+  expect(screen.getByRole("combobox", { name: /MCP server/ })).toBeDisabled();
+  fireEvent.click(screen.getByRole("button", { name: "Refresh MCP servers" }));
+  expect(
+    await screen.findByText("No MCP servers are enabled for this workspace."),
+  ).toBeVisible();
+  fireEvent.click(screen.getByRole("button", { name: "Refresh MCP servers" }));
+  await screen.findByRole("option", { name: "CAD server" });
+  fireEvent.change(screen.getByRole("combobox", { name: /MCP server/ }), {
+    target: { value: "cad" },
+  });
+  expect(apply).toHaveBeenCalledWith(
+    expect.arrayContaining([
+      expect.objectContaining({ key: "mcp_server", value: "cad" }),
+      expect.objectContaining({ key: "mcp_server_name", value: "CAD server" }),
+    ]),
+  );
+  expect(load).toHaveBeenCalledTimes(3);
+});
+
+it("keeps an unavailable binding visible without substituting or clearing it", async () => {
+  const { workflow, block } = fixture();
+  Object.assign(block.configuration, {
+    mcp_server: "missing",
+    mcp_server_name: "Disconnected CAD",
+  });
+  vi.spyOn(discovery, "listWorkflowMcpTools").mockResolvedValue([]);
+  const apply = vi.fn(() => true);
+  render(
+    <McpTaskOptions
+      block={block}
+      workflow={workflow}
+      sessionId="session"
+      readOnly
+      onApply={apply}
+    />,
+  );
+  await waitFor(() =>
+    expect(screen.getByRole("alert")).toHaveTextContent(
+      "selected server is unavailable",
+    ),
+  );
+  expect(screen.getByRole("combobox", { name: /MCP server/ })).toHaveValue(
+    "missing",
+  );
+  expect(screen.getByRole("combobox", { name: /MCP server/ })).toBeDisabled();
+  expect(apply).not.toHaveBeenCalled();
+});
 
 function fixture() {
   const add = createAuthoringObject("mcp-task", initialWorkflow, initialLayout);

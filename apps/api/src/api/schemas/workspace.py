@@ -582,6 +582,7 @@ class RivetRunResultResponse(BaseModel):
 class RivetRunStepResponse(BaseModel):
     step_id: str
     sequence: int
+    attempt: int = 1
     node_id: str | None = None
     node_type: str | None = None
     label: str
@@ -634,6 +635,8 @@ class RivetRunInspectionResponse(BaseModel):
     events: List[Dict[str, Any]] = Field(default_factory=list)
     run_inputs: List[RivetRunResultResponse] = Field(default_factory=list)
     inputs_state: str = "not-retained"
+    graph: Dict[str, Any] | None = None
+    evidence_records: List[Dict[str, Any]] = Field(default_factory=list)
     steps: List[RivetRunStepResponse] = Field(default_factory=list)
     final_outputs: List[RivetRunResultResponse] = Field(default_factory=list)
     diagnostic: RivetRunDiagnosticResponse | None = None

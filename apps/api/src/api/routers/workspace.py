@@ -63,6 +63,13 @@ from workspace_service import (
     WorkspaceServiceError,
     default_workspace_parent_dir,
 )
+from workspace_service.workflow_trace import (
+    TraceExportResource,
+    build_canonical_trace,
+    build_trace_export,
+    canonical_artifact_paths,
+    project_prompt_workflow_trace,
+)
 from api.schemas.workspace import (
     WorkspaceNodeResponse,
     WorkspaceTreeResponse,
@@ -190,6 +197,10 @@ from api.schemas.workspace import (
     WorkflowEditorBootstrapResponse,
     WorkflowEditorReadRequest,
     WorkflowEditorSaveRequest,
+)
+from api.schemas.workflow_trace import (
+    WorkflowTraceEvidenceIngestRequest,
+    WorkflowTraceEvidencePageResponse,
 )
 from workspace_service.workflows import (
     WorkflowPersistenceError,
@@ -1589,6 +1600,241 @@ async def workflow_recent_runs(
         ) from error
 
 
+async def _canonical_trace_record(session_id: str, run_path: str, service):
+    scope = _workflow_source_scope(session_id, service)
+    if (
+        not run_path.startswith("runs/")
+        or not run_path.endswith(".json")
+        or ".." in run_path.split("/")
+    ):
+        raise HTTPException(status_code=404, detail="Workflow run was not found")
+    try:
+        raw = await service.files.read_reference(scope.workspace_dir, run_path)
+        if len(raw) > 16 * 1024 * 1024:
+            raise ValueError("workflow run exceeds review limit")
+        record = json.loads(raw)
+        if not isinstance(record, dict):
+            raise ValueError("workflow run record is invalid")
+        return (
+            scope,
+            record,
+            build_canonical_trace(
+                record,
+                workspace_id=scope.workspace_id,
+                session_id=session_id,
+                path=run_path,
+            ),
+        )
+    except (OSError, ValueError, TypeError, json.JSONDecodeError) as error:
+        raise HTTPException(
+            status_code=404, detail="Workflow run was not found"
+        ) from error
+
+
+@router.get("/workflow-sources/run-trace", response_model=RivetRunInspectionResponse)
+@traced("workspace.workflow_sources.run_trace")
+async def workflow_source_run_trace_endpoint(
+    session_id: str,
+    run_path: str,
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    """Project one workspace-owned run log into the shared Trace contract."""
+
+    _scope, _record, inspection = await _canonical_trace_record(
+        session_id, run_path, service
+    )
+    return inspection
+
+
+@router.get("/workflow-sources/run-trace/artifact")
+@traced("workspace.workflow_sources.run_trace.artifact")
+async def workflow_source_run_trace_artifact_endpoint(
+    session_id: str,
+    run_path: str,
+    artifact_id: str,
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    """Return one verified raster preview from a workspace-owned saved run."""
+
+    scope, _record, inspection = await _canonical_trace_record(
+        session_id, run_path, service
+    )
+    artifact = next(
+        (
+            item
+            for item in canonical_artifact_paths(inspection)
+            if item.get("artifact_id") == artifact_id
+        ),
+        None,
+    )
+    if artifact is None:
+        raise HTTPException(status_code=404, detail="Trace artifact was not found")
+    media_type = str(artifact.get("media_type") or "")
+    if media_type not in {"image/png", "image/jpeg", "image/gif", "image/webp"}:
+        raise HTTPException(
+            status_code=415, detail="Trace artifact is not a raster preview"
+        )
+    location = str(artifact.get("workspace_path") or "")
+    try:
+        data = await service.files.read_reference(scope.workspace_dir, location)
+    except (OSError, ValueError) as error:
+        raise HTTPException(
+            status_code=404, detail="Trace artifact was not found"
+        ) from error
+    expected_size = artifact.get("bytes")
+    expected_digest = artifact.get("sha256")
+    if (
+        isinstance(expected_size, int)
+        and expected_size >= 0
+        and len(data) != expected_size
+    ) or (
+        isinstance(expected_digest, str)
+        and len(expected_digest) == 64
+        and hashlib.sha256(data).hexdigest() != expected_digest
+    ):
+        raise HTTPException(
+            status_code=409,
+            detail="Trace artifact no longer matches its saved identity",
+        )
+    label = (
+        str(artifact.get("label") or "preview")
+        .replace('"', "")
+        .replace("\r", "")
+        .replace("\n", "")
+    )
+    return Response(
+        content=data,
+        media_type=media_type,
+        headers={
+            "Cache-Control": "no-store",
+            "Content-Disposition": f'inline; filename="{label}"',
+            "X-Content-Type-Options": "nosniff",
+        },
+    )
+
+
+@router.get("/workflow-sources/run-trace/export")
+@traced("workspace.workflow_sources.run_trace.export")
+async def workflow_source_run_trace_export_endpoint(
+    session_id: str,
+    run_path: str,
+    mode: str = Query(default="report_only", pattern=r"^(report_only|full_data)$"),
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    scope, _record, inspection = await _canonical_trace_record(
+        session_id, run_path, service
+    )
+    resources = []
+    for artifact in canonical_artifact_paths(inspection):
+        data = None
+        media_type = str(artifact.get("media_type") or "application/octet-stream")
+        report_asset = media_type in {
+            "image/png",
+            "image/jpeg",
+            "image/gif",
+            "image/webp",
+        } or (
+            media_type == "image/svg+xml"
+            and isinstance(artifact.get("bytes"), int)
+            and artifact["bytes"] <= 2 * 1024 * 1024
+        )
+        availability = "omitted_from_export" if mode == "report_only" else "retained"
+        location = str(artifact.get("workspace_path") or "")
+        engineering_record = (
+            media_type == "application/json"
+            and isinstance(artifact.get("bytes"), int)
+            and artifact["bytes"] <= 2 * 1024 * 1024
+        )
+        input_text = (
+            artifact.get("role")
+            in {"input", "run_input", "input_reconstruction", "source_document"}
+            and media_type in {"text/plain", "text/markdown"}
+            and isinstance(artifact.get("bytes"), int)
+            and artifact["bytes"] <= 64 * 1024
+        )
+        package_metadata = (
+            media_type == "model/3mf"
+            and isinstance(artifact.get("bytes"), int)
+            and artifact["bytes"] <= 8 * 1024 * 1024
+        )
+        viewer_source = (
+            media_type == "model/stl"
+            and isinstance(artifact.get("bytes"), int)
+            and artifact["bytes"] <= 8 * 1024 * 1024
+        )
+        if location and (
+            mode == "full_data"
+            or report_asset
+            or engineering_record
+            or input_text
+            or package_metadata
+            or viewer_source
+        ):
+            try:
+                data = await service.files.read_reference(scope.workspace_dir, location)
+            except (OSError, ValueError):
+                availability = "missing"
+        digest = artifact.get("sha256")
+        resources.append(
+            TraceExportResource(
+                subject_id=str(artifact["artifact_id"]),
+                name=str(artifact.get("label") or artifact["artifact_id"]),
+                media_type=media_type,
+                data=data,
+                digest=(
+                    str(digest)
+                    if isinstance(digest, str) and len(digest) == 64
+                    else None
+                ),
+                availability=availability,
+                role="input"
+                if artifact.get("role") in {"input", "run_input"}
+                else str(artifact["role"])
+                if artifact.get("role") in {"input_reconstruction", "source_document"}
+                else "output",
+                report_asset=report_asset,
+            )
+        )
+    run_id = inspection["run"]["run_id"]
+    encoded = build_trace_export(
+        inspection=inspection,
+        evidence={
+            "run_id": run_id,
+            "source": "canonical-run-record",
+            "input_provenance": _record.get("trace_input_pack"),
+            "authorization": {
+                key: _record[key]
+                for key in (
+                    "approval_actor",
+                    "approval_evidence",
+                    "execution_kind",
+                    "external_effects",
+                )
+                if key in _record
+            },
+            "approval_events": [
+                event
+                for event in _record.get("step_events", [])
+                if event.get("kind") == "approval_decided"
+            ],
+        },
+        mode=mode,
+        resources=resources,
+        source_record=_record,
+    )
+    return Response(
+        content=encoded,
+        media_type="application/zip",
+        headers={
+            "Cache-Control": "no-store",
+            "Content-Disposition": (
+                f'attachment; filename="wright-workflow-review-{run_id}-{mode}.zip"'
+            ),
+            "X-Content-Type-Options": "nosniff",
+        },
+    )
+
+
 @router.get("/workflow-sources/reviews")
 async def workflow_artifact_reviews(
     session_id: str,
@@ -2914,6 +3160,17 @@ async def workflow_run_inspection_endpoint(
             run_id=run_id,
             after_sequence=after_sequence,
         )
+        trace_projection = getattr(service, "workflow_traces", None)
+        if trace_projection is not None:
+            try:
+                evidence_page = trace_projection.evidence_page(
+                    workspace_id=workspace["workspace_id"],
+                    run_id=run_id,
+                    limit=100,
+                )
+                inspection["evidence_records"] = evidence_page["records"]
+            except KeyError:
+                inspection["evidence_records"] = []
     except (WorkflowOperationsError, WorkflowRunnerError) as error:
         raise HTTPException(
             status_code=404, detail="Workflow run was not found"
@@ -3469,6 +3726,181 @@ async def workflow_run_evidence_export_endpoint(
             "X-Content-Type-Options": "nosniff",
         },
     )
+
+
+@router.get("/workflows/runs/{run_id}/trace/export")
+@traced("workspace.workflows.trace.export")
+async def workflow_run_trace_export_endpoint(
+    run_id: str,
+    session_id: str = Query(...),
+    mode: str = Query(default="report_only", pattern=r"^(report_only|full_data)$"),
+    engine: BaseAgentEngine = Depends(get_agent_engine),
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    """Build one pinned, non-mutating offline review package."""
+
+    _runner_feature_enabled()
+    _operations_feature_enabled()
+    workspace = service.lifecycle.get_by_session(session_id)
+    if not workspace:
+        raise HTTPException(status_code=404, detail="Workspace not found")
+    try:
+        inspection = service.workflow_operations.inspection(
+            workspace_id=workspace["workspace_id"],
+            session_id=session_id,
+            run_id=run_id,
+        )
+        evidence = service.workflow_operations.run_evidence(
+            workspace_id=workspace["workspace_id"],
+            session_id=session_id,
+            run_id=run_id,
+        )
+    except (WorkflowOperationsError, WorkflowRunnerError) as error:
+        raise HTTPException(
+            status_code=404, detail="Workflow run was not found"
+        ) from error
+    resources: list[TraceExportResource] = []
+    artifact_store = getattr(service, "workspace_document_artifacts", None)
+    workspace_dir = None
+    if artifact_store is not None:
+        workspace_dir = await service.resolve_workspace_dir(session_id, engine)
+    for item in evidence.get("artifacts") or ():
+        if not isinstance(item, dict) or not item.get("artifact_id"):
+            continue
+        artifact_id = str(item["artifact_id"])
+        payload = None
+        name = str(item.get("label") or artifact_id)
+        media_type = str(item.get("media_type") or "application/octet-stream")
+        report_asset = media_type in {
+            "image/png",
+            "image/jpeg",
+            "image/gif",
+            "image/webp",
+        } or (
+            media_type == "image/svg+xml"
+            and isinstance(item.get("bytes"), int)
+            and item["bytes"] <= 2 * 1024 * 1024
+        )
+        viewer_source = (
+            media_type == "model/stl"
+            and isinstance(item.get("bytes"), int)
+            and item["bytes"] <= 8 * 1024 * 1024
+        )
+        digest = str(item.get("sha256")) if item.get("sha256") else None
+        availability = "omitted_from_export" if mode == "report_only" else "retained"
+        if (
+            (
+                mode == "full_data"
+                or report_asset
+                or viewer_source
+                or (
+                    media_type == "application/json"
+                    and isinstance(item.get("bytes"), int)
+                    and item["bytes"] <= 2 * 1024 * 1024
+                )
+            )
+            and artifact_store is not None
+            and workspace_dir
+        ):
+            try:
+                record, payload = artifact_store.read_for_run(
+                    workspace_id=workspace["workspace_id"],
+                    session_id=session_id,
+                    workspace_path=workspace_dir,
+                    run_id=run_id,
+                    artifact_id=artifact_id,
+                )
+                name = record.relative_path.rsplit("/", maxsplit=1)[-1]
+                media_type = record.media_type
+                digest = record.sha256
+            except (WorkspaceDocumentArtifactError, FileNotFoundError, ValueError):
+                availability = "missing"
+        resources.append(
+            TraceExportResource(
+                subject_id=artifact_id,
+                name=name,
+                media_type=media_type,
+                data=payload,
+                digest=digest,
+                availability=availability,
+                report_asset=report_asset,
+            )
+        )
+    encoded = build_trace_export(
+        inspection=inspection,
+        evidence=evidence,
+        mode=mode,
+        resources=resources,
+    )
+    return Response(
+        content=encoded,
+        media_type="application/zip",
+        headers={
+            "Cache-Control": "no-store",
+            "Content-Disposition": (
+                f'attachment; filename="wright-workflow-review-{run_id}-{mode}.zip"'
+            ),
+            "X-Content-Type-Options": "nosniff",
+        },
+    )
+
+
+@router.post(
+    "/workflows/runs/{run_id}/trace/evidence",
+    response_model=dict,
+    status_code=status.HTTP_201_CREATED,
+)
+@traced("workspace.workflows.trace.evidence.ingest")
+async def workflow_run_trace_evidence_ingest_endpoint(
+    run_id: str,
+    body: WorkflowTraceEvidenceIngestRequest,
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    workspace = service.lifecycle.get_by_session(body.session_id)
+    if not workspace:
+        raise HTTPException(status_code=404, detail="Workspace not found")
+    try:
+        return service.workflow_traces.ingest_evidence(
+            workspace_id=workspace["workspace_id"],
+            run_id=run_id,
+            envelope=body.evidence,
+        )
+    except KeyError as error:
+        raise HTTPException(
+            status_code=404, detail="Workflow run was not found"
+        ) from error
+    except ValueError as error:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT, detail=str(error)
+        ) from error
+
+
+@router.get(
+    "/workflows/runs/{run_id}/trace/evidence",
+    response_model=WorkflowTraceEvidencePageResponse,
+)
+@traced("workspace.workflows.trace.evidence.list")
+async def workflow_run_trace_evidence_list_endpoint(
+    run_id: str,
+    session_id: str = Query(...),
+    after_id: str = Query(default="", max_length=240),
+    limit: int = Query(default=100, ge=1, le=200),
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    workspace = service.lifecycle.get_by_session(session_id)
+    if not workspace:
+        raise HTTPException(status_code=404, detail="Workspace not found")
+    try:
+        return service.workflow_traces.evidence_page(
+            workspace_id=workspace["workspace_id"],
+            run_id=run_id,
+            after_id=after_id,
+            limit=limit,
+        )
+    except KeyError as error:
+        raise HTTPException(
+            status_code=404, detail="Workflow run was not found"
+        ) from error
 
 
 @router.get("/workflows/{slug}/graph", response_model=WorkflowGraphResponse)

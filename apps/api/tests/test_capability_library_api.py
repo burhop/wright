@@ -141,6 +141,74 @@ def test_catalog_browsing_never_probes_the_computer(capability_client, monkeypat
         )
 
 
+@pytest.mark.parametrize(
+    ("system", "architecture", "platform_key"),
+    [
+        ("Linux", "x86_64", "linux_x64"),
+        ("Linux", "aarch64", "linux_arm64"),
+        ("Windows", "AMD64", "windows_11_x64"),
+        ("Darwin", "x86_64", "macos_x64"),
+        ("Darwin", "arm64", "macos_arm64"),
+        ("Unknown", "cpu", "unknown_cpu"),
+    ],
+)
+def test_current_platform_filters_on_api_host_without_probes(
+    capability_client, monkeypatch, system, architecture, platform_key
+):
+    client, database_path = capability_client
+    monkeypatch.setattr("tool_registry.compatibility.platform.system", lambda: system)
+    monkeypatch.setattr(
+        "tool_registry.compatibility.platform.machine", lambda: architecture
+    )
+
+    def forbid_probe(*args, **kwargs):
+        raise AssertionError("Platform filtering must not launch machine probes")
+
+    monkeypatch.setattr("api.services.mcp_services.observe_machine", forbid_probe)
+    all_records = client.get(
+        "/api/mcp/capabilities", params={"curation": "all", "limit": 200}
+    ).json()
+    expected = [
+        item
+        for item in all_records["capabilities"]
+        if item["requirements"]["supported_platforms"]
+        .get(platform_key, {})
+        .get("status")
+        in {"yes", "likely", "host-dependent"}
+    ]
+    response = client.get(
+        "/api/mcp/capabilities",
+        params={"platform": "current", "curation": "all", "limit": 200},
+    )
+    assert response.status_code == 200
+    body = response.json()
+    assert body["current_platform"] == platform_key
+    assert body["capabilities"] == expected
+    assert body["total"] == len(expected)
+    assert sum(body["curation_counts"].values()) == len(expected)
+    explicit = client.get(
+        "/api/mcp/capabilities",
+        params={"platform": platform_key, "curation": "all", "limit": 200},
+    ).json()
+    assert explicit["capabilities"] == expected
+    curated = client.get(
+        "/api/mcp/capabilities",
+        params={"platform": "current", "curation": "curated", "limit": 1},
+    ).json()
+    assert curated["total"] == body["curation_counts"]["curated"]
+    assert curated["curation_counts"] == body["curation_counts"]
+    assert all(item["compatibility"]["observation_id"] is None for item in expected)
+    if system == "Unknown":
+        assert body["total"] == 0
+    with sqlite3.connect(database_path) as connection:
+        assert (
+            connection.execute(
+                "SELECT COUNT(*) FROM machine_compatibility_observations"
+            ).fetchone()[0]
+            == 0
+        )
+
+
 def test_repeated_catalog_reads_do_not_rebuild_bundled_snapshot(
     capability_client, monkeypatch
 ):

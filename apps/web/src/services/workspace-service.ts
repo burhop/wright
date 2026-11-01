@@ -1,4 +1,6 @@
 import { logger } from "./logger";
+import { WorkspaceWorkflowRunError } from "./workflow-run-error";
+export { WorkspaceWorkflowRunError } from "./workflow-run-error";
 import { hostAdapter } from "./host-adapter";
 import type { SelectOptions } from "./host-adapter/wright-desktop";
 import type { RecoveryLayout } from "../prototypes/workflow-recovery/model";
@@ -508,17 +510,6 @@ export class WorkspaceWorkflowSourceConflictError extends Error {
   }
 }
 
-export class WorkspaceWorkflowRunError extends Error {
-  readonly code: string;
-  readonly correction: string | null;
-
-  constructor(code: string, message: string, correction?: string | null) {
-    super(message);
-    this.name = "WorkspaceWorkflowRunError";
-    this.code = code;
-    this.correction = correction ?? null;
-  }
-}
 
 function workflowRunFailurePrefix(code: string): string {
   const templateCodes = new Set([
@@ -743,6 +734,7 @@ export interface RivetRunResultItem {
 export interface RivetRunStep {
   step_id: string;
   sequence: number;
+  attempt?: number;
   node_id: string | null;
   node_type: string | null;
   label: string;
@@ -784,6 +776,53 @@ export interface RivetRunInspection {
   }>;
   run_inputs: RivetRunResultItem[];
   inputs_state: string;
+  graph?: {
+    graph_id: string;
+    name: string;
+    nodes: Array<{
+      node_id: string;
+      node_type: string;
+      label: string | null;
+      order: number;
+      x: number;
+      y: number;
+      width: number;
+      prompt: string | null;
+      configuration: Record<string, unknown>;
+    }>;
+    connections: Array<{
+      connection_id: string;
+      source_node_id: string;
+      target_node_id: string;
+      source_port: string;
+      target_port: string;
+      label: string;
+      traversals?: Array<{
+        traversal_id: string;
+        sequence: number;
+        source_step_id: string;
+        target_step_id: string;
+        source_attempt: number;
+        target_attempt: number;
+      }>;
+    }>;
+  } | null;
+  evidence_records?: Array<{
+    evidence_id: string;
+    producer: string;
+    producer_version: string;
+    kind: string;
+    statement: string;
+    recorded_outcome: string | null;
+    subjects: Array<{
+      subject_kind: string;
+      subject_id: string;
+      revision: string | null;
+      digest: string | null;
+    }>;
+    supporting_refs: string[];
+    supersedes_id: string | null;
+  }>;
   steps: RivetRunStep[];
   final_outputs: RivetRunResultItem[];
   diagnostic: {
@@ -1747,6 +1786,81 @@ export class WorkspaceService {
     return payload.runs;
   }
 
+  async getWorkspaceWorkflowRunTrace(
+    sessionId: string,
+    runPath: string,
+  ): Promise<RivetRunInspection> {
+    const query = new URLSearchParams({
+      session_id: sessionId,
+      run_path: runPath,
+    });
+    const response = await hostAdapter.fetch(
+      `${API_BASE}/api/workspace/workflow-sources/run-trace?${query}`,
+      { cache: "no-store" },
+    );
+    if (!response.ok)
+      throw new Error("This saved run review could not be loaded.");
+    const inspection = (await response.json()) as RivetRunInspection;
+    const previewable = new Set([
+      "image/png",
+      "image/jpeg",
+      "image/gif",
+      "image/webp",
+    ]);
+    const attachPreview = (result: RivetRunResultItem) => {
+      const artifact = result.artifact;
+      const mediaType = artifact?.media_type;
+      const artifactId = artifact?.artifact_id;
+      if (
+        artifact &&
+        typeof mediaType === "string" &&
+        previewable.has(mediaType) &&
+        typeof artifactId === "string"
+      ) {
+        const previewQuery = new URLSearchParams({
+          session_id: sessionId,
+          run_path: runPath,
+          artifact_id: artifactId,
+        });
+        artifact.preview_url = `${API_BASE}/api/workspace/workflow-sources/run-trace/artifact?${previewQuery}`;
+      }
+    };
+    inspection.final_outputs.forEach(attachPreview);
+    inspection.run_inputs.forEach(attachPreview);
+    inspection.steps.forEach((step) => {
+      step.inputs.forEach(attachPreview);
+      step.outputs.forEach(attachPreview);
+    });
+    return inspection;
+  }
+
+  async exportWorkspaceWorkflowRunTrace(
+    sessionId: string,
+    runPath: string,
+    mode: "report_only" | "full_data",
+  ): Promise<void> {
+    const query = new URLSearchParams({
+      session_id: sessionId,
+      run_path: runPath,
+      mode,
+    });
+    const response = await hostAdapter.fetch(
+      `${API_BASE}/api/workspace/workflow-sources/run-trace/export?${query}`,
+      { cache: "no-store" },
+    );
+    if (!response.ok) throw new Error("Workflow review export is unavailable");
+    const blob = await response.blob();
+    const url = URL.createObjectURL(blob);
+    try {
+      const anchor = document.createElement("a");
+      anchor.href = url;
+      anchor.download = `wright-workflow-review-${mode}.zip`;
+      anchor.click();
+    } finally {
+      URL.revokeObjectURL(url);
+    }
+  }
+
   async getWorkspaceWorkflowReviews(
     sessionId: string,
     path: string,
@@ -1982,9 +2096,11 @@ export class WorkspaceService {
     if (!response.ok) {
       let message = "BREP is unavailable";
       try {
-        const body = (await response.json()) as { detail?: unknown };
+        const body = (await response.json()) as { detail?: unknown; message?: unknown };
         if (typeof body.detail === "string" && body.detail.trim()) {
           message = body.detail;
+        } else if (typeof body.message === "string" && body.message.trim()) {
+          message = body.message;
         }
       } catch {
         // Preserve the stable fallback when an intermediary returned no JSON.
@@ -2359,6 +2475,27 @@ export class WorkspaceService {
       const anchor = document.createElement("a");
       anchor.href = url;
       anchor.download = `wright-rivet-run-${runId}-evidence.json`;
+      anchor.click();
+    } finally {
+      URL.revokeObjectURL(url);
+    }
+  }
+
+  async exportRivetRunTrace(
+    sessionId: string,
+    runId: string,
+    mode: "report_only" | "full_data",
+  ): Promise<void> {
+    const response = await hostAdapter.fetch(
+      `${API_BASE}/api/workspace/workflows/runs/${encodeURIComponent(runId)}/trace/export?session_id=${encodeURIComponent(sessionId)}&mode=${mode}`,
+    );
+    if (!response.ok) throw new Error("Workflow review export is unavailable");
+    const blob = await response.blob();
+    const url = URL.createObjectURL(blob);
+    try {
+      const anchor = document.createElement("a");
+      anchor.href = url;
+      anchor.download = `wright-workflow-review-${runId}-${mode}.zip`;
       anchor.click();
     } finally {
       URL.revokeObjectURL(url);

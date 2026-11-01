@@ -25,6 +25,19 @@ from .workflow_runs import (
     WorkflowRunEvent as WorkflowRunEvent,
     WorkflowRunState as WorkflowRunState,
 )
+from .workflow_trace import (
+    TraceArtifactVersion as TraceArtifactVersion,
+    TraceCaptureEvent as TraceCaptureEvent,
+    TraceEvidenceLink as TraceEvidenceLink,
+    TraceEvidenceRecord as TraceEvidenceRecord,
+    TraceEvidenceSubject as TraceEvidenceSubject,
+    TraceOccurrence as TraceOccurrence,
+    TraceReportRevision as TraceReportRevision,
+    TraceRepresentation as TraceRepresentation,
+    TraceRunRecord as TraceRunRecord,
+    TraceTraversal as TraceTraversal,
+    trace_anchor as trace_anchor,
+)
 from .canonical_workflow_runs import (
     CanonicalWorkflowRun as CanonicalWorkflowRun,
     RecoveryWorkflowRunEnvelope as RecoveryWorkflowRunEnvelope,

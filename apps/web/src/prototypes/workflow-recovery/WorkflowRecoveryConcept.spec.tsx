@@ -21,6 +21,7 @@ import { formatRecoveryAuthoringSource } from "./recovery-authoring";
 import { blankWorkflowSource } from "../../services/blank-workflow";
 import type { WorkflowRunOptions } from "./WorkflowRecoveryConcept";
 import type { WorkspaceEngineeringResult } from "../../services/workspace-service";
+import { WorkspaceWorkflowRunError } from "../../services/workflow-run-error";
 import {
   workspaceService,
   type WorkflowApprovalCheckpoint,
@@ -400,6 +401,30 @@ it("explains a mismatched saved revision while preserving the open editor", asyn
     "different saved workflow revision",
   );
   expect(screen.getByTestId("workflow-recovery-concept")).toBeInTheDocument();
+});
+
+it("explains a template gate without claiming a run failed or a prompt was sent", async () => {
+  const onRun = vi.fn().mockRejectedValue(new WorkspaceWorkflowRunError(
+    "This engineering template needs setup or qualification before a live run.",
+    "workflow_template_setup_required", "Bracket geometry and CalculiX D034 integration require clean-environment qualification.", "request", "trace-blocked",
+  ));
+  render(<Editor workflowSource={reportWorkflowSource} definitionRevision={2} storageDigest={"b".repeat(64)} onRun={onRun} />);
+  await userEvent.click(screen.getByTestId("workflow-recovery-run-start"));
+  const issue = await screen.findByTestId("workflow-run-issue");
+  expect(issue).toHaveTextContent("No workflow steps ran");
+  expect(issue).toHaveTextContent("Wright template/integration maintainers");
+  expect(issue).toHaveTextContent("Not assessed");
+  expect(screen.getByTestId("workflow-recovery-run-details-toggle")).toHaveTextContent("Run not started");
+  expect(screen.getByTestId("workflow-recovery-native-run-mode")).not.toHaveTextContent("Workflow failed");
+  expect(screen.queryByTestId("workflow-recovery-native-run-input")).not.toBeInTheDocument();
+  await userEvent.click(screen.getByText("Technical log and telemetry"));
+  expect(screen.getByTestId("workflow-run-error-diagnostic")).toHaveTextContent("trace-blocked");
+  expect(screen.getByTestId("workflow-run-error-diagnostic")).toHaveTextContent("CalculiX");
+  const writeText = vi.fn().mockResolvedValue(undefined);
+  Object.defineProperty(navigator, "clipboard", { configurable: true, value: { writeText } });
+  await userEvent.click(screen.getByRole("button", { name: "Copy diagnostic" }));
+  await waitFor(() => expect(writeText).toHaveBeenCalledWith(expect.stringContaining("trace-blocked")));
+  expect(writeText.mock.calls[0]?.[0]).not.toContain(reportPrompt);
 });
 
 it("rehydrates a pending review into the normal run drawer without running or pulsing", async () => {
@@ -1166,7 +1191,7 @@ describe("WorkflowRecoveryConcept component states", () => {
     ).toHaveTextContent("Workflow running");
     expect(
       screen.getByTestId("workflow-recovery-native-run-input"),
-    ).toHaveTextContent("Prompt sent to");
+    ).toHaveTextContent("Saved prompt for");
     expect(
       screen.getByTestId("workflow-recovery-native-run-log"),
     ).toHaveTextContent("Run requested");

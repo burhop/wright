@@ -161,6 +161,7 @@ const capability: CapabilityView = {
 };
 
 const result: CapabilityListResponse = {
+  current_platform: "linux_arm64",
   snapshot: {
     snapshot_id: "bundled-fixture",
     channel: "bundled",
@@ -247,6 +248,108 @@ describe("CapabilityLibrary", () => {
     expect(dialog).toHaveTextContent("Bracket workspace");
     expect(dialog).toHaveTextContent(
       "does not approve individual tool calls or destructive actions",
+    );
+  });
+
+  it("defaults to the Wright host platform without requiring a setup check", async () => {
+    render(<CapabilityLibrary />);
+    await screen.findByText(capability.name);
+    expect(mcpService.getCapabilities).toHaveBeenCalledWith(
+      expect.objectContaining({ platform: ["current"] }),
+    );
+    expect(
+      screen.getByLabelText("Current platform and architecture"),
+    ).toHaveValue("current");
+    expect(
+      screen.getByRole("option", { name: "Linux ARM64 (current)" }),
+    ).toBeInTheDocument();
+    expect(mcpService.observeCapability).not.toHaveBeenCalled();
+  });
+
+  it("keeps the all-platform opt-out across reloads", async () => {
+    const view = render(<CapabilityLibrary />);
+    await screen.findByText(capability.name);
+    fireEvent.change(
+      screen.getByLabelText("Current platform and architecture"),
+      {
+        target: { value: "all" },
+      },
+    );
+    await waitFor(() =>
+      expect(mcpService.getCapabilities).toHaveBeenLastCalledWith(
+        expect.objectContaining({ platform: undefined }),
+      ),
+    );
+    expect(window.location.search).toContain("platform=all");
+    view.unmount();
+    render(<CapabilityLibrary />);
+    await screen.findByText(capability.name);
+    expect(
+      screen.getByLabelText("Current platform and architecture"),
+    ).toHaveValue("all");
+    expect(mcpService.getCapabilities).toHaveBeenLastCalledWith(
+      expect.objectContaining({ platform: undefined }),
+    );
+    fireEvent.change(
+      screen.getByLabelText("Current platform and architecture"),
+      {
+        target: { value: "current" },
+      },
+    );
+    await waitFor(() =>
+      expect(mcpService.getCapabilities).toHaveBeenLastCalledWith(
+        expect.objectContaining({ platform: ["current"] }),
+      ),
+    );
+  });
+
+  it("keeps installations on other platforms discoverable through the explicit installed view", async () => {
+    vi.mocked(mcpService.getCapabilities).mockResolvedValue({
+      ...result,
+      curation_counts: { curated: 1, follow_up: 0, removed: 0 },
+    });
+    render(<CapabilityLibrary />);
+    await screen.findByText(capability.name);
+    fireEvent.click(
+      screen.getByRole("button", { name: "Show installed integrations" }),
+    );
+    await waitFor(() =>
+      expect(mcpService.getCapabilities).toHaveBeenLastCalledWith(
+        expect.objectContaining({
+          platform: undefined,
+          installed: true,
+          curation: ["all"],
+        }),
+      ),
+    );
+    expect(window.location.search).toContain("platform=all");
+  });
+
+  it("excludes retired records from every discovery list, including old URLs", async () => {
+    window.history.replaceState(null, "", "/tool-registry?curation=removed");
+    vi.mocked(mcpService.getCapabilities).mockResolvedValue({
+      ...result,
+      curation_counts: { curated: 1, follow_up: 2, removed: 46 },
+    });
+    render(<CapabilityLibrary />);
+    await screen.findByText(capability.name);
+    expect(screen.getByLabelText("Catalog list")).toHaveValue("curated");
+    expect(
+      screen.queryByRole("option", { name: "Removed from discovery" }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.getByTestId("capability-curation-summary"),
+    ).not.toHaveTextContent("46");
+    fireEvent.change(screen.getByLabelText("Catalog list"), {
+      target: { value: "all" },
+    });
+    await waitFor(() =>
+      expect(mcpService.getCapabilities).toHaveBeenLastCalledWith(
+        expect.objectContaining({
+          curation: ["curated", "follow_up"],
+          platform: ["current"],
+        }),
+      ),
     );
   });
 

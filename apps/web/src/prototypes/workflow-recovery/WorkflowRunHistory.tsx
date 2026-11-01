@@ -1,10 +1,74 @@
 import { useEffect, useState } from "react";
 import {
   workspaceService,
+  type RivetRunInspection,
   type WorkspaceWorkflowRunSummary,
 } from "../../services/workspace-service";
-import { EngineeringResults } from "./EngineeringResults";
 import { approvalPresentation } from "./engineering-run-presentation";
+import { WorkflowTracePage } from "../../components/workflow-trace/WorkflowTracePage";
+
+function CanonicalWorkflowTrace({
+  sessionId,
+  runPath,
+  onOpenFile,
+}: {
+  sessionId: string;
+  runPath: string;
+  onOpenFile?: (path: string) => void;
+}) {
+  const [inspection, setInspection] = useState<RivetRunInspection | null>(null);
+  const [error, setError] = useState("");
+  useEffect(() => {
+    let current = true;
+    setError("");
+    workspaceService
+      .getWorkspaceWorkflowRunTrace(sessionId, runPath)
+      .then((value) => {
+        if (current) setInspection(value);
+      })
+      .catch((reason) => {
+        if (current)
+          setError(
+            reason instanceof Error
+              ? reason.message
+              : "This saved run review could not be loaded.",
+          );
+      });
+    return () => {
+      current = false;
+    };
+  }, [runPath, sessionId]);
+  return (
+    <WorkflowTracePage
+      inspection={inspection}
+      recentRuns={inspection ? [inspection.run] : []}
+      currentRevision={inspection?.run.revision ?? null}
+      elapsedMs={inspection?.run.duration_ms || 0}
+      error={error || null}
+      onSelectRun={() => undefined}
+      onExportTrace={(mode) =>
+        void workspaceService.exportWorkspaceWorkflowRunTrace(
+          sessionId,
+          runPath,
+          mode,
+        )
+      }
+      onOpenArtifact={(artifact) => {
+        const path = artifact.workspace_path;
+        if (onOpenFile && typeof path === "string") onOpenFile(path);
+      }}
+    />
+  );
+}
+
+function traceAnchor(value: string) {
+  let hash = 2166136261;
+  for (let index = 0; index < value.length; index += 1) {
+    hash ^= value.charCodeAt(index);
+    hash = Math.imul(hash, 16777619);
+  }
+  return `workflow-trace-${(hash >>> 0).toString(16)}`;
+}
 
 export function WorkflowRunHistory({
   sessionId,
@@ -21,9 +85,12 @@ export function WorkflowRunHistory({
   currentSourceDigest?: string;
   onOpenRunWorkingView?: (runId: string, sourceDigest: string) => void;
 }) {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(() =>
+    window.location.hash.startsWith("#workflow-trace-"),
+  );
   const [retry, setRetry] = useState(0);
   const [runs, setRuns] = useState<WorkspaceWorkflowRunSummary[]>([]);
+  const [expandedRuns, setExpandedRuns] = useState<Set<string>>(new Set());
   const [error, setError] = useState("");
   const [pending, setPending] = useState(false);
   useEffect(() => {
@@ -35,7 +102,21 @@ export function WorkflowRunHistory({
     workspaceService
       .getWorkspaceWorkflowRuns(sessionId, path)
       .then((value) => {
-        if (current) setRuns(value);
+        if (current) {
+          setRuns(value);
+          setExpandedRuns(
+            new Set(
+              value
+                .filter(
+                  (run) =>
+                    run.status === "interrupted" ||
+                    run.status === "unknown" ||
+                    window.location.hash === `#${traceAnchor(run.path)}`,
+                )
+                .map((run) => run.path),
+            ),
+          );
+        }
       })
       .catch((error) => {
         if (current)
@@ -75,7 +156,7 @@ export function WorkflowRunHistory({
       data-testid="workflow-run-history"
       onToggle={(event) => setOpen(event.currentTarget.open)}
     >
-      <summary>Previous runs</summary>
+      <summary>Trace: previous runs</summary>
       {open && (
         <>
           <button
@@ -94,11 +175,17 @@ export function WorkflowRunHistory({
           {runs.map((run) => (
             <details
               key={run.path}
-              open={
-                run.status === "interrupted" ||
-                run.status === "unknown" ||
-                run.status === "reconciliation_required"
-              }
+              id={traceAnchor(run.path)}
+              open={expandedRuns.has(run.path)}
+              onToggle={(event) => {
+                const expanded = event.currentTarget.open;
+                setExpandedRuns((current) => {
+                  const next = new Set(current);
+                  if (expanded) next.add(run.path);
+                  else next.delete(run.path);
+                  return next;
+                });
+              }}
             >
               <summary>
                 {(run.status === "awaiting_approval" ||
@@ -119,15 +206,19 @@ export function WorkflowRunHistory({
                 </p>
               )}
               {run.error && <p>{run.error}</p>}
+              <a href={`#${traceAnchor(run.path)}`}>
+                Link to this Trace review
+              </a>
               {run.last_event?.task_title && (
                 <p>
                   Last recorded step: {run.last_event.task_title}
                   {run.last_event.message ? ` · ${run.last_event.message}` : ""}
                 </p>
               )}
-              {run.results.length > 0 && (
-                <EngineeringResults
-                  results={run.results}
+              {expandedRuns.has(run.path) && (
+                <CanonicalWorkflowTrace
+                  sessionId={sessionId}
+                  runPath={run.path}
                   onOpenFile={onOpenFile}
                 />
               )}
@@ -154,6 +245,23 @@ export function WorkflowRunHistory({
                   Open saved run log
                 </button>
               )}
+              <details>
+                <summary>Recorded execution details</summary>
+                <p>
+                  This historical record shows only data captured by its
+                  execution. Missing graph, prompt, or iteration detail is not
+                  reconstructed from the current workflow.
+                </p>
+                {onOpenFile && (
+                  <button
+                    type="button"
+                    className="recovery-button recovery-button--secondary"
+                    onClick={() => onOpenFile(run.path)}
+                  >
+                    Inspect complete saved record
+                  </button>
+                )}
+              </details>
             </details>
           ))}
         </>

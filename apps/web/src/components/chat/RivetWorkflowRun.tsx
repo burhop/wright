@@ -191,6 +191,13 @@ export function RivetWorkflowRun({
         onExportEvidence={() => {
           void workspaceService.exportRivetRunEvidence(sessionId, run.run_id);
         }}
+        onExportTrace={(mode) => {
+          void workspaceService.exportRivetRunTrace(
+            sessionId,
+            run.run_id,
+            mode,
+          );
+        }}
       />
       {manifest && (
         <details data-testid="rivet-run-evidence">

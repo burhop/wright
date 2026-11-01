@@ -6,8 +6,16 @@ import type {
 } from "../../services/mcp-service";
 import { capabilityFacts } from "./CapabilityFacts";
 
+const PLATFORM_LABELS: Record<string, string> = {
+  windows_11_x64: "Windows 11 x64",
+  linux_x64: "Linux x64",
+  linux_arm64: "Linux ARM64",
+  macos_x64: "macOS x64",
+  macos_arm64: "macOS ARM64",
+};
+
 export interface CapabilityFilterState {
-  curation: "curated" | "follow_up" | "removed" | "all";
+  curation: "curated" | "follow_up" | "all";
   engineeringStage: string;
   protocol: string;
   search: string;
@@ -67,7 +75,7 @@ export const emptyCapabilityFilters: CapabilityFilterState = {
   search: "",
   domain: "",
   lifecycleStage: "",
-  platform: "",
+  platform: "current",
   maturity: "",
   evidenceClass: "",
   compatibility: "",
@@ -85,10 +93,9 @@ export function readCapabilityFilters(
 ): CapabilityFilterState {
   const parameters = new URLSearchParams(search);
   const requestedCuration = parameters.get("curation");
+  const requestedPlatform = parameters.get("platform");
   return {
-    curation: ["curated", "follow_up", "removed", "all"].includes(
-      requestedCuration || "",
-    )
+    curation: ["curated", "follow_up", "all"].includes(requestedCuration || "")
       ? (requestedCuration as CapabilityFilterState["curation"])
       : "curated",
     engineeringStage: parameters.get("engineering_stage") || "",
@@ -96,7 +103,11 @@ export function readCapabilityFilters(
     search: parameters.get("search") || "",
     domain: parameters.get("domain") || "",
     lifecycleStage: parameters.get("lifecycle_stage") || "",
-    platform: parameters.get("platform") || "",
+    platform: ["current", "all", ...Object.keys(PLATFORM_LABELS)].includes(
+      requestedPlatform || "",
+    )
+      ? requestedPlatform!
+      : "current",
     maturity: parameters.get("maturity") || "",
     evidenceClass: (parameters.get("evidence_class") || "") as
       EvidenceClass | "",
@@ -157,9 +168,11 @@ export function matchesCapabilityOwnershipFilters(
 export function CapabilityFilters({
   value,
   onChange,
+  currentPlatform,
 }: {
   value: CapabilityFilterState;
   onChange: (value: CapabilityFilterState) => void;
+  currentPlatform?: string | null;
 }) {
   const update = (next: Partial<CapabilityFilterState>) => {
     const merged = { ...value, ...next };
@@ -200,8 +213,7 @@ export function CapabilityFilters({
         >
           <option value="curated">Curated</option>
           <option value="follow_up">Follow up</option>
-          <option value="removed">Removed from discovery</option>
-          <option value="all">All records</option>
+          <option value="all">All current entries</option>
         </select>
       </label>
       <label>
@@ -299,12 +311,17 @@ export function CapabilityFilters({
           onChange={(event) => update({ platform: event.target.value })}
           style={{ ...controlStyle, width: "100%" }}
         >
-          <option value="">Current platform: any result</option>
-          <option value="windows_11_x64">Windows 11 x64</option>
-          <option value="linux_x64">Linux x64</option>
-          <option value="linux_arm64">Linux ARM64</option>
-          <option value="macos_x64">macOS x64</option>
-          <option value="macos_arm64">macOS ARM64</option>
+          <option value="current">
+            {currentPlatform
+              ? `${PLATFORM_LABELS[currentPlatform] || currentPlatform} (current)`
+              : "This platform"}
+          </option>
+          <option value="all">All platforms</option>
+          {Object.entries(PLATFORM_LABELS).map(([key, label]) => (
+            <option key={key} value={key}>
+              {label}
+            </option>
+          ))}
         </select>
       </label>
       <label>

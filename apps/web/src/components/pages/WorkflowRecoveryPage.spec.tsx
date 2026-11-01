@@ -801,6 +801,7 @@ describe("workspace workflow page", () => {
     ).toHaveTextContent("create a new one explicitly");
     expect(mocks.create).not.toHaveBeenCalled();
     expect(mocks.get).toHaveBeenCalledOnce();
+    expect(mocks.update).not.toHaveBeenCalled();
   });
 
   it("opens the stored workflow when explicit empty-file creation loses a race", async () => {

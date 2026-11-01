@@ -44,7 +44,10 @@ export function CapabilityLibrary({
 
   const query = useMemo(
     () => ({
-      curation: [filters.curation],
+      curation:
+        filters.curation === "all" && filters.installed !== "true"
+          ? ["curated", "follow_up"]
+          : [filters.curation],
       engineering_stage: filters.engineeringStage
         ? [filters.engineeringStage]
         : undefined,
@@ -54,7 +57,7 @@ export function CapabilityLibrary({
       lifecycle_stage: filters.lifecycleStage
         ? [filters.lifecycleStage]
         : undefined,
-      platform: filters.platform ? [filters.platform] : undefined,
+      platform: filters.platform === "all" ? undefined : [filters.platform],
       maturity: filters.maturity ? [filters.maturity] : undefined,
       evidence_class: filters.evidenceClass
         ? [filters.evidenceClass]
@@ -294,7 +297,11 @@ export function CapabilityLibrary({
         </div>
       </div>
 
-      <CapabilityFilters value={filters} onChange={setFilters} />
+      <CapabilityFilters
+        value={filters}
+        onChange={setFilters}
+        currentPlatform={result?.current_platform}
+      />
 
       <details>
         <summary>What do the setup labels mean?</summary>
@@ -318,16 +325,28 @@ export function CapabilityLibrary({
         </div>
       )}
       {result?.curation_counts && !loading && !error && (
-        <div data-testid="capability-curation-summary" role="status">
-          {result.curation_counts.curated || 0} curated for this environment ·{" "}
-          {result.curation_counts.follow_up || 0} follow up ·{" "}
-          {result.curation_counts.removed || 0} removed from discovery{" "}
+        <div
+          data-testid="capability-curation-summary"
+          role="status"
+          style={{
+            display: "flex",
+            alignItems: "center",
+            flexWrap: "wrap",
+            gap: "var(--space-md)",
+          }}
+        >
+          <span>
+            {result.curation_counts.curated || 0} curated matching these filters
+            · {result.curation_counts.follow_up || 0} follow up
+          </span>
           <button
             type="button"
+            style={{ textDecoration: "underline" }}
             onClick={() => {
               const next = {
                 ...filters,
                 curation: "all" as const,
+                platform: "all",
                 installed: "true" as const,
               };
               writeCapabilityFilters(next);

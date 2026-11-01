@@ -26,6 +26,7 @@ from data_vault import (
     WorkflowRepository,
     WorkflowReviewRepository,
     WorkflowRunRepository,
+    WorkflowTraceRepository,
     WorkspaceRepository,
     create_default_secret_provider,
 )
@@ -77,6 +78,7 @@ from .engineering_scenario_service import EngineeringScenarioService
 from .engineering_workflow_template_service import EngineeringWorkflowTemplateService
 from .workflow_external_actions import WorkflowExternalActionService
 from .workflow_integration_policy import WorkflowIntegrationPolicyService
+from .workflow_trace import WorkflowTraceCapture, WorkflowTraceProjection
 from .workspace_path import WorkspacePath
 
 logger = get_logger(__name__)
@@ -278,6 +280,11 @@ class WorkspaceService:
             runner_adapter = PosixProcessAdapter()
         runner_settings = RunnerSettings.from_env()
         runner_supervisor = ProcessSupervisor(adapter=runner_adapter)
+        self.workflow_trace_repository = WorkflowTraceRepository(db_path)
+        self.workflow_trace_capture = WorkflowTraceCapture(
+            self.workflow_trace_repository
+        )
+        self.workflow_traces = WorkflowTraceProjection(self.workflow_trace_repository)
         self.workflow_runner = WorkspaceWorkflowRunner(
             supervisor=runner_supervisor,
             settings=runner_settings,
@@ -289,6 +296,8 @@ class WorkspaceService:
                 maximum_output_bytes=runner_settings.captured_output_bytes,
                 maximum_event_bytes=runner_settings.maximum_event_bytes,
             ),
+            trace_run_callback=self.workflow_trace_capture.register_rivet_run,
+            trace_event_callback=self.workflow_trace_capture.append_rivet_event,
         )
         self.workflow_operations = WorkspaceWorkflowOperations(
             WorkflowReviewRepository(db_path), self.workflow_runner

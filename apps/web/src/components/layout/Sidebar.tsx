@@ -1,17 +1,8 @@
 import NavItem from "../common/NavItem";
 import type { NavigationSection } from "../../store/types";
-import { useTools } from "../../store/tools";
 import { processDefinitionViewEnabled } from "../../services/surfaces/feature-flags";
 
 export function Sidebar() {
-  let servers = [];
-  try {
-    const toolsContext = useTools();
-    servers = toolsContext.servers || [];
-  } catch (e) {
-    // Fallback when rendered outside ToolsProvider (e.g. in isolated tests)
-  }
-
   const sections: NavigationSection[] = [
     {
       id: "dashboard",
@@ -92,7 +83,6 @@ export function Sidebar() {
             label={sec.label}
             path={sec.path}
             icon={sec.icon}
-            badge={sec.id === "tool-registry" ? servers.length : undefined}
           />
         ))}
       </div>

@@ -1,4 +1,27 @@
 import type { RecoveryDiagnostic, RecoveryWorkflow } from "./model";
+import { isUnboundToolTask } from "./mcp-task-binding";
+
+export function unconfiguredMcpDiagnostics(
+  workflow: RecoveryWorkflow,
+): RecoveryDiagnostic[] {
+  return workflow.blocks
+    .filter(
+      (block) =>
+        isUnboundToolTask(block) ||
+        (["mcp-task", "mcp-tool"].includes(
+          String(block.configuration.authoring_template),
+        ) &&
+          !String(block.configuration.mcp_server ?? "").trim()),
+    )
+    .map((block) => ({
+      code: "WFR-MCP-SERVER-REQUIRED",
+      semanticId: block.id,
+      line: null,
+      explanation: `${block.title}: no MCP server selected.`,
+      correction:
+        "Select an enabled workspace MCP server in this task's inspector. A template candidate is not a tool binding.",
+    }));
+}
 
 // This is a run constraint, not a source/command constraint: disconnected
 // drafts must remain editable and saveable while an engineer connects them.

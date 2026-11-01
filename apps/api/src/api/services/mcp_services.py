@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import hashlib
+from dataclasses import replace
 from datetime import timedelta
 
 from fastapi import Depends, HTTPException, Request, status
@@ -38,6 +39,7 @@ from tool_registry.catalog_updates import (
     rollback_catalog,
 )
 from tool_registry.compatibility import (
+    current_platform_key,
     load_latest_machine_observation,
     observe_machine,
     save_machine_observation,
@@ -256,13 +258,19 @@ class McpApiService:
         limit: int,
         cursor: str | None,
     ):
+        host_platform = current_platform_key()
+        if "current" in filters.platforms:
+            filters = replace(
+                filters,
+                platforms=(filters.platforms - {"current"}) | {host_platform},
+            )
         entries, snapshot = self._capability_context()
         observation = load_latest_machine_observation(
             self.db_path, now=self.capability_dependencies.clock()
         )
         views = self._capability_views(entries, observation)
         try:
-            return paginate_capabilities(
+            result = paginate_capabilities(
                 entries,
                 views,
                 filters=filters,
@@ -270,6 +278,8 @@ class McpApiService:
                 cursor=cursor,
                 snapshot=snapshot,
             )
+            result.current_platform = host_platform
+            return result
         except CapabilityCursorError as error:
             raise McpInvalidOperationError(str(error)) from error
 

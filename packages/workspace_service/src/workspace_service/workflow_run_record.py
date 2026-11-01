@@ -547,6 +547,8 @@ async def record_workflow_run(
     required_step_ids=None,
     run_log_path=None,
     cancellation_status=None,
+    trace_definition=None,
+    trace_inputs=None,
 ):
     from .workflow_resource_lease import ApplicationLease
 
@@ -570,6 +572,8 @@ async def record_workflow_run(
             required_step_ids=required_step_ids,
             run_log_path=run_log_path,
             cancellation_status=cancellation_status,
+            trace_definition=trace_definition,
+            trace_inputs=trace_inputs,
         )
 
 
@@ -691,6 +695,8 @@ async def _record_run(
     required_step_ids=None,
     run_log_path=None,
     cancellation_status=None,
+    trace_definition=None,
+    trace_inputs=None,
 ):
     started = datetime.now(timezone.utc)
     slug = PurePosixPath(source_path).name.removesuffix(".workflow.wflow")
@@ -732,6 +738,10 @@ async def _record_run(
         record["run_id"] = run_id
     if required_step_ids is not None:
         record["required_step_ids"] = list(required_step_ids)
+    if trace_definition is not None:
+        record["trace_definition"] = trace_definition
+    if trace_inputs is not None:
+        record["trace_inputs"] = trace_inputs
     # Publish before execution, then atomically checkpoint this run's own file.
     # A host crash leaves a nonterminal record with the last known operation;
     # reopening it must not imply that a submitted mutation is safe to repeat.

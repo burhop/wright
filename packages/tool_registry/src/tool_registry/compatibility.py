@@ -61,6 +61,11 @@ def _platform_key(system: str, architecture: str) -> str:
     return f"{os_key or 'unknown'}_{arch or 'unknown'}"
 
 
+def current_platform_key() -> str:
+    """Identify Wright's host without probing installed apps or credentials."""
+    return _platform_key(platform.system(), platform.machine())
+
+
 def _default_version_reader(executable: str) -> str | None:
     try:
         completed = subprocess.run(

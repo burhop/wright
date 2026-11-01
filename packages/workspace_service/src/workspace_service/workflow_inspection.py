@@ -157,7 +157,7 @@ def _retained_results(value: Any) -> list[dict[str, Any]]:
 
 def _inspection_context(
     events: Sequence[Any], record: WorkflowRunRecord
-) -> tuple[list[dict[str, Any]], str, list[dict[str, Any]], str]:
+) -> tuple[list[dict[str, Any]], str, list[dict[str, Any]], str, dict[str, Any] | None]:
     for event in events:
         if str(getattr(event, "kind", "")) != "inspection-context":
             continue
@@ -181,13 +181,17 @@ def _inspection_context(
             for index, item in enumerate(payload.get("graphNodes") or (), start=1)
             if isinstance(item, Mapping)
         ][:100]
+        graph_trace = payload.get("graphTrace")
+        if not isinstance(graph_trace, Mapping):
+            graph_trace = None
         return (
             run_inputs,
             str(payload.get("inputsState") or "unavailable"),
             nodes,
             str(payload.get("inventoryState") or "unavailable"),
+            dict(graph_trace) if graph_trace is not None else None,
         )
-    return [], "not-retained", [], "not-retained"
+    return [], "not-retained", [], "not-retained", None
 
 
 def _step_document(value: Mapping[str, Any], sequence: int) -> dict[str, Any]:
@@ -209,6 +213,7 @@ def _step_document(value: Mapping[str, Any], sequence: int) -> dict[str, Any]:
     return {
         "step_id": str(value.get("call_id") or f"step-{sequence}"),
         "sequence": sequence,
+        "attempt": max(1, int(value.get("attempt") or 1)),
         "node_id": node_id,
         "node_type": node_type,
         "label": label,
@@ -242,44 +247,10 @@ def _step_document(value: Mapping[str, Any], sequence: int) -> dict[str, Any]:
 def _lifecycle_steps(
     events: Sequence[Any], inventory: Sequence[Mapping[str, Any]]
 ) -> list[dict[str, Any]]:
-    steps_by_node: dict[tuple[str, ...], dict[str, Any]] = {}
-    for item in inventory:
-        node_id = _bounded_text(item.get("node_id"), maximum=128)
-        node_type = _bounded_text(item.get("node_type"), maximum=64)
-        node_title = _primary_label(item.get("label"), node_id=node_id)
-        key = (
-            ("node", node_id)
-            if node_id is not None
-            else ("inventoried", node_type or "", node_title or "")
-        )
-        order = max(1, int(item.get("order") or len(steps_by_node) + 1))
-        steps_by_node[key] = {
-            "step_id": f"node:{node_id}" if node_id else f"inventory:{order}",
-            "sequence": order,
-            "node_id": node_id,
-            "node_type": node_type,
-            "label": node_title or node_type or "Workflow box",
-            "_label_rank": 3 if node_title else (1 if node_type else 0),
-            "_order": 1_000_000 + order,
-            "_has_lifecycle": False,
-            "kind": "node",
-            "qualified_tool_name": None,
-            "request_id": None,
-            "trace_id": None,
-            "state": "not-run",
-            "started_at": None,
-            "completed_at": None,
-            "duration_ms": None,
-            "reason_code": None,
-            "inputs": [],
-            "outputs": [],
-            "input_state": "not-run",
-            "output_state": "not-run",
-            "result": None,
-            "artifacts": [],
-            "redaction_count": 0,
-            "complete": True,
-        }
+    steps: list[dict[str, Any]] = []
+    attempts: dict[str, int] = {}
+    active: dict[str, list[dict[str, Any]]] = {}
+    observed_nodes: set[str] = set()
     for event in events:
         payload, redactions = _event_payload(event)
         phase = _bounded_text(payload.get("phase"), maximum=64)
@@ -300,19 +271,33 @@ def _lifecycle_steps(
         node_title = _primary_label(
             payload.get("nodeTitle") or payload.get("node_title"), node_id=node_id
         )
-        key = (
-            ("node", node_id)
-            if node_id is not None
-            else ("observed", node_type or "", node_title or "")
-        )
-        step = steps_by_node.get(key)
+        identity = node_id or f"observed:{node_type or ''}:{node_title or ''}"
+        if node_id is not None:
+            observed_nodes.add(node_id)
+        step: dict[str, Any] | None = None
+        if phase != "node-start":
+            candidates = active.get(identity) or []
+            step = candidates[-1] if candidates else None
         if step is None:
+            attempt = attempts.get(identity, 0) + 1
+            attempts[identity] = attempt
             label = node_title or node_type or "Workflow node"
             step = {
-                "step_id": f"node:{node_id}"
-                if node_id
-                else f"node-event:{event_sequence}",
+                "step_id": (
+                    (
+                        f"node:{node_id}"
+                        if attempt == 1
+                        else f"node:{node_id}:attempt:{attempt}"
+                    )
+                    if node_id
+                    else (
+                        f"node-event:{event_sequence}"
+                        if attempt == 1
+                        else f"node-event:{event_sequence}:attempt:{attempt}"
+                    )
+                ),
                 "sequence": event_sequence,
+                "attempt": attempt,
                 "node_id": node_id,
                 "node_type": node_type,
                 "label": label,
@@ -337,7 +322,8 @@ def _lifecycle_steps(
                 "redaction_count": 0,
                 "complete": True,
             }
-            steps_by_node[key] = step
+            steps.append(step)
+            active.setdefault(identity, []).append(step)
         if node_title and step["_label_rank"] < 3:
             step["label"] = node_title
             step["_label_rank"] = 3
@@ -368,6 +354,8 @@ def _lifecycle_steps(
             step["outputs"] = _retained_results(payload.get("outputValues"))
             step["input_state"] = str(payload.get("inputState") or "not-run")
             step["output_state"] = str(payload.get("outputState") or "not-run")
+            if step in active.get(identity, []):
+                active[identity].remove(step)
         else:
             step["completed_at"] = occurred_at or step["completed_at"]
             if phase == "node-error":
@@ -386,6 +374,8 @@ def _lifecycle_steps(
                     payload.get("outputState")
                     or ("available" if step["outputs"] else "unavailable")
                 )
+            if step in active.get(identity, []):
+                active[identity].remove(step)
         trace_id = _bounded_text(
             payload.get("traceId") or payload.get("trace_id"), maximum=256
         )
@@ -396,14 +386,53 @@ def _lifecycle_steps(
             if isinstance(retained_duration, (int, float))
             else _duration_ms(step["started_at"], step["completed_at"])
         )
-    for step in steps_by_node.values():
+    for item in inventory:
+        node_id = _bounded_text(item.get("node_id"), maximum=128)
+        if node_id is not None and node_id in observed_nodes:
+            continue
+        node_type = _bounded_text(item.get("node_type"), maximum=64)
+        node_title = _primary_label(item.get("label"), node_id=node_id)
+        order = max(1, int(item.get("order") or len(steps) + 1))
+        steps.append(
+            {
+                "step_id": f"node:{node_id}:not-run"
+                if node_id
+                else f"inventory:{order}",
+                "sequence": order,
+                "attempt": 1,
+                "node_id": node_id,
+                "node_type": node_type,
+                "label": node_title or node_type or "Workflow box",
+                "_label_rank": 3 if node_title else (1 if node_type else 0),
+                "_order": 1_000_000 + order,
+                "_has_lifecycle": False,
+                "kind": "node",
+                "qualified_tool_name": None,
+                "request_id": None,
+                "trace_id": None,
+                "state": "not-run",
+                "started_at": None,
+                "completed_at": None,
+                "duration_ms": None,
+                "reason_code": None,
+                "inputs": [],
+                "outputs": [],
+                "input_state": "not-run",
+                "output_state": "not-run",
+                "result": None,
+                "artifacts": [],
+                "redaction_count": 0,
+                "complete": True,
+            }
+        )
+    for step in steps:
         if not step["_has_lifecycle"]:
             continue
         step["complete"] = step["input_state"] not in {
             "truncated",
             "unavailable",
         } and step["output_state"] not in {"truncated", "unavailable"}
-    return list(steps_by_node.values())
+    return steps
 
 
 def _first_time(*values: Any) -> str | None:
@@ -461,9 +490,10 @@ def _merged_steps(
     inventory: Sequence[Mapping[str, Any]],
 ) -> list[dict[str, Any]]:
     steps = _lifecycle_steps(events, inventory)
-    by_node = {
-        step["node_id"]: step for step in steps if step.get("node_id") is not None
-    }
+    by_node: dict[str, list[dict[str, Any]]] = {}
+    for step in steps:
+        if step.get("node_id") is not None:
+            by_node.setdefault(str(step["node_id"]), []).append(step)
     ordered_calls = sorted(
         child_calls,
         key=lambda item: (
@@ -476,12 +506,25 @@ def _merged_steps(
         child["_order"] = 1_000_000 + index
         child["_has_lifecycle"] = False
         node_id = child.get("node_id")
-        step = by_node.get(node_id) if node_id is not None else None
+        candidates = by_node.get(str(node_id), []) if node_id is not None else []
+        child_started = _epoch(child.get("started_at"))
+        step = next(
+            (
+                candidate
+                for candidate in candidates
+                if child_started is not None
+                and (_epoch(candidate.get("started_at")) or float("-inf"))
+                <= child_started
+                and (_epoch(candidate.get("completed_at")) or float("inf"))
+                >= child_started
+            ),
+            candidates[-1] if candidates else None,
+        )
         if step is None:
             step = child
             steps.append(step)
             if node_id is not None:
-                by_node[node_id] = step
+                by_node.setdefault(str(node_id), []).append(step)
         else:
             _merge_child_step(step, child)
 
@@ -635,8 +678,8 @@ def build_workflow_inspection(
     latest_sequence = (
         int(getattr(ordered_events[-1], "sequence", 0)) if ordered_events else 0
     )
-    run_inputs, inputs_state, inventory, inventory_state = _inspection_context(
-        ordered_events, record
+    run_inputs, inputs_state, inventory, inventory_state, graph_trace = (
+        _inspection_context(ordered_events, record)
     )
     steps = _merged_steps(ordered_events, child_calls, inventory)
     artifacts = _artifact_outputs(manifest)
@@ -734,6 +777,7 @@ def build_workflow_inspection(
         "events": [_event_document(item) for item in incremental_events],
         "run_inputs": run_inputs,
         "inputs_state": inputs_state,
+        "graph": graph_trace,
         "steps": steps,
         "final_outputs": outputs,
         "diagnostic": diagnostic,

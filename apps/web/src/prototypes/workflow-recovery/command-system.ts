@@ -53,6 +53,11 @@ export type RecoveryCommand =
   | { kind: "set_block_kind"; blockId: string; value: RecoveryBlock["kind"] }
   | { kind: "assign_mcp_work_operation"; blockId: string }
   | {
+      kind: "set_block_execution_kind";
+      blockId: string;
+      executionKind: RecoveryBlock["executionKind"];
+    }
+  | {
       kind: "set_block_definition";
       blockId: string;
       patch: Partial<Pick<RecoveryBlock, "purpose" | "instructions">>;
@@ -255,13 +260,14 @@ function applyCommand(
     return;
   }
   if (command.kind === "set_block_execution_kind") {
+    const value = "value" in command ? command.value : command.executionKind;
     const target = block(workflow, command.blockId);
     if (
       recoveryAuthoringSectionKind(target) !== "task" ||
-      !["human", "deterministic", "ai_capable"].includes(command.value)
+      !["human", "deterministic", "ai_capable"].includes(value)
     )
       throw new Error(`WFR-COMMAND-EXECUTION-KIND-INVALID:${command.blockId}`);
-    target.executionKind = command.value;
+    target.executionKind = value;
     return;
   }
   if (command.kind === "set_block_kind") {

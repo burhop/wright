@@ -86,11 +86,8 @@ export function PromptBlockEditor({
       setMessage(String(error));
     }
   };
-  return (
-    <section
-      className="recovery-prompt-editor"
-      data-testid="workflow-recovery-prompt-editor"
-    >
+  const promptFields = (
+    <>
       <label>
         Prompt source
         <select
@@ -222,14 +219,25 @@ export function PromptBlockEditor({
           </small>
         </section>
       )}
-      {block.configuration.authoring_template === "mcp-task" && (
+    </>
+  );
+  return (
+    <section
+      className="recovery-prompt-editor"
+      data-testid="workflow-recovery-prompt-editor"
+    >
+      {block.configuration.authoring_template === "mcp-task" ? (
         <McpTaskOptions
           block={block}
           workflow={workflow}
           sessionId={sessionId}
           readOnly={readOnly}
           onApply={onApply}
-        />
+        >
+          {promptFields}
+        </McpTaskOptions>
+      ) : (
+        promptFields
       )}
       <ResponseOptions className="recovery-response-options">
         {cad && <summary>Activity summary · optional</summary>}

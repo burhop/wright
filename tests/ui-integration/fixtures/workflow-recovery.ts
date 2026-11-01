@@ -6,7 +6,7 @@ import { expect, type Page } from "@playwright/test";
 
 const WORKSPACE_ID = "ws-recovery";
 const SESSION_ID = "session-recovery";
-const WORKFLOW_PATH = "workflows/mounting-bracket.workflow.wflow";
+const WORKFLOW_PATH = "workflows/untitled.workflow.wflow";
 
 export const publicWorkflowSource = readFileSync(
   resolve(
@@ -610,7 +610,7 @@ export async function openRecoveryEditor(page: Page): Promise<void> {
   );
   await expect(
     page.getByRole("region", {
-      name: /Bracket development workflow workflows\/mounting-bracket\.workflow\.wflow/,
+      name: /Bracket development workflow workflows\/untitled\.workflow\.wflow/,
     }),
   ).toBeVisible();
   await collapseAgentConsole(page);

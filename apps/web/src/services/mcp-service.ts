@@ -298,6 +298,7 @@ export interface CatalogSnapshotSummary {
 }
 
 export interface CapabilityListResponse {
+  current_platform?: string | null;
   curation_counts?: Record<string, number>;
   lifecycle_coverage?: Array<{
     stage: string;

@@ -79,6 +79,7 @@ interface RecoveryCanvasRuntime {
   readonly focusPath?: boolean;
   readonly blockIcons?: Readonly<Record<string, string>>;
   readonly executionLabels?: Readonly<Record<string, string>>;
+  readonly blockTools?: Readonly<Record<string, string>>;
   readonly readOnly?: boolean;
   readonly canConnect?: (sourcePortId: string, targetPortId: string) => boolean;
   readonly connectionIssue?: (
@@ -145,6 +146,7 @@ interface RecoveryNodeData extends Record<string, unknown> {
   readonly onToggleComponent: (semanticId: string) => void;
   readonly muted: boolean;
   readonly iconKind: string;
+  readonly toolLabel?: string;
   readonly readOnly: boolean;
   readonly onRename: (title: string) => void;
   readonly onDelete: () => void;
@@ -471,6 +473,9 @@ const RecoveryBlockNode = memo(function RecoveryBlockNode({
             : ` ${data.runState.replace("-", " ")}`}
         </span>
       </header>
+      {data.toolLabel && (
+        <div className="recovery-block__tool">{data.toolLabel}</div>
+      )}
       <div
         className="recovery-block__io-summary"
         aria-label={`${block.inputs.length} inputs and ${block.outputs.length} outputs`}
@@ -1224,6 +1229,7 @@ export const ReactFlowRecoveryCanvas: DraftCanvasRenderer = ({
           onDelete: () =>
             onIntent({ type: "delete-concept", semanticId: block.semanticId }),
           iconKind: runtime.blockIcons?.[block.semanticId] ?? blockIcon(block),
+          toolLabel: runtime.blockTools?.[block.semanticId],
           selected: selectedSemanticId === block.semanticId,
           runState: runtime.run.steps[block.semanticId]?.state ?? "idle",
           active: runtime.run.activeBlockId === block.semanticId,
@@ -1246,6 +1252,7 @@ export const ReactFlowRecoveryCanvas: DraftCanvasRenderer = ({
       onPortKey,
       runtime.proposedBlockIds,
       runtime.blockIcons,
+      runtime.blockTools,
       runtime.hiddenPorts,
       runtime.outputLabels,
       runtime.outputGroups,
