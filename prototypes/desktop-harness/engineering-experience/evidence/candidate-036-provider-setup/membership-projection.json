@@ -1,0 +1,26 @@
+{
+  "status": "PASS",
+  "boundary": "Read-only projection of actual candidate database, corrected source module; running service still uses original wheel",
+  "providers": [
+    {
+      "server_id": "import:draft-e4f0ce6f14f1c0347530",
+      "before_workspace_ids": [
+        "af3b3e57-e686-4262-b458-0e21eaa4998d"
+      ],
+      "after_workspace_ids": [
+        "af3b3e57-e686-4262-b458-0e21eaa4998d",
+        "fc0b0211-6825-484c-bb64-7b79af461bac"
+      ]
+    },
+    {
+      "server_id": "import:draft-af20446479ca6a5d3642",
+      "before_workspace_ids": [
+        "af3b3e57-e686-4262-b458-0e21eaa4998d"
+      ],
+      "after_workspace_ids": [
+        "af3b3e57-e686-4262-b458-0e21eaa4998d",
+        "fc0b0211-6825-484c-bb64-7b79af461bac"
+      ]
+    }
+  ]
+}

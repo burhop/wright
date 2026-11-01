@@ -52,6 +52,28 @@ class WorkflowArtifactReviewRepository:
             ).fetchall()
         return [dict(row) for row in rows]
 
+    def pending_navigation(self, workspace_id, *, after="", limit=20):
+        """Read exact terminal review identities without returning evidence bodies."""
+        if not 1 <= limit <= 50:
+            raise ValueError("Pending navigation page size must be 1 through 50")
+        with connect_state_db(self.db_path, ensure_parent=True) as db:
+            db.execute(REVIEW_SCHEMA)
+            rows = db.execute(
+                """SELECT review_id, workflow_path, state,
+                json_extract(package_json, '$.summary.run_id') AS run_id,
+                json_extract(package_json, '$.summary.run_log_path') AS path,
+                json_extract(package_json, '$.summary.source_digest') AS source_digest,
+                json_extract(package_json, '$.summary.task_id') AS step_id,
+                json_extract(package_json, '$.summary.task_title') AS step_title
+                FROM workflow_artifact_reviews WHERE workspace_id=? AND state='pending'
+                AND review_id>? ORDER BY review_id LIMIT ?""",
+                (workspace_id, after, limit + 1),
+            ).fetchall()
+        return {
+            "items": [dict(row) for row in rows[:limit]],
+            "next_cursor": rows[limit - 1]["review_id"] if len(rows) > limit else None,
+        }
+
     def decide(self, workspace_id, review_id, digest, decision):
         raw = json.dumps(decision, sort_keys=True, separators=(",", ":"))
         with connect_state_db(self.db_path, ensure_parent=True) as db:

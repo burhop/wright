@@ -1,0 +1,29 @@
+{
+  "scope": "Offline replay of retained real coupon response/package; fixture schema identity, no new provider or workflow execution",
+  "originals_unchanged": true,
+  "original_response_sha256": "d672e130c030a20f5b625cf5889bf61f68b2f1592897878d572677a6c8ca82fe",
+  "original_intent_sha256": "6ce8c3b16183ca498da839802cd890af6a6dbf4129f80e8e5121539e076b2194",
+  "package_sha256": "df8c1de036909a94e5cc6437a05a84e70116edeba24f0fc25bb293972e773f7c",
+  "preview_sha256": "ddf6f2e7521ff32af97274b22697f4413b25c12e7a3abd3904e9473b0dac3bf7",
+  "inspection": {
+    "method": "Passive recorded-package inspection; no slicer or machine command executed",
+    "slice_evidence": {
+      "path": "outputs/slice-evidence.json",
+      "sha256": "849506dafb41963ec1e9de8aedc848098355f17e4f73faed10c5fa638f1256c9",
+      "bytes": 1297
+    },
+    "support_preview": {
+      "path": "outputs/support-preview.json",
+      "sha256": "f8194013e99d76f21ee7358b9dad63d1944b55247c0b7af9d82f24e18c79b595",
+      "bytes": 55172
+    },
+    "toolpath_summary": {
+      "path": "outputs/toolpath-summary.json",
+      "sha256": "d6c1f1160ee3de4c0309a3bc35e15ed42fbcd1b8603a620381bb2625570e7bc2",
+      "bytes": 1450
+    },
+    "engineering_acceptance": false
+  },
+  "handle_qualified": false,
+  "canonical_run_qualified": false
+}

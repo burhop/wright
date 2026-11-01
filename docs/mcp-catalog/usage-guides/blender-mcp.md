@@ -289,3 +289,21 @@ Completed run f93f69fde7cf48a9aea48772ababe8bd; full evidence
 independent-verification.json. Exact native container was stopped afterward
 (exit143); files and run records remained unchanged. This is not a graceful
 document-recovery claim. The original installed desktop plugin is unchanged.
+
+## Isolated ARM64 mesh-repair handoff (28 October 2026)
+
+The cached independent provider at `5f8ddaf6e987c4aa0c3467fcc548838b28f64477`
+(package 1.9.1, MCP 1.30.0, Blender 4.3.2) passed a bounded duplicate-face repair
+and export through Wright's gateway. Native STL import removed the duplicate;
+the guarded repair sequence retained a closed mesh and exact 10 × 8 × 6 mm bounds.
+An independent reader checked topology and 480 mm³ volume. The exact exported
+bytes then passed to the independent offline slicer and produced a checked 3MF
+with a native PNG. [Evidence](https://github.com/burhop/wright/blob/642e5330bab50dd46a7e04d4b67225e0cc0b12c8/prototypes/desktop-harness/engineering-experience/evidence/mesh-repair-slice-handoff/README.md).
+
+The selected image is `sha256:4fa54f2eecd99edbbd1daac1ff6adad2d280013e4bcf606c3b3b0aa27cb3b3af`.
+Override its default entrypoint; it contains older Wright services which this
+qualification did not start. Use `--init`, Xvfb, safe mode, disabled telemetry,
+network none and only a fresh qualification-directory mount. Keep the source
+unchanged, check both response text and actual artifacts, and stop only the
+owned native process after outcome reconciliation. This does not qualify the
+handle's feature-preserving repair, requested orientations or physical use.

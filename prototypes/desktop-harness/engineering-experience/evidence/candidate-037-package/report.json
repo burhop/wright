@@ -1,0 +1,124 @@
+{
+  "status": "PASS",
+  "source_revision": "0d330f56c3885e9d28bdd1632f249c2fde5b7898",
+  "wheel_sha256": "0eec3aaf69ff53bbee671532b27682c2ccf795ed91a04503d648eac919488813",
+  "readiness": {
+    "code": "WORKFLOW_NOT_READY",
+    "block_id": "geometry_check",
+    "source_digest": "394ef1879d7d5eb0f25bc933f8f4fc317c2fef3da847a3cd0f975603f6d532f7",
+    "engineering_execution": false
+  },
+  "pending_navigation": {
+    "status": "PASS",
+    "transport": "in-process ASGI HTTP, installed modules",
+    "owners": "real SQLite continuation and artifact review repositories; fixture workspace/session resolver",
+    "checks": [
+      "exact scoped pending run and review",
+      "foreign workspace excluded",
+      "unknown session rejected",
+      "private payload excluded",
+      "checkpoint unchanged"
+    ],
+    "engineering_run_started": false
+  },
+  "packages": {
+    "jsonschema": "4.26.0",
+    "bcrypt": "5.0.0",
+    "opentelemetry-sdk": "1.45.1",
+    "pydantic-settings": "2.15.0",
+    "urllib3": "2.8.0",
+    "mcp": "1.30.0",
+    "pillow": "13.0.0",
+    "uvicorn": "0.52.1",
+    "sse-starlette": "3.4.8",
+    "opentelemetry-exporter-http-transport": "0.66b1",
+    "python-multipart": "0.0.32",
+    "annotated-doc": "0.0.5",
+    "pydantic": "2.13.4",
+    "certifi": "2026.10.23",
+    "watchfiles": "1.3.0",
+    "rpds-py": "2026.6.3",
+    "opentelemetry-proto": "1.45.1",
+    "charset-normalizer": "3.5.2",
+    "protobuf": "7.36.2",
+    "packaging": "26.3",
+    "opentelemetry-exporter-otlp-common": "0.66b1",
+    "idna": "3.20",
+    "anyio": "4.15.1",
+    "psutil": "7.2.2",
+    "annotated-types": "0.8.0",
+    "requests": "2.34.2",
+    "googleapis-common-protos": "1.76.0",
+    "python-dotenv": "1.2.2",
+    "passlib": "1.7.4",
+    "fastapi": "0.162.0",
+    "jwcrypto": "1.6.1",
+    "opentelemetry-exporter-otlp-proto-common": "1.45.1",
+    "pypdfium2": "5.14.0",
+    "starlette": "1.6.0",
+    "attrs": "26.1.0",
+    "PyJWT": "2.15.1",
+    "wright-engineering": "0.1.9",
+    "opentelemetry-semantic-conventions": "0.66b1",
+    "httptools": "0.9.0",
+    "structlog": "26.1.0",
+    "PyYAML": "6.0.3",
+    "httpcore": "1.0.9",
+    "grpcio": "1.85.0",
+    "opentelemetry-exporter-otlp": "1.45.1",
+    "h11": "0.16.0",
+    "click": "8.5.0",
+    "httpx-sse": "0.4.3",
+    "jsonschema-specifications": "2025.9.1",
+    "typing_extensions": "4.16.0",
+    "pycparser": "3.11",
+    "cryptography": "50.0.2",
+    "opentelemetry-api": "1.45.1",
+    "uvloop": "0.23.0",
+    "httpx": "0.28.1",
+    "websockets": "17.3",
+    "referencing": "0.37.0",
+    "cffi": "2.1.1",
+    "typing-inspection": "0.4.4",
+    "opentelemetry-exporter-otlp-proto-grpc": "1.45.1",
+    "pydantic_core": "2.46.4",
+    "opentelemetry-exporter-otlp-proto-http": "1.45.1"
+  },
+  "server_started": false,
+  "plugin_changed": false,
+  "windows_acceptance": "UNVERIFIED",
+  "verified_module_bytes": [
+    {
+      "module": "workspace_service.workflow_tool_observations",
+      "sha256": "5563fdfa71ca54410ca588799180db933702965ec331bf5b660fdd1df6dd8a4e"
+    },
+    {
+      "module": "workspace_service.workflow_source_execution",
+      "sha256": "b4a56f7e79da943ae509fb51882f23a3ab2a7e60c72868178567ff41c9b805d7"
+    },
+    {
+      "module": "workspace_service.workflow_external_actions",
+      "sha256": "70ee70f9d05ef9f387b64c5c4c5e7ee2f8cb65db7001cb545af1fd36d6ad3fa6"
+    },
+    {
+      "module": "data_vault.workflow_continuation_repository",
+      "sha256": "d10e423051e30946e46dd23dbd9a49c2c87ddc92a932238ff9f767497895c28e"
+    },
+    {
+      "module": "data_vault.workflow_artifact_review_repository",
+      "sha256": "b138c0e13c93e75ee2ba30536e3c213cead2ee517db5636b17f7bb266d919a80"
+    },
+    {
+      "module": "api.routers.workspace",
+      "sha256": "7d3cdb97df895677538fccd0aebc4f5fe4932c73cf1bdf5fc2a3fbbc8b62ff8e"
+    },
+    {
+      "module": "api.main",
+      "sha256": "fc099ca3831d410129d22a1faea5def37c202de8e6f0233ca7af9d4db920944a"
+    }
+  ],
+  "native_editor_sha256": "f77a8cef947f904ec188fef20dfdb70a0ca7e14e381133a6cce78b0abb0bc0ff",
+  "frontend_manifest_sha256": "7d72f1eacd62af09d6f3c86efa6599f8ade2f4de2d60fb64a70ec8e00a4dedf6",
+  "source_archive_sha256": "1029206acd19786345c2686d24364578400081ae029a323297383aeaa43c60f6",
+  "dependency_check": "61 packages compatible; 60 dependency versions pinned to prior isolated candidate"
+}

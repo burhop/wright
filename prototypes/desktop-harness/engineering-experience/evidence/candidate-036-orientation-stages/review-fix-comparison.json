@@ -1,0 +1,14 @@
+{
+  "status": "PASS",
+  "changed_existing_sections": [
+    "manufacturing_check",
+    "report"
+  ],
+  "new_connections": [
+    "exact_manufacturing_check_orientations",
+    "exact_manufacturing_check_package",
+    "exact_report_selection",
+    "exact_report_slice_responses"
+  ],
+  "review_subjects_unchanged": true
+}

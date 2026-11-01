@@ -208,3 +208,33 @@ def test_projection_search_filters_and_cursor_are_stable() -> None:
 
     with pytest.raises(CapabilityCursorError):
         paginate_capabilities(entries, views, cursor="not-a-cursor!")
+
+
+@pytest.mark.parametrize("custom", [False, True])
+def test_membership_combines_workspace_defaults_and_explicit_enablement(custom):
+    server = _server("custom-tool" if custom else "legacy-cad", "Loaded CAD")
+    views = build_capability_views(
+        [] if custom else [_entry()],
+        [server],
+        _observation(),
+        workspace_membership={
+            server.server_id: [
+                {"workspace_id": "reviewed", "label": "Explicitly selected"},
+                {"workspace_id": "both", "label": "Same workspace"},
+            ],
+            server.name: [
+                {"workspace_id": "new", "label": "Loaded-tool defaults"},
+                {"workspace_id": "both", "label": "Same workspace"},
+            ],
+        },
+    )
+    view = find_capability(views, server.server_id)
+    assert view is not None
+    assert view.user_state.enabled_workspaces == [
+        {"workspace_id": "both", "label": "Same workspace"},
+        {"workspace_id": "new", "label": "Loaded-tool defaults"},
+        {"workspace_id": "reviewed", "label": "Explicitly selected"},
+    ]
+    # This is a read projection. It does not change provider readiness or grants.
+    assert view.user_state.explicit_disabled is True
+    assert server.is_active is False

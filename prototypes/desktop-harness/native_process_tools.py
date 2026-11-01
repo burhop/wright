@@ -140,7 +140,7 @@ PanelUpdate = Annotated[
 BASE = "/api/workspace/process-interfaces"
 
 
-def register_native_process_tools(mcp, client, *, resource_uri=None):
+def register_native_process_tools(mcp, client, *, resource_uri=None, native_workspace_files=False):
     async def invoke(request, *, changes=False):
         owner_called = False
         try:
@@ -383,4 +383,5 @@ def register_native_process_tools(mcp, client, *, resource_uri=None):
                 "workspace": workspace,
                 "snapshot": result["document"],
                 "working_view_enabled": True,
+                **({"native_workspace_files_enabled": True} if native_workspace_files else {}),
             }

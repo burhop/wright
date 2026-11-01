@@ -783,10 +783,25 @@ describe("ReactFlowRecoveryCanvas component contract", () => {
     expect(onIntent).toHaveBeenCalledWith({
       type: "select",
       semanticId: "block.large-100",
+      inspect: false,
     });
     expect(screen.getByRole("status")).toHaveTextContent(
       "Focused Large graph block 100",
     );
+    expect(screen.getByTestId("workflow-recovery-find-submit")).toHaveAttribute(
+      "type",
+      "button",
+    );
+    onIntent.mockClear();
+    fireEvent.keyDown(screen.getByTestId("workflow-recovery-find-input"), {
+      key: "Enter",
+    });
+    expect(onIntent).toHaveBeenCalledOnce();
+    expect(onIntent).toHaveBeenCalledWith({
+      type: "select",
+      semanticId: "block.large-100",
+      inspect: false,
+    });
     expect(elapsed).toBeLessThan(5000);
   });
 });

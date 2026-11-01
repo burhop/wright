@@ -38,7 +38,9 @@ const result=await build({configFile:false,root:resolve(root,'apps/web'),plugins
 const assets=result.output;
 const script=assets.filter(x=>x.type==='chunk').map(x=>x.code).join('\n');
 const css=assets.filter(x=>x.type==='asset'&&x.fileName.endsWith('.css')).map(x=>x.source).join('\n');
-const html=`<!doctype html><html><meta charset="utf-8"><style>${css}</style><body style="background:#202020;color:#eee;padding:20px"><h2>Historical CAD capture — display test</h2><p>Controlled transport fixture; no new engineering run or desktop acceptance.</p><div id="viewer"></div><script>${script.replaceAll('</script','<\\/script')}</script></body></html>`;
+// Reproduce an embedded host that allows inline raster data but not blob: URLs.
+// This is a restrictive compatibility case, not a claim about observed host CSP.
+const html=`<!doctype html><html><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="img-src data:"><style>${css}</style><body style="background:#202020;color:#eee;padding:20px"><h2>Historical CAD capture — display test</h2><p>Controlled transport fixture; no new engineering run or desktop acceptance.</p><div id="viewer"></div><script>${script.replaceAll('</script','<\\/script')}</script></body></html>`;
 const server=createServer((req,res)=>{res.writeHead(200,{'content-type':'text/html;charset=utf-8'});res.end(html);});
 await new Promise(done=>server.listen(0,'127.0.0.1',done));
 const browser=await chromium.launch({headless:true});
@@ -50,10 +52,12 @@ try{
  await expect(img).toBeVisible();
  await expect.poll(()=>img.evaluate(el=>el.complete&&el.naturalWidth>0&&el.naturalHeight>0)).toBe(true);
  report.dimensions=await img.evaluate(el=>({width:el.naturalWidth,height:el.naturalHeight}));
+ expect(await img.evaluate(async el=>Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',await(await fetch(el.src)).arrayBuffer())),b=>b.toString(16).padStart(2,'0')).join(''))).toBe(hash);
+ report.image_policy='img-src data:';
  await page.screenshot({path:resolve(output,'historical-image.png')});
  report.passed.push('actual historical PNG decodes through native client and shared viewer');
  await page.evaluate(()=>window.showMalformed());
- await expect(page.getByText('A bitmap preview is unavailable.',{exact:true})).toBeVisible();
+ await expect(page.getByText('This image could not be displayed. You can download the original file.',{exact:true})).toBeVisible();
  report.passed.push('malformed bitmap reaches explicit shared fallback without retry');
  report.calls=await page.evaluate(()=>window.calls);
  expect(report.calls).toHaveLength(2);

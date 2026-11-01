@@ -1,0 +1,24 @@
+{
+  "scope": "isolated digital coupon, not installed provider or handle execution",
+  "prerelease": true,
+  "version": "OrcaSlicer 2.5.0-alpha",
+  "asset_sha256": "b64c705537a80ca0f4a5d0b51fa21d1f789191141f54b7f3599d2f2b9bfad0be",
+  "container": "sha256:ec4229b057a0a4897ce1a614b4cd627a366704a7f8b071965a0ec084d14b60d3",
+  "provider_revision": "7b50d0288fb7b91af8af422b96c4df4db0f1110c",
+  "mcp_version": "1.30.0",
+  "profile_source": "profile-receipt.json; unchanged resolved 2.4.2 profiles, actual applied values checked",
+  "launcher": "docker --init, nonroot, network none, read-only root, cap-drop ALL, no-new-privileges; xvfb-run -a --server-args=-screen 0 1280x1024x24 /opt/venv/bin/bambu-p1s-mcp",
+  "runtime_path": "/opt/orca-alpha/AppRun",
+  "packaging_adjustment": "chmod -R a+rX on extracted public runtime, no source patch",
+  "native_preview_sha256": "98bcc7c10dffcacd99d684d2a848751d673ba9e275853202c4aca3562b9b6d2f",
+  "sources": [
+    "https://github.com/OrcaSlicer/OrcaSlicer/releases/tag/v2.5.0-alpha",
+    "https://github.com/OrcaSlicer/OrcaSlicer/pull/15745"
+  ],
+  "attempts": {
+    "03": "virtual display initialized as container PID 1; MCP initialization timed out, no tool call; owned container stopped",
+    "04": "docker --init corrected startup; 2.4.2 slice succeeded but no PNG",
+    "05": "alpha extracted directories root-only, native launch denied; no slice",
+    "06": "public directory permissions corrected inside image; native slice, settings, passive paths and mandatory PNG passed"
+  }
+}

@@ -1150,3 +1150,34 @@ async def test_configured_command_preview_has_names_and_public_values_only(disco
         assert raw['public_env']=={'RUN_MODE':'read-only'}
         draft=result.json()['preview']['drafts'][0]
         assert draft['launch_env']=={'RUN_MODE':'read-only'} and [field['name'] for field in draft['env_vars']]==['API_KEY']
+
+
+@pytest.mark.asyncio
+async def test_new_workspace_snapshots_shared_tool_defaults_without_grants(discovery):
+    from workspace_service.use_cases.tools import WorkspaceToolUseCases
+
+    app, repository, _, create, _ = discovery
+    service = app.state.desktop_service
+    backend = app.state.desktop_backend
+    backend.clients["private-test-client"] = backend._now() + 30
+    installed = ["CAD", "FEA", "Rivet Workflows"]
+    service.tools = WorkspaceToolUseCases(
+        repository, lambda: installed[:], lambda _: None, lambda: []
+    )
+    create("Existing")
+    repository.set_enabled_tools("Existing", ["Existing CAD"])
+
+    async def create_owned(name, parent, agent, **kwargs):
+        create(name)
+        return SimpleNamespace(workspace_id=name, session_id="desktop-" + name, workspace_name=name)
+
+    service.create_workspace = AsyncMock(side_effect=create_owned)
+    async with httpx.AsyncClient(transport=httpx.ASGITransport(app), base_url="http://test") as client:
+        response = await client.post("/api/desktop/workspaces", json={"name": "Handle"})
+    assert response.status_code == 201
+    assert repository.enabled_tools("Handle") == ["wright__workspace_status", "CAD", "FEA"]
+    installed.append("Later installed tool")
+    assert service.tools.list_by_workspace("Handle").enabled_tools == ["wright__workspace_status", "CAD", "FEA"]
+    assert repository.enabled_tools("Existing") == ["Existing CAD"]
+    # Only repository membership changed: no server/start/approval owner is provided.
+    assert service.tools.servers() == []

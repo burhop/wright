@@ -1,0 +1,25 @@
+{
+  "status": "PASS",
+  "saved": [
+    {
+      "workspace_id": "540d9175-cdc7-4816-a1a1-661b8998a0f7",
+      "session_id": "desktop-df149141-a687-445f-9524-25d732a8257e",
+      "path": "uploads/467f9fe327ccaf085c507487c2907503bd2e50bdd055cbcf6bdeff706b705fb0/concept.png",
+      "filename": "concept.png",
+      "sha256": "467f9fe327ccaf085c507487c2907503bd2e50bdd055cbcf6bdeff706b705fb0",
+      "bytes": 60521
+    },
+    {
+      "workspace_id": "540d9175-cdc7-4816-a1a1-661b8998a0f7",
+      "session_id": "desktop-df149141-a687-445f-9524-25d732a8257e",
+      "path": "uploads/2b4ad39c8d07368fa4d0b5bfb257625cbafe5098a0cc106ca80103929cc378ee/context.md",
+      "filename": "context.md",
+      "sha256": "2b4ad39c8d07368fa4d0b5bfb257625cbafe5098a0cc106ca80103929cc378ee",
+      "bytes": 2202
+    }
+  ],
+  "boundary": "Original browser receipt and actual stored bytes reconciled read-only; first harness failed on response-envelope assertion after both uploads and visible success checks; no writes repeated",
+  "browser_resource_sha256": "32b8427efa6d486add8e569cef51633dc372c6d6f51a4de39e053e1b17b00307",
+  "original_harness_status": "FAIL",
+  "engineering_runs_started": 0
+}

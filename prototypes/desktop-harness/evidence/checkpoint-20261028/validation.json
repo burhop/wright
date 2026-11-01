@@ -1,0 +1,25 @@
+{
+  "checks": {
+    "focused_tests": {
+      "passed": 145,
+      "files": 5
+    },
+    "app_typescript": "PASS",
+    "native_panel_eslint": "PASS",
+    "corrected_files_prettier": "PASS",
+    "strict_mkdocs": "PASS",
+    "protected_files": {
+      "checked": 9,
+      "unchanged": true,
+      "changed_paths": []
+    }
+  },
+  "log_sha256": {
+    "tests.log": "77d6022d1fc18961fd8c5e59180808ef4a4cb42357ed07bf769e6f2797109f5b",
+    "types.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "eslint.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "docs-corrected.log": "42e8739e534197c6f13816e8f8630f6d770bb6a99545d0c4a46e3543d8d39ef1",
+    "format-corrected.log": "17aa973d3f004560237d9a95171210b0671deff23d61628eecf7322ff5938f20"
+  },
+  "purpose": "preservation only, no PR/merge/release or full-gate qualification"
+}

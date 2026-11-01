@@ -1,0 +1,15 @@
+{
+  "status": "Reviewed local draft; not installed or executed",
+  "source_sha256": "e853290045d868efd01139367b881d498380d58f6e7e16811ae0bcb75625425a",
+  "original_desktop_receipt": "desktop-draft-receipt.json",
+  "editor_parse_save_reopen": "PASS: EngineeringHandleDraft.spec.ts",
+  "compiled_render": "PASS: diagram and exact source at 1100x900 and 480x900 in simulated host",
+  "windows_render": "unverified",
+  "runs_started": 0,
+  "compiled_bundle_sha256": "9c5d2d5fe5d34e3d0752d116acda0816087e3b1458952aed1b8c1e4bfc267019",
+  "remaining_usability": [
+    "Initial canvas ordering obscures engineering stage sequence.",
+    "Only specification/report are projected as result cards before tool binding.",
+    "Run and Run readiness compete visually."
+  ]
+}

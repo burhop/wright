@@ -92,6 +92,54 @@ def test_optional_research_policy_and_saved_helper_survive_portable_transfer(cas
     assert not (case.target / "runs").exists()
 
 
+@pytest.mark.parametrize("segment", [False, True])
+def test_saved_correction_scope_survives_portable_transfer_and_compilation(
+    case, segment
+):
+    from .test_workflow_process_validation_rework import mcp_file_rework_source
+    from workspace_service.workflow_source_execution import compile_prompt_workflow
+    from workspace_service.process_validation.configuration import (
+        ValidatorConfiguration,
+    )
+
+    text = mcp_file_rework_source()
+    if segment:
+        lines = text.splitlines()
+        for index, line in enumerate(lines):
+            if line.startswith("  settings: "):
+                settings = json.loads(line.removeprefix("  settings: "))
+                if "validation" in settings:
+                    settings["validation"].update(
+                        rework_scope="verified_segment", repair_subjects=["jig_step"]
+                    )
+                    lines[index] = "  settings: " + json.dumps(settings)
+        text = "\n".join(lines) + "\n"
+    before = compile_prompt_workflow(text)
+    exported = export(case, text, mode="bundle")
+    report = inspect(case, exported["bundle"])
+    assert report.can_import and not report.can_run
+    applied = asyncio.run(
+        case.service.apply(
+            str(case.target),
+            exported["bundle"],
+            "workflows/imported.workflow.wflow",
+            exported["bundle_digest"],
+        )
+    )
+    reopened = WorkspaceWorkflowSourceStore(case.target).read(
+        "workflows/imported.workflow.wflow"
+    )
+    assert reopened.source == applied["source"]["source"] == text
+    after = compile_prompt_workflow(reopened.source)
+    assert after.steps == before.steps
+    assert after.revisions == before.revisions
+    config = ValidatorConfiguration.model_validate(after.steps[-1].validation)
+    assert config.rework_scope == ("verified_segment" if segment else "producer")
+    assert config.repair_subjects == (("jig_step",) if segment else ())
+    assert config.load(str(case.target)).reference() == config.profile.reference
+    assert not (case.target / "runs").exists()
+
+
 def test_two_workspace_import_preserves_exact_instructions_and_no_authority(case):
     exported = export(case)
     before = profile("Changed local B")  # Local default changes cannot affect import.

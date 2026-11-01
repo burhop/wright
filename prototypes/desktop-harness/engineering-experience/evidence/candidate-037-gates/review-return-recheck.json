@@ -1,0 +1,36 @@
+{
+  "status": "PARTIAL",
+  "source_base": "834faf71d0f83f7414387f777ca169e36155328d",
+  "focused_browser_recheck": {
+    "passed": 8,
+    "failed": 0,
+    "projects": [
+      "chromium"
+    ],
+    "repetitions": 2,
+    "coverage": "normal review plus lost review, action, and unknown acknowledgements",
+    "boundary": "served workspace UI, controlled HTTP; no external effects",
+    "log": ".local-run/experience-review/candidate-037/gates/browser-review-recheck/run.log",
+    "limitation": "Earlier full supported-browser suite had 160 passed, 5 skipped, 1 failure before editor loaded. Focused repeat did not reproduce or explain that failure."
+  },
+  "review_return_rerun": {
+    "passed": 27,
+    "failed": 0,
+    "log": ".local-run/experience-review/candidate-037/gates/review-rerun-return.log",
+    "added_coverage": [
+      "Recreate process service while first review waits; reopen same run and exact subject without model dispatch",
+      "Record synthetic review, change requirements, start distinct full run",
+      "Reject old approval subject for new review",
+      "Recreate service again; reopen second waiting review without additional model calls",
+      "Preserve historical run bytes and output files"
+    ],
+    "boundary": "Real durable owners with synthetic model documents and attributed synthetic decisions. Service reconstruction, not machine restart or Windows UI acceptance."
+  },
+  "remaining": [
+    "Coherent final repository gates",
+    "Combined native UI return/edit/rerun journey",
+    "Real engineering chain and personal reviews",
+    "Actual Windows acceptance"
+  ],
+  "installed_plugin": "unchanged 0.33.0"
+}

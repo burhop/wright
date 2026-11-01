@@ -16,6 +16,8 @@ export interface ValidatorSettings {
   };
   baseline: { id: string; version: string; sha256: string };
   subjects: Record<string, string>;
+  rework_scope?: "producer" | "verified_segment";
+  repair_subjects?: string[];
   budget?: {
     max_bytes?: number;
     max_entities?: number;
@@ -54,8 +56,37 @@ export function validatorSettings(
       new Set(Object.values(value.subjects)).size !==
         Object.keys(value.subjects).length ||
       Object.keys(value).some(
-        (key) => !["profile", "baseline", "subjects", "budget"].includes(key),
+        (key) =>
+          ![
+            "profile",
+            "baseline",
+            "subjects",
+            "budget",
+            "rework_scope",
+            "repair_subjects",
+          ].includes(key),
       )
+    )
+      return null;
+    if (
+      value.rework_scope !== undefined &&
+      !["producer", "verified_segment"].includes(value.rework_scope)
+    )
+      return null;
+    const repairs = value.repair_subjects ?? [];
+    if (
+      !Array.isArray(repairs) ||
+      repairs.some(
+        (role) =>
+          typeof role !== "string" || !Object.hasOwn(value.subjects, role),
+      ) ||
+      new Set(repairs).size !== repairs.length
+    )
+      return null;
+    if (
+      value.rework_scope === "verified_segment"
+        ? !repairs.length
+        : repairs.length
     )
       return null;
     return value;
@@ -72,6 +103,10 @@ export function validationProfileCommands(
   const profile = validationProfiles.find((item) => item.name === name);
   if (!profile) throw new Error("Choose an available validation profile.");
   const existing = validatorSettings(block);
+  if (existing?.rework_scope === "verified_segment")
+    throw new Error(
+      "This check repeats a group of steps. Edit its requirements and correction settings together in Source.",
+    );
   const roles = profile.roles;
   const reuse =
     existing &&

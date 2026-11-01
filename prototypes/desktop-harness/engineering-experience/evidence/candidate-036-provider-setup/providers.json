@@ -1,0 +1,79 @@
+{
+  "scope": "actual setup/validation/enablement via compiled panel and isolated backend; no engineering invocation",
+  "providers": [
+    {
+      "provider": "oasis",
+      "validation": {
+        "evidence_id": "validation-acab44aed3f343b2b8860b1a4f7c3ca6",
+        "capability_id": "import:draft-e4f0ce6f14f1c0347530",
+        "server_id": "import:draft-e4f0ce6f14f1c0347530",
+        "snapshot_id": "bundled-bb8e97c144c2667095cc",
+        "capability_digest": "f870d19477a313f54711189d9a772d77acd96cc0206e7f21c1bcbf50195c0f6b",
+        "observation_id": "machine-b8b291a0100233f95658",
+        "platform_key": "linux_arm64",
+        "architecture": "aarch64",
+        "server_revision": "configuration:30d6868a0d5a20771844fe1f714fd66363ccca40d77d1e7af6928c1ba39ef38a",
+        "credential_binding_digest": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+        "state": "passed",
+        "protocol_steps": {
+          "initialize": "passed",
+          "notifications/initialized": "passed",
+          "tools/list": "passed"
+        },
+        "schema_digest": "c0aa99787d2c3fa2eff3eb63cfeaba8822108879549a9f8a7bd771b9ee73f968",
+        "tool_count": 17,
+        "read_only_probe": null,
+        "observed_at": "2026-10-29T01:30:43.186390Z",
+        "trace_id": "0745aab9ec3b0420332ab74a3ffc38dd",
+        "reason_codes": [],
+        "missing_requirements": []
+      },
+      "enablement": {
+        "workspace_id": "af3b3e57-e686-4262-b458-0e21eaa4998d",
+        "capability_id": "import:draft-e4f0ce6f14f1c0347530",
+        "server_id": "import:draft-e4f0ce6f14f1c0347530",
+        "enabled": true,
+        "validation_evidence_id": "validation-acab44aed3f343b2b8860b1a4f7c3ca6",
+        "invocation_approved": false,
+        "message": "Available in this workspace. Individual tool invocation and destructive-action approval remain separate."
+      }
+    },
+    {
+      "provider": "slicer",
+      "validation": {
+        "evidence_id": "validation-fbf3ab0e12854d2d86b50076c0b15cb2",
+        "capability_id": "import:draft-af20446479ca6a5d3642",
+        "server_id": "import:draft-af20446479ca6a5d3642",
+        "snapshot_id": "bundled-bb8e97c144c2667095cc",
+        "capability_digest": "b36fde65c6610ff378ecff5b00adb0f1fff1a022b0a8531e9cbb4266301921fa",
+        "observation_id": "machine-a66e7092d495ab7722e3",
+        "platform_key": "linux_arm64",
+        "architecture": "aarch64",
+        "server_revision": "configuration:2dc2c9c6fc61fcc98c095809b84ec190f474706e74c7e09029acfae918b1aafc",
+        "credential_binding_digest": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+        "state": "passed",
+        "protocol_steps": {
+          "initialize": "passed",
+          "notifications/initialized": "passed",
+          "tools/list": "passed"
+        },
+        "schema_digest": "35ee6df2fd1d911915a3516a7c04b5781a3f0759843479bbbf9404a0298865b5",
+        "tool_count": 11,
+        "read_only_probe": null,
+        "observed_at": "2026-10-29T01:32:17.796204Z",
+        "trace_id": "93c6ed0baa16624c1cf67b1678e764be",
+        "reason_codes": [],
+        "missing_requirements": []
+      },
+      "enablement": {
+        "workspace_id": "af3b3e57-e686-4262-b458-0e21eaa4998d",
+        "capability_id": "import:draft-af20446479ca6a5d3642",
+        "server_id": "import:draft-af20446479ca6a5d3642",
+        "enabled": true,
+        "validation_evidence_id": "validation-fbf3ab0e12854d2d86b50076c0b15cb2",
+        "invocation_approved": false,
+        "message": "Available in this workspace. Individual tool invocation and destructive-action approval remain separate."
+      }
+    }
+  ]
+}

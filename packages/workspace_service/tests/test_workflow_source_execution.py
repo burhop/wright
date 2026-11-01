@@ -299,6 +299,18 @@ def test_invalid_settings_rejected_before_generation(settings):
         compile_prompt_workflow(source(task(**settings)))
 
 
+def test_unsupported_conditional_path_explains_limit_without_removing_reviews():
+    accepted = source(task("first"), task("second"), links=[("first", "second")])
+    conditional = accepted.replace("when: null", 'when: "decision.accepted"')
+    # Preserve graph semantics: supported data handoff compiles, conditional handoff does not.
+    compile_prompt_workflow(accepted)
+    with pytest.raises(WorkflowSourceExecutionError) as error:
+        compile_prompt_workflow(conditional)
+    assert "This version of Wright cannot run" in str(error.value)
+    assert "still inspect and edit the diagram" in error.value.correction
+    assert "keep its required decisions and reviews" in error.value.correction
+
+
 def test_cycle_and_shared_overwrite_rejected():
     with pytest.raises(WorkflowSourceExecutionError, match="cycle"):
         compile_prompt_workflow(
@@ -376,3 +388,17 @@ def test_step_events_capture_actual_prompt_and_written_path(tmp_path):
     ]
     assert events[0]["prompt"] == "Write a short report."
     assert events[-1]["output_path"] == "report.html"
+
+
+def test_unconfigured_engineering_step_stays_blocked_with_preserving_guidance():
+    draft = source(
+        task("check_geometry")
+        .replace('name: "check_geometry"', 'name: "Check geometry"')
+        .replace("performed_by: ai_assisted", "performed_by: configured_tool")
+    )
+    with pytest.raises(WorkflowSourceExecutionError) as error:
+        compile_prompt_workflow(draft)
+    assert error.value.code == "WORKFLOW_NOT_READY"
+    assert "Check geometry" in str(error.value)
+    assert "configure the tool or task it requires" in error.value.correction
+    assert "keep the step and its required checks or reviews" in error.value.correction

@@ -1,0 +1,60 @@
+{
+  "status": "PASS",
+  "boundary": "actual compiled native UI; simulated Linux desktop host and labeled fixture state; Windows and real review reconciliation unverified",
+  "resource_sha256": "f4197ffe63fd7bc0a544de7d6ad9d12c712f8ca599fc2ed1f9aedc782b924758",
+  "layouts": [
+    {
+      "width": 1100,
+      "scroll": 1100
+    },
+    {
+      "width": 480,
+      "scroll": 480
+    }
+  ],
+  "calls": [
+    {
+      "name": "wright_workspace_list",
+      "args": {}
+    },
+    {
+      "name": "wright_workspace_files",
+      "args": {
+        "workspace_id": "study-workspace",
+        "session_id": "study-session"
+      }
+    },
+    {
+      "name": "wright_workspace_pending",
+      "args": {
+        "workspace_id": "study-workspace",
+        "session_id": "study-session",
+        "checkpoint_after": "",
+        "review_after": ""
+      }
+    },
+    {
+      "name": "wright_process_view",
+      "args": {
+        "request": {
+          "operation": "snapshot",
+          "workspace_id": "study-workspace",
+          "session_id": "study-session",
+          "path": "workflows/handle-strength-check.wflow",
+          "expected_storage_digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "run_id": "run2"
+        }
+      }
+    },
+    {
+      "name": "wright_workspace_pending",
+      "args": {
+        "workspace_id": "study-workspace",
+        "session_id": "study-session",
+        "checkpoint_after": "",
+        "review_after": ""
+      }
+    }
+  ],
+  "errors": []
+}

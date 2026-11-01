@@ -5,12 +5,13 @@ import { CommonProcessView } from "../../components/process-interfaces/CommonPro
 import "../../components/process-interfaces/process-workspace.css";
 import "./native-panel.css";
 
-/** Offline next-slice composition. No model worker, authority or UI executor. */
+/** Native presentation over the shared process client and durable run owners. */
 export function NativeProcessPanel({
   client,
   sessionId,
   workspaceName,
   title,
+  description,
   runId,
   readReasoningStatus,
   readOnly = false,
@@ -30,12 +31,13 @@ export function NativeProcessPanel({
   readonly sessionId: string;
   readonly workspaceName: string;
   readonly title: string;
+  readonly description?: string;
   readonly runId?: string;
   readonly readReasoningStatus: WorkflowReasoningStatusReader;
   readonly readOnly?: boolean;
   readonly onOpenWorkflow?: () => void;
   readonly onRunAttached?: (runId: string) => void;
-  readonly onPrepareAnother?: () => void;
+  readonly onPrepareAnother?: () => void | Promise<void>;
   readonly onDirty?: (pending: boolean) => void;
   readonly theme?: "dark" | "light";
   readonly canNavigate?: boolean;
@@ -55,32 +57,38 @@ export function NativeProcessPanel({
           {onOpenWorkflow && (
             <button
               type="button"
-              aria-label="Open workflow"
+              aria-label="Edit workflow"
               onClick={onOpenWorkflow}
             >
-              Workflow
+              Edit workflow
             </button>
           )}
           <button
             type="button"
-            aria-current="page"
+            aria-current={historyOpen ? undefined : "page"}
             onClick={
               historyOpen && !historyDisabled ? onToggleHistory : undefined
             }
           >
-            Run and results
+            {runId ? "View run" : "Run workflow"}
           </button>
         </nav>
         {onToggleHistory && (
           <button
             type="button"
             aria-expanded={historyOpen}
+            aria-current={historyOpen ? "page" : undefined}
             disabled={historyDisabled}
             onClick={onToggleHistory}
           >
-            {historyOpen ? "Back to current view" : "Run history"}
+            {historyOpen ? "Back to workflow" : "Previous runs"}
           </button>
         )}
+        <small className="native-workflow-panel__view-hint">
+          {runId
+            ? "Follow this run, respond when needed, and inspect its results."
+            : "Review the inputs and check tools, then choose Start workflow."}
+        </small>
       </header>
       <div
         className="native-process-panel"
@@ -97,6 +105,7 @@ export function NativeProcessPanel({
             client={client}
             sessionId={sessionId}
             title={title}
+            description={description}
             runId={runId}
             readReasoningStatus={readReasoningStatus}
             readOnly={readOnly}

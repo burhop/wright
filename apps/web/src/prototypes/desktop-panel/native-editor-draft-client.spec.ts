@@ -181,6 +181,8 @@ it("coalesces edits and reads an uncertain autosave without replaying its acknow
       await vi.advanceTimersByTimeAsync(600);
     });
     expect(f.writes).toHaveLength(1);
+    expect(hook.result.current.attention).toBe(true);
+    expect(hook.result.current.message).toContain("Lost acknowledgement");
     await act(async () => {
       await vi.advanceTimersByTimeAsync(2000);
     });
@@ -188,6 +190,7 @@ it("coalesces edits and reads an uncertain autosave without replaying its acknow
     await act(async () => {
       await hook.result.current.refresh();
     });
+    expect(hook.result.current.attention).toBe(false);
     expect(f.writes).toHaveLength(1);
     act(() => {
       hook.result.current.change({ ...snapshot, source: "intermediate" }, true);
@@ -202,8 +205,10 @@ it("coalesces edits and reads an uncertain autosave without replaying its acknow
       ...accepted,
       storage_digest: "b".repeat(64),
       storage_revision: 2,
+      definition_revision: 2,
     };
     act(() => hook.result.current.accepted(newer));
+    expect(hook.result.current.acceptedRevision).toBe(2);
     act(() =>
       hook.result.current.change(
         { ...snapshot, source: "post-save edit" },

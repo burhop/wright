@@ -15,6 +15,98 @@ from pathlib import Path
 import zipfile
 
 
+def _unwrap_response(response):
+    if isinstance(response, dict) and "content" in response:
+        content = response["content"]
+        if (
+            response.get("isError", False) is not False
+            or not isinstance(content, list)
+            or len(content) != 1
+            or not isinstance(content[0], dict)
+        ):
+            raise ValueError(
+                "The recorded provider response has an unsupported MCP envelope"
+            )
+        item = content[0]
+        if item.get("type") == "json" and isinstance(item.get("value"), dict):
+            return item["value"]
+        if item.get("type") == "text" and isinstance(item.get("text"), str):
+            return json.loads(item["text"])
+        raise ValueError(
+            "The recorded provider response has an unsupported MCP envelope"
+        )
+    return response
+
+
+def select_observation(envelope, selector):
+    """Select one exact recorded operation, not an agent's interpretation."""
+    if (
+        not isinstance(selector, dict)
+        or set(selector) != {"server_id", "tool", "schema_digest", "arguments"}
+        or not isinstance(selector["arguments"], dict)
+        or any(
+            not isinstance(selector[key], str) or not selector[key]
+            for key in ("server_id", "tool", "schema_digest")
+        )
+        or envelope.get("schema_version") != "wright.mcp-tool-observations/1"
+        or envelope.get("server_id") != selector["server_id"]
+    ):
+        raise ValueError(
+            "The recorded observation needs its exact provider/tool selection"
+        )
+    projection = envelope.get("observations", {})
+    if (
+        not isinstance(projection, dict)
+        or projection.get("complete") is not True
+        or projection.get("evidence_state") != "available"
+        or projection.get("redaction_count") != 0
+        or not isinstance(projection.get("value"), list)
+    ):
+        raise ValueError(
+            "Complete unredacted tool observations are required for inspection"
+        )
+    calls = projection["value"]
+    encoded = json.dumps(calls, sort_keys=True, separators=(",", ":")).encode()
+    if (
+        hashlib.sha256(encoded).hexdigest() != projection.get("digest")
+        or type(envelope.get("call_count")) is not int
+        or envelope["call_count"] != len(calls)
+        or any(
+            not isinstance(call, dict)
+            or type(call.get("call_number")) is not int
+            or call["call_number"] != index
+            for index, call in enumerate(calls, 1)
+        )
+    ):
+        raise ValueError("Recorded tool observation identity is inconsistent")
+    matched = [
+        call
+        for call in calls
+        if all(call.get(key) == selector[key] for key in ("tool", "schema_digest"))
+        and json.dumps(call.get("arguments"), sort_keys=True, allow_nan=False)
+        == json.dumps(selector["arguments"], sort_keys=True, allow_nan=False)
+    ]
+    if len(matched) != 1 or matched[0].get("status") != "succeeded":
+        raise ValueError(
+            "Inspection requires one unambiguous successful recorded operation"
+        )
+    call = matched[0]
+    response = _unwrap_response(call.get("result"))
+    if (
+        "supplementary_response" in call
+        and json.dumps(_unwrap_response(call["supplementary_response"]), sort_keys=True, allow_nan=False)
+        != json.dumps(response, sort_keys=True, allow_nan=False)
+    ):
+        raise ValueError(
+            "Supplementary provider response needs an explicit qualified interpretation"
+        )
+    return response, {
+        **selector,
+        "call_number": call["call_number"],
+        "projection_sha256": projection["digest"],
+    }
+
+
 def run(config, read_toolpaths):
     workspace = Path(config["workspace_root"]).resolve(strict=True)
 
@@ -37,29 +129,26 @@ def run(config, read_toolpaths):
 
     response_raw = read(config["provider_response"], 1024 * 1024)
     response = json.loads(response_raw)
-    # Wright retains structured content directly, or the standard MCP content
-    # envelope. The selected provider returns exactly one JSON text block.
-    if isinstance(response, dict) and "content" in response:
-        content = response["content"]
-        if (
-            response.get("isError", False) is not False
-            or not isinstance(content, list)
-            or len(content) != 1
-            or not isinstance(content[0], dict)
-            or content[0].get("type") != "text"
-            or not isinstance(content[0].get("text"), str)
-        ):
-            raise ValueError(
-                "The recorded provider response has an unsupported MCP envelope"
-            )
-        response = json.loads(content[0]["text"])
+    observation_identity = None
+    if (
+        isinstance(response, dict)
+        and response.get("schema_version") == "wright.mcp-tool-observations/1"
+    ):
+        response, observation_identity = select_observation(
+            response, config.get("provider_observation")
+        )
+    elif config.get("provider_observation") is not None:
+        raise ValueError("Configured tool observation evidence is missing")
+    else:
+        response = _unwrap_response(response)
     if (
         not isinstance(response, dict)
         or response.get(config["success_field"]) is not True
     ):
         raise ValueError("The qualified provider did not report a successful slice")
     if any(
-        response.get(field) != expected
+        json.dumps(response.get(field), sort_keys=True, allow_nan=False)
+        != json.dumps(expected, sort_keys=True, allow_nan=False)
         for field, expected in config["expected_response_fields"].items()
     ):
         raise ValueError(
@@ -174,6 +263,8 @@ def run(config, read_toolpaths):
         "profiles": retained_profiles,
         "engineering_acceptance": False,
     }
+    if observation_identity is not None:
+        evidence["provider_observation"] = observation_identity
     preview = publish("support-preview.json", view)
     summary = {
         "format": "wright.gcode.toolpath-summary.v1",

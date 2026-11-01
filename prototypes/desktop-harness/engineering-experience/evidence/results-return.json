@@ -1,0 +1,18 @@
+{
+  "status": "PASS",
+  "boundary": "Candidate presentation fix on actual 0.30 API/storage, simulated native-file host; read-only exact-run navigation, image hash/viewport, report, producing step, availability and reload; no execution or source writes",
+  "html_sha256": "d470226e67b8170d4b257a1830fca179543bfb08d53cf61ee31168fd2dd16865",
+  "checks": [
+    "PNG visible and exact bytes retained",
+    "host download requests carry exact PNG and JSON bytes; declined delivery visible without retry",
+    "Back to results restores original Open file focus and viewport",
+    "producing step shows Results 1/1 without false source mismatch",
+    "same run retained after return and reload",
+    "narrow panel"
+  ],
+  "errors": [],
+  "protected_hashes_unchanged": 9,
+  "windows_acceptance": "UNVERIFIED",
+  "installed_plugin": "unchanged 0.33",
+  "tests": "65/65 shared common-view and native process tests; TypeScript and changed-file ESLint passed"
+}

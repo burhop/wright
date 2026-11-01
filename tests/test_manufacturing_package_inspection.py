@@ -124,6 +124,7 @@ def test_actual_recorded_paths_and_hashes_are_retained(handoff, enveloped):
         ("source", "different-mesh"),
         ("output", "different-package"),
         ("plate", 2),
+        ("plate", True),
     ],
 )
 def test_unsuccessful_or_mismatched_response_cannot_publish(handoff, field, value):
@@ -210,7 +211,9 @@ def test_explicit_nominal_layer_section_retains_full_package_identity(handoff):
     assert view["layers"][0]["support"]
 
 
-@pytest.mark.parametrize("preview", ["valid", "missing", "invalid", "duplicate", "existing"])
+@pytest.mark.parametrize(
+    "preview", ["valid", "missing", "invalid", "duplicate", "existing"]
+)
 def test_legacy_preview_uses_actual_package_and_same_passive_paths(handoff, preview):
     root, config, _ = handoff
     source_package = root / config["slice_package"]
@@ -221,7 +224,9 @@ def test_legacy_preview_uses_actual_package_and_same_passive_paths(handoff, prev
     with zipfile.ZipFile(archive_bytes, "w") as archive:
         archive.writestr(config["gcode_entry"], gcode)
         if preview != "missing":
-            archive.writestr("Metadata/plate_1.png", b"invalid!" if preview == "invalid" else png)
+            archive.writestr(
+                "Metadata/plate_1.png", b"invalid!" if preview == "invalid" else png
+            )
         if preview == "duplicate":
             with pytest.warns(UserWarning, match="Duplicate"):
                 archive.writestr("Metadata/plate_1.png", png)
@@ -245,3 +250,394 @@ def test_legacy_preview_uses_actual_package_and_same_passive_paths(handoff, prev
     a, b, c, d = segment
     assert f"M{a:.3f},{-b:.3f}L{c:.3f},{-d:.3f}" in svg
     assert "256" not in svg and "<script" not in svg
+
+
+def observed_response(root, config, response, *, calls=None):
+    from workspace_service.workflow_tool_observations import response_from_observations
+
+    selector = {
+        "server_id": "fixture-slicer",
+        "tool": "fixture-slicer__slice",
+        "schema_digest": "a" * 64,
+        "arguments": {
+            "source": response["source"],
+            "output": response["output"],
+            "plate": 1,
+        },
+    }
+    config["provider_observation"] = selector
+    if calls is None:
+        calls = [
+            {
+                "tool": selector["tool"],
+                "schema_digest": selector["schema_digest"],
+                "arguments": selector["arguments"],
+                "status": "succeeded",
+                "result": response,
+                "text": json.dumps(response),
+            }
+        ]
+    envelope = json.loads(response_from_observations(selector["server_id"], calls))
+    (root / config["provider_response"]).write_text(json.dumps(envelope))
+    return envelope
+
+
+def test_recorded_observation_to_passive_package_inspection(handoff):
+    root, config, response = handoff
+    envelope = observed_response(root, config, response)
+    result = operation.run(config, read_3mf_toolpaths)
+    evidence = json.loads((root / result["slice_evidence"]["path"]).read_text())
+    assert evidence["provider_observation"]["call_number"] == 1
+    assert (
+        evidence["provider_observation"]["projection_sha256"]
+        == envelope["observations"]["digest"]
+    )
+    assert (
+        evidence["package_sha256"]
+        == hashlib.sha256((root / config["slice_package"]).read_bytes()).hexdigest()
+    )
+    assert evidence["engineering_acceptance"] is False
+
+
+@pytest.mark.parametrize(
+    "change",
+    [
+        "server",
+        "tool",
+        "arguments",
+        "schema",
+        "incomplete",
+        "redacted",
+        "digest",
+        "count",
+        "missing",
+    ],
+)
+def test_observation_mismatch_never_publishes(handoff, change):
+    root, config, response = handoff
+    envelope = observed_response(root, config, response)
+    if change == "server":
+        config["provider_observation"]["server_id"] = "different"
+    elif change == "tool":
+        config["provider_observation"]["tool"] = "different"
+    elif change == "arguments":
+        config["provider_observation"]["arguments"]["output"] = "different"
+    elif change == "schema":
+        config["provider_observation"]["schema_digest"] = "b" * 64
+    elif change == "incomplete":
+        envelope["observations"]["complete"] = False
+    elif change == "redacted":
+        envelope["observations"]["redaction_count"] = 1
+    elif change == "digest":
+        envelope["observations"]["digest"] = "b" * 64
+    elif change == "count":
+        envelope["call_count"] += 1
+    elif change == "missing":
+        envelope = response
+    (root / config["provider_response"]).write_text(json.dumps(envelope))
+    with pytest.raises(ValueError):
+        operation.run(config, read_3mf_toolpaths)
+    assert not list((root / "outputs").iterdir())
+
+
+@pytest.mark.parametrize("kind", ["duplicate", "failed", "warning"])
+def test_ambiguous_failed_or_qualified_observation_blocks_inspection(handoff, kind):
+    root, config, response = handoff
+    envelope = observed_response(root, config, response)
+    call = envelope["observations"]["value"][0]
+    if kind == "failed":
+        call["status"] = "failed"
+    if kind == "warning":
+        call["text"] = "Warning: support geometry incomplete"
+    observed_response(
+        root, config, response, calls=[call, call] if kind == "duplicate" else [call]
+    )
+    with pytest.raises(ValueError):
+        operation.run(config, read_3mf_toolpaths)
+    assert not list((root / "outputs").iterdir())
+
+
+def test_selects_exact_orientation_among_multiple_calls(handoff):
+    root, config, response = handoff
+    envelope = observed_response(root, config, response)
+    selected = envelope["observations"]["value"][0]
+    alternate = json.loads(json.dumps(selected))
+    alternate["arguments"]["source"] = "configured-host/side.stl"
+    alternate["arguments"]["output"] = "configured-host/side.3mf"
+    alternate["result"].update(alternate["arguments"])
+    observed_response(root, config, response, calls=[alternate, selected])
+    result = operation.run(config, read_3mf_toolpaths)
+    evidence = json.loads((root / result["slice_evidence"]["path"]).read_text())
+    assert evidence["provider_observation"]["call_number"] == 2
+
+
+def test_argument_identity_does_not_equate_boolean_with_integer(handoff):
+    root, config, response = handoff
+    observed_response(root, config, response)
+    config["provider_observation"]["arguments"]["plate"] = True
+    with pytest.raises(ValueError, match="unambiguous"):
+        operation.run(config, read_3mf_toolpaths)
+    assert not list((root / "outputs").iterdir())
+
+
+def test_supplementary_response_equality_is_type_exact(handoff):
+    root, config, response = handoff
+    envelope = observed_response(root, config, response)
+    call = envelope["observations"]["value"][0]
+    call["text"] = json.dumps({**response, "ok": 1, "plate": True})
+    observed_response(root, config, response, calls=[call])
+    with pytest.raises(ValueError):
+        operation.run(config, read_3mf_toolpaths)
+    assert not list((root / "outputs").iterdir())
+
+
+@pytest.fixture
+def compared_alternatives(handoff):
+    """Synthetic packages exercise the real observation and inspection path."""
+    root, original, response = handoff
+    module_spec = importlib.util.spec_from_file_location(
+        "handle_comparison", REPO / "scripts/engineering/compare_handle_slices.py"
+    )
+    comparison_operation = importlib.util.module_from_spec(module_spec)
+    module_spec.loader.exec_module(comparison_operation)
+    alternatives = {}
+    for name, distance in (("pads_down", 5), ("side", 8)):
+        config = {**original}
+        config.update(
+            source_mesh=f"inputs/{name}.stl",
+            slice_package=f"inputs/{name}.3mf",
+            provider_response=f"inputs/{name}-response.json",
+            output_root=f"outputs/{name}",
+        )
+        (root / config["source_mesh"]).write_bytes(f"Synthetic {name} mesh".encode())
+        (root / config["output_root"]).mkdir()
+        with zipfile.ZipFile(root / config["slice_package"], "w") as archive:
+            archive.writestr(
+                config["gcode_entry"],
+                f"G90\nG21\nM83\n;CHANGE_LAYER\n;Z_HEIGHT:0.2\nG1 X0 Y0 Z0.2\n;FEATURE:Support\nG1 X10 Y{distance} E1\n",
+            )
+            archive.writestr(
+                "Metadata/plate_1.png",
+                b"\x89PNG\r\n\x1a\n" + name.encode() + b" fixture only",
+            )
+        actual = {
+            **response,
+            "source": config["source_mesh"],
+            "output": config["slice_package"],
+        }
+        config["expected_response_fields"] = {
+            k: actual[k] for k in ("source", "output", "plate")
+        }
+        observed_response(root, config, actual)
+        alternatives[name] = config
+    config = {
+        "workspace_root": str(root),
+        "alternatives": alternatives,
+        "comparison_output": "outputs/comparison.json",
+    }
+    compared = comparison_operation.inspect_alternatives(
+        config, operation.run, read_3mf_toolpaths
+    )
+    selection = {
+        "workspace_root": str(root),
+        "comparison": compared["comparison"]["path"],
+        "comparison_sha256": compared["comparison"]["sha256"],
+        "selected": "side",
+        "rationale": "Fixture choice only; not an engineering recommendation.",
+        "package_output": "outputs/selected.3mf",
+        "preview_output": "outputs/selected.png",
+        "selection_output": "outputs/selection.json",
+    }
+    return root, comparison_operation, compared, selection, config
+
+
+def test_comparison_retains_actual_observations_and_exact_selected_bytes(
+    compared_alternatives,
+):
+    root, compare, measured, selection, _ = compared_alternatives
+    before = {p: p.read_bytes() for p in root.rglob("*") if p.is_file()}
+    result = compare.retain_selection(selection)
+    assert result["engineering_acceptance"] is False
+    assert result["decision_kind"] == "proposed_selection_not_engineering_approval"
+    for alternative in measured["alternatives"].values():
+        assert alternative["provider_observation"]["call_number"] == 1
+        assert alternative["observed_layer_count"] == 1
+        assert alternative["observed_path_segments"]["support"] > 0
+    assert (root / selection["package_output"]).read_bytes() == (
+        root / "inputs/side.3mf"
+    ).read_bytes()
+    assert (root / selection["preview_output"]).read_bytes() == (
+        root / "outputs/side/slice-preview.png"
+    ).read_bytes()
+    assert all(p.read_bytes() == contents for p, contents in before.items())
+    with pytest.raises(ValueError, match="fresh workspace outputs"):
+        compare.retain_selection(selection)
+
+
+@pytest.mark.parametrize(
+    "path",
+    [
+        "inputs/side.3mf",
+        "inputs/pads_down.3mf",
+        "inputs/pads_down.stl",
+        "outputs/side/slice-preview.png",
+        "outputs/comparison.json",
+    ],
+)
+def test_comparison_drift_blocks_selection_without_publishing(
+    compared_alternatives, path
+):
+    root, compare, _, selection, _ = compared_alternatives
+    with (root / path).open("ab") as stream:
+        stream.write(b"changed")
+    with pytest.raises(ValueError, match="changed"):
+        compare.retain_selection(selection)
+    assert not (root / selection["package_output"]).exists()
+    assert not (root / selection["selection_output"]).exists()
+
+
+@pytest.mark.parametrize("case", ["outside", "alias", "existing", "no-rationale"])
+def test_selection_rejects_invalid_destinations_and_missing_rationale(
+    compared_alternatives, case
+):
+    root, compare, _, selection, _ = compared_alternatives
+    if case == "outside":
+        selection["preview_output"] = "../escape.png"
+    elif case == "alias":
+        selection["preview_output"] = "outputs/../outputs/selected.3mf"
+    elif case == "existing":
+        selection["preview_output"] = "inputs/side.3mf"
+    else:
+        selection["rationale"] = "  "
+    with pytest.raises(ValueError):
+        compare.retain_selection(selection)
+    assert not (root / selection["package_output"]).exists()
+
+
+@pytest.mark.parametrize("change", ["legacy", "source_mesh", "slice_package"])
+def test_comparison_rejects_unobserved_or_swapped_inputs(compared_alternatives, change):
+    root, compare, _, _, config = compared_alternatives
+    config["comparison_output"] = "outputs/another-comparison.json"
+    for name, alternative in config["alternatives"].items():
+        alternative["output_root"] = f"outputs/another-{name}"
+        (root / alternative["output_root"]).mkdir()
+    pads = config["alternatives"]["pads_down"]
+    side = config["alternatives"]["side"]
+    if change == "legacy":
+        pads.pop("provider_observation")
+    else:
+        pads[change], side[change] = side[change], pads[change]
+    with pytest.raises(ValueError):
+        compare.inspect_alternatives(config, operation.run, read_3mf_toolpaths)
+    assert not (root / config["comparison_output"]).exists()
+    for alternative in config["alternatives"].values():
+        assert not list((root / alternative["output_root"]).iterdir())
+
+
+def test_portable_inspection_resources_execute_existing_reader_and_inspector(
+    compared_alternatives, monkeypatch,
+):
+    root, _, _, selection, config = compared_alternatives
+    bundle_path = (
+        REPO
+        / "prototypes/desktop-harness/engineering-experience/handle/inspection-resources-v2.zip"
+    )
+    builder_spec = importlib.util.spec_from_file_location(
+        "handle_resource_builder",
+        bundle_path.with_name("build_inspection_resources.py"),
+    )
+    builder = importlib.util.module_from_spec(builder_spec)
+    builder_spec.loader.exec_module(builder)
+    # A stale code snapshot or changed profile must not silently keep its pin.
+    assert bundle_path.read_bytes() == builder.package()
+    # Windows defaults ZipInfo to DOS metadata. The portable archive must still
+    # reproduce the accepted bytes without changing any source/asset pin.
+    original_zip_info = zipfile.ZipInfo
+
+    class WindowsZipInfo(original_zip_info):
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+            self.create_system = 0
+
+    with monkeypatch.context() as patch:
+        patch.setattr(builder.zipfile, "ZipInfo", WindowsZipInfo)
+        assert bundle_path.read_bytes() == builder.package()
+    with zipfile.ZipFile(bundle_path) as archive:
+        manifest = json.loads(archive.read("manifest.json"))
+        assert set(archive.namelist()) == set(manifest["files"]) | {"manifest.json"}
+        for name, identity in manifest["files"].items():
+            data = archive.read(name)
+            assert identity == {
+                "sha256": hashlib.sha256(data).hexdigest(),
+                "bytes": len(data),
+            }
+        assert (
+            json.loads(archive.read("profiles/process.json"))["enable_support"] == "1"
+        )
+        modules = {}
+        for name in (
+            "passive_representations",
+            "inspect_manufacturing_package",
+            "compare_handle_slices",
+        ):
+            namespace = {"__name__": name}
+            exec(compile(archive.read(name + ".py"), name + ".py", "exec"), namespace)
+            modules[name] = namespace
+    config["comparison_output"] = "outputs/bundled-comparison.json"
+    for name, alternative in config["alternatives"].items():
+        alternative["output_root"] = f"outputs/bundled-{name}"
+        (root / alternative["output_root"]).mkdir()
+    measured = modules["compare_handle_slices"]["inspect_alternatives"](
+        config,
+        modules["inspect_manufacturing_package"]["run"],
+        modules["passive_representations"]["read_3mf_toolpaths"],
+    )
+    selection.update(
+        comparison=measured["comparison"]["path"],
+        comparison_sha256=measured["comparison"]["sha256"],
+    )
+    result = modules["compare_handle_slices"]["retain_selection"](selection)
+    assert result["engineering_acceptance"] is False
+    assert (root / selection["package_output"]).read_bytes() == (
+        root / "inputs/side.3mf"
+    ).read_bytes()
+
+
+def test_selection_retains_exact_support_evidence(compared_alternatives):
+    root, compare, measured, selection, _ = compared_alternatives
+    selection["support_output"] = "outputs/selected-support.json"
+    result = compare.retain_selection(selection)
+    original = measured["alternatives"]["side"]["inspection"]["support_preview"]
+    assert result["original_support_evidence"] == original
+    assert (root / selection["support_output"]).read_bytes() == (
+        root / original["path"]
+    ).read_bytes()
+    assert result["retained_support_evidence"]["sha256"] == original["sha256"]
+    assert result["engineering_acceptance"] is False
+
+
+@pytest.mark.parametrize("orientation", ["pads_down", "side"])
+def test_changed_support_evidence_blocks_selection_without_writes(
+    compared_alternatives, orientation
+):
+    root, compare, measured, selection, _ = compared_alternatives
+    selection["support_output"] = "outputs/selected-support.json"
+    original = measured["alternatives"][orientation]["inspection"]["support_preview"]
+    (root / original["path"]).write_text("changed")
+    with pytest.raises(ValueError, match="support evidence changed"):
+        compare.retain_selection(selection)
+    for name in (
+        "package_output",
+        "preview_output",
+        "selection_output",
+        "support_output",
+    ):
+        assert not (root / selection[name]).exists()
+
+
+def test_support_destination_cannot_overwrite_another_output(compared_alternatives):
+    root, compare, _, selection, _ = compared_alternatives
+    selection["support_output"] = selection["package_output"]
+    with pytest.raises(ValueError, match="distinct fresh"):
+        compare.retain_selection(selection)
+    assert not (root / selection["package_output"]).exists()

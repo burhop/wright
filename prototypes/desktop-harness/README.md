@@ -1,5 +1,12 @@
 # Wright inside the desktop harness — local prototype
 
+**Current direction, 28 October:** start with the
+[Codex engineering-experience plan](../../docs/design/codex-engineering-experience-plan.md)
+and [preservation checkpoint](evidence/checkpoint-20261028/README.md).
+The next design pass addresses complete engineering journeys and individual
+controls in the desktop harness. Earlier dated checkpoints below are historical;
+they do not describe the current installed candidate or establish user acceptance.
+
 **Current, 19 October:** the normal full merge gate passed on `cb875fc5`.
 The tested 0.16 candidate adds device-code sign-in without SSH, encrypted missing
 credentials, private-safe configuration import, HTTPS headers and reviewed

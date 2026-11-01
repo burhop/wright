@@ -5,6 +5,83 @@
   --native-host-border: var(--color-border);
 }
 
+.native-ui-review {
+  padding: 3px 12px;
+  background: var(--native-host-bg, #202020);
+  color: var(--native-host-fg, #f0f0f0);
+  font: 12px/1.4 var(--native-host-font, system-ui, sans-serif);
+  border-bottom: 1px solid var(--native-host-border, #414141);
+}
+.native-ui-review button {
+  font: inherit;
+  color: inherit;
+  background: transparent;
+  border: 1px solid var(--native-host-border, #555);
+  border-radius: 5px;
+  padding: 5px 8px;
+  cursor: pointer;
+}
+.native-ui-review > span {
+  pointer-events: none;
+  position: absolute;
+  z-index: 100;
+  top: 38px;
+  left: 12px;
+  right: 12px;
+  padding: 8px;
+  background: var(--native-host-bg, #202020);
+  border: 1px solid var(--native-host-border, #555);
+}
+.native-ui-review button:focus-visible,
+.native-ui-review textarea:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+.native-ui-review button:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+.native-ui-review__form {
+  position: absolute;
+  z-index: 100;
+  top: 40px;
+  right: 12px;
+  left: 12px;
+  max-height: calc(100vh - 64px);
+  overflow: auto;
+  padding: 14px;
+  background: var(--native-host-bg, #202020);
+  border: 1px solid var(--native-host-border, #555);
+  border-radius: 8px;
+  box-shadow: 0 8px 32px #0006;
+}
+.native-ui-review__form h2 {
+  margin-top: 0;
+  font-size: 15px;
+}
+.native-ui-review__form label {
+  display: block;
+}
+.native-ui-review__form textarea {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 64px;
+  font: inherit;
+  color: inherit;
+  background: transparent;
+}
+.native-ui-review__form code {
+  overflow-wrap: anywhere;
+}
+.native-ui-review__form small {
+  display: block;
+  margin: 8px 0;
+}
+.native-ui-review__form button {
+  margin: 4px 6px 4px 0;
+}
+
 .native-workflow-panel[data-control-style] {
   --color-neutral: var(--native-host-bg, #1c1c1c);
   --color-primary: var(--native-host-fg, #eeeeee);
@@ -31,6 +108,7 @@
 .native-workflow-panel__context small {
   flex-basis: 100%;
   color: var(--color-text-muted);
+  overflow-wrap: anywhere;
 }
 .native-workflow-panel__context > button {
   min-height: 32px;
@@ -64,22 +142,33 @@
   padding: 7px 10px;
   font: inherit;
   border: 0;
-  border-radius: 6px;
-  color: var(--color-text-muted);
+  border-bottom: 2px solid transparent;
+  border-radius: 0;
+  color: var(--color-primary);
   background: transparent;
   cursor: pointer;
 }
 .native-workflow-views button[aria-current="page"] {
-  color: var(--color-primary);
-  background: var(--color-surface-elevated, #333);
+  border-bottom-color: currentColor;
+  font-weight: 600;
 }
 .native-workflow-views button:disabled {
-  opacity: 0.6;
+  color: var(--color-text-muted);
+  opacity: 0.5;
   cursor: default;
+}
+.native-workflow-views button:not(:disabled):hover {
+  background: var(--color-surface-hover, #333);
 }
 .native-workflow-views button:focus-visible {
   outline: 2px solid var(--color-primary);
   outline-offset: 2px;
+}
+.native-process-panel .wp-button:disabled {
+  color: var(--color-text-muted);
+  background: transparent;
+  border: 1px solid var(--color-border);
+  cursor: not-allowed;
 }
 /* Keep the common kit, with the same surrounding neutral controls as the editor. */
 .native-process-panel .wright-process-ui {
@@ -92,7 +181,7 @@
   --color-text-muted: inherit;
   --color-border: inherit;
   --color-border-hover: inherit;
-  --font-ui: inherit;
+  --font-ui: var(--native-host-font, system-ui, sans-serif);
   --color-secondary: var(--color-primary);
 }
 .native-workflow-panel__editor {
@@ -176,6 +265,112 @@
   padding: 10px 0;
   border-bottom: 1px solid var(--native-host-border, #414141);
 }
+.native-home .native-home__workflows,
+.native-home .native-home__files {
+  /* The workspace is a navigator, not a document-sized stack of controls. */
+  box-sizing: border-box;
+  max-height: min(45dvh, 360px);
+  overflow: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+  padding: 2px 4px;
+}
+.native-home .native-home__files li {
+  margin: 0;
+  padding: 5px 4px;
+  border-bottom: 1px solid var(--native-host-border, #414141);
+}
+.native-home .native-home__files button {
+  display: block;
+  width: 100%;
+  padding: 2px 0;
+  border: 0;
+  border-radius: 2px;
+  text-align: left;
+  background: transparent;
+  overflow-wrap: anywhere;
+  font-size: 13px;
+}
+.native-home .native-home__files button:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.native-home .native-home__files small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 11px;
+}
+.native-home__list-count {
+  margin: 6px 0;
+  font-size: 11px;
+  color: var(--native-host-muted, #aaa);
+}
+.native-home[data-file-tabs="true"] .native-home__files {
+  max-height: min(58dvh, 520px);
+}
+.native-home[data-file-tabs="true"] .native-home__files li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 4px 8px;
+}
+.native-home[data-file-tabs="true"] .native-home__files button {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 30px;
+  padding: 3px 2px;
+}
+.native-home[data-file-tabs="true"]
+  .native-home__files
+  button
+  > span:first-child {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.native-home__file-kind {
+  margin-left: auto;
+  font-size: 11px;
+  color: var(--native-host-muted, #b5b5b5);
+}
+.native-home__file-details {
+  margin: 0;
+  max-width: 200px;
+}
+.native-home__file-details summary {
+  padding: 4px 6px;
+  cursor: pointer;
+  list-style: none;
+}
+.native-home__file-details code {
+  display: block;
+  overflow-wrap: anywhere;
+  font-size: 11px;
+}
+.native-home__context-tools {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 12px;
+  margin: 4px 0 8px;
+  font-size: 12px;
+}
+.native-home__context-tools details {
+  margin: 0;
+}
+.native-home__context-tools summary {
+  cursor: pointer;
+}
+.native-home__file-options {
+  margin: 12px 0;
+  font-size: 12px;
+}
+.native-home__file-options > summary {
+  cursor: pointer;
+}
 .native-home .native-home__workflows button {
   display: flex;
   align-items: center;
@@ -191,6 +386,43 @@
 }
 .native-home .native-home__workflows small {
   font-size: 12px;
+}
+.native-home__workflow-purpose {
+  margin: 0 0 5px;
+  color: var(--native-host-muted, #aaa);
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+.native-home .native-connections__items {
+  box-sizing: border-box;
+  max-height: min(60dvh, 520px);
+  overflow: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+  padding: 2px;
+}
+.native-connections__items > li {
+  padding: 12px;
+  border: 1px solid var(--native-host-border, #414141);
+  border-radius: 8px;
+}
+.native-connections__items > li > p {
+  margin: 5px 0;
+  font-size: 12px;
+}
+.native-connections__items > li > button {
+  margin: 6px 6px 0 0;
+}
+.native-connections__next {
+  color: var(--native-host-muted, #aaa);
+}
+.native-connections__items summary {
+  margin: 6px 0;
+  cursor: pointer;
+  font-size: 12px;
+}
+.native-connections__manage[open] {
+  padding-bottom: 8px;
 }
 .native-home label,
 .native-home small {
@@ -278,6 +510,32 @@
   font-size: 12px;
   color: var(--native-host-muted, #aaa);
   background: transparent;
+}
+/* Compact navigation to recorded questions/reviews, never a second run controller. */
+.native-home__attention {
+  margin: 12px 0 18px;
+}
+.native-home__attention-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 3px 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--native-host-border, #414141);
+}
+.native-home__attention-row > strong,
+.native-home__attention-row > span {
+  grid-column: 1;
+  overflow-wrap: anywhere;
+}
+.native-home__attention-row > span {
+  font-size: 12px;
+  color: var(--native-host-muted, #aaa);
+}
+.native-home__attention-row > button,
+.native-home__attention-row > small {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  align-self: center;
 }
 .native-home__section-heading,
 .native-home__workflow-actions {
@@ -407,4 +665,176 @@
 }
 .native-workspace-settings button {
   margin: 8px 6px 0 0;
+}
+
+/* Native host owns tabs/breadcrumbs; Wright reuses the editor's file-actions slot. */
+#ui-review {
+  order: 3;
+}
+.native-ui-review {
+  text-align: right;
+  border-top: 1px solid var(--native-host-border, #414141);
+  border-bottom: 0;
+}
+.native-ui-review__form {
+  text-align: left;
+}
+.native-workspace-frame[data-native-file="true"] {
+  grid-template-rows: minmax(0, 1fr);
+}
+.native-workflow-panel .recovery-filebar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 4px 8px;
+  padding: 6px 10px;
+}
+.native-workflow-panel .recovery-filebar__identity {
+  min-width: 0;
+  grid-column: 1;
+  grid-row: 1;
+}
+.native-workflow-panel .recovery-toolbar {
+  grid-column: 1 / -1;
+  grid-row: 2;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+}
+.native-workflow-panel .recovery-filebar .native-workflow-panel__context {
+  grid-column: 2;
+  grid-row: 1;
+  padding: 0;
+  border: 0;
+  gap: 4px;
+  justify-content: flex-end;
+  min-width: 0;
+}
+.native-workflow-panel__context > [role="status"],
+.native-workflow-panel__context > [role="alert"] {
+  flex-basis: 100%;
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+.native-workflow-panel__run {
+  color: var(--color-text-muted);
+}
+.native-workflow-views button {
+  min-height: 30px;
+  padding: 4px 7px;
+}
+.native-workflow-details {
+  position: relative;
+  font-size: 12px;
+}
+.native-workflow-details > summary {
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 5px;
+}
+.native-workflow-details > summary:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+.native-workflow-details__content {
+  position: absolute;
+  z-index: 60;
+  right: 0;
+  top: calc(100% + 4px);
+  box-sizing: border-box;
+  width: min(380px, calc(100vw - 24px));
+  max-height: calc(100vh - 150px);
+  overflow: auto;
+  padding: 12px;
+  background: var(--native-host-bg, #202020);
+  color: var(--color-primary);
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  box-shadow: 0 8px 24px #0006;
+  font: 12px/1.5 var(--font-ui);
+}
+.native-workflow-details__content dl {
+  margin: 0;
+}
+.native-workflow-details__content dt {
+  font-weight: 600;
+}
+.native-workflow-details__content dd {
+  margin: 0 0 6px;
+  overflow-wrap: anywhere;
+}
+.native-workflow-details__content > button {
+  min-height: 32px;
+  padding: 5px 10px;
+  font: inherit;
+  color: inherit;
+  border: 1px solid var(--color-border);
+  background: transparent;
+  border-radius: 5px;
+  cursor: pointer;
+}
+@media (max-width: 600px) {
+  .native-workflow-panel .recovery-filebar {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .native-workflow-panel .recovery-filebar__identity {
+    grid-column: 1;
+    grid-row: 1;
+  }
+  .native-workflow-panel .recovery-filebar .native-workflow-panel__context {
+    grid-column: 1;
+    grid-row: 2;
+    justify-content: flex-start;
+  }
+  .native-workflow-panel .recovery-toolbar {
+    grid-row: 3;
+  }
+  .native-workflow-details__content {
+    position: fixed;
+    top: 86px;
+    left: 12px;
+    right: 12px;
+    width: auto;
+    max-height: calc(100vh - 140px);
+  }
+}
+
+.native-editor-connections {
+  width: min(860px, calc(100vw - 24px));
+  max-height: calc(100vh - 24px);
+  padding: 0;
+  color: var(--native-host-fg, #f0f0f0);
+  background: var(--native-host-bg, #202020);
+  border: 1px solid var(--native-host-border, #555);
+  border-radius: 10px;
+}
+.native-editor-connections::backdrop {
+  background: rgb(0 0 0 / 55%);
+}
+.native-editor-connections > header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px;
+  position: sticky;
+  top: 0;
+  background: inherit;
+  z-index: 1;
+}
+.native-editor-connections > .native-home {
+  padding: 12px;
+}
+
+.native-editor-connections > header button {
+  flex-shrink: 0;
+  font: inherit;
+  color: inherit;
+  background: transparent;
+  border: 1px solid var(--native-host-border, #555);
+  border-radius: 5px;
+  padding: 8px 10px;
+  cursor: pointer;
+}
+.native-editor-connections > header button:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
 }

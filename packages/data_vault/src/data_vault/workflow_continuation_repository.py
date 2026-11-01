@@ -158,6 +158,34 @@ class WorkflowContinuationRepository:
             ).fetchall()
         return tuple(self._record(row) for row in rows)
 
+    def pending_navigation(
+        self, workspace_id: str, *, after: str = "", limit: int = 20
+    ) -> dict[str, Any]:
+        """Read compact recorded waits, not eligibility or dispatch authority."""
+        if not 1 <= limit <= 50:
+            raise ValueError("Pending navigation page size must be 1 through 50")
+        with connect_state_db(self.db_path, ensure_parent=True) as connection:
+            self._ensure(connection)
+            rows = connection.execute(
+                """SELECT checkpoint_id, workflow_id AS workflow_path, run_id,
+                step_id, action_kind, state, expires_at,
+                json_extract(continuation_json, '$.checkpoint_kind') AS checkpoint_kind,
+                json_extract(continuation_json, '$.response_id') AS response_id,
+                json_extract(continuation_json, '$.run_log_path') AS path,
+                json_extract(continuation_json, '$.source_digest') AS source_digest,
+                json_extract(continuation_json, '$.step_title') AS step_title
+                FROM workflow_continuation_checkpoints
+                WHERE workspace_id=? AND state IN ('pending', 'approved')
+                AND checkpoint_id>? ORDER BY checkpoint_id LIMIT ?""",
+                (workspace_id, after, limit + 1),
+            ).fetchall()
+        return {
+            "items": [dict(row) for row in rows[:limit]],
+            "next_cursor": rows[limit - 1]["checkpoint_id"]
+            if len(rows) > limit
+            else None,
+        }
+
     @staticmethod
     def _input_checkpoint(connection, checkpoint_id):
         row = connection.execute(

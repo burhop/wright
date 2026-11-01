@@ -130,8 +130,8 @@ try{
  if(lostStartAck){
    await expect(frame.getByTestId('common-process-view')).toBeVisible();
    await frame.getByRole('button',{name:'Prepare and check inputs',exact:true}).click();
-   await expect(frame.getByRole('button',{name:'Start process',exact:true})).toBeEnabled();
-   await frame.getByRole('button',{name:'Start process',exact:true}).click();
+   await expect(frame.getByRole('button',{name:/^(Start workflow|Start process)$/,exact:true})).toBeEnabled();
+   await frame.getByRole('button',{name:/^(Start workflow|Start process)$/,exact:true}).click();
    await expect(frame.getByRole('button',{name:'Reconcile start request',exact:true})).toBeVisible();
    await page.screenshot({path:resolve(output,'native-start-ack-unknown-fixture.png')});
    expect(ownerCalls.filter(call=>call.arguments?.request?.operation==='start')).toHaveLength(1);
@@ -230,7 +230,7 @@ try{
    await frame.getByTestId('workflow-recovery-source-apply').click();await frame.getByTestId('workflow-recovery-save').click();
    await expect(frame.getByTestId('workflow-recovery-save-status')).toHaveText('Saved');accepted=await sourceCall('GET');
    await frame.getByTestId('workflow-recovery-view-diagram').click();
-   await frame.getByRole('button',{name:'Run and results',exact:true}).click();
+   await frame.getByRole('button',{name:/^(Run workflow|View run|Run and results)$/,exact:true}).click();
    await expect(frame.getByTestId('common-process-view')).toBeVisible();
    await frame.getByText('Saved defaults (1)',{exact:true}).click();
    const input=frame.getByLabel('Brief (required)',{exact:true});
@@ -243,7 +243,7 @@ try{
    await page.screenshot({path:resolve(output,'native-working-preparation-fixture.png')});
    await frame.getByRole('button',{name:'Open workflow',exact:true}).click();
    await expect(frame.getByTestId('workflow-recovery-save')).toBeVisible();
-   await frame.getByRole('button',{name:'Run and results',exact:true}).click();
+   await frame.getByRole('button',{name:/^(Run workflow|View run|Run and results)$/,exact:true}).click();
    await expect(frame.getByTestId('common-process-view')).toBeVisible();
    const calls=await page.evaluate(()=>window.calls);
    expect(calls.filter(c=>c.name==='wright_process_ui_update').map(c=>c.arguments.request.operation)).toEqual(['inputs','readiness']);

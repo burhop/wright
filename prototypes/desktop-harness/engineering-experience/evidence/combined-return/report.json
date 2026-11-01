@@ -1,0 +1,26 @@
+{
+  "status": "PASS",
+  "source_base": "ce49d4a6",
+  "resource_sha256": "14da65e88c7fb094255df387a568b460306311758a1b394c7f15af78bf68ca9f",
+  "boundary": "Compiled UI with controlled transport/source storage; no real engineering/review/backend persistence/Windows acceptance",
+  "checks": [
+    "Open exact waiting review; switch to editor and back without process update",
+    "Prepare new run from waiting state without cancelling or starting; return to same waiting run from history",
+    "Edit and apply source; save revised title; editor action changes to Run workflow",
+    "New preparation does not inherit the old review",
+    "History retains named result from prior source version; known old version offers saved evidence rather than failing working view"
+  ],
+  "process_updates": 0,
+  "denied": [],
+  "page_errors": [],
+  "unit_tests": {
+    "passed": 100,
+    "failed": 0
+  },
+  "typescript": "PASS",
+  "eslint": "PASS",
+  "windows": "UNVERIFIED",
+  "real_engineering": "UNVERIFIED",
+  "installed_plugin": "unchanged 0.33.0",
+  "private_evidence": ".local-run/experience-review/candidate-037/combined-return"
+}

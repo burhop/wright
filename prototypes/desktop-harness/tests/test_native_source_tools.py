@@ -120,3 +120,86 @@ def test_real_scope_denial_is_known_and_never_writes(native_save):
     assert result["error"]["code"] == "PERMISSION_DENIED"
     assert result["error"]["outcome_known"] is True
     client.call.assert_not_awaited()
+
+
+def test_editor_tool_discovery_is_app_only_scoped_and_read_only(native_save):
+    server, client = native_save
+    tool = {
+        "name": "cad.inspect",
+        "server_id": "cad",
+        "tool_name": "inspect",
+        "title": "Inspect CAD",
+        "description": "Inspect the selected document",
+        "input_schema": {"type": "object"},
+        "output_schema": None,
+        "schema_digest": "b" * 64,
+    }
+    client.call.side_effect = [
+        {"tools": [tool]},
+        {
+            "servers": [
+                {"server_id": "cad", "name": "Study CAD", "private_config": "omitted"}
+            ]
+        },
+    ]
+    _, result = asyncio.run(
+        server.call_tool(
+            "wright_workflow_editor_tools",
+            {
+                "request": {"workspace_id": "workspace", "session_id": "session"},
+            },
+        )
+    )
+    assert result == {
+        "workspace_id": "workspace",
+        "session_id": "session",
+        "tools": [{**tool, "server_name": "Study CAD", "workspace_server": True}],
+    }
+    client.scope.assert_awaited_once_with("workspace", "session")
+    assert client.call.await_count == 2
+    assert client.call.call_args_list[0].args == (
+        "GET",
+        "/api/workspace/workflow-sources/tools",
+    )
+    assert client.call.call_args_list[0].kwargs == {"params": {"session_id": "session"}}
+    assert client.call.call_args_list[1].args == ("GET", "/api/mcp/servers")
+    registered = next(
+        t
+        for t in asyncio.run(server.list_tools())
+        if t.name == "wright_workflow_editor_tools"
+    )
+    assert registered.meta["ui"]["visibility"] == ["app"]
+    assert registered.annotations.readOnlyHint is True
+
+
+def test_editor_tool_discovery_scope_denial_makes_no_request(native_save):
+    server, client = native_save
+    client.scope.side_effect = PermissionError("scope differs")
+    with pytest.raises(Exception, match="scope differs"):
+        asyncio.run(
+            server.call_tool(
+                "wright_workflow_editor_tools",
+                {
+                    "request": {"workspace_id": "other", "session_id": "session"},
+                },
+            )
+        )
+    client.call.assert_not_awaited()
+
+
+@pytest.mark.parametrize(
+    "tools", [None, {}, [None], [{"token": "must not leave owner"}]]
+)
+def test_editor_tool_discovery_rejects_invalid_metadata(native_save, tools):
+    server, client = native_save
+    client.call.return_value = {"tools": tools}
+    with pytest.raises(Exception, match="invalid workflow tool"):
+        asyncio.run(
+            server.call_tool(
+                "wright_workflow_editor_tools",
+                {
+                    "request": {"workspace_id": "workspace", "session_id": "session"},
+                },
+            )
+        )
+    assert client.call.await_count == 1

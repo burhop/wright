@@ -2816,10 +2816,15 @@ end`;
       "37",
     );
     expect(screen.getByTestId("workflow-recovery-run-start")).toBeDisabled();
-    expect(screen.getByTestId("workflow-recovery-run-start")).toHaveAttribute(
-      "title",
-      expect.stringContaining("exact mounting-bracket fixture facts"),
-    );
+    // Saving publishes the accepted revision before its async semantic digest.
+    // Wait for the existing bounded-simulation reason, retaining the run guard.
+    await waitFor(() => {
+      expect(screen.getByTestId("workflow-recovery-run-start")).toBeDisabled();
+      expect(screen.getByTestId("workflow-recovery-run-start")).toHaveAttribute(
+        "title",
+        expect.stringContaining("exact mounting-bracket fixture facts"),
+      );
+    });
   });
 
   it("runs the host-confirmed revision with its semantic digest and separate storage proof after undo", async () => {

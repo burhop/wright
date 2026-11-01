@@ -20,7 +20,9 @@ from workspace_service.process_validation.readers.base import (
     SubjectSnapshot,
     ValidationIssue,
 )
-from workspace_service.process_validation.readers.structural import StructuralEvidenceReader
+from workspace_service.process_validation.readers.structural import (
+    StructuralEvidenceReader,
+)
 
 
 def subject(role, content, fmt):
@@ -231,3 +233,176 @@ def test_receipt_rejects_a_field_whose_hash_does_not_match():
             context(geometry, displacement),
         )
     assert captured.value.code == "structural.receipt_file_mismatch"
+
+
+def design_response_case():
+    from workspace_service.process_validation.readers.design_response import (
+        DesignResponseReader,
+    )
+
+    geometry = subject("design", b"synthetic geometry bytes", "step")
+    geometry = replace(
+        geometry,
+        subject=geometry.subject.model_copy(
+            update={
+                "producer": geometry.subject.producer.model_copy(
+                    update={"step_id": "cad"}
+                )
+            }
+        ),
+    )
+    basis = subject("basis", b'{"load_n":40}', "json")
+    field = subject(
+        "field",
+        b"element_id,integration_point,sxx_mpa,syy_mpa,szz_mpa,sxy_mpa,sxz_mpa,syz_mpa\n1,1,30,0,0,0,0,0\n",
+        "csv",
+    )
+    field = replace(
+        field,
+        subject=field.subject.model_copy(
+            update={"input_digests": (geometry.subject.sha256, basis.subject.sha256)}
+        ),
+    )
+    definition = check(
+        "stress_maximum",
+        unit="MPa",
+        maximum=20,
+        parameters={
+            "field_role": "field",
+            "basis_roles": ["basis"],
+            "related_roles": ["field", "basis"],
+        },
+    ).model_copy(update={"reader": "design-response", "subject_role": "design"})
+    return DesignResponseReader(), geometry, basis, field, definition
+
+
+def test_design_response_measures_field_and_retains_exact_design_basis_evidence():
+    from workspace_service.process_validation.evaluation import compare
+
+    reader, geometry, basis, field, definition = design_response_case()
+    from workspace_service.process_validation.service import (
+        default_reader_registry,
+        _finding,
+    )
+    from core.process_validation import (
+        Baseline,
+        Requirement,
+        SourceReference,
+        ValidationProfile,
+    )
+
+    measurement = default_reader_registry().measure(
+        geometry, definition, context(basis, field)
+    )
+    assert measurement.reader == reader.identity
+    profile = ValidationProfile(
+        id="synthetic-strength",
+        version="1",
+        baseline=Baseline(
+            id="synthetic-basis",
+            version="1",
+            requirements=(
+                Requirement(
+                    id="REQ",
+                    text="Synthetic stress limit",
+                    scope="design",
+                    sources=(
+                        SourceReference(
+                            artifact_ref="basis.json",
+                            sha256=basis.subject.sha256,
+                            locator="stress_limit",
+                        ),
+                    ),
+                ),
+            ),
+        ),
+        checks=(definition,),
+    )
+    finding = _finding(
+        profile,
+        definition,
+        ValidationIssue(
+            "requirement.out_of_bounds",
+            "Synthetic stress exceeds limit",
+            state="fail",
+            category="output_defect",
+            action="revise_output",
+        ),
+        geometry.subject,
+        measurement,
+    )
+    assert finding.owner == geometry.subject.producer
+    assert finding.correction.target_step_id == "cad"
+    assert measurement.value == 30
+    assert measurement.subject_id == geometry.subject.id
+    assert compare(definition, measurement, geometry.subject) == "fail"
+    assert all(
+        any(s.subject.sha256 in ref for ref in measurement.evidence_refs)
+        for s in (geometry, basis, field)
+    )
+
+
+@pytest.mark.parametrize(
+    "fault",
+    [
+        "old_geometry",
+        "old_basis",
+        "legacy",
+        "other_run",
+        "same_producer",
+        "missing_field",
+        "malformed_field",
+        "nonfinite",
+        "wrong_units",
+    ],
+)
+def test_invalid_analysis_never_requests_cad_repair(fault):
+    reader, geometry, basis, field, definition = design_response_case()
+    if fault == "old_geometry":
+        field = replace(
+            field,
+            subject=field.subject.model_copy(
+                update={"input_digests": ("a" * 64, basis.subject.sha256)}
+            ),
+        )
+    elif fault == "old_basis":
+        field = replace(
+            field,
+            subject=field.subject.model_copy(
+                update={"input_digests": (geometry.subject.sha256, "a" * 64)}
+            ),
+        )
+    elif fault == "legacy":
+        field = replace(
+            field, subject=field.subject.model_copy(update={"input_digests": ()})
+        )
+    elif fault in {"other_run", "same_producer"}:
+        key, value = ("run_id", "other") if fault == "other_run" else ("step_id", "cad")
+        field = replace(
+            field,
+            subject=field.subject.model_copy(
+                update={
+                    "producer": field.subject.producer.model_copy(update={key: value})
+                }
+            ),
+        )
+    elif fault in {"malformed_field", "nonfinite"}:
+        content = (
+            b"bad csv"
+            if fault == "malformed_field"
+            else field.content.replace(b",30,", b",nan,")
+        )
+        field = replace(
+            field,
+            content=content,
+            subject=field.subject.model_copy(
+                update={"sha256": hashlib.sha256(content).hexdigest()}
+            ),
+        )
+    elif fault == "wrong_units":
+        definition = definition.model_copy(update={"unit": "Pa"})
+    related = (basis,) if fault == "missing_field" else (basis, field)
+    with pytest.raises(ValidationIssue) as error:
+        reader.measure(geometry, definition, context(*related))
+    assert error.value.action != "revise_output"
+    assert error.value.state == "blocked"

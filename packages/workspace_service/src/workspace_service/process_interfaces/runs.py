@@ -10,7 +10,12 @@ from pathlib import PurePosixPath
 
 from pydantic import TypeAdapter
 
-from core.process_interactions import StartReceipt, ProcessRunEvent, ProcessRunEventPage
+from core.process_interactions import (
+    NavigationTarget,
+    StartReceipt,
+    ProcessRunEvent,
+    ProcessRunEventPage,
+)
 from core.process_validation import Digest, Identifier, canonical_digest
 from core.tracing import traced
 from data_vault.process_input_repository import ProcessRecordConflict
@@ -236,6 +241,9 @@ class ProcessRunSupervisor:
                     code,
                     str(error),
                     error.correction,
+                    navigation=NavigationTarget(kind="block", block_id=error.block_id)
+                    if error.block_id
+                    else None,
                     details={"source_code": error.code},
                 ) from error
             transferred = False

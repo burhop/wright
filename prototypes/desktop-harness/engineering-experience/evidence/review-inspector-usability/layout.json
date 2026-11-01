@@ -1,0 +1,12 @@
+{
+  "classes": "workflow-recovery workflow-recovery--redesign",
+  "inspector": {
+    "position": "absolute",
+    "height": "579.125px"
+  },
+  "parent": {
+    "class": "recovery-workbench recovery-workbench--inspecting",
+    "display": "grid",
+    "height": "580.125px"
+  }
+}

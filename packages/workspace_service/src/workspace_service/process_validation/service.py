@@ -29,6 +29,7 @@ from data_vault.process_validation_repository import AttemptRecord
 from .evaluation import compare
 from .readers.base import ReaderContext, ReaderRegistry, ValidationIssue
 from .readers.cfd import CfdEvidenceReader
+from .readers.design_response import DesignResponseReader
 from .readers.geometry import StepSeatGeometryReader
 from .readers.harness import HarnessReader
 from .readers.kicad import KiCadReader
@@ -127,6 +128,7 @@ def default_reader_registry() -> ReaderRegistry:
     registry.register(SheetMetalEvidenceReader())
     registry.register(StepBoundingBoxReader())
     registry.register(StructuralEvidenceReader())
+    registry.register(DesignResponseReader())
     registry.register(ThermalFieldReader())
     registry.register(TrackingTimelineReader())
     registry.register(WaterHeaterTimelineReader())

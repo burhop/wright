@@ -12,6 +12,19 @@ import secrets
 import re
 
 
+def include_desktop_router(app, router):
+    """Register the desktop API before the existing frontend catch-all.
+
+    FastAPI may retain an included router rather than flattening its routes.
+    Move the newly registered entries as a group; do not inspect private route
+    wrappers or depend on each entry exposing a path.
+    """
+    existing_count = len(app.router.routes)
+    app.include_router(router)
+    added_routes = app.router.routes[existing_count:]
+    app.router.routes[:] = added_routes + app.router.routes[:existing_count]
+
+
 class DetachedDesktopConnection:
     async def check_health(self):
         return {
@@ -65,6 +78,7 @@ def main():
     )
     parser.add_argument("--enable-native-editor", action="store_true")
     parser.add_argument("--enable-native-working-view", action="store_true")
+    parser.add_argument("--enable-native-workspace-files", action="store_true")
     args = parser.parse_args()
     if (
         args.enable_image_inputs or args.enable_engineering_image_inputs
@@ -74,6 +88,8 @@ def main():
         parser.error("Native editor requires the opt-in desktop bridge")
     if args.enable_native_working_view and not args.enable_native_editor:
         parser.error("Native working view requires the opt-in native editor")
+    if args.enable_native_workspace_files and not args.enable_native_editor:
+        parser.error("Native workspace files require the opt-in native editor")
     if args.enable_confined_inspection and not args.enable_desktop_bridge:
         parser.error("Confined inspection requires the opt-in desktop bridge")
     if args.enable_enrolled_mcp_tasks and not args.enable_desktop_bridge:
@@ -151,20 +167,14 @@ def main():
             local_reviews=args.enable_local_reviews,
             native_editor=args.enable_native_editor,
             native_working_view=args.enable_native_working_view,
+            native_workspace_files=args.enable_native_workspace_files,
             remote_signin_mode=args.remote_signin_mode,
         )
         app.state.agent_engine = desktop
         app.state.mcp_authorization_presenter = desktop.oauth.present
         if args.remote_signin_mode == "device_code":
             app.state.mcp_device_authorization_presenter = desktop.oauth.present_device
-        app.include_router(desktop.router())
-        # The normal app already ends with a GET frontend fallback. Newly
-        # included API routes must precede it rather than returning HTML 200.
-        app.router.routes.sort(
-            key=lambda route: (
-                0 if getattr(route, "path", "").startswith("/api/desktop/") else 1
-            )
-        )
+        include_desktop_router(app, desktop.router())
 
     @app.middleware("http")
     async def preview_boundary(request, call_next):

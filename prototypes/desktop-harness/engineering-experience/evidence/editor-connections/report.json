@@ -1,0 +1,127 @@
+{
+  "status": "PASS",
+  "boundary": "compiled native UI; simulated host and blocked fixture; no source save, engineering tools or Windows acceptance",
+  "resource_sha256": "f62726a0d890e3df4d1f10a77f7277a693a83bc6714de7ea35b9e4def853aae1",
+  "calls": [
+    {
+      "name": "wright_workflow_read",
+      "args": {
+        "workspace_id": "study-workspace",
+        "session_id": "study-session",
+        "path": "workflows/handle.wflow"
+      }
+    },
+    {
+      "name": "wright_workflow_editor_tools",
+      "args": {
+        "request": {
+          "workspace_id": "study-workspace",
+          "session_id": "study-session"
+        }
+      }
+    },
+    {
+      "name": "wright_editor_drafts_read",
+      "args": {
+        "request": {
+          "workspace_id": "study-workspace",
+          "session_id": "study-session",
+          "path": "workflows/handle.wflow",
+          "draft_id": null
+        }
+      }
+    },
+    {
+      "name": "wright_workflow_editor_tools",
+      "args": {
+        "request": {
+          "workspace_id": "study-workspace",
+          "session_id": "study-session"
+        }
+      }
+    },
+    {
+      "name": "wright_connections_list",
+      "args": {
+        "workspace_id": "study-workspace",
+        "session_id": "study-session",
+        "search": ""
+      }
+    },
+    {
+      "name": "wright_workflow_editor_tools",
+      "args": {
+        "request": {
+          "workspace_id": "study-workspace",
+          "session_id": "study-session"
+        }
+      }
+    },
+    {
+      "name": "wright_workflow_read",
+      "args": {
+        "workspace_id": "study-workspace",
+        "session_id": "study-session",
+        "path": "workflows/handle.wflow"
+      }
+    },
+    {
+      "name": "wright_process_ui_read",
+      "args": {
+        "request": {
+          "session_id": "study-session",
+          "path": "workflows/handle.wflow",
+          "expected_storage_digest": "574184585ee11646e3ce1880338f5576f401d3108717f75d477669589d1ee497",
+          "workspace_id": "study-workspace",
+          "operation": "snapshot"
+        }
+      }
+    },
+    {
+      "name": "wright_process_ui_read",
+      "args": {
+        "request": {
+          "session_id": "study-session",
+          "path": "workflows/handle.wflow",
+          "expected_storage_digest": "574184585ee11646e3ce1880338f5576f401d3108717f75d477669589d1ee497",
+          "target": {
+            "kind": "block",
+            "block_id": "cad"
+          },
+          "workspace_id": "study-workspace",
+          "operation": "navigation"
+        }
+      }
+    },
+    {
+      "name": "wright_workflow_editor_tools",
+      "args": {
+        "request": {
+          "workspace_id": "study-workspace",
+          "session_id": "study-session"
+        }
+      }
+    },
+    {
+      "name": "wright_workflow_read",
+      "args": {
+        "workspace_id": "study-workspace",
+        "session_id": "study-session",
+        "path": "workflows/handle.wflow"
+      }
+    },
+    {
+      "name": "wright_process_ui_read",
+      "args": {
+        "request": {
+          "session_id": "study-session",
+          "path": "workflows/handle.wflow",
+          "expected_storage_digest": "574184585ee11646e3ce1880338f5576f401d3108717f75d477669589d1ee497",
+          "workspace_id": "study-workspace",
+          "operation": "snapshot"
+        }
+      }
+    }
+  ],
+  "errors": []
+}

@@ -1,0 +1,22 @@
+[
+  {
+    "fingerprint": "ea4e67186bac84fcffd9f424e0a23b4da6b5b761:prototypes/desktop-harness/engineering-experience/evidence/candidate-036-support-connection/qualification.json:generic-api-key:27",
+    "classification": "SHA-256 of canonical empty credential-status map; no credential value",
+    "verified_original_commit_line": true
+  },
+  {
+    "fingerprint": "95b45535c6f72e557140ddc6c3e7a2eba014a852:prototypes/desktop-harness/engineering-experience/evidence/candidate-036-mesh-setup/mesh-validate.json:generic-api-key:29",
+    "classification": "SHA-256 of canonical empty credential-status map; no credential value",
+    "verified_original_commit_line": true
+  },
+  {
+    "fingerprint": "237a0faf09370512ce1df5cdeb2190e699093f63:prototypes/desktop-harness/engineering-experience/evidence/candidate-036-provider-setup/providers.json:generic-api-key:16",
+    "classification": "SHA-256 of canonical empty credential-status map; no credential value",
+    "verified_original_commit_line": true
+  },
+  {
+    "fingerprint": "237a0faf09370512ce1df5cdeb2190e699093f63:prototypes/desktop-harness/engineering-experience/evidence/candidate-036-provider-setup/providers.json:generic-api-key:53",
+    "classification": "SHA-256 of canonical empty credential-status map; no credential value",
+    "verified_original_commit_line": true
+  }
+]

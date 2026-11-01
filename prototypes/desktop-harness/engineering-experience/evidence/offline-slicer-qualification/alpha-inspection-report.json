@@ -1,0 +1,46 @@
+{
+  "scope": "synthetic 10mm coupon only",
+  "package_sha256": "f441c695577dd36c8d52c487f840cbf60fddcc3d425c0ba0405e5d443306fec0",
+  "package_bytes": 50592,
+  "verified_package_settings": {
+    "curr_bed_type": "Textured PEI Plate",
+    "filament_type": [
+      "PETG"
+    ],
+    "layer_height": "0.2",
+    "nozzle_diameter": [
+      "0.4"
+    ],
+    "printer_model": "Bambu Lab P1S",
+    "sparse_infill_density": "40%",
+    "wall_loops": "5"
+  },
+  "passive_inspection": {
+    "method": "Passive recorded-package inspection; no slicer or machine command executed",
+    "slice_evidence": {
+      "path": "inspection-nominal/slice-evidence.json",
+      "sha256": "051766fd30f76f6808ef64532db5d728d5cd6202ae96be0fef0059903a5f7fd3",
+      "bytes": 898
+    },
+    "support_preview": {
+      "path": "inspection-nominal/support-preview.json",
+      "sha256": "6db307352c08422e563c30f1023742487773120ff2831caef663c7a030e7ddee",
+      "bytes": 102216
+    },
+    "toolpath_summary": {
+      "path": "inspection-nominal/toolpath-summary.json",
+      "sha256": "bd90218c6234e435c85311ca1c8139684c53db47e21aec5e616d4ffed6670d07",
+      "bytes": 1462
+    },
+    "engineering_acceptance": false
+  },
+  "package_pngs": [
+    "Metadata/plate_1.png",
+    "Metadata/plate_1_small.png",
+    "Metadata/plate_no_light_1.png",
+    "Metadata/top_1.png",
+    "Metadata/pick_1.png"
+  ],
+  "handle_qualified": false,
+  "legacy_preview_check": "passed"
+}

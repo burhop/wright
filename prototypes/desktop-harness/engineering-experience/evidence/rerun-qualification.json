@@ -1,0 +1,28 @@
+{
+  "resource_sha256": "9c5d2d5fe5d34e3d0752d116acda0816087e3b1458952aed1b8c1e4bfc267019",
+  "status": "PASS",
+  "boundary": "Actual retained-run API/storage with simulated host plus controlled workspace/chat fixture. No engineering workflow executed.",
+  "checks": [
+    "chooser hides files; return retains workspace",
+    "workspace files visible",
+    "chat handoff visible and exact workspace sent through public host message",
+    "added tools only by default",
+    "expired check remains visible",
+    "catalog reachable without mutation",
+    "480px no horizontal overflow",
+    "Prepare new run visible outside collapsed details",
+    "exact retained image and JSON delivery requests",
+    "declined host download is visible and not retried",
+    "exact producing step and same run return",
+    "preview return restores file-control focus and viewport"
+  ],
+  "tests": {
+    "common_view_and_native_routing": 84,
+    "durable_review_owners": 26,
+    "latest_handoff_copy": 7
+  },
+  "protected_hashes_unchanged": 9,
+  "windows_acceptance": "UNVERIFIED",
+  "installed_plugin": "unchanged 0.33.0",
+  "retained_failed_probe": "retained-results-rerun-proof checked the history evidence list before opening the working view; corrected test preserved separately"
+}

@@ -1,6 +1,7 @@
 import { useEffect, useId, useRef, useState } from "react";
 import type { JsonValue } from "@wright/process-client";
 import { ImageThumbnail } from "./inputs";
+import { useFileDownload, fileDownloadMessage, type FileDownloadRequest } from "./file-download";
 import { ThreeDViewer, ToolpathViewer } from "./geometry";
 import { MarkdownDocument } from "./documents";
 import { PdfPageViewer } from "./pdf";
@@ -13,6 +14,49 @@ import {
 
 /** Download the exact bytes supplied by the scoped representation owner. */
 export function RepresentationDownload({ blob, name }: { blob: Blob; name: string }) {
+  const request = useFileDownload();
+  return request
+    ? <HostRepresentationDownload key={name} blob={blob} name={name} request={request} />
+    : <BrowserRepresentationDownload blob={blob} name={name} />;
+}
+function HostRepresentationDownload({ blob, name, request }: { blob: Blob; name: string; request: FileDownloadRequest }) {
+  const pending = useRef(false);
+  const generation = useRef(0);
+  const [busy, setBusy] = useState(false);
+  const [message, setMessage] = useState("");
+  useEffect(() => {
+    const current = ++generation.current;
+    pending.current = false;
+    setBusy(false);
+    setMessage("");
+    return () => { generation.current = current + 1; };
+  }, [blob, name]);
+  async function download() {
+    if (pending.current) return;
+    pending.current = true;
+    const current = generation.current;
+    setBusy(true);
+    setMessage("");
+    try {
+      const result = await request(blob, name.replaceAll("\\", "/").split("/").at(-1) || "representation");
+      if (current === generation.current) setMessage(fileDownloadMessage(result));
+    } catch {
+      if (current === generation.current) setMessage("The download was not confirmed. Check your downloads before trying again.");
+    } finally {
+      if (current === generation.current) {
+        pending.current = false;
+        setBusy(false);
+      }
+    }
+  }
+  return <div>
+    <button type="button" className="wp-link" disabled={busy} onClick={() => void download()}>
+      {busy ? "Preparing download…" : "Download exact file"}
+    </button>
+    {message && <p role="status">{message}</p>}
+  </div>;
+}
+function BrowserRepresentationDownload({ blob, name }: { blob: Blob; name: string }) {
   const [link, setLink] = useState<{ blob: Blob; url: string }>();
   useEffect(() => {
     const url = URL.createObjectURL(blob);
@@ -363,6 +407,38 @@ export function ScalarFieldPlot({
     </figure>
   );
 }
+/** Add whitespace without reserializing numbers, duplicate keys or string escapes. */
+function readableJson(text: string): string {
+  const tokens = text.match(/"(?:\\.|[^"\\])*"|[{}\[\],:]|[^\s{}\[\],:]+/g) ?? [];
+  const parts: string[] = [];
+  let depth = 0;
+  let size = 0;
+  for (let index = 0; index < tokens.length; index += 1) {
+    const token = tokens[index];
+    let part = token;
+    if (token === "{" || token === "[") {
+      depth += 1;
+      if (tokens[index + 1] !== (token === "{" ? "}" : "]"))
+        part += "\n" + "  ".repeat(depth);
+    } else if (token === "}" || token === "]") {
+      depth -= 1;
+      if (tokens[index - 1] !== (token === "}" ? "{" : "["))
+        part = "\n" + "  ".repeat(depth) + token;
+    } else if (token === ",") {
+      part += "\n" + "  ".repeat(depth);
+    } else if (token === ":") {
+      part += " ";
+    }
+    size += part.length;
+    if (size > 1024 * 1024) return text;
+    parts.push(part);
+  }
+  const formatted = parts.join("");
+  return new TextEncoder().encode(formatted).length <= 1024 * 1024
+    ? formatted
+    : text;
+}
+
 export function RepresentationViewer({
   blob,
   title,
@@ -466,6 +542,8 @@ export function RepresentationViewer({
                   message:
                     "This representation exceeds the supported text preview size. Download it to inspect the complete file.",
                 };
+              // Undefined means parsing failed; malformed evidence stays verbatim.
+              if (record !== undefined) return { text: readableJson(text) };
             }
             return { text };
           })

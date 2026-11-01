@@ -1,0 +1,14 @@
+{
+  "status": "PASS",
+  "host": "GB10 Linux ARM64",
+  "runner": "Node 26 / Vitest 4.1.10",
+  "test_files": [
+    "EngineeringRunContext.spec.tsx",
+    "WorkflowRunObserverIntegration.spec.tsx",
+    "EngineeringTemplateSources.spec.ts"
+  ],
+  "passed": 40,
+  "scope": "Controlled component regression: recorded result identity, source mismatch, declared waits, no replay during observation, existing template round trips including Robot Tracking Diagnosis",
+  "real_robot_execution": false,
+  "windows_acceptance": "UNVERIFIED"
+}

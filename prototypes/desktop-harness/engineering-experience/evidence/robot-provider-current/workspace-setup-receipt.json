@@ -1,0 +1,107 @@
+{
+  "status": "PARTIAL",
+  "scope": "Real isolated workspace setup, protocol validation and enablement; no gateway tool invocation or canonical workflow execution yet",
+  "workspace": {
+    "workspace_id": "ef07ca7b-d880-45fa-9fc8-6a4f59d57d77",
+    "session_id": "desktop-06b73fa3-db16-4efc-b85c-8217003329b3",
+    "workspace_name": "Robot tracking \u2014 isolated desktop regression 036",
+    "presentation": {
+      "kind": "native-panel",
+      "browser_available": false,
+      "reopen_tool": "wright_home"
+    }
+  },
+  "providers": [
+    {
+      "name": "operations",
+      "server_id": "import:draft-525d00ce708479059830",
+      "plan_id": "plan-fc203969fdaf5cd08316",
+      "plan_digest": "60fba7838a60ac8eb4e5e2d3a17d4ff5ed9f76c7449aa1094732fcd1ed2922b1",
+      "validation": {
+        "evidence_id": "validation-ba96a1f41f524627b89079647b9d8386",
+        "capability_id": "import:draft-525d00ce708479059830",
+        "server_id": "import:draft-525d00ce708479059830",
+        "snapshot_id": "bundled-bb8e97c144c2667095cc",
+        "capability_digest": "b52a5ee402c82c9211f7ae3c6071829ffa04327652996400ab8ee202b57b14cd",
+        "observation_id": "machine-dcc70ac9c2c3b5ed9ff4",
+        "platform_key": "linux_arm64",
+        "architecture": "aarch64",
+        "server_revision": "configuration:7d925f2c7e9432e25103d6d5372b94401f4a96b4f280ae8fd8d60753607f4e5f",
+        "credential_binding_digest": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+        "state": "passed",
+        "protocol_steps": {
+          "initialize": "passed",
+          "notifications/initialized": "passed",
+          "tools/list": "passed"
+        },
+        "schema_digest": "27cefd7d01cc2c32587f9ab4b43a8c49df4fc7ecce4d1c5a6f86dd7a26dd17d8",
+        "tool_count": 2,
+        "read_only_probe": null,
+        "observed_at": "2026-10-29T05:26:26.982629Z",
+        "trace_id": "d66c8f9bea9de0e8cd70c2083fc41c5a",
+        "reason_codes": [],
+        "missing_requirements": []
+      },
+      "enablement": {
+        "workspace_id": "ef07ca7b-d880-45fa-9fc8-6a4f59d57d77",
+        "capability_id": "import:draft-525d00ce708479059830",
+        "server_id": "import:draft-525d00ce708479059830",
+        "enabled": true,
+        "validation_evidence_id": "validation-ba96a1f41f524627b89079647b9d8386",
+        "invocation_approved": false,
+        "message": "Available in this workspace. Individual tool invocation and destructive-action approval remain separate."
+      }
+    },
+    {
+      "name": "rosbag",
+      "server_id": "import:draft-b1d50ab1a98948ea2feb",
+      "plan_id": "plan-4571799921643406f749",
+      "plan_digest": "f721e89a68e73ec455769a72163b5c6b7245b2da6c0823c2a6a0ce1f12d5053a",
+      "validation": {
+        "evidence_id": "validation-898ee81318714803a05f7ea49333fe22",
+        "capability_id": "import:draft-b1d50ab1a98948ea2feb",
+        "server_id": "import:draft-b1d50ab1a98948ea2feb",
+        "snapshot_id": "bundled-bb8e97c144c2667095cc",
+        "capability_digest": "a975c84e4e51346aef9cd938c437e48235a24e945b5bc03d7a1ba919848401b2",
+        "observation_id": "machine-86bd3d351a5e50a0e468",
+        "platform_key": "linux_arm64",
+        "architecture": "aarch64",
+        "server_revision": "configuration:d15fb103eec8845485806746678396c4b44063e7181de4faf121292908d9409c",
+        "credential_binding_digest": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+        "state": "passed",
+        "protocol_steps": {
+          "initialize": "passed",
+          "notifications/initialized": "passed",
+          "tools/list": "passed"
+        },
+        "schema_digest": "9908e3071aced3540b3960be3381a6803b54ca832bc4662aedf9052ff8d62e8e",
+        "tool_count": 31,
+        "read_only_probe": null,
+        "observed_at": "2026-10-29T05:26:30.670702Z",
+        "trace_id": "cdb7c43509be59db4d71784c9adeb387",
+        "reason_codes": [],
+        "missing_requirements": []
+      },
+      "enablement": {
+        "workspace_id": "ef07ca7b-d880-45fa-9fc8-6a4f59d57d77",
+        "capability_id": "import:draft-b1d50ab1a98948ea2feb",
+        "server_id": "import:draft-b1d50ab1a98948ea2feb",
+        "enabled": true,
+        "validation_evidence_id": "validation-898ee81318714803a05f7ea49333fe22",
+        "invocation_approved": false,
+        "message": "Available in this workspace. Individual tool invocation and destructive-action approval remain separate."
+      }
+    }
+  ],
+  "blocked_capability": {
+    "name": "AgentCAD 0.6.0 corrective CAD on Linux ARM64/Python 3.12.12",
+    "reason": "Required cadquery-ocp >=7.8,<7.9 has no matching Linux ARM64 wheel",
+    "dry_run_exit": 1,
+    "log_sha256": "961357dac4191135a53cc1b82b3b5811b6bdc24336f7aacd85dda1661aa0dc84",
+    "dependencies_overridden": false
+  },
+  "requirements_preserved": true,
+  "engineering_runs_started": false,
+  "personal_reviews_approved": false,
+  "windows_acceptance": "UNVERIFIED"
+}

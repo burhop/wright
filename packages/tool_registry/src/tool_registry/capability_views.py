@@ -140,9 +140,13 @@ def _user_state(
     if server is None:
         return CapabilityUserState()
     configured = server.credentials_configured or {}
-    workspaces = workspace_membership.get(server.server_id) or workspace_membership.get(
-        server.name, []
-    )
+    # Workspace defaults may retain names while explicit enablement stores IDs.
+    # Both are supported by gateway authority; neither membership hides the other.
+    workspaces = {
+        item["workspace_id"]: item
+        for identity in (server.name, server.server_id)
+        for item in workspace_membership.get(identity, [])
+    }.values()
     return CapabilityUserState(
         server_id=server.server_id,
         installed=server.is_installed,

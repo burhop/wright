@@ -1,0 +1,134 @@
+{
+  "scope": "Fresh original scenario/template copies; no tool calls or engineering execution",
+  "examples": [
+    {
+      "template_id": "printed-replacement-part",
+      "template_version": "1.0.0",
+      "template_source_digest": "4d7fc589183f84b34a66c9495798507b2ef4326e467f2e927effe9733bf1e545",
+      "source_digest": "eb032df71348ee77e032ac0378e6c4cf700b951f265b33ace7775100bf5b6491",
+      "original_scenario": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/02-repair-cart-bow-handle",
+      "scenario_hashes": {
+        "concept.png": "467f9fe327ccaf085c507487c2907503bd2e50bdd055cbcf6bdeff706b705fb0",
+        "concept.svg": "06567d143fe7d3d06641da7e60262eaed6f562878bb2fd080b93f298f2fe447f",
+        "context.md": "2b4ad39c8d07368fa4d0b5bfb257625cbafe5098a0cc106ca80103929cc378ee",
+        "prompt.txt": "95eb1233ff0498c5bc96d5659b7f9538a89f98c4bdc916a61442cf5f3da41834",
+        "scenario.json": "4d0ec7d6c8cff674507cb5a5f418bacee3c5eef2f27002370fe3d9e60f44e6a5",
+        "user-profile.md": "64784f2ce75bda54ab4dc0fbbf499b629837d36bba57cc713c1ba565e8d02e0d"
+      },
+      "bindings_sha256": "07b70aea8f0491b7f837bc38017e5c40a263efdb476e70452ba2abdfbfe4a99c",
+      "catalog_readiness": {
+        "state": "setup_required",
+        "definition_valid": true,
+        "configured": false,
+        "qualified": false,
+        "available": false,
+        "verified_run": false,
+        "facts": [
+          {
+            "code": "definition-reviewed",
+            "label": "Starter definition reviewed",
+            "satisfied": true,
+            "evidence": []
+          },
+          {
+            "code": "adapters-qualified",
+            "label": "Image, slicer, and printer adapters qualified",
+            "satisfied": false,
+            "evidence": []
+          }
+        ],
+        "blocking_reasons": [
+          "Configure and qualify image-to-mesh, slicer, and Bambu P1S transfer adapters before a live run."
+        ]
+      },
+      "capability_requirements": [
+        {
+          "operation": "image_to_mesh",
+          "qualification": "required"
+        },
+        {
+          "operation": "mesh_repair",
+          "qualification": "required"
+        },
+        {
+          "operation": "slice_with_supports",
+          "qualification": "required"
+        },
+        {
+          "operation": "printer_transfer",
+          "qualification": "required"
+        }
+      ],
+      "compiler": {
+        "status": "blocked",
+        "code": "WORKFLOW_NOT_READY",
+        "message": "Create source mesh needs a supported execution type."
+      },
+      "execution": "not started; full original capabilities remain gated"
+    },
+    {
+      "template_id": "robot-tracking-diagnosis",
+      "template_version": "1.0.0",
+      "template_source_digest": "8383ffbf8533294793d2cb77b10eda5b204ed70534f2c5722647332255fb1bdd",
+      "source_digest": "a85155e3354e5281e66cdddce560e09be043d3f8e2f31d976102fd10b86622c9",
+      "original_scenario": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/01-aisle-floor-seam",
+      "scenario_hashes": {
+        "bag-conversion.md": "76dc930e6976dbf21f065aa8016ccdfb634075372c12ce4db6ac49af24f3536d",
+        "concept.png": "79f619187a5be0f67aa718cec63724274beb13ab16c123c0186d5a0cf3fee906",
+        "concept.svg": "05480604cdebad9badeef706236df2f49fd9445378461d080335919f7cf1bcc9",
+        "context.md": "a3cc366ae9f2356e19a0f639af55942bea2b99ad5a1943482bf5766402c98d0f",
+        "events.csv": "fa876752cf2877fd795061ab932135ac8bc5f269bbb29b1656b877c3be1690ef",
+        "external-pose.csv": "bce2ebe559eb3e22659a2ea4f6d8538f28036389a05ea6afd167f590b59478a3",
+        "odometry.csv": "ad64361e94798e145377a2c4628bbd3e30b363e58ee4c1fc1140ecab0bbb4b88",
+        "planned-path.csv": "018d83f6cbcac87544c81b58b264ce456d1f7b5ca1259fc92f1c6ac0b7de7283",
+        "prompt.txt": "300c6c5330978304327b4aa933eed705d368c18873c452eca5a356fee7fdc0f4",
+        "scenario.json": "e9984e1231caf54dd26de9258b7cbb011f0a7ddd4152eefc4fec7079bfff0e94",
+        "telemetry.csv": "a5d8c728439d2aaec0d2ee8af927f7598119d2eab9bf233a62b7acc67c875226",
+        "user-profile.md": "a0dd132c0d39f647391d0f44869730b74d2e158fec9354b453d77ae99e1ce6d7",
+        "velocity-command.csv": "0a31444dc0c9e9631cc2f8ad3b33c5914a47985f6310d75a705d58d2b7970d4b"
+      },
+      "bindings_sha256": "9b17ee58a813bc1a66dc3289c8652c7fbbcd00e1070f308775eb2d1ac0c6ccd7",
+      "catalog_readiness": {
+        "state": "reference",
+        "definition_valid": true,
+        "configured": false,
+        "qualified": false,
+        "available": false,
+        "verified_run": false,
+        "facts": [
+          {
+            "code": "rosbag-retrieval",
+            "label": "Known-message retrieval qualified",
+            "satisfied": true,
+            "evidence": []
+          },
+          {
+            "code": "analysis-qualified",
+            "label": "Numeric alignment and metrics qualified",
+            "satisfied": false,
+            "evidence": []
+          }
+        ],
+        "blocking_reasons": [
+          "Numeric messages, independent alignment, plotting, and recovery behavior require qualification."
+        ]
+      },
+      "capability_requirements": [
+        {
+          "operation": "rosbag_retrieval",
+          "qualification": "partial"
+        },
+        {
+          "operation": "time_alignment_and_metrics",
+          "qualification": "required"
+        }
+      ],
+      "compiler": {
+        "status": "blocked",
+        "code": "WORKFLOW_NOT_READY",
+        "message": "Inspect bag and topic schemas needs a supported execution type."
+      },
+      "execution": "not started; full original capabilities remain gated"
+    }
+  ]
+}

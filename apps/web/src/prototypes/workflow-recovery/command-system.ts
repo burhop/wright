@@ -25,7 +25,7 @@ import {
   validateAuthoringConnections,
 } from "./authoring-objects";
 import {
-  findAuthoringPosition,
+  findInsertedAuthoringPosition,
   hydrateAuthoringLayout,
 } from "./authoring-positioning";
 
@@ -42,7 +42,13 @@ export type RecoveryCommand =
       >;
     }
   | { kind: "set_phase_name"; phaseId: string; name: string }
+  | {
+      kind: "set_block_execution_kind";
+      blockId: string;
+      value: RecoveryBlock["executionKind"];
+    }
   | { kind: "set_block_title"; blockId: string; title: string }
+  | { kind: "set_block_kind"; blockId: string; value: RecoveryBlock["kind"] }
   | {
       kind: "set_block_definition";
       blockId: string;
@@ -54,6 +60,7 @@ export type RecoveryCommand =
       key: string;
       value: string | number | boolean;
     }
+  | { kind: "remove_block_configuration"; blockId: string; key: string }
   | {
       kind: "set_block_object_configuration";
       blockId: string;
@@ -70,6 +77,12 @@ export type RecoveryCommand =
       portId: string;
       required: boolean;
       cardinality: RecoveryPort["cardinality"];
+    }
+  | {
+      kind: "set_port_definition";
+      portId: string;
+      name: string;
+      description: string;
     }
   | { kind: "set_port_type"; portId: string; typeId: string }
   | { kind: "delete_port"; portId: string }
@@ -238,6 +251,26 @@ function applyCommand(
     block(workflow, command.blockId).title = command.title.trim();
     return;
   }
+  if (command.kind === "set_block_execution_kind") {
+    const target = block(workflow, command.blockId);
+    if (
+      recoveryAuthoringSectionKind(target) !== "task" ||
+      !["human", "deterministic", "ai_capable"].includes(command.value)
+    )
+      throw new Error(`WFR-COMMAND-EXECUTION-KIND-INVALID:${command.blockId}`);
+    target.executionKind = command.value;
+    return;
+  }
+  if (command.kind === "set_block_kind") {
+    const target = block(workflow, command.blockId);
+    if (
+      recoveryAuthoringSectionKind(target) !== "task" ||
+      !["work", "approval", "decision", "component"].includes(command.value)
+    )
+      throw new Error(`WFR-COMMAND-STEP-TYPE-INVALID:${command.blockId}`);
+    target.kind = command.value;
+    return;
+  }
   if (command.kind === "set_block_definition") {
     if (
       Object.keys(command.patch).length === 0 ||
@@ -262,6 +295,21 @@ function applyCommand(
   }
   if (command.kind === "set_block_configuration") {
     block(workflow, command.blockId).configuration[command.key] = command.value;
+    return;
+  }
+  if (command.kind === "remove_block_configuration") {
+    const target = block(workflow, command.blockId);
+    const value = target.configuration[command.key];
+    if (
+      command.key.startsWith("__wright_") ||
+      !Object.hasOwn(target.configuration, command.key) ||
+      !["string", "number", "boolean"].includes(typeof value)
+    ) {
+      throw new Error(
+        `WFR-COMMAND-CONFIGURATION-REMOVE-INVALID:${command.blockId}`,
+      );
+    }
+    delete target.configuration[command.key];
     return;
   }
   if (command.kind === "set_block_object_configuration") {
@@ -322,6 +370,19 @@ function applyCommand(
       owner.outputPortIds = owner.outputPortIds.filter((id) => id !== port.id);
       workflow.ports = workflow.ports.filter((item) => item.id !== port.id);
     }
+    return;
+  }
+  if (command.kind === "set_port_definition") {
+    const port = workflow.ports.find((item) => item.id === command.portId);
+    if (
+      !port ||
+      typeof command.name !== "string" ||
+      !command.name.trim() ||
+      typeof command.description !== "string"
+    )
+      throw new Error(`WFR-COMMAND-PORT-DEFINITION-INVALID:${command.portId}`);
+    port.name = command.name.trim();
+    port.description = command.description.trim();
     return;
   }
   if (command.kind === "set_port_contract") {
@@ -749,6 +810,7 @@ export function textEditCommands(
   const disconnects: RecoveryCommand[] = [];
   const relationshipUpdates: RecoveryCommand[] = [];
   const deletedBlocks: RecoveryCommand[] = [];
+  const deletedPorts: RecoveryCommand[] = [];
   const addedBlocks: RecoveryCommand[] = [];
   const connections: RecoveryCommand[] = [];
   const metadataPatch: Partial<
@@ -803,6 +865,15 @@ export function textEditCommands(
       deletedBlocks.push({ kind: "delete_block", blockId: current.id });
       continue;
     }
+    if (
+      current.kind !== edited.kind &&
+      recoveryAuthoringSectionKind(current) === "task"
+    )
+      edits.push({
+        kind: "set_block_kind",
+        blockId: current.id,
+        value: edited.kind,
+      });
     if (current.title !== edited.title)
       edits.push({
         kind: "set_block_title",
@@ -843,6 +914,20 @@ export function textEditCommands(
         });
         continue;
       }
+      if (
+        edited.configuration[key] === undefined &&
+        !key.startsWith("__wright_") &&
+        ["string", "number", "boolean"].includes(
+          typeof current.configuration[key],
+        )
+      ) {
+        edits.push({
+          kind: "remove_block_configuration",
+          blockId: current.id,
+          key,
+        });
+        continue;
+      }
       if (edited.configuration[key] === undefined)
         return [
           {
@@ -865,8 +950,15 @@ export function textEditCommands(
     }
   }
   const additionLayout = hydrateAuthoringLayout(before, currentLayout);
-  const placementWorkflow = cloneWorkflow(before);
-  for (const block of after.blocks) {
+  const dependencyPositions = hydrateAuthoringLayout(after, {
+    ...additionLayout,
+    positions: {},
+  }).positions;
+  for (const block of [...after.blocks].sort(
+    (a, b) =>
+      dependencyPositions[a.id].x - dependencyPositions[b.id].x ||
+      dependencyPositions[a.id].y - dependencyPositions[b.id].y,
+  )) {
     if (beforeById.has(block.id)) continue;
     const portIds = new Set([...block.inputPortIds, ...block.outputPortIds]);
     const ports = after.ports.filter((port) => portIds.has(port.id));
@@ -882,14 +974,17 @@ export function textEditCommands(
             "Declare every input and output connection point in the new task section.",
         },
       ];
-    const position = findAuthoringPosition(placementWorkflow, additionLayout);
+    const position = findInsertedAuthoringPosition(
+      after,
+      additionLayout,
+      block.id,
+    );
     addedBlocks.push({
       kind: "add_block",
       block: structuredClone(block),
       ports: structuredClone(ports),
       position,
     });
-    placementWorkflow.blocks.push(block);
     additionLayout.positions[block.id] = position;
   }
   const afterArtifacts = new Map(
@@ -935,6 +1030,10 @@ export function textEditCommands(
     const edited = afterPorts.get(current.id);
     if (!edited) {
       if (deletedBlockIds.has(current.ownerBlockId)) continue;
+      if (!current.artifactContractId) {
+        deletedPorts.push({ kind: "delete_port", portId: current.id });
+        continue;
+      }
       return [
         {
           code: "WFR-TEXT-STRUCTURE-UNSUPPORTED",
@@ -947,6 +1046,16 @@ export function textEditCommands(
         },
       ];
     }
+    if (
+      current.name !== edited.name ||
+      current.description !== edited.description
+    )
+      edits.push({
+        kind: "set_port_definition",
+        portId: current.id,
+        name: edited.name,
+        description: edited.description,
+      });
     if (
       current.required !== edited.required ||
       current.cardinality !== edited.cardinality
@@ -1028,6 +1137,7 @@ export function textEditCommands(
     ...deletedBlocks,
     ...addedBlocks,
     ...edits,
+    ...deletedPorts,
     ...connections,
   ];
   const candidate = cloneWorkflow(before);

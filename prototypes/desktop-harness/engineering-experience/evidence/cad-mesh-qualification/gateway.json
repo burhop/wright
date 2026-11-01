@@ -1,0 +1,41 @@
+{
+  "scope": "actual retained CAD -> Gmsh volume mesh, not strength or accepted handle execution",
+  "route": "gateway",
+  "provider_job": "75a9a950",
+  "provider_status": "completed",
+  "trustworthy_result": false,
+  "critic_approved": false,
+  "mesh": {
+    "scope": "CAD-derived volume meshing prerequisite; not strength or dimensional acceptance",
+    "source_sha256": "825c3fcc14947389e11b0b4bbc9d159635af4bd54f477a001d96f95c3802f64e",
+    "nodes": 934,
+    "tetrahedra": 2872,
+    "minimum_tetra_volume": 0.26598774035927714,
+    "mesh_volume_coordinate_units_cubed": 23863.840035507375,
+    "bounds_coordinate_units": [
+      [
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        60.0,
+        40.0,
+        46.0
+      ]
+    ],
+    "gmsh_exit": 0,
+    "files": {
+      "cad-mesh.msh": "927ed30a54127bc3e59f6497df2b1aa24f489e0c24056da62d01210390327021",
+      "cad-volume-mesh.vtu": "60428880b33f65ab41cd7e97972d37d024e095b29881d800e60f3f333e8cb6e0"
+    }
+  },
+  "independent_check": {
+    "status": "PASS",
+    "boundary": "independent ASCII mesh connectivity, finite coordinates, positive tetra volumes, recorded output digests and retained STEP identity; not CAD compliance or strength",
+    "nodes": 934,
+    "tetrahedra": 2872,
+    "volume_coordinate_units_cubed": 23863.840035507375,
+    "source_sha256": "825c3fcc14947389e11b0b4bbc9d159635af4bd54f477a001d96f95c3802f64e"
+  }
+}

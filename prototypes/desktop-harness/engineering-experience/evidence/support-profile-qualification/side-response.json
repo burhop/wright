@@ -1,0 +1,10 @@
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "{\n  \"ok\": true,\n  \"source\": \"/workspace/side.stl\",\n  \"output\": \"/workspace/output/side.gcode.3mf\",\n  \"plate\": 1,\n  \"slicer\": \"/opt/orca-alpha/AppRun\",\n  \"bytes\": 42131,\n  \"argv\": [\n    \"/opt/orca-alpha/AppRun\",\n    \"--slice\",\n    \"1\",\n    \"--debug\",\n    \"1\",\n    \"--export-3mf\",\n    \"/workspace/output/side.gcode.3mf\",\n    \"--load-settings\",\n    \"/workspace/machine.json;/workspace/process.json\",\n    \"--load-filaments\",\n    \"/workspace/filament.json\",\n    \"--arrange\",\n    \"1\",\n    \"/workspace/side.stl\"\n  ]\n}"
+    }
+  ],
+  "structured_content": null,
+  "is_error": false
+}

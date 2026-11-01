@@ -1,3 +1,6 @@
+import { NativeEditorConnections } from "./NativeEditorConnections";
+import { WorkflowToolDiscovery } from "../workflow-recovery/workflow-tool-discovery";
+import { createNativeToolDiscovery } from "./native-tool-discovery";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   ProcessClientError,
@@ -12,7 +15,10 @@ import type {
   WorkspaceWorkflowRunSummary,
   WorkspaceWorkflowSourceDocument,
 } from "../../services/workspace-service";
-import { recoveryWorkflowSourceTitle } from "../workflow-recovery/recovery-authoring";
+import {
+  recoveryWorkflowSourceTitle,
+  recoveryWorkflowSourceSummary,
+} from "../workflow-recovery/recovery-authoring";
 import { readNativeRecordedRun } from "./native-recorded-run";
 import { NativeWorkflowPanel } from "./NativeWorkflowPanel";
 import { NativeProcessPanel } from "./NativeProcessPanel";
@@ -51,7 +57,9 @@ export function NativePanelContent({
   onAcceptedSource,
   readEvidence,
   onLocationChange,
+  openLink,
 }: {
+  readonly openLink?: (url: string) => Promise<void>;
   readonly initial: WorkspaceWorkflowSourceDocument;
   readonly sourceClient: NativeSourceClient;
   readonly draftClient?: NativeEditorDraftClient;
@@ -72,6 +80,7 @@ export function NativePanelContent({
     document: WorkspaceWorkflowSourceDocument,
   ) => void;
 }) {
+  const [connectionsOpen, setConnectionsOpen] = useState(false);
   const [accepted, setAccepted] = useState(initial);
   const [view, setView] = useState<"editor" | "working">(
     workingViewEnabled
@@ -163,6 +172,18 @@ export function NativePanelContent({
         : undefined,
     [initial.workspace_id, sessionId, transferCall],
   );
+  const discoverTools = useMemo(
+    () => ({
+      read: createNativeToolDiscovery(
+        initial.workspace_id,
+        sessionId,
+        readEvidence,
+      ),
+      sessionId,
+      openConnections: () => setConnectionsOpen(true),
+    }),
+    [initial.workspace_id, sessionId, readEvidence],
+  );
   const transferPending = openingTransfer || !!transferDocument;
   const dispatcher = useMemo(() => createProcessNavigationDispatcher(), []);
   const navigate = useCallback(
@@ -202,8 +223,7 @@ export function NativePanelContent({
         throw new ProcessClientError({
           code: "CAPABILITY_UNAVAILABLE",
           message: "This native panel cannot open that navigation target yet.",
-          correction:
-            "Inspect the recorded result in Run and results or Files.",
+          correction: "Inspect the recorded result in View run or Files.",
         });
       }
     },
@@ -249,14 +269,14 @@ export function NativePanelContent({
     [onDirty, sourceDirty, transferPending],
   );
   const openWorking = async () => {
-    if (sourceDirty || workingDirty || transferPending) return;
+    if (sourceDirty || workingDirty || transferPending) return false;
     try {
       const stored = await sourceClient.read();
       if (stored.storage_digest !== accepted.storage_digest) {
         setNotice(
           "The saved workflow changed. Compare or reload it before preparing another run.",
         );
-        return;
+        return false;
       }
       if (process.source_digest !== stored.storage_digest) {
         setProcess({
@@ -268,10 +288,12 @@ export function NativePanelContent({
       }
       setNotice("");
       setView("working");
+      return true;
     } catch {
       setNotice(
         "Wright could not read the accepted workflow. Your draft is kept.",
       );
+      return false;
     }
   };
   const openEditor = () => {
@@ -342,6 +364,26 @@ export function NativePanelContent({
   };
   return (
     <div style={{ height: "100%", minHeight: 0 }}>
+      {connectionsOpen && readEvidence && (
+        <NativeEditorConnections
+          workspace={{
+            workspace_id: initial.workspace_id,
+            session_id: sessionId,
+            workspace_name: workspaceName,
+            available: true,
+            reason: null,
+          }}
+          call={readEvidence}
+          openLink={openLink}
+          onClose={() => setConnectionsOpen(false)}
+        />
+      )}
+      {connectionsOpen && !readEvidence && (
+        <p role="status">
+          Connections are unavailable in this editor. Your workflow is kept
+          open.
+        </p>
+      )}
       {notice && <p role="status">{notice}</p>}
       {transferDocument && transfer && onOpenTransferred && (
         <WorkflowBundleDialog
@@ -377,30 +419,34 @@ export function NativePanelContent({
         {run && !selectedEvidence?.record && (
           <p role="status">
             {selectedEvidence?.error || !readEvidence
-              ? "Selected run evidence could not be read. Return to Run and results to inspect it."
+              ? "Selected run evidence could not be read. Choose View run to inspect it."
               : "Reading selected run evidence…"}
           </p>
         )}
-        <NativeWorkflowPanel
-          initial={initial}
-          client={sourceClient}
-          draftClient={draftClient}
-          navigation={navigation}
-          readOnlyRun={selectedEvidence?.record}
-          workspaceName={workspaceName}
-          onOpenTransfer={
-            transfer && onOpenTransferred ? openTransfer : undefined
-          }
-          transferDisabled={sourceDirty || workingDirty || transferPending}
-          onDirty={sourceChange}
-          onAccepted={(document) => {
-            setAccepted(document);
-            onAcceptedSource?.(document);
-          }}
-          onOpenWorkingView={
-            workingViewEnabled ? () => void openWorking() : undefined
-          }
-        />
+        <WorkflowToolDiscovery.Provider value={discoverTools}>
+          <NativeWorkflowPanel
+            initial={initial}
+            client={sourceClient}
+            draftClient={draftClient}
+            navigation={navigation}
+            readOnlyRun={selectedEvidence?.record}
+            selectedRunId={run}
+            selectedRunSourceDigest={process.source_digest}
+            workspaceName={workspaceName}
+            onOpenTransfer={
+              transfer && onOpenTransferred ? openTransfer : undefined
+            }
+            transferDisabled={sourceDirty || workingDirty || transferPending}
+            onDirty={sourceChange}
+            onAccepted={(document) => {
+              setAccepted(document);
+              onAcceptedSource?.(document);
+            }}
+            onOpenWorkingView={
+              workingViewEnabled ? () => void openWorking() : undefined
+            }
+          />
+        </WorkflowToolDiscovery.Provider>
       </div>
       {view === "working" && workingViewEnabled && (
         <NativeProcessPanel
@@ -424,6 +470,7 @@ export function NativePanelContent({
                 }}
                 paths={[process.source_path]}
                 initialPath={process.source_path}
+                workingSourceDigest={process.source_digest}
                 titles={
                   process.source_digest === accepted.storage_digest
                     ? {
@@ -466,13 +513,21 @@ export function NativePanelContent({
               ? (recoveryWorkflowSourceTitle(accepted.source) ?? accepted.path)
               : process.source_path
           }
+          description={
+            process.source_digest === accepted.storage_digest
+              ? recoveryWorkflowSourceSummary(accepted.source)?.purpose
+              : undefined
+          }
           runId={run}
           theme={theme}
           onDirty={workingChange}
           onOpenWorkflow={openEditor}
           onRunAttached={setRun}
-          onPrepareAnother={() => {
+          onPrepareAnother={async () => {
+            if (!(await openWorking())) return;
             setRun(undefined);
+            setRunDetails(undefined);
+            setNavigation(undefined);
             setWorkingGeneration((value) => value + 1);
           }}
         />

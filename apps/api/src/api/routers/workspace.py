@@ -1468,6 +1468,34 @@ def process_validation_review(
         raise _process_validation_error(error) from error
 
 
+@router.get("/workflow-sources/pending")
+async def workflow_pending_navigation(
+    session_id: str,
+    checkpoint_after: str = "",
+    review_after: str = "",
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    """Recorded attention items only; exact-run views resolve current eligibility."""
+    scope = _workflow_source_scope(session_id, service)
+    checkpoints, reviews = await asyncio.gather(
+        asyncio.to_thread(
+            service.workflow_external_actions.pending_navigation,
+            scope.workspace_id,
+            after=checkpoint_after,
+        ),
+        asyncio.to_thread(
+            service.workflow_artifact_reviews.repository.pending_navigation,
+            scope.workspace_id,
+            after=review_after,
+        ),
+    )
+    return {
+        "workspace_id": scope.workspace_id,
+        "checkpoints": checkpoints,
+        "reviews": reviews,
+    }
+
+
 @router.get(
     "/workflow-sources/runs",
     response_model=WorkflowSourceRecentRunsResponse,

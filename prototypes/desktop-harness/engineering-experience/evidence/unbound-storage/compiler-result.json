@@ -1,0 +1,9 @@
+{
+  "status": "correctly_blocked",
+  "code": "WORKFLOW_NOT_READY",
+  "message": "Check CAD against the specification is not configured to run in this version of Wright.",
+  "block_id": "geometry_check",
+  "saved_digest": "394ef1879d7d5eb0f25bc933f8f4fc317c2fef3da847a3cd0f975603f6d532f7",
+  "source": "actual saved and reopened disposable workflow",
+  "engineering_execution": false
+}

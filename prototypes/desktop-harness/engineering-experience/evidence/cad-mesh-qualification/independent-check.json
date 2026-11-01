@@ -1,0 +1,8 @@
+{
+  "status": "PASS",
+  "boundary": "independent ASCII mesh connectivity, finite coordinates, positive tetra volumes, recorded output digests and retained STEP identity; not CAD compliance or strength",
+  "nodes": 934,
+  "tetrahedra": 2872,
+  "volume_coordinate_units_cubed": 23863.840035507375,
+  "source_sha256": "825c3fcc14947389e11b0b4bbc9d159635af4bd54f477a001d96f95c3802f64e"
+}
