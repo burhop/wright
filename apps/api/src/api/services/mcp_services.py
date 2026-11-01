@@ -790,11 +790,18 @@ class McpApiService:
         self._notify_gateway_changes(result.sync_session_id)
         return result.server
 
-    async def uninstall_server(self, server_id: str, session_id: str | None = None):
+    async def uninstall_server(
+        self,
+        server_id: str,
+        session_id: str | None = None,
+        *,
+        sync_agent_profile: bool = True,
+    ):
         result = await registry_services.uninstall_server(
             self.engine, server_id, session_id=session_id
         )
-        self._sync_workspace_tools(result.sync_session_id)
+        if sync_agent_profile:
+            self._sync_workspace_tools(result.sync_session_id)
         self._notify_gateway_changes(result.sync_session_id)
         return result.server
 

@@ -349,7 +349,7 @@ async def test_uninstall_denied_and_uncertain_outcomes_never_repeat_owner(contro
         owner.uninstall_server = AsyncMock(side_effect=OSError("PRIVATE diagnostic"))
         failed = await client.post("/api/desktop/connection-controls", json=request)
         assert failed.status_code == 503 and "PRIVATE" not in failed.text
-        owner.uninstall_server.assert_awaited_once_with("playwright-mcp")
+        owner.uninstall_server.assert_awaited_once_with("playwright-mcp", sync_agent_profile=False)
 
 
 @pytest.mark.asyncio

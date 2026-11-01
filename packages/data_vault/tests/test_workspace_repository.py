@@ -34,7 +34,12 @@ def test_partial_settings_cas_preserves_credentials_sessions_tools_and_untouched
     secrets = MemorySecrets()
     repository = WorkspaceRepository(db, secrets=secrets)
     repository.create(
-        "ws", "desktop-ws", str(tmp_path), workspace_name="Wright", git_token="PRIVATE"
+        "ws",
+        "desktop-ws",
+        str(tmp_path),
+        workspace_name="Wright",
+        git_token="PRIVATE",
+        agent_id="openai-desktop-harness",
     )
     repository.associate_session("ws", "desktop-ws", agent_id="openai-desktop-harness")
     repository.associate_session("ws", "hermes-session", agent_id="hermes")

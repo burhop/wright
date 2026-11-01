@@ -57,11 +57,11 @@ class FakeClient:
             return b"Native browser bootstrap fixture"
         if kwargs.get("binary"):
             return b"Fixture preview"
-        if path.endswith("?version=1.0.1"):
+        if path.endswith("?version=1.0.3"):
             value = {
                 "template": {
                     "template_id": checkpoint.TEMPLATE_ID,
-                    "version": "wrong" if self.alteration == "version" else "1.0.1",
+                    "version": "wrong" if self.alteration == "version" else "1.0.3",
                     "source_digest": checkpoint.TEMPLATE_SHA256,
                     "source": self.source,
                     "layout": self.layout,
@@ -117,7 +117,7 @@ class FakeClient:
                 "metadata_authority": "wright_host",
                 "template": {
                     "template_id": checkpoint.TEMPLATE_ID,
-                    "version": "1.0.1",
+                    "version": "1.0.3",
                     "source_digest": checkpoint.TEMPLATE_SHA256,
                     "layout_digest": "b" * 64,
                 },

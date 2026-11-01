@@ -428,9 +428,7 @@ def _software_for_step(family: str, node_id: str) -> str:
             (r"solve|field|calculix|mesh", "CalculiX"),
             (r"bracket|cad|geometry|project", "AgentCAD / build123d"),
         ),
-        "sheet-metal-supplier-handoff": (
-            (r"solid_edge|sheet|cad|export", "Solid Edge"),
-        ),
+        "sheet-metal-supplier-handoff": ((r"sheet|cad|export", "CAD tool"),),
     }
     for pattern, software in rules.get(family, ()):
         if re.search(pattern, node_id, re.I):

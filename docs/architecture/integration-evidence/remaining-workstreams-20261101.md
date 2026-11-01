@@ -76,10 +76,28 @@ Raw logs are retained in the local integration evidence directory. Full API:
 single expected-version correction passing its 26-test owner suite. Focused API
 reconciliation: 80 passed. Focused frontend reconciliation: 173 passed; additional
 chat link/status checks: 14 passed. Native panel rebuilt with no external assets.
-Remaining focused workspace regressions: 99 passed. These results are preliminary; full merge/pre-push gates and all current-head CI
+Full workspace suite: 3,146 passed, 13 skipped. Remaining focused workspace regressions: 99 passed. Model registry: 185 passed (performance slice excluded by the normal gate). Image/source-binding and packaging contracts: 145 passed. Synthetic timing/UI fixture reconciliation: 117 passed; synthetic dashboard integrity: 26 passed. These results are preliminary; full merge/pre-push gates and all current-head CI
 remain required before merge. No engineering process, protected campaign,
 physical operation, personal sign-in or production deployment was started.
 
 Actual Windows panel rendering, viewer preference persistence, file delivery and
 chat-switch restoration must not be inferred from local or simulated tests.
 Existing UI capabilities and usable common-view fallback remain required.
+
+## Remaining candidate blockers
+
+The consolidated branch is not merge-qualified yet. The root preflight found
+older synthetic-VM storage fixtures that expect a whole-runtime tmpfs instead of
+the incoming fresh disk-software/private-tmpfs layout. Existing tests remain
+blocking; no skip or weaker production guard was added. Additional scratch-only
+checks of the current layout pass all 15 cases, including wrong mount identity,
+size/options/UID, existing-state preservation and root-owned verifier enforcement.
+
+The public leak checker also reports four deliberate negative-test canaries.
+Their original literals and detector rules remain unchanged pending review of a
+strictly scoped fixture-policy proposal. No broad security exemption is applied.
+
+The full merge gate was stopped while these findings were reconciled. It and the
+normal pre-push gate must run to completion, followed by all current-head CI.
+There is no push or PR for this consolidated branch yet. Actual Windows/native
+acceptance remains separate from all local and simulated-host results.

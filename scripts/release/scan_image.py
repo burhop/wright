@@ -30,6 +30,8 @@ SCANNER_VERSION = "0.70.0"
 BUILD_INPUTS = (
     ".dockerignore",
     "docker",
+    "docs/mcp-catalog/usage-guides",
+    "prototypes/desktop-harness/engineering-experience/handle/replacement-handle-draft.workflow.wflow",
     "apps",
     "packages",
     "src",

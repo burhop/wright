@@ -18,17 +18,115 @@ ReportError = view.ReportError
 
 @pytest.fixture
 def campaign(tmp_path):
-    source = ROOT / "artifacts/first-contact/synthetic-beta-001/session-records"
-    index = json.loads((source / "index.json").read_text())
-    index["sessions"] = [
-        x
-        for x in index["sessions"]
-        if x["session_id"] in {"customer-001", "customer-003", "cal-002"}
-    ]
+    # Synthetic projection fixtures: never import private customer campaign
+    # archives or treat this unit-test metadata as real acceptance evidence.
+    from test_synthetic_beta_reports import recorded
+
     records = tmp_path / "records"
     records.mkdir()
-    for item in index["sessions"]:
-        shutil.copytree(source / item["session_id"], records / item["session_id"])
+    index = {"schema_version": 1, "sessions": []}
+    for sid in ("customer-001", "customer-003", "cal-002"):
+        root, report, verification = recorded(records, sid)
+        scope = "calibration_checkpoint" if sid == "cal-002" else "first_contact"
+        report["outcome"] = "lab_failure" if sid == "customer-001" else "justified_stop"
+        statuses = [
+            "completed",
+            "completed",
+            "failed",
+            "not_reached",
+            "not_reached",
+            "not_reached",
+        ]
+        for row, status in zip(report["stages"], statuses):
+            row.update(status=status, evidence_refs=["e00001"])
+        verification["stages"] = deepcopy(report["stages"])
+        events = [
+            {
+                "id": event_id,
+                "session_id": sid,
+                "time": time,
+                "action": {"action": "screenshot"},
+                "observed_result": "Synthetic fixture only",
+                "elapsed_seconds": 1,
+                "captures": [
+                    {"path": "screen.txt", "sha256": view.digest(root / "screen.txt")}
+                ],
+            }
+            for event_id, time in (
+                ("e00001", "2026-10-25T12:00:01Z"),
+                ("e00146", "2026-10-25T12:10:00Z"),
+            )
+        ]
+        (root / "events.jsonl").write_text(
+            "".join(json.dumps(event) + "\n" for event in events)
+        )
+        verification.update(events_sha256=view.digest(root / "events.jsonl"))
+        audit = {
+            "schema_version": 1,
+            "session_id": sid,
+            "observation_scope": scope,
+            "events_sha256": verification["events_sha256"],
+            "disposition": "supported",
+            "stages": [
+                {
+                    "id": row["id"],
+                    "reported": row["status"],
+                    "verified": row["status"],
+                    "confirmed": True,
+                }
+                for row in report["stages"]
+            ],
+            "findings": [
+                {"id": finding["id"], "disposition": "supported"}
+                for finding in report["friction"]
+            ],
+            "target_observation": {
+                "present": False,
+                "progressed": True,
+                "evidence_refs": ["e00001"],
+            },
+        }
+        manifest = {
+            "session_id": sid,
+            "observation_scope": scope,
+            "assistance": "none",
+            "started_at": "2026-10-25T12:00:00Z",
+            "finished_at": "2026-10-25T12:20:00Z",
+            "base_sha256": "c" * 64,
+            "task_digest": "d" * 64,
+            "instructions_digest": "e" * 64,
+            "binary_sha256": "f" * 64,
+            "model": "fixture-model",
+            "effort": "fixture-effort",
+        }
+        payloads = {
+            "report.json": report,
+            "verification.json": verification,
+            "audit.json": audit,
+            "customer-session.json": manifest,
+            "resulting-state.json": {"installation": {"artifact_sha256": "a" * 64}},
+            "customer-agent/agent-result.json": {
+                "resolved_model": "fixture-model",
+                "resolved_effort": "fixture-effort",
+            },
+        }
+        for name, value in payloads.items():
+            target = root / name
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_text(json.dumps(value))
+        names = [*payloads, "events.jsonl", "screen.txt"]
+        index["sessions"].append(
+            {
+                "session_id": sid,
+                "files": {
+                    name: {
+                        "sha256": view.digest(root / name),
+                        "bytes": (root / name).stat().st_size,
+                    }
+                    for name in names
+                },
+            }
+        )
     index_path = records / "index.json"
     index_path.write_text(json.dumps(index))
     (tmp_path / "loop.md").write_text("Fixture operator instructions")
@@ -78,6 +176,8 @@ def test_real_reference_counts_exclude_lab_and_checkpoint(campaign):
         "independent_completions": 0,
         "lab_failures": 1,
         "unreviewed_or_rejected": 0,
+        "excluded_earlier_attempts": 0,
+        "measured_attempts": 2,
     }
     baseline = next(s for s in data["sessions"] if s["id"] == "customer-003")
     assert baseline["elapsed_seconds"] > 1100
@@ -454,9 +554,27 @@ def test_paired_quality_cost_evidence_is_bound_and_measurements_are_not_invented
     campaign,
 ):
     registry, _ = campaign
-    source = ROOT / "artifacts/first-contact/084/quality-cost/summary.json"
     path = registry.parent / "qa.json"
-    shutil.copyfile(source, path)
+    path.write_text(
+        json.dumps(
+            {
+                "source_commit": "0" * 40,
+                "environment": "Synthetic unit-test fixture",
+                "pairs": [
+                    {
+                        "attempt": n,
+                        "baseline_seconds": 20 + n,
+                        "candidate_seconds": 10 + n,
+                    }
+                    for n in range(3)
+                ],
+                "unique_ids_markers_fixtures_sources_equal": True,
+                "coverage_and_runtime_outcomes_equal_all_three_pairs": True,
+                "negative_controls": [],
+                "limits": ["Not real customer or measured product evidence"],
+            }
+        )
+    )
     config = json.loads(registry.read_text())
     config["quality_cost_experiments"] = [
         {
@@ -561,7 +679,7 @@ def test_startup_failure_clock_is_visible_without_fabricated_customer_report(cam
             "schema_version": 1,
             "id": "startup",
             "label": "Startup fixture",
-            "steps": [{"id": "boot", "label": "Start VM"}],
+            "steps": [{"id": "boot", "label": "Start VM", "stage_id": "environment"}],
         },
     )
     recorder.step("boot", "started")
@@ -602,7 +720,9 @@ def test_timed_completion_never_overrules_independent_assessment(campaign):
             "schema_version": 1,
             "id": "job",
             "label": "Fixture",
-            "steps": [{"id": "result", "label": "Get result"}],
+            "steps": [
+                {"id": "result", "label": "Get result", "stage_id": "review_results"}
+            ],
         },
     )
     recorder.step("result", "started", actor="customer")

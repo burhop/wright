@@ -673,3 +673,5 @@ must not include exception details, and request-derived viewer IDs must become
 bounded numbers before HTML/script interpolation. Existing UI-kit tests qualify
 all supported raster formats and hostile MIME rejection; CodeQL remains required
 for full data-flow analysis. Do not suppress rules or exclude maintained sources.
+
+Offline provider setup guides are frontend build inputs. The Docker source binding includes `docs/mcp-catalog/usage-guides` so guide changes cannot reuse an image built from older help content.

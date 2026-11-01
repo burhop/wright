@@ -21,6 +21,11 @@ def session(tmp_path, monkeypatch):
     binary = tmp_path / "codex"
     binary.write_text("fixture binary")
     (tmp_path / "codex-code-mode-host").write_text("fixture adjacent helper")
+    cli.JourneyRecorder.begin(
+        root,
+        json.loads((cli.ASSETS / "first-workflow-journey.json").read_text()),
+        boundary="whole_journey",
+    )
     task = tmp_path / "task.txt"
     task.write_text("Try the public first-contact journey.")
     state = {"cancelled": False, "calls": [], "cleanup_fail": False}
@@ -40,7 +45,10 @@ def session(tmp_path, monkeypatch):
             return {"live": True, "base_sha256": "a" * 64}
 
     class Visible:
-        def __init__(self, *args):
+        def __init__(self, *args, **kwargs):
+            pass
+
+        def native_pause(self, *args, **kwargs):
             pass
 
         def cancel(self):
@@ -189,6 +197,7 @@ def test_model_receives_only_scoped_binds_and_visible_tools(session):
         "desktop",
         "feedback_note",
         "journey_step",
+        cli.ACTIVITY_TOOL["name"],
     }
     assert "customer-1" in call["task"]
     assert "registered_target" not in call["task"]
@@ -493,7 +502,7 @@ def test_archive_maps_legacy_identity_suffix_by_exact_original_response(session)
 
 def test_customer_clock_closes_and_labels_missing_startup(session):
     result = run(session)
-    assert result["journey_clock_boundary"] == "customer_session_only"
+    assert result["journey_clock_boundary"] == "whole_journey"
     root = session["root"]
     assert result["journey_plan_sha256"] == cli.sha256(root / "journey-plan.json")
     assert (

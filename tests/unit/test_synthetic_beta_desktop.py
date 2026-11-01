@@ -19,6 +19,10 @@ class Guest:
         (root / "sessions/test").mkdir(parents=True)
         self.calls = []
 
+    def _session(self, session):
+        assert session == "test"
+        return self.root / "sessions" / session
+
     def state(self, session):
         return {"live": True}
 
@@ -62,7 +66,9 @@ def test_invalid_capture_rejected(data):
 def test_recorder_returns_screen_and_real_references(tmp_path):
     guest = Guest(tmp_path)
     session = VisibleSession(guest, "test", 20)
-    result = session("desktop", {"action": "screenshot"})
+    result = session(
+        "desktop", {"intent": "Inspect the fixture screen", "action": "screenshot"}
+    )
     assert result["image_url"].startswith("data:image/png;base64,")
     assert json.loads(result["text"])["screen_width"] == 2
     event = json.loads(session.events.read_text())
@@ -89,17 +95,26 @@ def test_cancel_and_budget_stop_before_guest_input(tmp_path):
     guest = Guest(tmp_path)
     session = VisibleSession(guest, "test", 20, max_actions=0)
     with pytest.raises(VMError, match="budget"):
-        session("desktop", {"action": "key", "key": "ret"})
+        session(
+            "desktop",
+            {"intent": "Inspect the fixture screen", "action": "key", "key": "ret"},
+        )
     session.max_actions = 10
     session.cancel()
     with pytest.raises(VMError, match="deadline"):
-        session("desktop", {"action": "key", "key": "ret"})
+        session(
+            "desktop",
+            {"intent": "Inspect the fixture screen", "action": "key", "key": "ret"},
+        )
     assert not guest.calls
 
 
 def test_failed_wait_is_recorded_and_text_is_redacted(tmp_path):
     session = VisibleSession(Guest(tmp_path), "test", 20)
-    assert not session("desktop", {"action": "wait", "seconds": 90})["success"]
+    assert not session(
+        "desktop",
+        {"intent": "Inspect the fixture screen", "action": "wait", "seconds": 90},
+    )["success"]
     session("feedback_note", {"text": "password=example-secret", "evidence_refs": []})
     assert "example-secret" not in session.events.read_text()
     assert "[REDACTED]" in session.events.read_text()
@@ -116,8 +131,11 @@ def test_existing_attempt_cannot_be_overwritten(tmp_path):
 def test_move_exposes_only_visible_pointer_and_retains_screen_contract(tmp_path):
     guest = Guest(tmp_path)
     session = VisibleSession(guest, "test", 20)
-    session("desktop", {"action": "screenshot"})
-    result = session("desktop", {"action": "move", "x": 1, "y": 0})
+    session("desktop", {"intent": "Inspect the fixture screen", "action": "screenshot"})
+    result = session(
+        "desktop",
+        {"intent": "Inspect the fixture screen", "action": "move", "x": 1, "y": 0},
+    )
     assert result["success"]
     assert guest.calls == [
         ("test", "pointer", {"x": 1, "y": 0, "width": 2, "height": 1})
@@ -131,8 +149,17 @@ def test_move_exposes_only_visible_pointer_and_retains_screen_contract(tmp_path)
 def test_positioned_scroll_moves_before_wheel_event_with_current_dimensions(tmp_path):
     guest = Guest(tmp_path)
     session = VisibleSession(guest, "test", 20)
-    session("desktop", {"action": "screenshot"})
-    result = session("desktop", {"action": "scroll", "x": 1, "y": 0, "delta": 3})
+    session("desktop", {"intent": "Inspect the fixture screen", "action": "screenshot"})
+    result = session(
+        "desktop",
+        {
+            "intent": "Inspect the fixture screen",
+            "action": "scroll",
+            "x": 1,
+            "y": 0,
+            "delta": 3,
+        },
+    )
     assert result["success"]
     assert guest.calls == [
         ("test", "pointer", {"x": 1, "y": 0, "width": 2, "height": 1}),
@@ -143,22 +170,53 @@ def test_positioned_scroll_moves_before_wheel_event_with_current_dimensions(tmp_
 def test_regular_scroll_keeps_current_pointer_position(tmp_path):
     guest = Guest(tmp_path)
     session = VisibleSession(guest, "test", 20)
-    assert session("desktop", {"action": "scroll", "delta": -2})["success"]
+    assert session(
+        "desktop",
+        {"intent": "Inspect the fixture screen", "action": "scroll", "delta": -2},
+    )["success"]
     assert guest.calls == [("test", "scroll", {"delta": -2})]
 
 
 @pytest.mark.parametrize(
     "arguments",
     [
-        {"action": "scroll", "x": 1, "delta": 2},
-        {"action": "scroll", "y": 1, "delta": 2},
-        {"action": "scroll", "x": 1280, "y": 0, "delta": 2},
-        {"action": "scroll", "x": 0, "y": 0, "delta": 0},
-        {"action": "move", "x": -1, "y": 0},
-        {"action": "move", "x": 0, "y": 800},
-        {"action": "move", "x": True, "y": 0},
-        {"action": "move", "x": 0},
-        {"action": "move", "x": 0, "y": 0, "hidden_api": "/private"},
+        {
+            "intent": "Inspect the fixture screen",
+            "action": "scroll",
+            "x": 1,
+            "delta": 2,
+        },
+        {
+            "intent": "Inspect the fixture screen",
+            "action": "scroll",
+            "y": 1,
+            "delta": 2,
+        },
+        {
+            "intent": "Inspect the fixture screen",
+            "action": "scroll",
+            "x": 1280,
+            "y": 0,
+            "delta": 2,
+        },
+        {
+            "intent": "Inspect the fixture screen",
+            "action": "scroll",
+            "x": 0,
+            "y": 0,
+            "delta": 0,
+        },
+        {"intent": "Inspect the fixture screen", "action": "move", "x": -1, "y": 0},
+        {"intent": "Inspect the fixture screen", "action": "move", "x": 0, "y": 800},
+        {"intent": "Inspect the fixture screen", "action": "move", "x": True, "y": 0},
+        {"intent": "Inspect the fixture screen", "action": "move", "x": 0},
+        {
+            "intent": "Inspect the fixture screen",
+            "action": "move",
+            "x": 0,
+            "y": 0,
+            "hidden_api": "/private",
+        },
     ],
 )
 def test_invalid_pointer_or_partial_scroll_has_no_guest_input(tmp_path, arguments):
@@ -178,7 +236,9 @@ def test_journey_markers_use_controller_clock_and_require_real_event_refs(tmp_pa
             "schema_version": 1,
             "id": "fixture",
             "label": "Fixture",
-            "steps": [{"id": "open", "label": "Open Wright"}],
+            "steps": [
+                {"id": "open", "label": "Open Wright", "stage_id": "open_wright"}
+            ],
         },
     )
     args = {
@@ -189,7 +249,7 @@ def test_journey_markers_use_controller_clock_and_require_real_event_refs(tmp_pa
         "evidence_refs": [],
     }
     assert session("journey_step", args)["success"]
-    session("desktop", {"action": "screenshot"})
+    session("desktop", {"intent": "Inspect the fixture screen", "action": "screenshot"})
     args.update(
         status="blocked",
         note="password=example-secret",

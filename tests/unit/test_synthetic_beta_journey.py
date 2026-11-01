@@ -21,8 +21,13 @@ PLAN = {
     "label": "Fixture job",
     "target_seconds": 1200,
     "steps": [
-        {"id": "install", "label": "Install", "target_seconds": 10},
-        {"id": "result", "label": "Receive result"},
+        {
+            "id": "install",
+            "label": "Install",
+            "target_seconds": 10,
+            "stage_id": "install_wright",
+        },
+        {"id": "result", "label": "Receive result", "stage_id": "review_results"},
     ],
 }
 
