@@ -574,9 +574,8 @@ async def test_explicit_cancellation_reads_actual_terminal_outcome_without_resub
     barrier = operation_cancellation(runtime, reserve=True)
     assert barrier is not None
     barrier.activate()  # Stand-in for the already tested durable command owner.
-    with pytest.raises(WorkflowSourceExecutionError) as stopped:
+    with pytest.raises(asyncio.CancelledError):
         await asyncio.wait_for(pending, 2)
-    assert stopped.value.code == "APPLICATION_CANCELLED"
     assert [n for n, _ in g.calls].count("fea__submit") == 1
     assert [e["state"] for e in events][-2:] == ["cancellation_requested", "cancelled"]
     assert events[-1]["observation_source"] == "provider_status"

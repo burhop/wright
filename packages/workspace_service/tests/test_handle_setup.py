@@ -189,7 +189,6 @@ def test_installed_customer_setup_proposes_then_cas_accepts_without_execution(tm
                     assert check in derived_profile["checks"]
             assert '"tool":"test_handoff"' not in proposal["source"]
             assert '"tool":"local_simulate_handoff"' in proposal["source"]
-            from workspace_service.workflow_source_execution import _parse
 
             selected_tools = {
                 section["fields"].get("settings", {}).get("mcp_tool")
