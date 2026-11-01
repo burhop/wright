@@ -1,0 +1,56 @@
+{
+  "title": "New workflow authoring through the served source workspace",
+  "summary": "Continue the newly saved scratch workflow through type rejection, layout persistence, zoom and concurrent-save protection. No process execution or engineering review.",
+  "overall": "pass",
+  "updated": "2026-10-11T17:38:03.306Z",
+  "manualSteps": [
+    {
+      "label": "Workspace",
+      "instruction": "Open the isolated workspace and click Workflows."
+    },
+    {
+      "label": "New workflow",
+      "instruction": "Choose Workflow files, then New workflow."
+    },
+    {
+      "label": "Author",
+      "instruction": "Read the creation instructions, provide a name and create the verification workflow."
+    }
+  ],
+  "steps": [
+    {
+      "id": "S13",
+      "state": "pass",
+      "label": "Compact keyboard and scale",
+      "summary": "Measured visual viewport scale is 2; view selector, Fit control and keyboard-selected input inspector are available.",
+      "purpose": "Preserve normal-workspace authoring behavior.",
+      "action": "Use a 720 by 550 viewport at two-times page scale, then select Text input with Enter.",
+      "controls": [
+        "Workflow view",
+        "Fit workflow to view",
+        "Text input"
+      ],
+      "expected": "Compact view and keyboard inspector remain available.",
+      "actual": "Measured visual viewport scale is 2; view selector, Fit control and keyboard-selected input inspector are available.",
+      "raw": "screenshots/raw/S13.png",
+      "annotated": "screenshots/annotated/S13.png"
+    },
+    {
+      "id": "S14",
+      "state": "pass",
+      "label": "Concurrent save protects both edits",
+      "summary": "A real 409 conflict preserves the 102 mm local edit and the 101 mm concurrent saved edit.",
+      "purpose": "Preserve normal-workspace authoring behavior.",
+      "action": "Change local specimen text, update the same scratch source through its real CAS endpoint, then Save.",
+      "controls": [
+        "Source",
+        "Apply",
+        "Save"
+      ],
+      "expected": "Conflict retains local text and does not overwrite the other saved edit.",
+      "actual": "A real 409 conflict preserves the 102 mm local edit and the 101 mm concurrent saved edit.",
+      "raw": "screenshots/raw/S14.png",
+      "annotated": "screenshots/annotated/S14.png"
+    }
+  ]
+}

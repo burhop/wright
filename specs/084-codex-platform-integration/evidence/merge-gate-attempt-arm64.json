@@ -1,0 +1,9 @@
+{
+  "result": "FAILED_DEV_MERGE_GATE",
+  "exit_code": 1,
+  "schema": "wright.codex-candidate-merge-gate/1",
+  "timeout_seconds": 1200,
+  "elapsed_seconds": 844.96,
+  "source_revision": "0d45fbbdec914040cc368b426ede898b0c3791c1",
+  "image_id": "sha256:19ec7e09db2d3f43302ec8490e00c01f99e80c7220963a3eb1e2ab013425609e"
+}

@@ -1,0 +1,51 @@
+{
+  "schema": "wright.codex-frontend-format-equivalence/1",
+  "executed_source_revision": "25476bce507ec1866fdfc1f6617a2b9fd86f35de",
+  "typescript": "5.9.3",
+  "scope": "Compare transpiled ReactJSX/ES2022 JavaScript node kinds, literal values and identifiers; exclude source text/trivia/positions/redundant grouping parentheses. Earlier raw-TS comparisons differed on JSX whitespace/grouping and remain local.",
+  "checks": [
+    {
+      "path": "apps/web/src/components/chat/AgentPlatformPicker.tsx",
+      "prior_sha256": "015d953935e53d2b18c7162857e3341820fea88e5d5694843e0b4e2ef473ec30",
+      "formatted_sha256": "1d6cf284583b845fbe7bac2d3e67974f23095263974cc3fcf62a3e5f3d667cc8",
+      "emitted_javascript_syntax_equal": true,
+      "parse_errors": 0
+    },
+    {
+      "path": "apps/web/src/components/chat/WorkspacePanel.tsx",
+      "prior_sha256": "cfdde4e077e3ca81322b98e82fac8dbb32ab29dd7fbf3e7223330a51a49ebd80",
+      "formatted_sha256": "2360eb195b3fd80c8c314fa40d0e5b09223522817832fff418b1e9f62ffc4fa0",
+      "emitted_javascript_syntax_equal": true,
+      "parse_errors": 0
+    },
+    {
+      "path": "apps/web/src/services/agent-service.ts",
+      "prior_sha256": "742e2b304301b64b0daba98dbdbecc0dabc9b98c29c94e611fcbc22f097e8669",
+      "formatted_sha256": "554be749ef0d911abd917756532241a06de58538e416cfdf7ec317dac59aedb8",
+      "emitted_javascript_syntax_equal": true,
+      "parse_errors": 0
+    },
+    {
+      "path": "apps/web/tests/ChatSessions.spec.tsx",
+      "prior_sha256": "555581a90c67d9b64d4deb85a1ef21af2014e243e88ba09278aa645e37a9c792",
+      "formatted_sha256": "c1b703aa667cd5e249b8cc313c4419a3e09f7c2ec593a2a118cf41ab9f52f461",
+      "emitted_javascript_syntax_equal": true,
+      "parse_errors": 0
+    },
+    {
+      "path": "apps/web/tests/WorkspacePanelSessions.spec.tsx",
+      "prior_sha256": "251243a80c12b6dae678bb45172445db718301b2c536637086b71e71e296579b",
+      "formatted_sha256": "97bf9e95d1d399918595b2a32d65a94653367f1771c3da3b2ae14fd43f5a96a0",
+      "emitted_javascript_syntax_equal": true,
+      "parse_errors": 0
+    },
+    {
+      "path": "apps/web/tests/agent-service.spec.ts",
+      "prior_sha256": "d157075a36c0d13cca1a16129f8c65d4569fc9787f87506b58d805c3428e73ea",
+      "formatted_sha256": "e06789ff8764adf076169becf34d915e3d7e6a6035adc5f9a8a31532001fd075",
+      "emitted_javascript_syntax_equal": true,
+      "parse_errors": 0
+    }
+  ],
+  "result": "PASSED_FORMAT_ONLY_SOURCE_EQUIVALENCE"
+}

@@ -77,6 +77,7 @@ class NativeRoute(APIRoute):
                     "NATIVE_RUNTIME_BUSY": 503,
                     "NATIVE_LIMIT": 413,
                     "NATIVE_ARTIFACT_INVALID": 409,
+                    "NATIVE_AGENT_UNAVAILABLE": 409,
                     "NATIVE_INTERNAL": 500,
                 }.get(code, 400)
             except (RequestValidationError, ValidationError):
@@ -276,6 +277,18 @@ def history(
 async def start_run(
     process_id: str, request: Request, session_id: Session, service: Service
 ):
+    from api.agent_platform_engines import require_workflow_platform
+
+    try:
+        await require_workflow_platform(request)
+    except HTTPException as error:
+        if error.status_code != 409:
+            raise
+        raise NativeServiceError(
+            "NATIVE_AGENT_UNAVAILABLE",
+            "Codex workflow execution is unavailable in the experimental chat pilot",
+            "Use a session bound to a qualified workflow platform; existing runs retain their owner.",
+        ) from error
     payload = await body(request, StartNativeRun)
     return await service.start_run(
         session_id,

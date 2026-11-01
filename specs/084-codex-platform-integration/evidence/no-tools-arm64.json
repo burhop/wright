@@ -1,0 +1,27 @@
+{
+  "schema": "wright.codex-local-qualification/1",
+  "versions": {
+    "openai-codex": "0.162.1",
+    "openai-codex-cli-bin": "0.162.1"
+  },
+  "policy_sha256": "c3ca9e0bcf0dd4265050406b99b375bb30302e4d92fbcf32f20e339ff53dcbf3",
+  "provider_requests_sha256": "b6c1af3f9ffd4fedd5fbef6b9cab16c97ff2d190dbba33bd9b66c59b8ecb58cf",
+  "boundary": "local fixture provider requests plus actual runtime tool result",
+  "live_openai_request": false,
+  "credentials_present": false,
+  "configured_mcp_servers": 0,
+  "fixture_request_count": 2,
+  "approval_methods": [],
+  "terminal_status": "completed",
+  "adversarial_tool": "collaboration.list_agents",
+  "adversarial_tool_results": [
+    {
+      "type": "function_call_output",
+      "id": "fco_01a12bb1-b7a6-7ff3-bece-a2f2bb99aafb",
+      "call_id": "qualification-call",
+      "output": "{\"agents\":[{\"agent_name\":\"/root\",\"agent_status\":\"running\"}]}"
+    }
+  ],
+  "no_tools_qualified": false,
+  "result": "FAILED_EXECUTABLE_TOOL"
+}

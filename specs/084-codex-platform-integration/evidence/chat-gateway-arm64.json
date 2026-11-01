@@ -1,0 +1,30 @@
+{
+  "schema": "wright.codex-chat-pilot-qualification/1",
+  "result": "PASSED_LOCAL_CHAT_GATEWAY_PILOT",
+  "sdk_version": "0.162.1",
+  "runtime_version": "0.162.1",
+  "model": "gpt-6.1-sol",
+  "reasoning_effort": "high",
+  "live_openai_request": false,
+  "credentials_present": false,
+  "gateway_transport": "app-server dynamic-tool callback to existing Wright GatewayService",
+  "native_mcp_stdio_qualified": false,
+  "no_tools_qualified": false,
+  "native_tool_exception": "wright.codex-native-chat-tools-exception/1",
+  "history_after_restart": [
+    "user",
+    "assistant"
+  ],
+  "persisted_cancellation": "interrupted",
+  "gateway_binding_frozen": true,
+  "gateway_principal_drift_denied": true,
+  "gateway_foreign_scope_denied": true,
+  "gateway_malformed_arguments_denied": true,
+  "gateway_audited_tool_calls": 1,
+  "audit_tables": [
+    "gateway_audit_events"
+  ],
+  "provider_request_count": 5,
+  "process_ui_authoring_available": false,
+  "workflow_tasks_available": false
+}

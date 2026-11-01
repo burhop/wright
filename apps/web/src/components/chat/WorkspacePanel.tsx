@@ -1,3 +1,4 @@
+import { AgentPlatformPicker } from "./AgentPlatformPicker";
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import FileTree from "../common/FileTree";
@@ -327,7 +328,10 @@ export function WorkspacePanel({
   const loadHermesModels = useCallback(async () => {
     setIsLoadingModels(true);
     try {
-      const options = await agentService.listHermesModels();
+      const options = await agentService.listHermesModels(
+        false,
+        activeSessionId,
+      );
       setModelGroups(options.groups);
       setModelSelectionSupported(options.selection_supported !== false);
       setModelSelectionMessage(options.selection_message || null);
@@ -343,17 +347,15 @@ export function WorkspacePanel({
     } finally {
       setIsLoadingModels(false);
     }
-  }, []);
+  }, [activeSessionId]);
 
-  // Load active agent and model catalog on mount
+  // Load the chosen default without changing saved session routing.
   useEffect(() => {
     if (desktopConversation) return;
     const initializeAgent = async () => {
       try {
         const active = await agentService.getActiveAgent();
-        if (active !== "hermes") {
-          await agentService.setActiveAgent("hermes");
-        }
+        setDefaultAgent(active);
       } catch (err) {
         console.error("Failed to fetch active agent from backend", err);
       }
@@ -361,6 +363,18 @@ export function WorkspacePanel({
     };
     initializeAgent();
   }, [loadHermesModels, desktopConversation]);
+
+  const handlePlatformChange = async (platform: string) => {
+    try {
+      const selected = await agentService.setActiveAgent(platform);
+      setDefaultAgent(selected);
+      await loadHermesModels();
+    } catch (error) {
+      setModelError(
+        error instanceof Error ? error.message : "Agent selection failed",
+      );
+    }
+  };
 
   const handleModelChange = async (newModel: string) => {
     const option = modelGroups
@@ -375,7 +389,6 @@ export function WorkspacePanel({
     setSelectedModel(newModel);
     setModelError(null);
     try {
-      await agentService.setActiveAgent("hermes", activeSessionId);
       const result = await agentService.setHermesModel(
         option.provider,
         option.model,
@@ -709,6 +722,7 @@ export function WorkspacePanel({
   );
   const [isLeftDragging, setIsLeftDragging] = useState<boolean>(false);
   const [isRightDragging, setIsRightDragging] = useState<boolean>(false);
+  const [defaultAgent, setDefaultAgent] = useState("hermes");
   const [selectedModel, setSelectedModel] = useState<string>("");
   const [modelGroups, setModelGroups] = useState<HermesModelOptionGroup[]>([]);
   const [isLoadingModels, setIsLoadingModels] = useState<boolean>(true);
@@ -2336,6 +2350,10 @@ export function WorkspacePanel({
                 width: "100%",
               }}
             >
+              <AgentPlatformPicker
+                value={defaultAgent}
+                onChange={handlePlatformChange}
+              />
               {/* Model Select */}
               <label htmlFor="llm-model-select" style={{ fontSize: "0.65rem" }}>
                 Model
@@ -4092,6 +4110,7 @@ export function WorkspacePanel({
               }}
             >
               {/* Model Select */}
+              <AgentPlatformPicker value={defaultAgent} onChange={handlePlatformChange} />
               <label htmlFor="llm-model-select" style={{ fontSize: "0.65rem" }}>
                 Model
               </label>

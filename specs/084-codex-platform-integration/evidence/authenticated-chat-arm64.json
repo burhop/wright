@@ -1,0 +1,35 @@
+{
+  "schema": "wright.codex-authenticated-chat-qualification/1",
+  "sdk_version": "0.162.1",
+  "runtime_version": "0.162.1",
+  "model": "gpt-6.1-sol",
+  "reasoning_effort": "high",
+  "auth_route": "chatgpt",
+  "live_openai_request": true,
+  "no_tools_qualified": false,
+  "process_ui_authoring_available": false,
+  "workflow_tasks_available": false,
+  "native_mcp_stdio_qualified": false,
+  "result": "PASSED_AUTHENTICATED_CHAT_RESTART",
+  "turns": [
+    {
+      "attempt": "authenticated-first",
+      "terminal": "completed",
+      "token_events": 4,
+      "receipt": "completed"
+    },
+    {
+      "attempt": "authenticated-continuation",
+      "terminal": "completed",
+      "token_events": 4,
+      "receipt": "completed"
+    }
+  ],
+  "history_after_restart": [
+    "user",
+    "assistant"
+  ],
+  "same_platform_and_thread_continued": true,
+  "original_auth_file_unchanged": true,
+  "isolated_auth_copy_removed": true
+}

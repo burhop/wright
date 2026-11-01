@@ -145,6 +145,8 @@ class AgentChatRequest:
     instruction_set: dict | None = None
     # Internal evidence callback; never user-authored invocation/action authority.
     invocation_observer: Callable[[dict], Awaitable[None]] | None = None
+    gateway_handler: Callable[[dict], Awaitable[dict]] | None = None
+    gateway_cleanup: Callable[[], Awaitable[None]] | None = None
 
 
 @dataclass

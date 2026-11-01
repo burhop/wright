@@ -355,7 +355,7 @@ export function ChatTranscript({
         >
           <p style={{ fontSize: "0.9rem" }}>No messages yet.</p>
           <p style={{ fontSize: "0.78rem", marginTop: "4px" }}>
-            Send a message to start conversing with the Hermes Agent.
+            Send a message to start conversing with the selected agent.
           </p>
         </div>
       )}

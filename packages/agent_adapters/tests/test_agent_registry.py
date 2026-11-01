@@ -95,3 +95,16 @@ def test_unavailable_pi_never_falls_back_to_default(selection, monkeypatch):
     assert "pi" not in registry.supported_names()
     with pytest.raises(UnsupportedAgentRuntimeError, match="known but not implemented"):
         registry.create_engine(selection, db_path="test.db")
+def test_codex_chat_is_experimental_and_requires_explicit_opt_in(monkeypatch, tmp_path):
+    monkeypatch.delenv("WRIGHT_CODEX_CHAT_EXPERIMENTAL", raising=False)
+    registry = default_agent_registry()
+    assert "codex" in registry.known_names()
+    assert "codex" in registry.supported_names()
+    assert registry.resolve_provider("codex").support_level == "experimental"
+    with pytest.raises(UnsupportedAgentRuntimeError, match="storage port"):
+        create_agent_engine("codex", db_path=str(tmp_path / "state.db"))
+
+
+def test_pi_remains_unavailable_and_does_not_fall_back():
+    with pytest.raises(UnsupportedAgentRuntimeError, match="known but not implemented"):
+        create_agent_engine("pi")

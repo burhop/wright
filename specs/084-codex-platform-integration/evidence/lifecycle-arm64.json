@@ -1,0 +1,32 @@
+{
+  "schema": "wright.codex-local-qualification/1",
+  "versions": {
+    "openai-codex": "0.162.1",
+    "openai-codex-cli-bin": "0.162.1"
+  },
+  "policy_sha256": "c3ca9e0bcf0dd4265050406b99b375bb30302e4d92fbcf32f20e339ff53dcbf3",
+  "provider_requests_sha256": "c7dd88f4fba398c03420911d5741d64711c156155fd1b14c34eae6ccfdff8a5e",
+  "boundary": "local fixture provider requests plus actual runtime tool result",
+  "live_openai_request": false,
+  "credentials_present": false,
+  "configured_mcp_servers": 0,
+  "fixture_request_count": 2,
+  "approval_methods": [],
+  "terminal_status": "completed",
+  "adversarial_tool": "collaboration.list_agents",
+  "adversarial_tool_results": [],
+  "no_tools_qualified": false,
+  "probe": "lifecycle",
+  "lifecycle": {
+    "same_thread_on_resume": true,
+    "completed_turn_persisted_after_restart": true,
+    "first_terminal_status": "completed",
+    "interruption_acknowledgement": {},
+    "interrupted_terminal_status": "interrupted",
+    "persisted_terminal_statuses": [
+      "completed",
+      "interrupted"
+    ]
+  },
+  "result": "PASSED_LOCAL_LIFECYCLE"
+}
