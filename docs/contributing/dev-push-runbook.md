@@ -105,6 +105,18 @@ changes select the existing history scan in the fast gate; the full merge gate n
 runs that same scan. Existing allowlist rules and their selected contracts remain
 unchanged. No history rewrite or whole-file exclusion is permitted.
 
+PR #175 found that the linked-worktree history clone omitted cached remote
+branch refs scanned by CI's full checkout. The local Unix and Windows scanners
+now include available `origin` tracking refs alongside the candidate without
+adding unpublished local branches. Refresh remote refs before gating. Six exact
+historical findings are the SHA-256 identity of an empty credential-status map,
+verified at their introducing commits; only those fingerprints are excluded.
+Other values and paths remain subject to the scanner.
+
+GitHub is retiring `macos-14` on 2 November 2026 after scheduled brownouts.
+Native candidate and published-lifecycle matrices use `macos-15`, retaining
+ARM64 macOS coverage and the existing lifecycle test and evidence requirements.
+
 The OCI scanner may fail before it writes a vulnerability report. Its public
 projection now includes only an allowlisted reported category (for example DB
 download or registry rate limiting), retaining raw details locally. An unclassified
@@ -465,6 +477,11 @@ authoritative in CI when a local Docker host is unavailable.
 5. Merge through the pull request. Do not push directly to `dev`.
 
 ## CI failure protocol
+
+The image security correction merged in PR #175 also updates both the package
+identifier and version field in pip's msgpack software inventory. Exact-image
+smoke checks the installed system and vendored versions, inventory, Hermes
+pyasn1 and npm's nested undici. A fresh image scan remains authoritative.
 
 Engineering-image release assets use bounded retries for interrupted build-time
 GET downloads and remove incomplete output on terminal failure. The Docker bundle

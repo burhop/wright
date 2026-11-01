@@ -60,10 +60,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     bsdutils \
     ca-certificates \
     curl=8.14.1-2+deb13u7 \
+    libbrotli1=1.1.0-2+deb13u1 \
     libexpat1=2.9.0-1~deb13u1 \
     git \
     libblkid1 \
-    libbrotli1=1.1.0-2+deb13u1 \
     liblastlog2-2 \
     libmount1 \
     libpcre2-8-0=10.46-1~deb13u3 \
@@ -103,6 +103,7 @@ RUN set -eux; \
       "${pip_vendor}/vendor.txt"; \
     sed -i \
       -e "s/msgpack@1.1.2/msgpack@1.2.3/g" \
+      -e '/"name": "msgpack"/,/}/s/"version": "1.1.2"/"version": "1.2.3"/' \
       -e "s/urllib3@2.7.0/urllib3@2.8.0/g" \
       -e "s/certifi@2026.6.17/certifi@2026.10.19/g" \
       -e '/"name": "certifi"/,/}/s/"version": "2026.6.17"/"version": "2026.10.19"/' \
@@ -153,10 +154,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     bzip2 \
     ca-certificates \
     curl=8.14.1-2+deb13u7 \
+    libbrotli1=1.1.0-2+deb13u1 \
     gzip \
     libexpat1=2.9.0-1~deb13u1 \
     libblkid1 \
-    libbrotli1=1.1.0-2+deb13u1 \
     liblastlog2-2 \
     libmount1 \
     libpcre2-8-0=10.46-1~deb13u3 \
@@ -219,7 +220,7 @@ RUN set -eux; \
 RUN uv pip install --python /opt/hermes/.venv/bin/python \
         "cryptography==50.0.0" \
         "pillow==13.0.0" \
-        "pyasn1==0.6.4" \
+        "pyasn1==0.6.5" \
         "python-multipart==0.0.32" \
         "starlette==1.3.1" \
         "tornado==6.5.9" \

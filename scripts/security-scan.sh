@@ -37,6 +37,9 @@ prepare_history_scan_root() {
     TEMP_SCAN_PARENT="$(mktemp -d "${TMPDIR:-/tmp}/wright-security-scan.XXXXXX")"
     SCAN_ROOT_DIR="$TEMP_SCAN_PARENT/repo"
     git clone --no-hardlinks --no-checkout --single-branch --no-tags "$ROOT_DIR" "$SCAN_ROOT_DIR" >/dev/null
+    # CI checks out all remote heads. Include the locally cached origin refs as
+    # well as the candidate, without importing unrelated unpublished branches.
+    git -C "$SCAN_ROOT_DIR" fetch --no-tags "$ROOT_DIR" '+refs/remotes/origin/*:refs/remotes/scan-origin/*' >/dev/null
     HEAD_COMMIT="$(git -C "$ROOT_DIR" rev-parse --verify HEAD)"
     git -C "$SCAN_ROOT_DIR" checkout --detach "$HEAD_COMMIT" >/dev/null
   fi
@@ -51,7 +54,7 @@ prepare_history_scan_root() {
   case "$(uname -s)" in
     MINGW*|MSYS*|CYGWIN*) DOCKER_SCAN_ROOT_DIR="$(cygpath -w "$SCAN_ROOT_DIR")" ;;
   esac
-  echo "History scan coverage: $SCAN_COMMIT_COUNT commits reachable from HEAD."
+  echo "History scan coverage: $SCAN_COMMIT_COUNT commits reachable from HEAD, plus available remote refs."
 }
 
 usage() {

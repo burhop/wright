@@ -267,7 +267,11 @@ def invoke(request: dict, runtime_root: Path, *, sdk_observer=None) -> dict:
                     if (
                         set(part) != {"type", "image_url"}
                         or not isinstance(image, dict)
-                        or set(image) != {"url"}
+                        or not {"url"} <= set(image) <= {"url", "detail"}
+                        or (
+                            "detail" in image
+                            and image["detail"] not in ("auto", "low", "high")
+                        )
                         or not isinstance(image["url"], str)
                         or not image["url"].startswith("data:image/")
                     ):

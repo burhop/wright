@@ -28,6 +28,7 @@ def evaluate(
     key="evaluate",
     file_bytes=None,
     file_format="json",
+    related_subjects=(),
 ):
     profile = profile or load_profile("structured-demo")
     args = dict(
@@ -56,7 +57,7 @@ def evaluate(
         trace_id="trace",
         workspace_id="workspace",
         invocation_id="check",
-        subjects=(subject,),
+        subjects=(subject, *related_subjects),
         profile_ref=profile.reference(),
         baseline_ref=profile.baseline.reference(),
         idempotency_key=key,
