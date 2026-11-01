@@ -93,6 +93,64 @@ def test_malformed_record_is_never_retried(record_file, monkeypatch):
     assert len(opened) == 1
 
 
+@pytest.mark.parametrize("failure", ["missing", "denied"])
+def test_transient_resolution_failure_rechecks_exact_record(
+    record_file, monkeypatch, failure
+):
+    target, content = record_file
+    original = WorkspacePath.resolve
+    resolved, slept = [], []
+
+    def resolve(paths, relative, **kwargs):
+        resolved.append((relative, kwargs))
+        if len(resolved) == 1:
+            if failure == "missing":
+                raise FileNotFoundError(relative)
+            raise PermissionError(errno.EACCES, "Transient resolution denial")
+        return original(paths, relative, **kwargs)
+
+    monkeypatch.setattr(WorkspacePath, "resolve", resolve)
+    monkeypatch.setattr(records, "_RUN_RECORD_READ_DELAYS", (0.02,))
+    monkeypatch.setattr(records.time, "sleep", slept.append)
+    assert read_record(target)["run_id"] == "exact"
+    assert resolved == [(target.name, {"must_exist": True})] * 2
+    assert slept == [0.02]
+    assert target.read_bytes() == content
+
+
+def test_missing_record_remains_missing_after_bounded_observation(
+    record_file, monkeypatch
+):
+    target, _ = record_file
+    target.unlink()
+    slept = []
+    monkeypatch.setattr(records, "_RUN_RECORD_READ_DELAYS", (0.02, 0.04))
+    monkeypatch.setattr(records.time, "sleep", slept.append)
+    with pytest.raises(FileNotFoundError):
+        read_record(target)
+    assert slept == [0.02, 0.04]
+    assert not target.exists()
+
+
+def test_reobservation_never_bypasses_changed_confinement(record_file, monkeypatch):
+    target, content = record_file
+    attempts = []
+
+    def resolve(paths, relative, **kwargs):
+        attempts.append(relative)
+        if len(attempts) == 1:
+            raise FileNotFoundError(relative)
+        raise ValueError("Access denied: symbolic links and reparse points")
+
+    monkeypatch.setattr(WorkspacePath, "resolve", resolve)
+    monkeypatch.setattr(records, "_RUN_RECORD_READ_DELAYS", (0.02, 0.04))
+    monkeypatch.setattr(records.time, "sleep", lambda _: None)
+    with pytest.raises(ValueError, match="Access denied"):
+        read_record(target)
+    assert len(attempts) == 2
+    assert target.read_bytes() == content
+
+
 @pytest.mark.skipif(os.name != "nt", reason="Requires actual Windows file sharing")
 def test_actual_windows_read_lock_release_recovers(record_file, monkeypatch):
     from packages.workspace_service.tests.test_generated_file_sharing import (

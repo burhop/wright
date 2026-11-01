@@ -26,8 +26,8 @@ _MAX_RUN_READ_FILES = 100
 # supplier research stage alone produced 26 MiB), without treating prompt-file
 # limits as run limits. Keep a hard bound; never recover a partial JSON record.
 _MAX_RUN_RECORD_BYTES = 64 * 1024 * 1024
-# Windows CRT file opens can report sharing contention as errno EACCES without
-# winerror. Retry only this bounded observation, never an execution or mutation.
+# Windows observations can report sharing contention as EACCES or transient
+# absence during replacement. Retry only the same bounded, confined read.
 _RUN_RECORD_READ_DELAYS = (0.02, 0.04, 0.08, 0.16, 0.20) if os.name == "nt" else ()
 # The interaction owner pages a compact result inventory separately from progress.
 # Native responses remain only in the recorder, under its existing read bound.
@@ -1210,13 +1210,16 @@ def _read_run_record(paths, relative, source_path):
     for attempt in range(len(_RUN_RECORD_READ_DELAYS) + 1):
         # Recheck confinement for each observation; never reuse an earlier body
         # or suppress a persistent denial, missing record or malformed JSON.
-        path = paths.resolve(relative, must_exist=True)
         try:
+            path = paths.resolve(relative, must_exist=True)
             with path.open("rb") as stream:
                 data = stream.read(_MAX_RUN_RECORD_BYTES + 1)
             break
-        except PermissionError as error:
-            if error.errno != errno.EACCES or attempt == len(_RUN_RECORD_READ_DELAYS):
+        except (PermissionError, FileNotFoundError) as error:
+            retryable = (
+                isinstance(error, FileNotFoundError) or error.errno == errno.EACCES
+            )
+            if not retryable or attempt == len(_RUN_RECORD_READ_DELAYS):
                 raise
             time.sleep(_RUN_RECORD_READ_DELAYS[attempt])
     if len(data) > _MAX_RUN_RECORD_BYTES:
