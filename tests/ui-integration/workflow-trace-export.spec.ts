@@ -112,7 +112,7 @@ test("activity file controls preserve iteration-specific outputs and navigation"
       await expect(detail.locator(".document-link strong")).toHaveText(["Housing"]);
       await detail.locator(".document-link").click();
       await expect(detail.getByRole("link", { name: "Download original STEP" })).toHaveAttribute("href", "outputs/output/housing.step");
-      await detail.getByRole("button", { name: "Produced by: Generate housing", exact: true }).click();
+      await detail.getByRole("button", { name: "Activity: Generate housing", exact: true }).click();
       await expect(detail.getByRole("button", { name: "Iteration 1 / Failed", exact: true })).toHaveAttribute("aria-pressed", "true");
       await detail.getByRole("button", { name: "Back", exact: true }).click();
       await detail.getByRole("button", { name: "Back", exact: true }).click();

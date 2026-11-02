@@ -20,6 +20,13 @@ test("a template qualification rejection explains responsibility and recovery wi
   page,
 }) => {
   await mockRecoveryWorkspace(page, { source });
+  await page.route("**/api/mcp/servers", (route) =>
+    route.fulfill({
+      json: {
+        servers: [{ server_id: "test", name: "Qualification test server" }],
+      },
+    }),
+  );
   await page.route("**/api/workspace/workflow-sources/runs?*", (route) =>
     route.fulfill({
       json: {
@@ -70,10 +77,17 @@ test("a template qualification rejection explains responsibility and recovery wi
     await block.focus();
     await block.press("Enter");
     await page
-      .getByTestId("workflow-recovery-task-server")
+      .getByRole("combobox", { name: "Engineering server", exact: true })
       .selectOption("test");
+    await page
+      .getByRole("button", { name: "Use AI with this server", exact: true })
+      .click();
   }
   await page.getByTestId("workflow-recovery-inspector-close").click();
+  await page.getByTestId("workflow-recovery-save").click();
+  await expect(page.getByTestId("workflow-recovery-save-status")).toHaveText(
+    "Saved",
+  );
   await page.getByTestId("workflow-recovery-run-start").click();
   await expect(page.getByTestId("workflow-native-run-summary")).toContainText(
     "Run not started",
@@ -100,6 +114,11 @@ test("a template qualification rejection explains responsibility and recovery wi
     path: "test-results/workflow-template-blocked-desktop.png",
   });
   await page.setViewportSize({ width: 796, height: 791 });
+  await page
+    .getByRole("navigation", { name: "Workspace pane" })
+    .getByRole("button", { name: "Surface", exact: true })
+    .click();
+  await expect(issue).toBeInViewport();
   await page.screenshot({
     path: "test-results/workflow-template-blocked-narrow.png",
   });
@@ -121,6 +140,16 @@ test("workspace reference tasks expose an MCP choice, retain it across save/reop
   page,
 }) => {
   const state = await mockRecoveryWorkspace(page, { source });
+  await page.route("**/api/mcp/servers", (route) =>
+    route.fulfill({
+      json: {
+        servers: ["a", "b"].map((id) => ({
+          server_id: id,
+          name: `CAD server ${id}`,
+        })),
+      },
+    }),
+  );
   await page.route("**/api/workspace/workflow-sources/runs?*", (route) =>
     route.fulfill({
       json: {
@@ -162,12 +191,27 @@ test("workspace reference tasks expose an MCP choice, retain it across save/reop
     page.getByTestId("workflow-recovery-diagnostic-WFR-MCP-SERVER-REQUIRED"),
   ).toHaveCount(2);
   expect(runRequests).toEqual([]);
-  await expect(page.getByTestId("workflow-recovery-inspector")).toContainText(
-    "Template candidate: BREP MCP. No server is bound.",
-  );
+  await expect(
+    page.getByRole("region", { name: "Configure this step", exact: true }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("combobox", { name: "Engineering server", exact: true }),
+  ).toHaveValue("");
+  await page
+    .getByTestId(`workflow-recovery-settings-advanced-${cadId}`)
+    .click();
+  await expect(
+    page.getByTestId(`workflow-recovery-block-parameter-${cadId}-candidate`),
+  ).toHaveValue("BREP MCP");
   await page.getByTestId("workflow-recovery-dismiss-diagnostics").click();
+  await page
+    .getByRole("combobox", { name: "Engineering server", exact: true })
+    .selectOption("a");
+  await page
+    .getByRole("button", { name: "Use AI with this server", exact: true })
+    .click();
   const selector = page.getByTestId("workflow-recovery-task-server");
-  await selector.selectOption("a");
+  await expect(selector).toHaveValue("a");
   await expect(cad).toContainText("MCP: CAD server a");
   await expect(
     page.getByTestId(`workflow-recovery-block-instructions-${cadId}`),

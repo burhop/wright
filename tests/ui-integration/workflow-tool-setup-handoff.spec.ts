@@ -147,11 +147,18 @@ for (const width of [1280, 700]) {
       help.getByRole("link", { name: "Open Tool Registry (new tab)" }),
     ).toHaveAttribute("href", "/tool-registry");
     await help.getByText("Read provider setup guide (bundled copy)").click();
-    await expect(help.getByText(/# FreeCAD MCP usage guide/)).toBeVisible();
+    await expect(
+      help.getByRole("heading", {
+        name: "FreeCAD MCP usage guide",
+        exact: true,
+      }),
+    ).toBeVisible();
     await page.screenshot({
       path: testInfo.outputPath("configuration-and-bundled-help.png"),
     });
-    await help.getByText("Read provider setup guide (bundled copy)").click();
+    await help
+      .getByRole("button", { name: "Back to setup", exact: true })
+      .click();
     available = true;
     await help.getByRole("button", { name: "Return to job setup" }).click();
     await expect(page.getByTestId("printed-handle-setup-dialog")).toBeVisible();
@@ -169,8 +176,10 @@ for (const width of [1280, 700]) {
         page.getByTestId(`handle-setup-profile-${role}`),
       ).toHaveValue(`profiles/${role}.json`);
     await expect(page.getByTestId("handle-setup-propose")).toBeDisabled();
-    expect(scopes).toHaveLength(2);
+    // Initial setup, guide return, and refreshed setup all retain one subject.
+    expect(scopes).toHaveLength(3);
     expect(scopes[1]).toEqual(scopes[0]);
+    expect(scopes[2]).toEqual(scopes[0]);
     expect(scopes[1]).toMatchObject({
       expected_storage_digest: document.storage_digest,
       path: document.path,

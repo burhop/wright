@@ -68,14 +68,14 @@ test("reviews a completed run from the normal Workflows entry", async ({
 
   await openRecoveryEditor(page);
   await page.getByTestId("workflow-recovery-run-details-toggle").click();
-  await page.getByText("Trace: previous runs").click();
+  await page.getByText("Previous runs", { exact: true }).click();
   await page.getByText(/Completed/).click();
   const tracePage = page.getByTestId("workflow-trace-page");
   await expect(tracePage).toBeVisible();
   await expect(page.getByRole("region", { name: "Run results" })).toBeVisible();
   await expect(page.getByText("Created artifacts")).toBeVisible();
 
-  await page.getByRole("button", { name: "Process" }).click();
+  await tracePage.getByRole("button", { name: "Process", exact: true }).click();
   const graph = page.getByLabel("Executed graph Mounting bracket development");
   await expect(graph).toBeVisible();
   await expect(graph.locator(".react-flow__node")).toHaveCount(1);
@@ -84,7 +84,7 @@ test("reviews a completed run from the normal Workflows entry", async ({
     page.getByRole("complementary", { name: "Selected process detail" }),
   ).toBeVisible();
   await page.getByRole("button", { name: "Close process detail" }).click();
-  await page.getByRole("button", { name: "Results" }).click();
+  await tracePage.getByRole("button", { name: "Results", exact: true }).click();
   await expect(page.getByRole("region", { name: "Run results" })).toBeVisible();
 
   mkdirSync(evidenceDir, { recursive: true });
@@ -92,7 +92,11 @@ test("reviews a completed run from the normal Workflows entry", async ({
     path: resolve(evidenceDir, "trace-workspace-desktop.png"),
   });
   await page.setViewportSize({ width: 390, height: 844 });
-  await expect(tracePage).toBeVisible();
+  await page
+    .getByRole("navigation", { name: "Workspace pane" })
+    .getByRole("button", { name: "Surface", exact: true })
+    .click();
+  await expect(tracePage).toBeInViewport();
   expect((await tracePage.boundingBox())?.width).toBeLessThanOrEqual(390);
   await tracePage.screenshot({
     path: resolve(evidenceDir, "trace-workspace-mobile.png"),

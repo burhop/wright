@@ -131,7 +131,7 @@ test("reviews and locally exports exact source-run diagnostics from the working 
     .getByRole("button", { name: "Prepare and check inputs", exact: true })
     .click();
   await page
-    .getByRole("button", { name: "Start process", exact: true })
+    .getByRole("button", { name: "Start workflow", exact: true })
     .click();
   await expect(page.getByTestId("workspace-process-view")).toHaveAttribute(
     "data-run-id",
