@@ -793,3 +793,18 @@ response test. Preserve historical bytes and both existing audit hashes. If a
 source defect is found while a gate is running, preserve that incomplete log,
 stop only the task-owned gate and qualify the final source; an interrupted gate
 is not a passing receipt.
+
+
+### Asynchronous saved-run history
+
+PR #180's fifth cycle passed native Windows backend checks but exposed a history
+fixture that asserted a child effect before its trace request ran. History tests
+own every trace read and control pending delivery: the exact saved log remains
+available immediately, while visible Run results require the delivered response.
+They also assert no workflow start or resume and retain historical-binding checks.
+A missing response must fail the visible-results assertion; a successful callback
+alone is insufficient. Both native gates and Windows frontend CI check this owner
+early, retaining the complete frontend suites. This test/gate-only correction
+retains the exact green product full-gate receipt, runs affected checks and the
+normal push gate, and requires fresh current-head CI. It does not establish
+native Windows desktop panel acceptance.

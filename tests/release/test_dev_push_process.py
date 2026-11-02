@@ -107,6 +107,17 @@ def test_fast_gate_contains_the_frontend_ci_contract() -> None:
         )
 
 
+def test_history_loading_contract_is_checked_before_broad_frontend_suites() -> None:
+    owner = "src/prototypes/workflow-recovery/WorkflowRunHistory.spec.tsx"
+    for name in ("push", "merge"):
+        gate = _read(f"scripts/check-dev-{name}.sh")
+        assert owner in gate
+        assert gate.index(owner) < gate.index("npm run build --workspace=apps/web")
+    windows = _read(".github/workflows/test-windows.yml")
+    assert windows.index(owner) < windows.index("- name: Run Vitest")
+    assert "run: npm run test --workspace=apps/web\n" in windows
+
+
 def test_native_gates_check_path_and_runtime_security_before_long_checks() -> None:
     commands = (
         '"$GATE_PYTHON" -m pytest packages/workspace_service/tests/test_workspace_path.py -q',

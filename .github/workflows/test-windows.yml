@@ -121,5 +121,10 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Check loaded run history before the full frontend suite
+        run: >-
+          npm run test --workspace=apps/web -- --run
+          src/prototypes/workflow-recovery/WorkflowRunHistory.spec.tsx --maxWorkers=1
+
       - name: Run Vitest
         run: npm run test --workspace=apps/web
