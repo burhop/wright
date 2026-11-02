@@ -135,6 +135,20 @@ def run(session, identity="customer-1"):
     )
 
 
+def test_customer_assets_use_utf8_under_legacy_windows_locale(session, monkeypatch):
+    original = Path.read_text
+
+    def legacy_read(path, encoding=None, errors=None, **kwargs):
+        return original(
+            path, encoding=encoding or "cp1252", errors=errors, **kwargs
+        )
+
+    monkeypatch.setattr(Path, "read_text", legacy_read)
+    manifest = run(session)
+    assert manifest["report_status"] == "valid-unreviewed"
+    assert session["calls"]
+
+
 def test_customer_feedback_is_preserved_exactly_and_remains_unreviewed(session):
     before = session["auth"].read_bytes()
     manifest = run(session)

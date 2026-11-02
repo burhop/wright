@@ -138,7 +138,9 @@ def run_customer(
     if guest_id != session_id:
         if observation_scope == "first_contact":
             raise VMError("A repeat visit to an existing guest is not first contact")
-        previous = json.loads((guest_root / "customer-session.json").read_text())
+        previous = json.loads(
+            (guest_root / "customer-session.json").read_text(encoding="utf-8")
+        )
         if not previous.get("finished_at"):
             raise VMError("Preserve the unfinished customer before a prepared repeat")
         root = backend._session(session_id)
@@ -149,15 +151,19 @@ def run_customer(
     limit = 3600 if observation_scope in {"first_contact", "prepared_retry"} else 900
     if not 0 < timeout <= limit:
         raise VMError(f"Customer attempt exceeds its {limit}-second observation scope")
-    task_template = Path(task_path).read_text()
+    task_template = Path(task_path).read_text(encoding="utf-8")
     instructions = (
-        (ASSETS / "customer.md").read_text()
+        (ASSETS / "customer.md").read_text(encoding="utf-8")
         + "\n"
-        + (ASSETS / "journey-observation-v3.md").read_text()
+        + (ASSETS / "journey-observation-v3.md").read_text(encoding="utf-8")
     )
     if (root / "journey-plan.json").exists():
         journey = JourneyRecorder(root)
-        if journey_plan and json.loads(Path(journey_plan).read_text()) != journey.plan:
+        if (
+            journey_plan
+            and json.loads(Path(journey_plan).read_text(encoding="utf-8"))
+            != journey.plan
+        ):
             raise VMError("Requested journey plan differs from frozen clock")
     else:
         if observation_scope == "first_contact":
@@ -168,7 +174,9 @@ def run_customer(
         journey = JourneyRecorder.begin(
             root,
             json.loads(
-                Path(journey_plan or ASSETS / "first-workflow-journey.json").read_text()
+                Path(journey_plan or ASSETS / "first-workflow-journey.json").read_text(
+                    encoding="utf-8"
+                )
             ),
             boundary="customer_session_only",
         )
@@ -205,7 +213,7 @@ def run_customer(
     visible.journey = journey
     schema = customer_schema(session_id)
     (root / "customer-output-schema.json").write_text(
-        json.dumps(schema, indent=2) + "\n"
+        json.dumps(schema, indent=2) + "\n", encoding="utf-8", newline=""
     )
     manifest = {
         "schema_version": 1,
@@ -230,15 +238,23 @@ def run_customer(
         "context_isolation": "fresh unprivileged container; only read-only native CLI/adjacent code-mode helper/auth binds; no repository/config/history/AGENTS mount; guest controls are dynamic callbacks",
         "interaction_mode": "guest screenshots/mouse/keyboard; no DOM or private product APIs",
         "activity_diary_version": "continuous-customer-activity-v1",
-        "tools_sha256": hashlib.sha256(json.dumps(TOOLS + [JOURNEY_TOOL, ACTIVITY_TOOL], sort_keys=True).encode()).hexdigest(),
+        "tools_sha256": hashlib.sha256(
+            json.dumps(TOOLS + [JOURNEY_TOOL, ACTIVITY_TOOL], sort_keys=True).encode()
+        ).hexdigest(),
         "controller_files_sha256": {
             name: sha256(ASSETS.parent / name)
-            for name in ("cli.py", "desktop.py", "journey.py", "activity_diary.py", "agent.py")
+            for name in (
+                "cli.py",
+                "desktop.py",
+                "journey.py",
+                "activity_diary.py",
+                "agent.py",
+            )
         },
         "base_sha256": backend.state(guest_id)["base_sha256"],
         "journey_plan_sha256": sha256(root / "journey-plan.json"),
         "journey_clock_boundary": json.loads(
-            (root / "journey-clock.jsonl").read_text().splitlines()[0]
+            (root / "journey-clock.jsonl").read_text(encoding="utf-8").splitlines()[0]
         )["boundary"],
     }
     auth_before = sha256(Path(auth))
@@ -263,14 +279,16 @@ def run_customer(
             # Preserve the exact final response; parsing never rewrites the feedback.
             final = result["final_text"]
             destination = root / "report.json"
-            destination.write_text(final)
+            destination.write_text(final, encoding="utf-8", newline="")
             try:
                 report = load_report(destination)
                 if report.get("session_id") != session_id:
                     raise VMError(
                         "Customer report session differs from its observed guest"
                     )
-                (root / "report.md").write_text(render_report(report))
+                (root / "report.md").write_text(
+                    render_report(report), encoding="utf-8", newline=""
+                )
                 manifest["report_status"] = "valid-unreviewed"
             except (ValueError, VMError) as error:
                 manifest["report_status"] = "invalid-retained"
@@ -300,7 +318,7 @@ def run_customer(
                 manifest["original_auth_unchanged"] = False
             manifest["finished_at"] = datetime.now(timezone.utc).isoformat()
             (root / "customer-session.json").write_text(
-                json.dumps(manifest, indent=2) + "\n"
+                json.dumps(manifest, indent=2) + "\n", encoding="utf-8", newline=""
             )
     return manifest
 
@@ -313,7 +331,7 @@ def archive_latest_review(root):
         return None
     if latest.is_symlink():
         raise VMError("Latest verification cannot be a symlink")
-    verification = json.loads(latest.read_text())
+    verification = json.loads(latest.read_text(encoding="utf-8"))
     # The model's reported identity is data, not a path authority. Older replies
     # sometimes appended a descriptive suffix to the supplied reviewer ID.
     candidates = []
@@ -329,7 +347,7 @@ def archive_latest_review(root):
         ):
             continue
         try:
-            same_response = json.loads(raw.read_text()) == verification
+            same_response = json.loads(raw.read_text(encoding="utf-8")) == verification
         except ValueError:
             same_response = False
         if same_response:
@@ -367,7 +385,8 @@ def evaluate(lab_root, session_id, auth, binary, receipts=None, target=None):
     observation = load_observation_context(root, session_id)
     observation_scope = observation["observation_scope"]
     events = [
-        json.loads(line) for line in (root / "events.jsonl").read_text().splitlines()
+        json.loads(line)
+        for line in (root / "events.jsonl").read_text(encoding="utf-8").splitlines()
     ]
     # Validate actual capture paths/digests before any reviewer sees them.
     audit_report(report, root, **observation)
@@ -385,10 +404,14 @@ def evaluate(lab_root, session_id, auth, binary, receipts=None, target=None):
         "events": events,
         "allowed_event_ids": list(by_id),
         "evidence_refs_format": "Array of exact known event IDs only; capture paths and receipt-field references are not valid IDs. File/receipt details belong in reason.",
-        "resulting_state_receipts": json.loads(Path(receipts).read_text())
+        "resulting_state_receipts": json.loads(
+            Path(receipts).read_text(encoding="utf-8")
+        )
         if receipts
         else None,
-        "registered_target": json.loads(Path(target).read_text()) if target else None,
+        "registered_target": json.loads(Path(target).read_text(encoding="utf-8"))
+        if target
+        else None,
         "required_verification_shape": {
             "schema_version": 1,
             "session_id": session_id,
@@ -420,7 +443,7 @@ def evaluate(lab_root, session_id, auth, binary, receipts=None, target=None):
         json.dumps(schema, sort_keys=True, separators=(",", ":")).encode()
     ).hexdigest()
     (root / f"{evaluator_id}-output-schema.json").write_text(
-        json.dumps(schema, indent=2) + "\n"
+        json.dumps(schema, indent=2) + "\n", encoding="utf-8", newline=""
     )
     tools = [
         {
@@ -470,7 +493,9 @@ def evaluate(lab_root, session_id, auth, binary, receipts=None, target=None):
             },
             indent=2,
         )
-        + "\n"
+        + "\n",
+        encoding="utf-8",
+        newline="",
     )
     try:
         result = run_agent(
@@ -482,7 +507,7 @@ def evaluate(lab_root, session_id, auth, binary, receipts=None, target=None):
                     if observation_scope == "calibration_checkpoint_v2"
                     else "evaluator.md"
                 )
-            ).read_text(),
+            ).read_text(encoding="utf-8"),
             "Independently review this completed synthetic beta attempt and return one JSON verification object. Inspect the screens that bear on its consequential claims.\n"
             + json.dumps(request),
             tools,
@@ -496,11 +521,13 @@ def evaluate(lab_root, session_id, auth, binary, receipts=None, target=None):
         )
         if result["status"] == "completed":
             # Retain the raw response before parsing, audit, cleanup or latest-pointer changes.
-            (attempt / "verification.json").write_text(result["final_text"])
+            (attempt / "verification.json").write_text(
+                result["final_text"], encoding="utf-8", newline=""
+            )
     finally:
         cleanup = cleanup_model(identity, backend.owner)
         (root / f"{evaluator_id}-cleanup.json").write_text(
-            json.dumps(cleanup, indent=2) + "\n"
+            json.dumps(cleanup, indent=2) + "\n", encoding="utf-8", newline=""
         )
     if result["status"] != "completed":
         raise VMError("Independent reviewer failed; its attempt is retained")
@@ -525,15 +552,21 @@ def evaluate(lab_root, session_id, auth, binary, receipts=None, target=None):
                 },
                 indent=2,
             )
-            + "\n"
+            + "\n",
+            encoding="utf-8",
+            newline="",
         )
         raise
-    (attempt / "audit.json").write_text(json.dumps(audited, indent=2) + "\n")
+    (attempt / "audit.json").write_text(
+        json.dumps(audited, indent=2) + "\n", encoding="utf-8", newline=""
+    )
     (root / "verification.json").write_bytes(
         (attempt / "verification.json").read_bytes()
     )
     (root / "audit.json").write_bytes((attempt / "audit.json").read_bytes())
-    (root / "report.md").write_text(render_report(report, audited))
+    (root / "report.md").write_text(
+        render_report(report, audited), encoding="utf-8", newline=""
+    )
     return audited
 
 
@@ -606,7 +639,9 @@ def main(argv=None):
         result = audit_report(
             load_report(root / "report.json"),
             root,
-            verification=json.loads((root / "verification.json").read_text()),
+            verification=json.loads(
+                (root / "verification.json").read_text(encoding="utf-8")
+            ),
             **load_observation_context(root, args.session),
         )
     elif args.command == "storyboard":
@@ -615,7 +650,8 @@ def main(argv=None):
         result = export_storyboard(root, args.output)
     else:
         result = compare_calibration(
-            json.loads(args.protocol.read_text()), json.loads(args.sessions.read_text())
+            json.loads(args.protocol.read_text(encoding="utf-8")),
+            json.loads(args.sessions.read_text(encoding="utf-8")),
         )
     print(json.dumps(result, indent=2))
     return 0

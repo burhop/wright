@@ -3,7 +3,10 @@ from __future__ import annotations
 from fnmatch import fnmatchcase
 from pathlib import Path
 import shlex
+import shutil
 import subprocess
+import sys
+from types import SimpleNamespace
 
 import pytest
 import yaml
@@ -17,6 +20,53 @@ RUNBOOK = "docs/contributing/dev-push-runbook.md"
 
 def _read(relative_path: str) -> str:
     return (ROOT / relative_path).read_text(encoding="utf-8")
+
+
+def _bash() -> str:
+    if sys.platform == "win32":
+        # PATH may resolve Windows' WSL launcher, which needs an unrelated distro.
+        git = shutil.which("git")
+        assert git, "Git for Windows is required for the native gate tests"
+        for relative in ("bin/bash.exe", "usr/bin/bash.exe"):
+            candidate = Path(git).resolve().parent.parent / relative
+            if candidate.is_file():
+                return str(candidate)
+        raise AssertionError("Git Bash was not found beside Git for Windows")
+    bash = shutil.which("bash")
+    assert bash, "Bash is required for the Unix gate tests"
+    return bash
+
+
+def test_windows_selector_uses_git_bash_instead_of_wsl(tmp_path, monkeypatch):
+    git = tmp_path / "Git/cmd/git.exe"
+    git.parent.mkdir(parents=True)
+    git.touch()
+    bash = tmp_path / "Git/bin/bash.exe"
+    bash.parent.mkdir()
+    bash.touch()
+    monkeypatch.setattr(sys.modules[__name__], "sys", SimpleNamespace(platform="win32"))
+    monkeypatch.setattr(
+        shutil, "which", lambda name: str(git) if name == "git" else "wsl-bash"
+    )
+    assert _bash() == str(bash)
+
+
+def test_windows_portability_failures_have_an_early_gate():
+    owners = [
+        "tests/release/test_dev_push_process.py",
+        *[
+            f"tests/unit/test_synthetic_beta_{name}.py"
+            for name in ("agent", "cli", "dashboard", "guest", "reports", "vm")
+        ],
+    ]
+    for script in ("scripts/check-dev-push.sh", "scripts/check-dev-merge.sh"):
+        preflight = _read(script).split("audit_runtime_dependencies", 1)[0]
+        for owner in owners:
+            assert owner in preflight
+    windows = _read(".github/workflows/test-windows.yml")
+    preflight = windows.split("- name: Run pytest", 1)[0]
+    for owner in owners:
+        assert owner in preflight
 
 
 def test_dev_push_runbook_is_mandatory_at_every_entry_point() -> None:
@@ -665,7 +715,7 @@ def test_python_selection_routes_helpers_to_owner_suites(
     routes = gate[start:end]
     result = subprocess.run(
         [
-            "bash",
+            _bash(),
             "-c",
             'CHECK_PYTHON=0; PYTHON_TEST_TARGETS=(); changed_file="$1"; '
             'case "$changed_file" in\n'
@@ -712,7 +762,7 @@ def test_portable_viewer_inputs_select_actual_offline_browser_owners(path):
     route = gate[start : gate.index(";;", start) + 2]
     result = subprocess.run(
         [
-            "bash",
+            _bash(),
             "-c",
             'CHECK_PYTHON=0; CHECK_FRONTEND=0; PYTHON_TEST_TARGETS=(); PLAYWRIGHT_TARGETS=(); changed_file="$1"; '
             'case "$changed_file" in\n'

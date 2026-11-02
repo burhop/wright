@@ -17,6 +17,23 @@ view = importlib.import_module("synthetic_beta_testing.dashboard")
 ReportError = view.ReportError
 
 
+def test_report_link_across_drives_uses_exact_file_uri(tmp_path, monkeypatch):
+    source = tmp_path / "engineering result.json"
+    source.write_text("{}", encoding="utf-8")
+
+    def across_drives(*_):
+        raise ValueError("path is on mount D:, start on mount C:")
+
+    monkeypatch.setattr(view.os.path, "relpath", across_drives)
+    assert view.link(source, tmp_path / "report.html") == source.as_uri()
+
+
+def test_report_link_uses_url_separators(monkeypatch):
+    monkeypatch.setattr(view.os.path, "relpath", lambda *_: "records\\a b.json")
+    monkeypatch.setattr(view.os, "sep", "\\")
+    assert view.link(Path("unused"), Path("report.html")) == "records/a%20b.json"
+
+
 @pytest.fixture
 def campaign(tmp_path):
     # Synthetic projection fixtures: never import private customer campaign

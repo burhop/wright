@@ -38,7 +38,7 @@ def recorded(tmp_path, session_id="customer-1", obstacle=True, completed=False):
         ],
     }
     evidence = root / "events.jsonl"
-    evidence.write_text(json.dumps(event) + "\n")
+    evidence.write_text(json.dumps(event) + "\n", encoding="utf-8", newline="")
     stages = [
         {
             "id": stage,

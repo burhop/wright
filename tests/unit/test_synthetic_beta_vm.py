@@ -20,6 +20,8 @@ SPEC.loader.exec_module(vm)
 
 @pytest.fixture
 def qmp_server(tmp_path):
+    if not hasattr(socket, "AF_UNIX"):
+        pytest.skip("Real QMP Unix-domain sockets are unavailable on this host")
     servers = []
     threads = []
     errors = []
@@ -64,6 +66,13 @@ def qmp_server(tmp_path):
     for server in servers:
         server.close()
     assert not errors
+
+
+def test_qmp_rejects_missing_host_socket_support(monkeypatch):
+    monkeypatch.delattr(socket, "AF_UNIX", raising=False)
+    with pytest.raises(vm.VMError, match="Unix-domain socket support"):
+        with vm.QMPClient("unused"):
+            pytest.fail("unsupported socket must be rejected before connecting")
 
 
 def test_qmp_negotiates_and_ignores_events(qmp_server):

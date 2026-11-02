@@ -761,3 +761,25 @@ bounded on every host. The all-root collection audit found only this case above
 the Windows-safe ceiling; existing sub-limit cases are unchanged. This is a
 test-label correction, with the green product full gate retained and the normal
 push gate plus fresh current-head Windows CI required.
+
+PR #180's completed Windows root suite exposed seven additional portability
+causes together. Gate-selection tests must use Git Bash beside Git for Windows,
+not the optional WSL launcher on PATH. Synthetic customer/evidence text uses
+explicit UTF-8; newly written records preserve their supplied line endings.
+Historical audit fixtures write their original LF bytes, preserving both existing
+serialized audit hashes. Report links use URL separators and exact file URIs
+across drive roots, without weakening evidence confinement or URL validation.
+Known-host assertions compare native paths while retaining separate session files
+and strict checking. Agent cleanup preserves POSIX process groups and uses owned
+child terminate/kill on Windows; caller-owned container cleanup remains required.
+QMP Unix sockets are explicitly unavailable on hosts without AF_UNIX: real socket
+cases retain their supported-host coverage and a portable rejection test verifies
+that unsupported hosts fail before connecting. This does not qualify Windows VM
+hosting or native desktop rendering.
+
+Both native gates and Windows CI run the complete seven-owner portability slice
+before long checks. Controlled regressions cover Windows child cleanup, legacy
+CP1252 defaults, cross-drive URLs and Git Bash selection on every host. The broad
+suites remain unchanged; no failed test, payload or historical hash is waived.
+These corrections include reporting/transport source changes, so they require a
+fresh full product gate, normal pre-push gate and current-head CI.

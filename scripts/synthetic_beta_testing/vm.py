@@ -41,6 +41,8 @@ class QMPClient:
         self.events = []
 
     def __enter__(self):
+        if not hasattr(socket, "AF_UNIX"):
+            raise VMError("QMP requires a host with Unix-domain socket support")
         self.socket = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
         self.socket.settimeout(self.timeout)
         try:

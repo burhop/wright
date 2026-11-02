@@ -5,6 +5,7 @@ import json
 import sys
 import time
 from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 
@@ -12,6 +13,13 @@ MODULE = Path(__file__).resolve().parents[2] / "scripts/synthetic_beta_testing/a
 SPEC = importlib.util.spec_from_file_location("synthetic_beta_agent", MODULE)
 agent = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(agent)
+
+
+@pytest.fixture(autouse=True, params=["native", "windows-cleanup"])
+def process_platform(request, monkeypatch):
+    if request.param == "windows-cleanup":
+        monkeypatch.setattr(agent, "os", SimpleNamespace(name="nt"))
+
 
 SERVER = r"""
 import json,sys,time

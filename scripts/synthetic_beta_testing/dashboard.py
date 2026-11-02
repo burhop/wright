@@ -51,12 +51,19 @@ def read_bound(path, expected, sources, *, json_lines=False):
         raise ReportError("source digest/path mismatch: " + str(path))
     sources[str(path)] = expected
     if json_lines:
-        return [json.loads(line) for line in path.read_text().splitlines()]
-    return json.loads(path.read_text())
+        return [
+            json.loads(line) for line in path.read_text(encoding="utf-8").splitlines()
+        ]
+    return json.loads(path.read_text(encoding="utf-8"))
 
 
 def link(path, output):
-    return quote(os.path.relpath(path, output.parent), safe="/.-_")
+    try:
+        relative = os.path.relpath(path, output.parent)
+    except ValueError:
+        # Windows cannot express a relative link across drive roots.
+        return path.as_uri()
+    return quote(relative.replace(os.sep, "/"), safe="/.-_")
 
 
 def project_session(root, item, campaign, output, sources, intended_candidate=None):
@@ -74,7 +81,7 @@ def project_session(root, item, campaign, output, sources, intended_candidate=No
             raise ReportError("changed exported evidence: " + str(path))
         sources[str(path)] = identity["sha256"]
         if path.suffix == ".json":
-            values[name] = json.loads(path.read_text())
+            values[name] = json.loads(path.read_text(encoding="utf-8"))
     report = validate_report(values["report.json"])
     manifest = values["customer-session.json"]
     if report["session_id"] != sid or manifest["session_id"] != sid:
@@ -203,7 +210,7 @@ def project_session(root, item, campaign, output, sources, intended_candidate=No
     if anchor:
         rows = [
             json.loads(line)
-            for line in (root / "events.jsonl").read_text().splitlines()
+            for line in (root / "events.jsonl").read_text(encoding="utf-8").splitlines()
         ]
         event = next((row for row in rows if row["id"] == anchor), None)
         inspection = (
@@ -232,7 +239,10 @@ def project_session(root, item, campaign, output, sources, intended_candidate=No
         for f in report["friction"]
     ]
     events = (
-        [json.loads(line) for line in (root / "events.jsonl").read_text().splitlines()]
+        [
+            json.loads(line)
+            for line in (root / "events.jsonl").read_text(encoding="utf-8").splitlines()
+        ]
         if "events.jsonl" in item["files"]
         else []
     )
@@ -293,7 +303,9 @@ def project_session(root, item, campaign, output, sources, intended_candidate=No
             values["journey-plan.json"],
             [
                 json.loads(line)
-                for line in (root / "journey-clock.jsonl").read_text().splitlines()
+                for line in (root / "journey-clock.jsonl")
+                .read_text(encoding="utf-8")
+                .splitlines()
             ],
         )
         if journey["session_id"] != sid:
@@ -689,7 +701,9 @@ def engineering_cases(campaign, registry, output, sources, sessions):
         comparison = None
         if case.get("comparison_artifact"):
             artifact = next(a for a in artifacts if a["id"] == case["comparison_artifact"])
-            comparison = json.loads((path.parent / artifact["path"]).read_text())
+            comparison = json.loads(
+                (path.parent / artifact["path"]).read_text(encoding="utf-8")
+            )
         followups = []
         for attempt in case.get("followup_runs", []):
             record_path = (path.parent / attempt["path"]).resolve(strict=True)
@@ -726,7 +740,7 @@ def build_data(registry_path, output_path):
     output = Path(output_path).absolute()
     if output.resolve() != output:
         raise ReportError("output cannot traverse symlinks")
-    campaign = json.loads(registry.read_text())
+    campaign = json.loads(registry.read_text(encoding="utf-8"))
     if campaign.get("schema_version") != 1:
         raise ReportError("unknown campaign registry version")
     sources = {str(registry): digest(registry)}
@@ -739,7 +753,8 @@ def build_data(registry_path, output_path):
             raise ReportError("task source digest mismatch")
         sources[str(path)] = ref["sha256"]
         campaign["resolved_task_sources"][ref["sha256"]] = {
-            "text": path.read_text(), "url": link(path, output)
+            "text": path.read_text(encoding="utf-8"),
+            "url": link(path, output),
         }
     campaign["resolved_run_details"] = {}
     for ref in campaign.get("run_detail_sources", []):
@@ -751,8 +766,15 @@ def build_data(registry_path, output_path):
             if digest(target) != artifact["sha256"]:
                 raise ReportError("result attachment digest mismatch")
             sources[str(target)] = artifact["sha256"]
-            attachments.append({**artifact, "url": link(target, output),
-                                "text": target.read_text() if artifact["kind"] == "text" else None})
+            attachments.append(
+                {
+                    **artifact,
+                    "url": link(target, output),
+                    "text": target.read_text(encoding="utf-8")
+                    if artifact["kind"] == "text"
+                    else None,
+                }
+            )
         campaign["resolved_run_details"][detail["session_id"]] = {
             **detail, "artifacts": attachments
         }
@@ -992,8 +1014,10 @@ def build_data(registry_path, output_path):
         sources[str(viewer)] = digest(viewer)
     documents = {
         link(Path(name), output): {
-            "text": Path(name).read_text(),
-            "format": {".md": "markdown", ".json": "record"}.get(Path(name).suffix.lower(), "text"),
+            "text": Path(name).read_text(encoding="utf-8"),
+            "format": {".md": "markdown", ".json": "record"}.get(
+                Path(name).suffix.lower(), "text"
+            ),
         }
         for name in sources
         if Path(name).suffix.lower() in {".md", ".txt", ".json"}
@@ -1008,9 +1032,11 @@ def build_data(registry_path, output_path):
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "refresh_url": output.with_name(output.stem + "-status.json").name,
         "summary": {
-            "measured_attempts": len(full) + sum(s["performance_eligible"] for s in journey_attempts),
+            "measured_attempts": len(full)
+            + sum(s["performance_eligible"] for s in journey_attempts),
             "excluded_earlier_attempts": sum(
-                s["scope"] == "first_contact" and not s["performance_eligible"] for s in sessions
+                s["scope"] == "first_contact" and not s["performance_eligible"]
+                for s in sessions
             ),
             "qualified_journeys": len(qualified),
             "inspected_results": sum(s["inspected_tool_result"] for s in qualified),
@@ -1018,7 +1044,8 @@ def build_data(registry_path, output_path):
             "independent_completions": sum(
                 s["independent_completion"] for s in qualified
             ),
-            "lab_failures": sum(s["lab_failure"] for s in full) + sum(s["performance_eligible"] for s in journey_attempts),
+            "lab_failures": sum(s["lab_failure"] for s in full)
+            + sum(s["performance_eligible"] for s in journey_attempts),
             "unreviewed_or_rejected": sum(
                 not s["qualified"] and not s["lab_failure"] for s in full
             ),
@@ -1037,10 +1064,16 @@ def build_data(registry_path, output_path):
         "demonstration_readiness": campaign.get("demonstration_readiness", []),
         "current_case_id": campaign.get("current_case_id"),
         "documents": documents,
-        "record_urls": [link(Path(name), output) for name in sources if Path(name).suffix.lower() == ".json"],
+        "record_urls": [
+            link(Path(name), output)
+            for name in sources
+            if Path(name).suffix.lower() == ".json"
+        ],
         "viewer_url": link(viewer, output) if viewer.is_file() else None,
         "journey_template": json.loads(
-            (Path(__file__).parent / "assets/first-workflow-journey.json").read_text()
+            (Path(__file__).parent / "assets/first-workflow-journey.json").read_text(
+                encoding="utf-8"
+            )
         ),
         "quality_cost_experiments": quality_cost_history(
             campaign, registry, output, sources
@@ -1064,7 +1097,9 @@ def build_data(registry_path, output_path):
 
 
 def render(data):
-    template = (Path(__file__).parent / "assets/golden-hour-dashboard.html").read_text()
+    template = (Path(__file__).parent / "assets/golden-hour-dashboard.html").read_text(
+        encoding="utf-8"
+    )
     payload = (
         json.dumps(data, ensure_ascii=True)
         .replace("<", "\\u003c")
@@ -1072,9 +1107,17 @@ def render(data):
         .replace("&", "\\u0026")
     )
     assets = Path(__file__).parent / "assets"
-    return (template.replace("__GOLDEN_HOUR_DATA__", payload)
-            .replace("__GOLDEN_HOUR_ENGINEERING_CSS__", (assets / "golden-hour-engineering.css").read_text())
-            .replace("__GOLDEN_HOUR_ENGINEERING_JS__", (assets / "golden-hour-engineering.js").read_text()))
+    return (
+        template.replace("__GOLDEN_HOUR_DATA__", payload)
+        .replace(
+            "__GOLDEN_HOUR_ENGINEERING_CSS__",
+            (assets / "golden-hour-engineering.css").read_text(encoding="utf-8"),
+        )
+        .replace(
+            "__GOLDEN_HOUR_ENGINEERING_JS__",
+            (assets / "golden-hour-engineering.js").read_text(encoding="utf-8"),
+        )
+    )
 
 
 def export(registry_path, output_path):
@@ -1098,7 +1141,7 @@ def export(registry_path, output_path):
                   json.dumps({"schema_version": 1, "generated_at": data["generated_at"]}) + "\n"]
     ):
         with tempfile.NamedTemporaryFile(
-            mode="w", dir=target.parent, delete=False
+            mode="w", dir=target.parent, delete=False, encoding="utf-8", newline=""
         ) as f:
             f.write(contents)
             temporary = f.name

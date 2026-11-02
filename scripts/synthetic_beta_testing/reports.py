@@ -178,7 +178,9 @@ def load_observation_context(session_root: str | Path, session_id: str) -> dict:
         raise ReportError("controller session manifest cannot be a symlink")
     if not path.exists():
         return {"observation_scope": "first_contact", "assistance": "none"}
-    manifest = _object(json.loads(path.read_text()), "controller session manifest")
+    manifest = _object(
+        json.loads(path.read_text(encoding="utf-8")), "controller session manifest"
+    )
     if manifest.get("schema_version") != 1 or manifest.get("session_id") != session_id:
         raise ReportError("controller observation scope belongs to another session")
     scope = manifest.get("observation_scope", "first_contact")

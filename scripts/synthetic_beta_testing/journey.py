@@ -57,7 +57,9 @@ def validate_plan(plan):
 def read_events(root):
     return [
         json.loads(line)
-        for line in (Path(root) / "journey-clock.jsonl").read_text().splitlines()
+        for line in (Path(root) / "journey-clock.jsonl")
+        .read_text(encoding="utf-8")
+        .splitlines()
     ]
 
 
@@ -224,7 +226,9 @@ class JourneyRecorder:
     def __init__(self, root):
         self.root = Path(root)
         self.path = self.root / "journey-clock.jsonl"
-        self.plan = json.loads((self.root / "journey-plan.json").read_text())
+        self.plan = json.loads(
+            (self.root / "journey-plan.json").read_text(encoding="utf-8")
+        )
         if self.path.is_symlink() or (self.root / "journey-plan.json").is_symlink():
             raise ReportError("journey records cannot be symlinks")
 
@@ -327,7 +331,9 @@ def main():
     sub.add_parser("show")
     args = parser.parse_args()
     if args.command == "begin":
-        JourneyRecorder.begin(args.session_root, json.loads(args.plan.read_text()))
+        JourneyRecorder.begin(
+            args.session_root, json.loads(args.plan.read_text(encoding="utf-8"))
+        )
     else:
         recorder = JourneyRecorder(args.session_root)
         if args.command == "step":
@@ -337,7 +343,11 @@ def main():
     print(
         json.dumps(
             project(
-                json.loads((args.session_root / "journey-plan.json").read_text()),
+                json.loads(
+                    (args.session_root / "journey-plan.json").read_text(
+                        encoding="utf-8"
+                    )
+                ),
                 read_events(args.session_root),
             ),
             indent=2,

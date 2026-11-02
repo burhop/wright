@@ -130,8 +130,12 @@ def test_restored_sessions_use_distinct_known_hosts_without_disabling_checks(tmp
         value for value in second if value.startswith("UserKnownHostsFile=")
     )
     assert first_hosts != second_hosts
-    assert "/first/known-hosts" in first_hosts
-    assert "/second/known-hosts" in second_hosts
+    assert Path(first_hosts.removeprefix("UserKnownHostsFile=")) == (
+        tmp_path / "private/guest-hosts/first/known-hosts"
+    )
+    assert Path(second_hosts.removeprefix("UserKnownHostsFile=")) == (
+        tmp_path / "private/guest-hosts/second/known-hosts"
+    )
     assert "StrictHostKeyChecking=accept-new" in first
     assert "StrictHostKeyChecking=no" not in first
 

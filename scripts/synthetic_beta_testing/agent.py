@@ -112,7 +112,9 @@ def run_agent(
     `command` must already enforce the caller's process isolation. No shell is
     used. Callbacks must independently bound/cancel guest actions: Python cannot
     safely cancel an in-flight external callback. On timeout the agent process
-    group is stopped, and late callback results are never delivered to the model.
+    group is stopped on POSIX (the owned launcher on Windows), and late callback
+    results are never delivered to the model. The caller still owns cleanup of
+    its isolated container and any guest actions.
     Failed sessions remain failed; the client never retries a customer attempt.
     """
     if (
@@ -495,11 +497,17 @@ def run_agent(
     finally:
         if process is not None:
             if process.poll() is None:
-                os.killpg(process.pid, signal.SIGTERM)
+                if os.name == "nt":
+                    process.terminate()
+                else:
+                    os.killpg(process.pid, signal.SIGTERM)
                 try:
                     process.wait(timeout=3)
                 except subprocess.TimeoutExpired:
-                    os.killpg(process.pid, signal.SIGKILL)
+                    if os.name == "nt":
+                        process.kill()
+                    else:
+                        os.killpg(process.pid, signal.SIGKILL)
                     process.wait(timeout=3)
             record["process_exit_code"] = process.returncode
         record["elapsed_seconds"] = time.monotonic() - started

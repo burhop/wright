@@ -12,7 +12,7 @@ from .reports import ReportError
 from .activity_diary import project_diary
 
 TAXONOMY_PATH = Path(__file__).parent / "assets/journey-stages-v1.json"
-TAXONOMY = json.loads(TAXONOMY_PATH.read_text())
+TAXONOMY = json.loads(TAXONOMY_PATH.read_text(encoding="utf-8"))
 STAGE_IDS = {stage["id"] for stage in TAXONOMY["stages"]}
 LEGACY = {
     step_id: stage["id"]

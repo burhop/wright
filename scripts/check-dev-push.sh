@@ -478,6 +478,8 @@ if [[ "$CHECK_PYTHON" == "1" ]]; then
   run "$GATE_PYTHON" -m pytest packages/workspace_service/tests/test_workspace_path.py -q
   # Observe real late-worker cleanup before expensive suites (Windows PR165).
   run "$GATE_PYTHON" -m pytest packages/workspace_service/tests/test_native_process_runtime.py -q -k deadline_prevents_late_worker_artifact_publication
+  # Fail early on the full Windows portability failure set (PR180).
+  run "$GATE_PYTHON" -m pytest -q tests/release/test_dev_push_process.py tests/unit/test_synthetic_beta_agent.py tests/unit/test_synthetic_beta_cli.py tests/unit/test_synthetic_beta_dashboard.py tests/unit/test_synthetic_beta_guest.py tests/unit/test_synthetic_beta_reports.py tests/unit/test_synthetic_beta_vm.py
   run "$GATE_PYTHON" -m scripts.release.audit_runtime_dependencies
   if [[ "$CHECK_DOCKER_SCAN" == "1" ]]; then
     run "$GATE_PYTHON" -m scripts.release.scan_image --allow-unavailable-local-host

@@ -16,6 +16,7 @@ import zlib
 
 from .vm import VMBackend, VMError
 from .journey import CATEGORIES, STATES
+from .activity_diary import ACTIVITY_STATES
 
 # Reuse the existing stdlib redaction module without core's telemetry bootstrap.
 _redaction_path = (
@@ -131,7 +132,6 @@ TOOLS = [
     },
 ]
 
-from .activity_diary import ACTIVITY_STATES
 
 ACTIVITY_TOOL = {
     "type": "function", "name": "activity_note",
