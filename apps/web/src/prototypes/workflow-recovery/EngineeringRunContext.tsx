@@ -169,7 +169,7 @@ export function EngineeringStepContext({
           />
         </>
       )}
-      {sourceMismatch && !input && (
+      {sourceMismatch && outputs.length > 0 && !input && (
         <p>
           Run results belong to a different saved workflow or an edited draft.
           Open Run details to inspect that run.
@@ -221,13 +221,17 @@ export function EngineeringRunProgress({
           const state =
             review === block.id
               ? "Awaiting your review"
-              : run.status === "failed" && last === block.id
-                ? "Stopped with an error"
-                : run.status === "running" && active === block.id
-                  ? "Running"
-                  : completed.has(block.id)
-                    ? "Finished"
-                    : "No completion recorded";
+              : run.status === "reconciliation_required" &&
+                  (active === block.id || last === block.id) &&
+                  !completed.has(block.id)
+                ? "Operation status unconfirmed"
+                : run.status === "failed" && last === block.id
+                  ? "Stopped with an error"
+                  : run.status === "running" && active === block.id
+                    ? "Running"
+                    : completed.has(block.id)
+                      ? "Finished"
+                      : "No completion recorded";
           return (
             <li key={block.id}>
               <button

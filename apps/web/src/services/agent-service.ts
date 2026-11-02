@@ -212,6 +212,8 @@ export class HermesAgentService {
   private modelOptionsRequest: Promise<HermesModelOptionsResponse> | null =
     null;
   private modelOptionsCache: HermesModelOptionsResponse | null = null;
+  private modelOptionsCacheKey = "";
+  private modelOptionsRequestKey = "";
   private commandsRequest: Promise<AgentCommand[]> | null = null;
   private commandsCache: AgentCommand[] | null = null;
 
@@ -381,6 +383,8 @@ export class HermesAgentService {
     const reader = response.body.getReader();
     const decoder = new TextDecoder("utf-8");
     let buffer = "";
+    // Network reads need not keep an event: line and its data: line together.
+    let currentEvent = "";
 
     while (true) {
       const { value, done } = await reader.read();
@@ -390,7 +394,6 @@ export class HermesAgentService {
       const lines = buffer.split("\n");
       buffer = lines.pop() || "";
 
-      let currentEvent = "";
       for (const line of lines) {
         const trimmed = line.trim();
         if (!trimmed) continue;
@@ -526,10 +529,18 @@ export class HermesAgentService {
         return null;
       }
     } else if (event === "stream_end") {
-      hostAdapter.notify(
-        "Agent Task Finished",
-        "The agent has completed your request.",
-      );
+      const outcome = JSON.parse(dataStr || "{}").status;
+      if (!outcome || outcome === "completed") {
+        hostAdapter.notify(
+          "Agent Task Finished",
+          "The agent has completed your request.",
+        );
+      } else if (outcome === "interrupted") {
+        hostAdapter.notify(
+          "Agent response interrupted",
+          "The response was interrupted.",
+        );
+      }
       return {
         type: "done",
         session: {
@@ -620,28 +631,44 @@ export class HermesAgentService {
       throw new Error(`Failed to set active agent: ${response.statusText}`);
     }
     const data = await response.json();
+    this.modelOptionsCache = null;
     return data.agent;
   }
 
-  async listHermesModels(refresh = false): Promise<HermesModelOptionsResponse> {
-    if (!refresh && this.modelOptionsCache) return this.modelOptionsCache;
-    if (!refresh && this.modelOptionsRequest) return this.modelOptionsRequest;
+  async listHermesModels(
+    refresh = false,
+    sessionId?: string | null,
+  ): Promise<HermesModelOptionsResponse> {
+    const key = sessionId || "default";
+    if (!refresh && this.modelOptionsCache && this.modelOptionsCacheKey === key)
+      return this.modelOptionsCache;
+    if (
+      !refresh &&
+      this.modelOptionsRequest &&
+      this.modelOptionsRequestKey === key
+    )
+      return this.modelOptionsRequest;
     const request = (async () => {
       const response = await fetch(
-        `${API_BASE}/api/agent/models${refresh ? "?refresh=true" : ""}`,
+        `${API_BASE}/api/agent/models${sessionId ? `?session_id=${encodeURIComponent(sessionId)}${refresh ? "&refresh=true" : ""}` : refresh ? "?refresh=true" : ""}`,
       );
       if (!response.ok) {
         throw new Error(`Failed to list Hermes models: ${response.statusText}`);
       }
       const options = (await response.json()) as HermesModelOptionsResponse;
       this.modelOptionsCache = options;
+      this.modelOptionsCacheKey = key;
       return options;
     })();
-    if (!refresh) this.modelOptionsRequest = request;
+    if (!refresh) {
+      this.modelOptionsRequest = request;
+      this.modelOptionsRequestKey = key;
+    }
     try {
       return await request;
     } finally {
-      if (!refresh) this.modelOptionsRequest = null;
+      if (!refresh && this.modelOptionsRequest === request)
+        this.modelOptionsRequest = null;
     }
   }
 
@@ -730,6 +757,7 @@ export class HermesAgentService {
       content: m.content,
       timestamp: m.timestamp,
       traceId: m.trace_id ?? null,
+      toolEvidence: Array.isArray(m.tool_evidence) ? m.tool_evidence : [],
     }));
   }
 

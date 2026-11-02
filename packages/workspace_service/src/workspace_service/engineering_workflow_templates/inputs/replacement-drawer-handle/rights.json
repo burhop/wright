@@ -1,0 +1,15 @@
+{
+  "license": "CC0-1.0",
+  "source": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/02-repair-cart-bow-handle",
+  "kind": "original_fictional_sample",
+  "notes": "Supplied concept sketch; not a computed result, physical product or fit/strength evidence.",
+  "files": {
+    "concept.png": "467f9fe327ccaf085c507487c2907503bd2e50bdd055cbcf6bdeff706b705fb0",
+    "concept.svg": "06567d143fe7d3d06641da7e60262eaed6f562878bb2fd080b93f298f2fe447f",
+    "context.md": "2b4ad39c8d07368fa4d0b5bfb257625cbafe5098a0cc106ca80103929cc378ee",
+    "prompt.txt": "95eb1233ff0498c5bc96d5659b7f9538a89f98c4bdc916a61442cf5f3da41834",
+    "scenario.json": "4d0ec7d6c8cff674507cb5a5f418bacee3c5eef2f27002370fe3d9e60f44e6a5",
+    "user-profile.md": "64784f2ce75bda54ab4dc0fbbf499b629837d36bba57cc713c1ba565e8d02e0d",
+    "validation-profile.json": "60e164adeb1f41686ead462bd803ff7b194b679afab8a07f9210e17d0a482f3c"
+  }
+}

@@ -205,6 +205,17 @@ class WorkspaceToolUseCases:
                 + ", ".join(inactive),
                 "running_mcps": running,
             }
+        if mcp_engine is None:
+            return {
+                "status": "configured",
+                "message": (
+                    "Tools are selected for this workspace. Their chat connection "
+                    "is checked when you send a message."
+                    if expected
+                    else "No external tools are selected for this workspace."
+                ),
+                "running_mcps": [{**item, "status": "selected"} for item in running],
+            }
         return {
             "status": "ok",
             "message": "MCP configuration is active and healthy.",

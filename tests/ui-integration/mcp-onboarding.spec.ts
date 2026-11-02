@@ -263,14 +263,12 @@ test.describe("Guided MCP onboarding", () => {
     await page
       .getByLabel("MCP configuration JSON")
       .fill('{"name":"safe","command":"python","args":["server.py"]}');
-    await page.getByRole("button", { name: "Review install plan" }).click();
+    await page.getByRole("button", { name: "Review setup plan" }).click();
     await expect(page.getByText("Confirm this installation")).toBeVisible();
     await expect(page.getByTestId("onboarding-plan-review")).toContainText(
       "All workspaces",
     );
-    await page
-      .getByRole("button", { name: "Continue to installation" })
-      .click();
+    await page.getByRole("button", { name: "Continue to setup" }).click();
     await expect(page.getByText("Credential boundary")).toBeVisible();
     await page.getByRole("button", { name: "Install MCP server" }).click();
     await expect(page.getByText("Onboarding completed")).toBeVisible();
@@ -300,8 +298,15 @@ test.describe("Guided MCP onboarding", () => {
       } else {
         await page.getByLabel("MCP server ID").fill("solid-edge-mcp");
       }
-      await page.getByRole("button", { name: "Review install plan" }).click();
-      await expect(page.getByText("Confirm this installation")).toBeVisible();
+      await page.getByRole("button", { name: "Review setup plan" }).click();
+      await expect(
+        page.getByText(
+          source === "remote"
+            ? "Confirm this connection"
+            : "Confirm this installation",
+          { exact: true },
+        ),
+      ).toBeVisible();
       await expect(page.locator("body")).not.toContainText(
         "secret-not-returned",
       );
@@ -346,15 +351,21 @@ test.describe("Guided MCP onboarding", () => {
           .fill("https://example.invalid/mcp");
       }
 
-      await dialog.getByRole("button", { name: "Review install plan" }).click();
+      await dialog.getByRole("button", { name: "Review setup plan" }).click();
       await expect(dialog.getByTestId("onboarding-plan-review")).toContainText(
         journey.connection,
       );
-      await dialog
-        .getByRole("button", { name: "Continue to installation" })
-        .click();
+      await dialog.getByRole("button", { name: "Continue to setup" }).click();
       await expect(dialog.getByText("Credential boundary")).toBeVisible();
-      await dialog.getByRole("button", { name: "Install MCP server" }).click();
+      await dialog
+        .getByRole("button", {
+          name:
+            journey.source === "remote"
+              ? "Connect MCP server"
+              : "Install MCP server",
+          exact: true,
+        })
+        .click();
       await expect(dialog.getByText("Onboarding completed")).toBeVisible();
       await dialog.getByRole("button", { name: "Done" }).click();
     }
@@ -379,10 +390,8 @@ test.describe("Guided MCP onboarding", () => {
     await page
       .getByLabel("MCP configuration JSON")
       .fill('{"name":"safe","command":"python","args":["server.py"]}');
-    await page.getByRole("button", { name: "Review install plan" }).click();
-    await page
-      .getByRole("button", { name: "Continue to installation" })
-      .click();
+    await page.getByRole("button", { name: "Review setup plan" }).click();
+    await page.getByRole("button", { name: "Continue to setup" }).click();
     await page.getByRole("button", { name: "Install MCP server" }).click();
     await expect(page.getByRole("alert")).toContainText(
       "install_plan_invalidated",

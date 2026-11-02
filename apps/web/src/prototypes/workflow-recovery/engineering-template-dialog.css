@@ -1,6 +1,8 @@
 .engineering-template-dialog {
   width: min(1040px, 94vw);
+  height: min(800px, 90vh);
   max-height: 90vh;
+  margin: auto;
   padding: 0;
   overflow: hidden;
   color: var(--color-primary);
@@ -10,12 +12,18 @@
   box-shadow: 0 24px 80px rgb(0 0 0 / 35%);
 }
 
+.engineering-template-dialog[open] {
+  display: flex;
+  flex-direction: column;
+}
+
 .engineering-template-dialog::backdrop {
   background: rgb(7 12 24 / 72%);
 }
 .engineering-template-dialog > header,
 .engineering-template-dialog > footer {
   display: flex;
+  flex: 0 0 auto;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
@@ -52,9 +60,10 @@
 }
 .engineering-template-dialog__body {
   display: grid;
+  flex: 1;
   grid-template-columns: minmax(260px, 0.82fr) minmax(360px, 1.4fr);
-  min-height: 540px;
-  max-height: 66vh;
+  min-height: 0;
+  overflow: hidden;
 }
 .engineering-template-dialog__list {
   overflow: auto;
@@ -117,7 +126,7 @@
 }
 .engineering-template-dialog__preview {
   min-height: 130px;
-  margin-bottom: 18px;
+  margin: 0 0 18px;
   overflow: hidden;
   border: 1px solid var(--color-border);
   border-radius: 12px;
@@ -127,8 +136,48 @@
   display: block;
   width: 100%;
   min-height: 130px;
-  max-height: 210px;
-  object-fit: cover;
+  max-height: 300px;
+  object-fit: contain;
+}
+.engineering-template-dialog__preview figcaption {
+  display: grid;
+  gap: 4px;
+  padding: 10px 14px;
+  background: var(--color-surface);
+  font-size: 12px;
+}
+.engineering-template-dialog__outcome,
+.engineering-template-dialog__setup {
+  margin: 16px 0;
+  padding: 14px;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+}
+.engineering-template-dialog__details h4 {
+  margin: 0 0 8px;
+}
+.engineering-template-dialog__stages {
+  padding-left: 22px;
+}
+.engineering-template-dialog__stages > li {
+  margin-bottom: 16px;
+}
+.engineering-template-dialog__stages p {
+  margin: 5px 0;
+}
+.engineering-template-dialog__stages dl {
+  margin: 8px 0;
+}
+.engineering-template-dialog__setup li + li {
+  margin-top: 8px;
+}
+.engineering-template-dialog__setup p:last-child,
+.engineering-template-dialog__outcome p:last-child {
+  margin-bottom: 0;
+}
+.engineering-template-dialog__details > label {
+  display: block;
+  margin-top: 16px;
 }
 .engineering-template-dialog__readiness {
   margin: 16px 0;
@@ -153,6 +202,7 @@
 }
 .engineering-template-dialog dd {
   margin: 0;
+  overflow-wrap: anywhere;
 }
 .engineering-template-dialog input {
   width: 100%;
@@ -178,11 +228,39 @@
 @media (max-width: 760px) {
   .engineering-template-dialog__body {
     grid-template-columns: 1fr;
+    grid-template-rows: auto minmax(0, 1fr);
     min-height: 0;
   }
   .engineering-template-dialog__list {
-    max-height: 220px;
+    max-height: 160px;
     border-right: 0;
     border-bottom: 1px solid var(--color-border);
   }
+}
+
+.template-tool-setup {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8rem;
+}
+.template-tool-setup th,
+.template-tool-setup td {
+  text-align: left;
+  vertical-align: top;
+  padding: 8px;
+  border-bottom: 1px solid var(--color-border);
+}
+.template-tool-setup td small {
+  display: block;
+  color: var(--color-muted);
+}
+.template-tool-setup td button {
+  display: block;
+  margin-top: 6px;
+}
+.template-tool-setup details {
+  margin-top: 8px;
+}
+.template-tool-setup a {
+  color: var(--color-secondary);
 }

@@ -1,5 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { MemoryRouter } from "react-router-dom";
+import { Sidebar } from "../components/layout/Sidebar";
 import { ToolRegistryPage } from "../components/pages/ToolRegistryPage";
 import { mcpService } from "../services/mcp-service";
 import { useTools } from "../store/tools";
@@ -74,5 +76,19 @@ describe("ToolRegistryPage capability layout", () => {
       await screen.findByTestId("capability-empty-state"),
     ).toBeInTheDocument();
     expect(mcpService.getCatalogState).not.toHaveBeenCalled();
+  });
+
+  it("does not advertise the raw catalog size as the registry count", () => {
+    vi.mocked(useTools).mockReturnValue({
+      servers: Array.from({ length: 82 }),
+    } as unknown as ReturnType<typeof useTools>);
+    render(
+      <MemoryRouter>
+        <Sidebar />
+      </MemoryRouter>,
+    );
+    expect(screen.getByTestId("nav-tool-registry")).toHaveTextContent(
+      /^Tool Registry$/,
+    );
   });
 });

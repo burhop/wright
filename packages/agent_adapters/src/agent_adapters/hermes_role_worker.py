@@ -60,16 +60,26 @@ def resolved_reasoning_effort(model, mode):
 def initialize_sdk_profile():
     """Use the installed CLI's profile and credential loaders before SDK imports.
 
-    The parent process keeps its environment. The confined child must resolve
-    the same named profile used by setup instead of reading the root defaults.
+    The parent process keeps its environment. The confined child uses an explicit
+    trusted profile home, or the existing named-profile contract when absent,
+    instead of reading unrelated root defaults.
     No project directory dotenv or agent/CLI entry point is loaded here.
     """
     from hermes_cli.profiles import resolve_profile_env
 
-    profile = (
-        os.getenv("WRIGHT_HERMES_PROFILE") or os.getenv("HERMES_PROFILE") or "wright"
-    ).strip() or "wright"
-    os.environ["HERMES_HOME"] = resolve_profile_env(profile)
+    explicit_home = os.getenv("HERMES_ROLE_PROFILE_HOME", "")
+    if explicit_home:
+        home = Path(explicit_home).expanduser()
+        if not home.is_absolute() or not home.is_dir():
+            raise ValueError("The configured SDK profile home is unavailable")
+        os.environ["HERMES_HOME"] = str(home.resolve(strict=True))
+    else:
+        profile = (
+            os.getenv("WRIGHT_HERMES_PROFILE")
+            or os.getenv("HERMES_PROFILE")
+            or "wright"
+        ).strip() or "wright"
+        os.environ["HERMES_HOME"] = resolve_profile_env(profile)
     from hermes_cli.env_loader import load_hermes_dotenv
 
     load_hermes_dotenv(hermes_home=os.environ["HERMES_HOME"])
@@ -404,14 +414,27 @@ def main():
             sys.path.insert(0, str(Path(__file__).resolve().parent))
             initialize_sdk_profile()
             result = invoke(request, root, sdk_observer=capture_sdk)
+            from hermes_sdk_evidence import sdk_model_observation
+
             for invocation in invocations:
-                invocation["upstream_reported_model"] = result.get("response_model")
+                invocation.update(sdk_model_observation(result.get("response_model")))
             persist_evidence()
     except Exception as error:
         # Auth/SDK exceptions can contain transport secrets; never forward them.
+        code = failure_code(error)
+        if invocations:
+            from hermes_sdk_evidence import sdk_failure_evidence
+
+            invocations[-1]["failure"] = sdk_failure_evidence(error, code)
+            try:
+                persist_evidence()
+            except (OSError, ValueError):
+                # Preserve the original failure and the already-written request
+                # if the bounded sidecar cannot accept its diagnostic update.
+                pass
         result = {
             "ok": False,
-            "code": failure_code(error),
+            "code": code,
             "reason": "The confined Hermes model invocation failed. Check its local provider credentials, default model and qualified SDK installation.",
         }
     sys.stdout.write(json.dumps(result))

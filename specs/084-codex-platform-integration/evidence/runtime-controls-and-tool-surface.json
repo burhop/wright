@@ -1,0 +1,63 @@
+{
+  "runtime": "0.162.1",
+  "sdk": "0.162.1",
+  "model": "gpt-6.1-sol",
+  "tested_startup_overrides": [
+    "sandbox_mode=\"read-only\"",
+    "approval_policy=\"never\"",
+    "approvals_reviewer=\"user\"",
+    "cli_auth_credentials_store=\"file\"",
+    "web_search=\"disabled\"",
+    "project_doc_max_bytes=0",
+    "features.shell_tool=false",
+    "features.unified_exec=false",
+    "features.code_mode_host=false",
+    "features.apps=false",
+    "features.plugins=false",
+    "features.remote_plugin=false",
+    "features.hooks=false",
+    "features.goals=false",
+    "features.memories=false",
+    "features.multi_agent=false",
+    "features.multi_agent_v2=false",
+    "features.browser_use=false",
+    "features.computer_use=false",
+    "features.image_generation=false",
+    "features.view_image=false",
+    "features.sleep_tool=false",
+    "features.workspace_dependencies=false",
+    "features.shell_snapshot=false",
+    "features.skill_mcp_dependency_install=false",
+    "features.skill_search=false",
+    "features.tool_suggest=false",
+    "analytics.enabled=false"
+  ],
+  "thread_and_turn_environments": [],
+  "allow_provider_model_fallback": false,
+  "observed_top_level_tools": null,
+  "observed_additional_tools_namespaces": [
+    {
+      "type": "namespace",
+      "name": "functions",
+      "members": [
+        "exec",
+        "wait",
+        "request_user_input",
+        "request_user_input_async"
+      ]
+    },
+    {
+      "type": "namespace",
+      "name": "collaboration",
+      "members": [
+        "followup_task",
+        "interrupt_agent",
+        "list_agents",
+        "send_message",
+        "spawn_agent",
+        "wait_agent"
+      ]
+    }
+  ],
+  "note": "The original report records the policy source hash at observation time; subsequent request-validation changes do not change these startup overrides."
+}

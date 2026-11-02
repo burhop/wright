@@ -182,7 +182,7 @@ class GatewayService:
         mcp_ui_resources: McpUiResourceStore | None = None,
         capability_providers: tuple[GatewayCapabilityProvider, ...] = (),
         operation_timeout: float = 30.0,
-        maximum_timeout: float = 120.0,
+        maximum_timeout: float = 600.0,
     ) -> None:
         self.workspaces = workspaces
         self.catalog = catalog

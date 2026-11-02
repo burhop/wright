@@ -26,7 +26,7 @@ def changed_asset(instructions, identity, text):
 def test_packaged_catalog_contains_all_primary_dependencies():
     instructions = resources.load_default_workflow_instructions()
     assert instructions.profile_id == "wright.workflow-defaults"
-    assert instructions.profile_version == "1.3.0"
+    assert instructions.profile_version == "1.4.0"
     assert instructions.action_intent_contract == "wright.workflow-action-intent/1"
     assert instructions.policy.assumption_policy == "document_reasonable"
     assert {binding.role for binding in instructions.bindings} >= {

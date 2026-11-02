@@ -1,0 +1,77 @@
+{
+  "schema": "wright.codex-served-frontend-source/1",
+  "missing": [],
+  "checks": [
+    {
+      "path": "apps/web/src/store/sessions.tsx",
+      "scope": "actual browser-loaded module inline source-map content",
+      "sha256": "8005a61154ca568c6e0a21ed33d873c0054d5f804ee9b57ecebfe575c2963d15",
+      "expected_sha256": "8005a61154ca568c6e0a21ed33d873c0054d5f804ee9b57ecebfe575c2963d15",
+      "matches": true
+    },
+    {
+      "path": "apps/web/src/components/chat/WorkspacePanel.tsx",
+      "scope": "actual browser-loaded module inline source-map content",
+      "sha256": "cfdde4e077e3ca81322b98e82fac8dbb32ab29dd7fbf3e7223330a51a49ebd80",
+      "expected_sha256": "cfdde4e077e3ca81322b98e82fac8dbb32ab29dd7fbf3e7223330a51a49ebd80",
+      "matches": true
+    },
+    {
+      "path": "apps/web/src/services/agent-service.ts",
+      "scope": "actual browser-loaded module inline source-map content",
+      "sha256": "742e2b304301b64b0daba98dbdbecc0dabc9b98c29c94e611fcbc22f097e8669",
+      "expected_sha256": "742e2b304301b64b0daba98dbdbecc0dabc9b98c29c94e611fcbc22f097e8669",
+      "matches": true
+    },
+    {
+      "path": "apps/web/src/services/health-service.ts",
+      "scope": "actual browser-loaded module inline source-map content",
+      "sha256": "7a0e39c65cb6775be6098b45c272162447f58f9d5a7e7bfc04e0737c48c10d32",
+      "expected_sha256": "7a0e39c65cb6775be6098b45c272162447f58f9d5a7e7bfc04e0737c48c10d32",
+      "matches": true
+    },
+    {
+      "path": "apps/web/src/components/chat/AgentPlatformPicker.tsx",
+      "scope": "actual browser-loaded module inline source-map content",
+      "sha256": "015d953935e53d2b18c7162857e3341820fea88e5d5694843e0b4e2ef473ec30",
+      "expected_sha256": "015d953935e53d2b18c7162857e3341820fea88e5d5694843e0b4e2ef473ec30",
+      "matches": true
+    },
+    {
+      "path": "apps/web/src/components/chat/ChatTranscript.tsx",
+      "scope": "actual browser-loaded module inline source-map content",
+      "sha256": "faf4fb2cdfd725abdfa715fda3e4bdb41dc1c97ec4b10331b7fc2b20fcd436a5",
+      "expected_sha256": "faf4fb2cdfd725abdfa715fda3e4bdb41dc1c97ec4b10331b7fc2b20fcd436a5",
+      "matches": true
+    },
+    {
+      "path": "apps/web/src/components/pages/WorkflowRecoveryPage.tsx",
+      "scope": "actual browser-loaded module inline source-map content",
+      "sha256": "cef0e3a75675caf6cdaec1ad3845143b7c47ce3af7e19fde0c8caf2d69b28863",
+      "expected_sha256": "cef0e3a75675caf6cdaec1ad3845143b7c47ce3af7e19fde0c8caf2d69b28863",
+      "matches": true
+    },
+    {
+      "path": "apps/web/src/prototypes/workflow-recovery/WorkflowRecoveryConcept.tsx",
+      "scope": "actual browser-loaded module inline source-map content",
+      "sha256": "9a737cc3ef6545013f0c0f84ec1aebccdbfb8fe2bf0e9b860a4fde8cb8a5542b",
+      "expected_sha256": "9a737cc3ef6545013f0c0f84ec1aebccdbfb8fe2bf0e9b860a4fde8cb8a5542b",
+      "matches": true
+    },
+    {
+      "path": "apps/web/src/prototypes/workflow-recovery/AuthoringControls.tsx",
+      "scope": "actual browser-loaded module inline source-map content",
+      "sha256": "20d160249bf3702e72113411713d640d965a6906ad460897f51d486689148eda",
+      "expected_sha256": "20d160249bf3702e72113411713d640d965a6906ad460897f51d486689148eda",
+      "matches": true
+    },
+    {
+      "path": "apps/web/src/prototypes/workflow-recovery/ReactFlowRecoveryCanvas.tsx",
+      "scope": "actual browser-loaded module inline source-map content",
+      "sha256": "e96bfc3323c1a9cd5a7db2c4e16685f605b956b9200d8d6ed5c9dc4516adca17",
+      "expected_sha256": "e96bfc3323c1a9cd5a7db2c4e16685f605b956b9200d8d6ed5c9dc4516adca17",
+      "matches": true
+    }
+  ],
+  "result": "PASSED_BROWSER_LOADED_SOURCE_IDENTITY"
+}

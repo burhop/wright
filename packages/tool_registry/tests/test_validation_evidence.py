@@ -180,3 +180,32 @@ def test_enablement_policy_requires_current_fully_passed_evidence(tmp_path) -> N
     with pytest.raises(ValidationEvidenceError) as not_passed:
         require_current_passed_validation(database, "fixture-server", **_current())
     assert not_passed.value.code == "validation_not_passed"
+
+
+def test_evidence_connections_close_on_reads_writes_and_conflicts(
+    tmp_path, monkeypatch
+):
+    from tool_registry import validation_evidence
+
+    database = tmp_path / "evidence.db"
+    upgrade_database(str(database))
+    _seed_references(database)
+    original = validation_evidence.sqlite3.connect
+    connections = []
+
+    def tracked_connect(*args, **kwargs):
+        connection = original(*args, **kwargs)
+        connections.append(connection)
+        return connection
+
+    monkeypatch.setattr(validation_evidence.sqlite3, "connect", tracked_connect)
+    evidence = _evidence()
+    save_capability_validation_evidence(database, evidence)
+    assert latest_capability_validation_evidence(database, "fixture-server") == evidence
+    assert list_capability_validation_evidence(database, "fixture-server") == [evidence]
+    with pytest.raises(ValidationEvidenceError, match="append-only"):
+        save_capability_validation_evidence(database, evidence)
+    assert len(connections) == 4
+    for connection in connections:
+        with pytest.raises(sqlite3.ProgrammingError, match="closed"):
+            connection.execute("SELECT 1")

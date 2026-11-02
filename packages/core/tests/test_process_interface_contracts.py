@@ -5,10 +5,12 @@ import base64
 from importlib.resources import files
 
 import pytest
-from pydantic import ValidationError
+from pydantic import TypeAdapter, ValidationError
 
 from core.process_interactions import (
     Action,
+    ArtifactRef,
+    FileLocator,
     InputSnapshot,
     InputDefinition,
     InputDependency,
@@ -20,6 +22,7 @@ from core.process_interactions import (
     PendingInteraction,
     ProcessRef,
     Reason,
+    StartReceipt,
     ValueBinding,
     checked_value_schema,
     validate_response,
@@ -59,6 +62,69 @@ def test_process_paths_are_confined(path):
 def test_process_rejects_client_supplied_authority():
     with pytest.raises(ValidationError):
         process(principal="administrator")
+
+
+@pytest.mark.parametrize("length", [171, 8192])
+def test_file_locators_preserve_full_paths_without_expanding_source_or_id_bounds(
+    length,
+):
+    path = "outputs/" + "x" * (length - len("outputs/"))
+    assert TypeAdapter(FileLocator).validate_python(path) == path
+    artifact = ArtifactRef(artifact_ref=path, sha256=DIGEST)
+    assert ArtifactRef.model_validate_json(artifact.model_dump_json()) == artifact
+    assert NavigationTarget(kind="evidence", artifact_ref=path).artifact_ref == path
+    assert (
+        Reason(
+            code="DETAILS",
+            message="Read",
+            correction="Open",
+            technical_details_ref=path,
+        ).technical_details_ref
+        == path
+    )
+    receipt = StartReceipt(
+        principal_id="reviewer",
+        process=process(),
+        request_id="start-one",
+        payload_digest=DIGEST,
+        input_snapshot_id="input-one",
+        input_digest=DIGEST,
+        run_id="run-one",
+        run_log_path=path,
+        created_at=NOW,
+    )
+    assert receipt.run_log_path == path
+    with pytest.raises(ValidationError):
+        process(source_path=path)
+    with pytest.raises(ValidationError):
+        process(workspace_id="w" * 161)
+
+
+@pytest.mark.parametrize(
+    "path",
+    [
+        "x" * 8193,
+        "",
+        "../outside",
+        "/outside",
+        "C:/outside",
+        "a\\b",
+        "a//b",
+        "a/./b",
+        "a/../b",
+        "a:b",
+        "a\x00b",
+        "a\nb",
+        "a\tb",
+        "a\x1fb",
+        "a\x7fb",
+        " outputs/result.txt",
+        "outputs/result.txt ",
+    ],
+)
+def test_file_locators_reject_oversize_ambiguous_and_unconfined_paths(path):
+    with pytest.raises(ValidationError):
+        ArtifactRef(artifact_ref=path, sha256=DIGEST)
 
 
 def snapshot(**changes):

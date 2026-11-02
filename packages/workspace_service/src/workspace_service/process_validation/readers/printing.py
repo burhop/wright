@@ -248,8 +248,10 @@ class PrintingArtifactReader:
                     "slice-hash-binding",
                     "safe-package-inventory",
                     "simulator-transfer-binding",
+                    "prepared-3mf-geometry-correspondence",
+                    "literal-package-text-prefix",
                 ],
-                "version": 5,
+                "version": 6,
                 "slice_operation_policy": "explicit-profile-operation",
                 "mesh_metrics": [
                     "triangle_count",
@@ -385,6 +387,21 @@ class PrintingArtifactReader:
                 and value.get("source_sha256") == repaired.subject.sha256
                 and value.get("package_sha256") == package.subject.sha256
             )
+            prepared_role = check.parameters.get("prepared_role")
+            if prepared_role is not None:
+                if not isinstance(prepared_role, str) or not prepared_role:
+                    raise ValidationIssue(
+                        "profile.printing_prepared_role",
+                        "Declare an exact prepared artifact role.",
+                        category="source_conflict",
+                    )
+                (prepared,) = _related(context, prepared_role)
+                valid = (
+                    valid and value.get("prepared_sha256") == prepared.subject.sha256
+                )
+                evidence.append(
+                    f"subject:{prepared.subject.id}@{prepared.subject.sha256}#prepared-slice-input"
+                )
             if not valid:
                 raise _defect(
                     "printing.slice_binding",
@@ -397,6 +414,79 @@ class PrintingArtifactReader:
                     f"subject:{package.subject.id}@{package.subject.sha256}#slice-output",
                 )
             )
+        elif operation == "prepared_mesh_correspondence":
+            from .three_mf_geometry import correspondence
+
+            prepared_role = check.parameters.get("prepared_role", "prepared_3mf")
+            if not isinstance(prepared_role, str) or not prepared_role:
+                raise ValidationIssue(
+                    "profile.printing_prepared_role",
+                    "Declare an exact prepared artifact role.",
+                    category="source_conflict",
+                )
+            source, prepared = _related(context, "repaired_mesh", prepared_role)
+            if (
+                source.subject.format != "stl"
+                or snapshot.subject.format != "3mf"
+                or prepared.subject.format != "3mf"
+            ):
+                raise _defect(
+                    "printing.geometry_format",
+                    "Bind original STL, prepared 3MF and final 3MF files.",
+                )
+            try:
+                correspondence(
+                    source.content,
+                    prepared.content,
+                    snapshot.content,
+                    check.parameters.get("rotation"),
+                    check.parameters.get("build_center_xy_mm"),
+                    check.parameters.get("tolerance_mm", 1e-4),
+                    context.checkpoint,
+                )
+            except ValidationIssue:
+                raise
+            except (ValueError, KeyError, IndexError, BadZipFile) as exc:
+                raise _defect(
+                    "printing.prepared_geometry_mismatch",
+                    "The prepared and final 3MF must preserve the original mesh and declared rigid build transform.",
+                ) from exc
+            observed = True
+            evidence.extend(
+                (
+                    f"subject:{source.subject.id}@{source.subject.sha256}#original-model-frame",
+                    f"subject:{prepared.subject.id}@{prepared.subject.sha256}#prepared-build-transform",
+                )
+            )
+        elif operation == "package_text_prefix":
+            from .three_mf_geometry import archive_members
+
+            entry = check.parameters.get("entry")
+            prefix = check.parameters.get("prefix")
+            if (
+                not isinstance(entry, str)
+                or not isinstance(prefix, str)
+                or not 1 <= len(prefix) <= 256
+            ):
+                raise ValidationIssue(
+                    "profile.package_text_prefix",
+                    "Declare an exact package entry and bounded literal prefix.",
+                    category="source_conflict",
+                )
+            try:
+                context.checkpoint()
+                text = archive_members(snapshot.content)[entry][:65536].decode("utf-8")
+                observed = any(
+                    line.startswith(prefix) for line in text.splitlines()[:32]
+                )
+                context.checkpoint()
+            except ValidationIssue:
+                raise
+            except (ValueError, KeyError, BadZipFile) as exc:
+                raise _defect(
+                    "printing.package_text",
+                    "The declared package text entry is unavailable or invalid.",
+                ) from exc
         elif operation == "package_inventory":
             members = _archive(snapshot.content, context)
             required = check.parameters.get("required_members")

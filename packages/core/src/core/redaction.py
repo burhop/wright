@@ -9,10 +9,10 @@ from typing import Any
 REDACTED = "[REDACTED]"
 
 SECRET_KEY_RE = re.compile(
-    r"(?i)(api[_-]?key|secret|token|password|authorization|cookie|credential|private[_-]?key|x[_-](?:upload|download)[_-]ticket)"
+    r"(?i)(api[_-]?server[_-]?key|api[_-]?key|secret|token|password|authorization|cookie|credential|private[_-]?key|x[_-](?:upload|download)[_-]ticket)"
 )
 SECRET_ASSIGNMENT_RE = re.compile(
-    r"(?i)\b(api[_-]?(?:key|token)|secret|token|password|authorization|cookie|credential)\b\s*[:=]\s*([^\s,;]+)"
+    r"(?i)\b((?:[a-z][a-z0-9]*[_-])*(?:api[_-]?server[_-]?key|api[_-]?(?:key|token)|secret|token|password|authorization|cookie|credential))\b\s*[:=]\s*([^\s,;]+)"
 )
 BEARER_RE = re.compile(r"(?i)\bbearer\s+[a-z0-9._~+/=-]+")
 # One-use HTTP transfer credentials also occur inside returned command strings
@@ -23,7 +23,7 @@ TRANSFER_TICKET_RE = re.compile(
 # Evidence also contains public identities such as credential_binding_digest and
 # token counts. Match credential fields, not those longer metadata names.
 EVIDENCE_SECRET_KEY_RE = re.compile(
-    r"(?i)(api[_-]?key|token|secret|password|authorization|cookie|credential|private[_-]?key|x[_-](?:upload|download)[_-]ticket)$"
+    r"(?i)(api[_-]?server[_-]?key|api[_-]?key|token|secret|password|authorization|cookie|credential|private[_-]?key|x[_-](?:upload|download)[_-]ticket)$"
 )
 
 

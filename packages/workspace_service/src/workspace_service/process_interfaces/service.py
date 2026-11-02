@@ -169,6 +169,8 @@ class ProcessInterfaceService:
             )
         else:
             from datetime import datetime, timezone
+            from ..workflow_run_preparation import qualify_workflow_run_origin
+            from ..workflow_source_execution import WorkflowSourceExecutionError
             from .readiness import prepare_values, qualify_inputs
             from .projection import ProjectionFacts
 
@@ -177,6 +179,28 @@ class ProcessInterfaceService:
                 if input_snapshot_id
                 else None
             )
+            # An unchanged catalog starter can contain intentionally unbound
+            # review/tool placeholders. Report its existing setup gate before
+            # compiling those placeholders for the preparation view. Identity
+            # and scope were checked above; navigation and retained runs do not
+            # pass through this preparation-only gate.
+            try:
+                await qualify_workflow_run_origin(
+                    service=self.workspace,
+                    workspace_dir=resolved.workspace_dir,
+                    workspace_id=process.workspace_id,
+                    source_path=process.source_path,
+                    source_digest=process.source_digest,
+                )
+            except WorkflowSourceExecutionError as error:
+                raise ProcessInterfaceError(
+                    "SOURCE_CHANGED"
+                    if error.code == "WORKFLOW_SOURCE_CONFLICT"
+                    else "CAPABILITY_UNAVAILABLE",
+                    str(error),
+                    error.correction,
+                    navigation=NavigationTarget(kind="process"),
+                ) from error
             prepared = await prepare_values(
                 self, resolved, snapshot=frozen, gateway=gateway, session_id=session_id
             )

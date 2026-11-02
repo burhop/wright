@@ -1,0 +1,47 @@
+{
+  "id": "printed-handle-orca",
+  "version": "2",
+  "geometry_guidance": "This version2 recipe separates native solid construction through the qualified independent FreeCAD1.1.1/OCCT7.8.1 execute_code contract from repair and preview through native Blender4.3.2/Blender MCP1.9.1. Exact source identities, schema digests and selected shared mounts remain prerequisites, not proof of engineering success. The versioned fixed operations preserve the original assignment and explicit reviewed design proposal. Retain native BOP/continuity observations, actual source/repair/reimport measurements, all original checks and the geometry-only preview in this fresh digital run. For Blender preserve the exact original user_prompt and guarded API policy. Do not infer achieved radii, hardware fit, strength or print success from operator settings. All declared reviews precede their dependent work; no real printer action is included.",
+  "requirements": [
+    "This recipe binds the supplied Printed02 handle; geometry and engineering acceptance remain pending.",
+    "Every selected provider must mount this managed workspace at the same absolute path. This recipe supports POSIX mounts without spaces.",
+    "Requires FreeCAD1.1.1 with the qualified execute_code schema for construction, Blender4.3.2 with execute_blender_code for repair/preview, OrcaSlicer2.4.2 at /opt/orca/AppRun through shell_execute, and run_simulation with the skfem backend. Tool metadata alone does not qualify native installation, shared mounts or engineering results.",
+    "Select four JSON files already in this workspace: machine, original process, Orca-compatible process, and filament. Preserve P1S, 0.4 mm nozzle, PETG, 0.20 mm layers, five walls and 40% infill.",
+    "The Orca-compatible process must equal the original process except tree_support_wall_count changes from string -1 to string 0 (automatic support walls). Original and derived profiles remain separate and hash-bound.",
+    "Setup prepares and accepts source only. All design/geometry/engineering reviews remain manual; the final local transfer is a manual, nonphysical simulation."
+  ],
+  "tools": {
+    "construction": {
+      "tool_name": "execute_code",
+      "schema_digest": "482e7c5323effa42d5e8aee272cc46faf389873c658cd9e2bbd6fe31df85d85a"
+    },
+    "geometry": {
+      "tool_name": "execute_blender_code",
+      "schema_digest": "f7a8667eb4a5be554da54e44764a02fae1bfda49c018e6719b4a9f62732169ca"
+    },
+    "slicer": {
+      "tool_name": "shell_execute",
+      "schema_digest": "a954c2b9424ba6112743921cb6ab81540dceafafdf00818efc8cd843604745c5"
+    },
+    "inspection": {
+      "tool_name": "run_simulation",
+      "schema_digest": "da27604c5ea6a550919524662de5be337ff5204b96c39cfe84518ccd3467897c"
+    }
+  },
+  "rights": {
+    "operations": "Original Wright preparation code and operation assets, MIT.",
+    "inputs": "Original fictional sample, CC0-1.0; see packaged starter rights.json.",
+    "slicer_profiles": "Not redistributed by this recipe; supplied workspace files are snapshotted without a relicensing claim."
+  },
+  "construction_outputs": {
+    "source_mesh": "source_mesh.stl",
+    "native_brep": "source-native.brep",
+    "native_observations": "native-geometry-observations.json"
+  },
+  "validation_resource_budget": {
+    "max_bytes": 33554432,
+    "max_entities": 1000000,
+    "timeout_seconds": 120,
+    "memory_limit_mb": 512
+  }
+}

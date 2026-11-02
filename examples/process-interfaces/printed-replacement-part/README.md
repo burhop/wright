@@ -12,6 +12,110 @@ This retains the original focus-wheel assignment, image, dimensions, materials
 and full 082 validation profile. It prepares a digital manufacturing package;
 it does not certify fit, strength, printer compatibility or physical printing.
 
+## Original drawer-handle scenario
+
+Bindings can explicitly select `"scenario_id":"printed-replacement-part-02"`.
+Omitting it retains the existing wheel (`printed-replacement-part-01`). Other
+scenario IDs fail before staging. The handle requires
+`"orientation_comparison":true` and `"run_path_template":"wright.run-path/1"`.
+Its [frozen assignment](scenarios/printed-replacement-part-02.json) and
+[versioned instructions](scenarios/printed-replacement-part-02.instructions.json)
+preserve the original 96 mm mounting scale, six original input files, exact full
+profile, five walls and 40% infill. The wheel's native-inspection and retained-source
+bindings are rejected for the handle. A supplied geometry basis must explicitly
+declare this handle's scenario ID; provider operations still require independent
+qualification.
+
+The handle proposal retains all 10 original requirements and 18 checks. It adds a
+declared, persisted local review of the actual repaired mesh, geometry-only preview,
+measurements and original requirements before **any** slicing. The original-frame
+repaired mesh remains the full-profile validation subject. The auxiliary study
+derives pads-down and side (+90° X) candidates from those exact bytes, records
+transforms and hashes, checks candidate integrity, and compares actual package
+and support-path evidence with unchanged profiles. Rotated side dimensions are
+checked against the declared build transform; they do not replace or weaken the
+original model-axis envelope checks. Support-contact locations and removability
+remain explicit final-review work.
+
+**Qualification:** source preparation and numerical/lineage fixtures are verified;
+no live handle run is established by these declarations. Without `slice_binding`,
+the existing `slice_model_file` schema, qualified `ok` response and
+`actual_local_bambu_slice` contract remain required, with a pads-down final package.
+The separate explicit Orca binding below uses its actual response and file contract.
+No correction or arbitrary partial recomputation is claimed by preparation tests.
+
+The `replacement-drawer-handle` catalog starter and this prepared process have
+different block IDs. Optional `workflow_id` preserves the exact existing starter's
+source identifier (lowercase letters/digits/underscores, starting with a letter).
+`source-transformation.json` records all seven starter roles and their prepared
+task IDs; this is inspectable metadata, not execution or UI compatibility authority.
+`scenario-binding.json` records the starter/scenario origin;
+`preparation.json` records the original base-template hash and exact proposed-source
+hash. Accept this transformed proposal through the normal workflow-source service,
+then bind/open its resulting accepted revision and exact subjects. A starter tab
+does not automatically become this prepared process, and an interface saved for
+the starter needs compatibility checking or the common-view fallback. Neither
+preparation nor import transfers run/review authority. See the
+[Feature 084 handoff](../../../specs/084-first-contact-experience/evidence/handle-preparation.md).
+
+### Explicit Orca 2.4.2 / standard 3MF binding
+
+For Printed02 only, the selected independent server must expose the fresh exact
+`shell_execute` schema. Declare this additional binding, retaining the other
+geometry/files/inspection/profile settings:
+
+```json
+{
+  "slice_binding": {
+    "kind": "orca-shell-3mf-v1",
+    "engine_version": "2.4.2",
+    "executable": "/opt/orca/AppRun",
+    "workspace_mount": "/the-qualified-workspace-mount",
+    "selected_orientation": "pads_down",
+    "original_process_profile": {
+      "path": "/path/to/unchanged-original-process.json",
+      "sha256": "the exact original file digest"
+    }
+  }
+}
+```
+
+`selected_orientation` accepts `pads_down` or `side`. The selected process profile
+must differ from the pinned original only in `tree_support_wall_count`, from
+`"-1"` to `"0"` for Orca automatic support walls. Any additional difference fails
+before staging. Both exact files, original/derived validation references, mapping,
+selection and [versioned instructions](scenarios/printed-replacement-part-02.orca-instructions.json)
+join the initial review and portable source dependencies. Preparation does not
+install or qualify an engine. Use the actual qualified provider/image/profile
+configuration described in [provider readiness](../../../specs/084-first-contact-experience/evidence/provider-readiness.md).
+
+The accepted source prepares two standard Core3MF files from the unchanged repaired
+STL, keeping model vertices/triangles in original axes and expressing orientation
+as a build-instance matrix. It slices each once through the existing MCP runtime,
+then independently reads actual native results, effective profiles, engine header,
+package geometry and nominal layer paths. It never invokes the unqualified native
+rotation flags. The shell's warning text or `isError:false` does not establish a
+successful native slice; actual `result.json`, settings and package bytes are
+required. Missing/unsupported contracts fail explicitly.
+
+The derived profile retains all 10 requirements and the original checks, changing
+only the slice-lineage operation label to the explicit Orca provenance contract
+and adding prepared-file identity. It adds independent checks for both candidate
+geometries, native results, engine headers, original package inventory and effective
+settings: 43 checks total. Model-axis envelope checks still read the original
+repaired STL. A 0.0001 mm serialization correspondence bound handles float32
+recentering; engineering dimensional requirements are unchanged. See the
+[independent reader evidence](../../../specs/084-first-contact-experience/evidence/standard-3mf-reader.md)
+for controls and conservative ordering limits.
+
+The selected package remains connected to final review, validation and the clearly
+simulated handoff. Changing selection requires an accepted revision and fresh
+affected preparation/package/review/receipt subjects. The other candidate never
+promotes itself. Real handle outputs, exact required native member names, support
+contact review and correction/reuse behaviour still need live proof. Initial
+review includes the declared per-block limits and explicitly unknown time/cost
+estimates through the common view; no whole-run or spend cap is implied.
+
 ## Prepare the process
 
 1. Select an isolated Wright workspace and existing independent geometry,
@@ -367,3 +471,65 @@ the measurement report. Existing feature, dimension and geometry checks remain
 required; projection availability alone is not drawing verification. Adopt this
 operation through a new accepted argument/source revision and fresh run, retaining
 failed attempts and their native documents.
+
+### Orca response handoff and report inputs
+
+The explicit Printed02 Orca binding saves each actual successful shell MCP
+response through Wright's existing response-file owner. The slicer declares
+`saved_response_file_port`, `save_output: true`, its exact `output_filename`, and
+`file_policy: "publish_overwrite"` with `run_path_template: "wright.run-path/1"`.
+The response becomes a hash-bound file output before the inspector runs; the
+native package, native result and effective settings remain separately verified
+provider-created outputs. Both response files also feed comparison and review.
+No separate workspace document writer or file-read tool is required by this
+Orca preparation.
+
+The source report is an ordinary AI task with exact construction/repair records,
+original requirements, slice evidence, nominal toolpath summary and orientation
+comparison references. Version 2 of the Orca instruction asset limits each
+inline reference to 32768 bytes and requires explicit unresolved findings when
+contents or observations are unavailable. It grants no engineering acceptance;
+the declared reviews and all original/derived validation checks remain required.
+The existing synthetic transfer is still an explicitly separate test-only
+boundary, not a customer printer connection or physical authority.
+
+The shared response-file declaration also supports `publish_indexed`, using the
+actual exclusively allocated indexed filename as the downstream file identity.
+The existing `indexed` and `overwrite` settings retain their previous timing.
+Older runtimes reject the new policies; use a compatible runtime and accept an
+explicit source revision before running this binding. Already accepted workflows
+and legacy wheel preparation retain their saved instructions and behavior.
+
+### Installed drawer-handle setup
+
+The installed application includes the Printed02 Orca setup recipe and its
+canonical versioned assets. Open an unchanged **Replace a broken drawer handle**
+starter in the workflow editor and choose **Set up this job**. Setup lists exact
+compatible tools already enabled in that workspace. It requires the same absolute
+managed POSIX workspace mount in all selected providers; this recipe does not
+infer equivalent mounts or provision native applications.
+
+Select four JSON files already present in Files: the P1S 0.4 mm machine profile,
+the original process profile, its Orca-compatible copy, and the PETG filament
+profile. No slicer profile is redistributed by this recipe. The compatible copy
+must retain every original process value except string `tree_support_wall_count`
+changes from `"-1"` to `"0"` for Orca's automatic support-wall setting. All original
+engineering requirements remain, including 0.20 mm layers, five walls and 40%
+infill. Setup copies the exact selected bytes into an immutable proposal inventory;
+subsequent edits to the original files do not alter those inspected snapshots.
+
+Inspect the proposed source, exact tool/schema identities and dependency hashes,
+then explicitly accept the revision. Acceptance preserves the workflow identity,
+starter origin and saved workflow instructions through the normal source CAS.
+The proposal binds only shipped trusted construction/repair operations; the HTTP
+setup route accepts no Python code. It makes no model or engineering-tool calls,
+does not approve reviews, and does not start a run. The customer route uses the
+manual local simulation capability for the final digital receipt; repository
+examples retain their explicit private test binding. Neither route prints a part.
+
+This first recipe supports an unchanged starter. Preserve edits and use a fresh
+starter rather than overwriting an authored process. A changed tool schema,
+recipe, accepted source or staged dependency requires a fresh proposal. Missing
+providers remain actionable setup requirements, and native/engineering
+qualification still requires actual subsequent evidence. The source, common view,
+reviews and original/derived validators remain the execution and evidence owners.

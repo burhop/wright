@@ -36,8 +36,10 @@ test.describe("MCP Tool Registry Directory E2E Flow @live", () => {
 
     // 5. Preflight is read-only. Review the exact local command without
     // registering it or requiring an irrelevant publisher acknowledgement.
-    await dialog.getByRole("button", { name: "Review install plan" }).click();
-    await liveExpect(dialog.getByText("Confirm this installation")).toBeVisible();
+    await dialog.getByRole("button", { name: "Review setup plan" }).click();
+    await liveExpect(
+      dialog.getByText("Confirm this installation"),
+    ).toBeVisible();
     await liveExpect(dialog.getByText("What Wright will do")).toBeVisible();
 
     // 6. The preview did not register a server row.

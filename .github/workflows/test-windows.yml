@@ -63,6 +63,17 @@ jobs:
           git config --global user.email "test-ci@example.com"
           git config --global user.name "CI Test Runner"
 
+      - name: Check cross-platform harness and gate boundaries
+        run: >-
+          uv run --extra runtime --extra engineering-models python -m pytest -q
+          tests/release/test_dev_push_process.py
+          tests/unit/test_synthetic_beta_agent.py
+          tests/unit/test_synthetic_beta_cli.py
+          tests/unit/test_synthetic_beta_dashboard.py
+          tests/unit/test_synthetic_beta_guest.py
+          tests/unit/test_synthetic_beta_reports.py
+          tests/unit/test_synthetic_beta_vm.py
+
       - name: Run pytest
         run: |
           $PSNativeCommandUseErrorActionPreference = $true
@@ -109,6 +120,11 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Check loaded run history before the full frontend suite
+        run: >-
+          npm run test --workspace=apps/web -- --run
+          src/prototypes/workflow-recovery/WorkflowRunHistory.spec.tsx --maxWorkers=1
 
       - name: Run Vitest
         run: npm run test --workspace=apps/web

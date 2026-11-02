@@ -49,15 +49,33 @@ class ChatInvocationRecorder:
 
     async def observe(self, invocation):
         self._scope()
-        if (
-            not isinstance(invocation, dict)
-            or invocation.get("schema_version") != "wright.workflow-invocation/1"
-            or invocation.get("operation") != "hermes-chat-http"
-            or invocation.get("capture_scope") != "primary_adapter_request"
-            or not isinstance(invocation.get("request_fields"), dict)
-            or invocation["request_fields"].get("session_id") != self.session_id
-            or self.count >= 4
-        ):
+        codex = isinstance(invocation, dict) and (
+            invocation.get("schema_version") == "wright.codex-client-evidence/1"
+            and invocation.get("capture_scope") == "app_server_sdk_call"
+            and invocation.get("phase")
+            in {
+                "prepared",
+                "sdk_call_started",
+                "acknowledged",
+                "permission_denied",
+                "unclaimed_reply",
+                "notification",
+                "runtime_notice",
+                "gateway_request",
+                "gateway_result",
+            }
+            and isinstance(invocation.get("method"), str)
+            and len(invocation["method"]) <= 160
+            and isinstance(invocation.get("fields"), dict)
+        )
+        hermes = isinstance(invocation, dict) and (
+            invocation.get("schema_version") == "wright.workflow-invocation/1"
+            and invocation.get("operation") == "hermes-chat-http"
+            and invocation.get("capture_scope") == "primary_adapter_request"
+            and isinstance(invocation.get("request_fields"), dict)
+            and invocation["request_fields"].get("session_id") == self.session_id
+        )
+        if not (codex or hermes) or self.count >= (384 if codex else 4):
             raise ValueError("Invalid scoped chat invocation evidence")
         raw = canonical_json(
             {"scope": self.identities, "invocation": redact_mapping(invocation)}
@@ -76,7 +94,9 @@ class ChatInvocationRecorder:
     def read(self, receipt):
         self._scope()
         path = receipt.get("path", "")
-        if path not in {self.prefix + f"/invocation-{index}" for index in range(1, 5)}:
+        if path not in {
+            self.prefix + f"/invocation-{index}" for index in range(1, 385)
+        }:
             raise ValueError("Chat invocation evidence is outside this request")
         files = ImmutableFileSet(
             self.paths.resolve(path), maximum_bytes=2_097_152, maximum_files=1

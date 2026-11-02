@@ -21,6 +21,7 @@ import { formatRecoveryAuthoringSource } from "./recovery-authoring";
 import { blankWorkflowSource } from "../../services/blank-workflow";
 import type { WorkflowRunOptions } from "./WorkflowRecoveryConcept";
 import type { WorkspaceEngineeringResult } from "../../services/workspace-service";
+import { WorkspaceWorkflowRunError } from "../../services/workflow-run-error";
 import {
   workspaceService,
   type WorkflowApprovalCheckpoint,
@@ -400,6 +401,63 @@ it("explains a mismatched saved revision while preserving the open editor", asyn
     "different saved workflow revision",
   );
   expect(screen.getByTestId("workflow-recovery-concept")).toBeInTheDocument();
+});
+
+it("explains a template gate without claiming a run failed or a prompt was sent", async () => {
+  const onRun = vi
+    .fn()
+    .mockRejectedValue(
+      new WorkspaceWorkflowRunError(
+        "This engineering template needs setup or qualification before a live run.",
+        "workflow_template_setup_required",
+        "Bracket geometry and CalculiX D034 integration require clean-environment qualification.",
+        "request",
+        "trace-blocked",
+      ),
+    );
+  render(
+    <Editor
+      workflowSource={reportWorkflowSource}
+      definitionRevision={2}
+      storageDigest={"b".repeat(64)}
+      onRun={onRun}
+    />,
+  );
+  await userEvent.click(screen.getByTestId("workflow-recovery-run-start"));
+  const issue = await screen.findByTestId("workflow-run-issue");
+  expect(issue).toHaveTextContent("No workflow steps ran");
+  expect(issue).toHaveTextContent("Wright template/integration maintainers");
+  expect(issue).toHaveTextContent("Not assessed");
+  expect(
+    screen.getByTestId("workflow-recovery-run-details-toggle"),
+  ).toHaveTextContent("Run not started");
+  expect(
+    screen.getByTestId("workflow-recovery-native-run-mode"),
+  ).not.toHaveTextContent("Workflow failed");
+  expect(
+    screen.queryByTestId("workflow-recovery-native-run-input"),
+  ).not.toBeInTheDocument();
+  await userEvent.click(screen.getByText("Technical log and telemetry"));
+  expect(screen.getByTestId("workflow-run-error-diagnostic")).toHaveTextContent(
+    "trace-blocked",
+  );
+  expect(screen.getByTestId("workflow-run-error-diagnostic")).toHaveTextContent(
+    "CalculiX",
+  );
+  const writeText = vi.fn().mockResolvedValue(undefined);
+  Object.defineProperty(navigator, "clipboard", {
+    configurable: true,
+    value: { writeText },
+  });
+  await userEvent.click(
+    screen.getByRole("button", { name: "Copy diagnostic" }),
+  );
+  await waitFor(() =>
+    expect(writeText).toHaveBeenCalledWith(
+      expect.stringContaining("trace-blocked"),
+    ),
+  );
+  expect(writeText.mock.calls[0]?.[0]).not.toContain(reportPrompt);
 });
 
 it("rehydrates a pending review into the normal run drawer without running or pulsing", async () => {
@@ -947,6 +1005,72 @@ describe("WorkflowRecoveryConcept component states", () => {
     );
   });
 
+  it("sends a revised starter through ordinary preflight without labeling it qualified", async () => {
+    const onRun = vi
+      .fn()
+      .mockRejectedValue(
+        new Error(
+          "Current tool qualification is missing. Check readiness in the working view.",
+        ),
+      );
+    const onRefreshTemplateReadiness = vi.fn();
+    render(
+      <Editor
+        workflowSource={reportWorkflowSource}
+        workflowFilePath="workflows/revised.workflow.wflow"
+        storageDigest={"b".repeat(64)}
+        definitionRevision={2}
+        onRun={onRun}
+        onRefreshTemplateReadiness={onRefreshTemplateReadiness}
+        templateReadiness={{
+          state: "revised",
+          template_id: "replacement-drawer-handle",
+          template_version: "1.0.0",
+          source_digest: "a".repeat(64),
+          layout_digest: "c".repeat(64),
+          accepted_source_digest: "b".repeat(64),
+          definition_revision: 2,
+          definition_valid: null,
+          configured: null,
+          qualified: null,
+          available: null,
+          verified_run: null,
+          facts: [],
+          blocking_reasons: [],
+          message:
+            "Check this accepted revision's current inputs, tools, model and authority in the working view before starting.",
+        }}
+      />,
+    );
+    await userEvent.click(
+      screen.getByTestId("workflow-recovery-run-readiness-toggle"),
+    );
+    expect(
+      screen.getByText("Revised · preflight required", { exact: true }),
+    ).toBeVisible();
+    expect(screen.queryByText("Ready", { exact: true })).toBeNull();
+    expect(screen.queryByText("Verified", { exact: true })).toBeNull();
+    const issue = screen.getByTestId(
+      "workflow-recovery-template-readiness-issue",
+    );
+    expect(issue).toHaveTextContent("replacement-drawer-handle");
+    expect(issue).toHaveTextContent(
+      "current inputs, tools, model and authority",
+    );
+    await userEvent.click(
+      screen.getByRole("button", { name: "Refresh revision status" }),
+    );
+    expect(onRefreshTemplateReadiness).toHaveBeenCalledOnce();
+    await userEvent.click(screen.getByTestId("workflow-recovery-run-start"));
+    await waitFor(() => expect(onRun).toHaveBeenCalledOnce());
+    expect(onRun.mock.calls[0]?.[0].expectedStorageDigest).toBe("b".repeat(64));
+    await waitFor(() =>
+      expect(
+        screen.getByTestId("workflow-native-run-summary"),
+      ).toHaveTextContent("Current tool qualification is missing"),
+    );
+  });
+
   it("corrects the old single-file image template on save while preserving its file and identity", async () => {
     const workflow = cloneWorkflow(initialWorkflow);
     const image = createAuthoringObject("image-input", workflow, initialLayout);
@@ -1100,7 +1224,7 @@ describe("WorkflowRecoveryConcept component states", () => {
     ).toHaveTextContent("Workflow running");
     expect(
       screen.getByTestId("workflow-recovery-native-run-input"),
-    ).toHaveTextContent("Prompt sent to");
+    ).toHaveTextContent("Saved prompt for");
     expect(
       screen.getByTestId("workflow-recovery-native-run-log"),
     ).toHaveTextContent("Run requested");

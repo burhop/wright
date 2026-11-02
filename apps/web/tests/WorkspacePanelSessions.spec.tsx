@@ -15,6 +15,8 @@ import {
   processWorkspaceQuery,
 } from "../src/services/process-workspace-tabs";
 
+const mockGetActiveAgent = vi.fn().mockResolvedValue("hermes");
+const mockSetActiveAgent = vi.fn().mockResolvedValue("hermes");
 const mockUseChat = vi.fn();
 const mockGetWorkspace = vi.fn();
 const mockSendMessage = vi.fn();
@@ -55,8 +57,8 @@ vi.mock("../src/hooks/useHealthStatus", () => ({
 
 vi.mock("../src/services/agent-service", () => ({
   agentService: {
-    getActiveAgent: vi.fn().mockResolvedValue("hermes"),
-    setActiveAgent: vi.fn().mockResolvedValue("hermes"),
+    getActiveAgent: (...args: unknown[]) => mockGetActiveAgent(...args),
+    setActiveAgent: (...args: unknown[]) => mockSetActiveAgent(...args),
     getCommands: vi.fn().mockResolvedValue([]),
     listHermesModels: (...args: unknown[]) => mockListHermesModels(...args),
   },
@@ -1152,6 +1154,10 @@ describe("WorkspacePanel session selection", () => {
     );
 
     fireEvent.click(await screen.findByTestId("activity-bar-workflows-btn"));
+    expect(
+      await screen.findByTestId("workspace-workflow-picker"),
+    ).toBeVisible();
+    fireEvent.click(screen.getByRole("button", { name: "New workflow" }));
 
     expect(
       await screen.findByTestId("workspace-workflow-fixture"),
@@ -1233,6 +1239,10 @@ describe("WorkspacePanel session selection", () => {
       display: "flex",
     });
     fireEvent.click(screen.getByTestId("activity-bar-workflows-btn"));
+    expect(
+      await screen.findByTestId("workspace-workflow-picker"),
+    ).toBeVisible();
+    fireEvent.click(screen.getByRole("button", { name: "New workflow" }));
 
     expect(
       await screen.findByTestId("workspace-workflow-fixture"),
@@ -1632,6 +1642,23 @@ describe("WorkspacePanel session selection", () => {
       "Onshape Session 2",
       "Onshape Session 2 (2)",
     ]);
+  });
+
+  it("preserves a Codex default while routing the existing chat model catalog by session", async () => {
+    mockGetActiveAgent.mockResolvedValueOnce("codex");
+    mockSetActiveAgent.mockClear();
+    render(
+      <MemoryRouter>
+        <ViewerPanelProvider>
+          <WorkspacePanel workspaceId="workspace-1" sessionId="new-session" />
+        </ViewerPanelProvider>
+      </MemoryRouter>,
+    );
+    await waitFor(() =>
+      expect(screen.getByLabelText("Agent for new chats")).toHaveValue("codex"),
+    );
+    expect(mockSetActiveAgent).not.toHaveBeenCalled();
+    expect(mockListHermesModels).toHaveBeenCalledWith(false, "new-session");
   });
 
   it("renders the model options returned by the Hermes catalog", async () => {

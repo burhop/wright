@@ -463,7 +463,11 @@ async def test_interrupted_final_mcp_is_durable_unknown_and_cannot_replay(
     assert blocked.value.detail["code"] == "workflow_continuation_outcome_unknown"
     assert dispatch_count(case) == expected_calls
     assert record(case)["status"] == (
-        "failed" if boundary == "lost_response" else "interrupted"
+        "failed"
+        if boundary == "lost_response"
+        else "reconciliation_required"
+        if boundary == "after_dispatch"
+        else "interrupted"
     )
 
 

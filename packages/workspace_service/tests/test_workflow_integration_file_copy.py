@@ -72,7 +72,10 @@ def case(tmp_path):
                 self.mutate(arguments)
             if kw.get("before_dispatch"):
                 kw["before_dispatch"](tool)
-                assert events[-1][0] == "integration_file_copy_authorized"
+                if runtime._integration_file_copy_authority is not None:
+                    assert events[-1][0] == "integration_file_copy_authorized"
+                else:
+                    assert events == []
             self.calls += 1
             value = await provider.call(
                 self.session,

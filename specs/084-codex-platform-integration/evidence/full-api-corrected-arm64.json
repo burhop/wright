@@ -1,0 +1,9 @@
+{
+  "result": "PASSED_FULL_API",
+  "exit_code": 0,
+  "schema": "wright.codex-full-api-correction/1",
+  "timeout_seconds": 900,
+  "elapsed_seconds": 360.16,
+  "scope": "Corrected saved-default startup fixture; runtime source unchanged from 0d45fbbd",
+  "clean_isolated_basetemp": true
+}

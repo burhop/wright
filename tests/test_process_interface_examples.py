@@ -1372,3 +1372,671 @@ def test_printed_missing_or_excessive_geometry_guidance_blocks_before_staging(
     with pytest.raises(ValueError, match="qualified geometry application guidance"):
         printed_preparer().prepare(workspace, "missing-guidance", tools, bindings)
     assert not (workspace / "process-proofs").exists()
+
+@pytest.fixture
+def handle_configuration(printed_configuration):
+    from workspace_service.workflow_run_paths import VERSION
+
+    workspace, bindings, tools = printed_configuration
+    module = printed_preparer()
+    profile = json.loads(
+        (
+            REPO
+            / "packages/workspace_service/src/workspace_service/process_validation/profiles/printed-replacement-part-02.json"
+        ).read_bytes()
+    )
+    bindings.update(
+        scenario_id="printed-replacement-part-02",
+        orientation_comparison=True,
+        run_path_template=VERSION,
+        inspection_workspace="/mounted-workspace",
+    )
+    for role, ref in bindings["profiles"].items():
+        raw = json.dumps(
+            {
+                check["selector"].removeprefix("/"): check["constraint"]["expected"]
+                for check in profile["checks"]
+                if check["subject_role"] == role + "_profile"
+            }
+        ).encode()
+        Path(ref["path"]).write_bytes(raw)
+        ref["sha256"] = module.definition.sha(raw)
+    return workspace, bindings, tools
+
+
+def handle_basis_input_references(plan):
+    review = next(step for step in plan.steps if step.id.startswith("review_basis"))
+    references = {}
+    for alias, address in review.references:
+        fields = plan.inputs.get(address.split(".")[0])
+        if fields:
+            references[Path(fields["settings"]["workspace_file"]).name] = (alias, fields)
+    for filename, role, kind in (
+        ("concept.png", "original_concept_png", "reference_images"),
+        ("concept.svg", "original_concept_svg", "engineering_document"),
+        ("context.md", "original_context_md", "engineering_document"),
+        ("prompt.txt", "original_prompt_txt", "engineering_document"),
+        ("scenario.json", "original_scenario_json", "engineering_document"),
+        ("user-profile.md", "original_user_profile_md", "engineering_document"),
+        ("requirements.md", "original_requirements", "engineering_document"),
+    ):
+        alias, fields = references[filename]
+        assert alias.replace(" ", "_") == review.id + "_" + role
+        assert fields["outputs"][0]["kind"] == kind
+    return review, references
+
+
+def test_handle_uses_frozen_assignment_exact_full_profile_and_preslice_review(
+    handle_configuration,
+):
+    from workspace_service.workflow_run_paths import bind_run_paths
+
+    workspace, bindings, tools = handle_configuration
+    module = printed_preparer()
+    result = module.prepare(workspace, "handle-source", tools, bindings)
+    source = (workspace / result["source_path"]).read_text()
+    plan = compile_prompt_workflow(source)
+    full_stage = next(s for s in plan.steps if s.id.startswith("validate_outputs"))
+    profile = ValidatorConfiguration.model_validate(full_stage.validation).load(
+        str(workspace)
+    )
+    assert profile.id == "printed-replacement-part-02-full"
+    assert len(profile.checks) == 18
+    assert len(profile.baseline.requirements) == 10
+    assert {r.id for r in profile.baseline.requirements} == {
+        "PRINT02-" + suffix
+        for suffix in (
+            "MOUNTING",
+            "LABEL-KEEPOUT",
+            "ENVELOPE",
+            "FINGER-CLEARANCE",
+            "GRIP",
+            "MESH-LINEAGE",
+            "SLICE",
+            "ORIENTATION",
+            "DELIVERABLES",
+            "ACTION-SCOPE",
+        )
+    }
+    for item in result["input_files"]:
+        assert (
+            module.definition.sha((workspace / item["path"]).read_bytes())
+            == item["sha256"]
+        )
+        if "02-repair-cart-bow-handle" in (item["original"] or ""):
+            assert (workspace / item["path"]).read_bytes() == (
+                REPO / item["original"]
+            ).read_bytes()
+    assert source.count('"action_kind":"local_review"') == 3
+    assert '"reference_dimension_mm":96.0' in source
+    assert "focus wheel" not in source and "socket interpretation" not in source
+    assert not (workspace / result["accepted_source_path"]).exists()
+    assert (
+        result["physical_dispatch"] is False
+        and result["engineering_acceptance"] is False
+    )
+    assert not list((workspace / result["output_root"]).iterdir())
+    _, review_inputs = handle_basis_input_references(plan)
+    assert "configured-geometry-basis.json" not in review_inputs
+    for filename in (
+        "concept.png", "concept.svg", "context.md", "prompt.txt",
+        "scenario.json", "user-profile.md",
+    ):
+        fields = review_inputs[filename][1]
+        original = (
+            REPO
+            / "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/02-repair-cart-bow-handle"
+            / filename
+        ).read_bytes()
+        assert (workspace / fields["settings"]["workspace_file"]).read_bytes() == original
+        if filename == "prompt.txt":
+            assert b"\r\n" in original
+    requirement_bytes = "\n".join(
+        requirement.id + ": " + requirement.text
+        for requirement in profile.baseline.requirements
+    ).encode()
+    assert (
+        workspace / review_inputs["requirements.md"][1]["settings"]["workspace_file"]
+    ).read_bytes() == requirement_bytes
+    for run_id in ("first-handle", "second-handle"):
+        steps = bind_run_paths(plan, run_id).steps
+        review = next(
+            s for s in steps if s.id.startswith("review_geometry_before_slice")
+        )
+        repair = next(s for s in steps if s.id.startswith("repair_measure_orient"))
+        orient = next(s for s in steps if s.id.startswith("orient_geometry"))
+        comparison = next(s for s in steps if s.id.startswith("compare_orientations"))
+        final = next(s for s in steps if s.id.startswith("review_preparation"))
+        slicers = [s for s in steps if s.tool_name.endswith("__slice_model_file")]
+        assert len(slicers) == 3
+        assert (
+            steps.index(repair) < steps.index(review) < min(map(steps.index, slicers))
+        )
+        assert steps.index(comparison) < steps.index(final)
+        root = result["output_root"] + "/" + run_id + "/"
+        assert root + "repaired_mesh.stl" in orient.file_dependencies.values()
+        assert root + "source_mesh.stl" not in orient.file_dependencies.values()
+        for name in ("pads_down", "side"):
+            slicer = next(s for s in slicers if s.id.startswith("slice_" + name))
+            assert (
+                root + "orientation/" + name + "/oriented.stl"
+                in slicer.file_dependencies.values()
+            )
+        args = (
+            workspace
+            / "process-proofs/printed-replacement-part/handle-source/inputs/orientation/orient_geometry-arguments.json"
+        )
+        assert "/mounted-workspace/" in json.loads(args.read_bytes())["input_content"]
+    staged = workspace / "process-proofs/printed-replacement-part/handle-source/inputs"
+    binding = json.loads((staged / "scenario-binding.json").read_bytes())
+    assert binding["starter_id"] == "replacement-drawer-handle"
+    operation = (staged / "orientation/orientation-study.py").read_text()
+    assert (
+        "socket" not in operation and "CANDIDATES = ('pads_down', 'side')" in operation
+    )
+    assert (staged / "scenario-instructions.json").read_bytes() == (
+        REPO
+        / "examples/process-interfaces/printed-replacement-part/scenarios/printed-replacement-part-02.instructions.json"
+    ).read_bytes()
+    disclosure = json.loads((staged / "run-disclosure.json").read_bytes())
+    rows = {row["step_id"]: row for row in disclosure["stages"]}
+    review_basis = next(s for s in plan.steps if s.id.startswith("review_basis"))
+    addresses = [
+        source.split(".")[0]
+        for _, source in review_basis.references
+        if source.split(".")[0] in plan.inputs
+    ]
+    assert any(
+        plan.inputs[address]["settings"]["workspace_file"].endswith(
+            "/run-disclosure.md"
+        )
+        for address in addresses
+    )
+    assert any(
+        plan.inputs[address]["settings"]["workspace_file"].endswith(
+            "/run-disclosure.json"
+        )
+        for address in addresses
+    )
+    for step in plan.steps:
+        row = rows[step.id]
+        if row["kind"] in ("mcp-task", "mcp-tool"):
+            assert row["timeout_seconds"] == step.timeout_seconds
+            if row["kind"] == "mcp-task":
+                assert row["timeout_scope"] == "agent_loop"
+                assert row["max_tool_calls"] == step.max_tool_calls
+        else:
+            assert "timeout_seconds" not in row and "max_tool_calls" not in row
+    for name in ("pads_down", "side"):
+        candidate_profile = json.loads(
+            (staged / f"orientation/validate_{name}-profile.json").read_bytes()
+        )
+        assert [c["id"] for c in candidate_profile["checks"]] == [
+            "repaired-mesh-integrity"
+        ]
+
+
+@pytest.mark.parametrize(
+    "fault",
+    [
+        "unknown",
+        "no_comparison",
+        "no_run_paths",
+        "wheel_native",
+        "wheel_retained",
+        "wheel_profiles",
+    ],
+)
+def test_handle_incompatible_binding_fails_before_staging(handle_configuration, fault):
+    workspace, bindings, tools = handle_configuration
+    if fault == "unknown":
+        bindings["scenario_id"] = "printed-replacement-part-03"
+    elif fault == "no_comparison":
+        bindings["orientation_comparison"] = False
+    elif fault == "no_run_paths":
+        bindings.pop("run_path_template")
+    elif fault == "wheel_native":
+        bindings["native_inspection_operation"] = {}
+    elif fault == "wheel_retained":
+        bindings["retained_geometry_source"] = {}
+    else:
+        path = Path(bindings["profiles"]["process"]["path"])
+        data = json.loads(path.read_bytes())
+        data.update(wall_loops="4", sparse_infill_density="35%")
+        path.write_text(json.dumps(data))
+        bindings["profiles"]["process"]["sha256"] = printed_preparer().definition.sha(
+            path.read_bytes()
+        )
+    with pytest.raises(ValueError):
+        printed_preparer().prepare(workspace, "invalid-handle", tools, bindings)
+    assert not (workspace / "process-proofs").exists()
+
+
+@pytest.mark.parametrize(
+    "scenario,resource",
+    [
+        ("printed-replacement-part-02", "printed-replacement-part-01"),
+        ("printed-replacement-part-01", "printed-replacement-part-02"),
+        ("heat-spreader-sizing-01", "printed-replacement-part-01"),
+    ],
+)
+def test_validator_cannot_bind_another_scenario_profile(
+    printed_configuration, scenario, resource
+):
+    workspace, _, tools = printed_configuration
+    flow = printed_preparer().definition.Definition(
+        "printed-replacement-part", workspace, "mismatch", tools
+    )
+    with pytest.raises(ValueError, match="scenario"):
+        flow.validator(resource, {}, scenario_id=scenario)
+
+
+@pytest.mark.parametrize("matching_scenario", [True, False])
+def test_configured_handle_basis_identity_is_explicit(
+    handle_configuration, matching_scenario
+):
+    from workspace_service.workflow_run_paths import (
+        TOKEN,
+        bind_run_paths,
+        bind_run_input_values,
+    )
+    from workspace_service.workflow_references import WorkflowReference
+
+    workspace, bindings, tools = handle_configuration
+    module = printed_preparer()
+    configured_geometry(bindings, workspace, module)
+    basis_ref = bindings["geometry_operation_files"]["basis"]
+    path = Path(basis_ref["path"])
+    basis = json.loads(path.read_bytes())
+    basis["scenario_id"] = (
+        "printed-replacement-part-02"
+        if matching_scenario
+        else "printed-replacement-part-01"
+    )
+    basis["proposed_geometry"] = {
+        "bolt_centers_xy_mm": [[0, 0], [96, 0]],
+        "pad_dimensions_mm": [18, 24, 5],
+        "minimum_finger_clearance_mm": 25,
+    }
+    path.write_text(json.dumps(basis))
+    basis_ref["sha256"] = module.definition.sha(path.read_bytes())
+    for role in ("construction", "repair"):
+        ref = bindings["geometry_operation_files"][role]
+        path = Path(ref["path"])
+        path.write_text(
+            json.dumps({"code": f"print('fixture-only outputs/{TOKEN}/{role}.stl')"})
+        )
+        ref["sha256"] = module.definition.sha(path.read_bytes())
+    bindings["geometry_operation_mode"] = "configured_tool"
+    if not matching_scenario:
+        with pytest.raises(ValueError, match="basis does not match"):
+            module.prepare(workspace, "handle-configured", tools, bindings)
+        assert not (workspace / "process-proofs").exists()
+        return
+    result = module.prepare(workspace, "handle-configured", tools, bindings)
+    source = (workspace / result["source_path"]).read_text()
+    plan = compile_prompt_workflow(source)
+    review, review_inputs = handle_basis_input_references(plan)
+    alias, fields = review_inputs["configured-geometry-basis.json"]
+    assert alias.replace(" ", "_") == review.id + "_configured_geometry_basis"
+    configured_bytes = (workspace / fields["settings"]["workspace_file"]).read_bytes()
+    assert configured_bytes == Path(basis_ref["path"]).read_bytes()
+    assert json.loads(configured_bytes)["proposed_geometry"] == basis["proposed_geometry"]
+    assert json.loads(configured_bytes)["engineering_acceptance"] is False
+    original_prompt = (
+        REPO
+        / "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/02-repair-cart-bow-handle/prompt.txt"
+    ).read_bytes()
+    assert b"\r\n" in original_prompt
+    for prefix, role in (
+        ("create_mesh", "construction"),
+        ("repair_measure_orient", "repair"),
+    ):
+        step = next(s for s in plan.steps if s.id.startswith(prefix))
+        assert step.tool_name.endswith("__execute_blender_code") and step.prompt == ""
+        input_id = step.arguments_from.split(".")[0]
+        settings = plan.inputs[input_id]["settings"]
+        call_path = workspace / settings["workspace_file"]
+        assert call_path.name == role + "-blender-call.json"
+        submitted = json.loads(call_path.read_bytes())
+        pinned = Path(bindings["geometry_operation_files"][role]["path"]).read_bytes()
+        assert submitted["code"] == json.loads(pinned)["code"]
+        assert submitted["user_prompt"].encode("utf-8") == original_prompt
+        assert (
+            call_path.parent / (role + "-provider-arguments.json")
+        ).read_bytes() == pinned
+        assert (
+            call_path.parent / (role + "-operation-review.json")
+        ).read_bytes() == pinned
+        values = bind_run_input_values(
+            bind_run_paths(plan, "real-run"),
+            {
+                input_id: WorkflowReference.from_bytes(
+                    settings["workspace_file"], call_path.read_bytes(), image=False
+                )
+            },
+        )
+        resolved = json.loads(values[input_id].text)
+        assert "real-run" in resolved["code"] and TOKEN not in resolved["code"]
+        assert resolved["user_prompt"].encode("utf-8") == original_prompt
+    assert "socket interpretation" not in source
+    assert "printed-replacement-part-02-full" in source
+
+
+@pytest.fixture
+def orca_configuration(handle_configuration):
+    workspace, bindings, tools = handle_configuration
+    module = printed_preparer()
+    path = Path(bindings["profiles"]["process"]["path"])
+    original = {
+        **json.loads(path.read_bytes()),
+        "tree_support_wall_count": "-1",
+        "enable_support": "1",
+        "support_type": "tree(auto)",
+    }
+    original_path = workspace / "original-process.json"
+    original_path.write_text(json.dumps(original))
+    path.write_text(json.dumps({**original, "tree_support_wall_count": "0"}))
+    bindings["profiles"]["process"]["sha256"] = module.definition.sha(path.read_bytes())
+    bindings["workflow_id"] = "replacement_handle_existing_starter"
+    bindings.pop("slice_success_contract")
+    bindings["slice_binding"] = dict(
+        kind="orca-shell-3mf-v1",
+        engine_version="2.4.2",
+        executable="/opt/orca/AppRun",
+        workspace_mount="/mounted-workspace",
+        selected_orientation="pads_down",
+        original_process_profile=dict(
+            path=str(original_path),
+            sha256=module.definition.sha(original_path.read_bytes()),
+        ),
+    )
+    tools.append(
+        dict(
+            server_id=bindings["slicer_server"],
+            tool_name="shell_execute",
+            name=bindings["slicer_server"] + "__shell_execute",
+            schema_digest="c" * 64,
+        )
+    )
+    return workspace, bindings, tools
+
+
+@pytest.mark.parametrize("orientation", ["pads_down", "side"])
+def test_explicit_orca_binding_keeps_original_requirements_and_two_exact_candidates(
+    orca_configuration, orientation
+):
+    from workspace_service.workflow_run_paths import bind_run_paths
+
+    workspace, bindings, tools = orca_configuration
+    bindings["slice_binding"]["selected_orientation"] = orientation
+    module = printed_preparer()
+    result = module.prepare(
+        workspace, "orca-" + orientation.replace("_", "-"), tools, bindings
+    )
+    source = (workspace / result["source_path"]).read_text()
+    assert source.startswith("workflow replacement_handle_existing_starter\n")
+    plan = compile_prompt_workflow(source)
+    assert len(plan.steps) == 16
+    handle_basis_input_references(plan)
+    assert not any(step.tool_name.endswith("__slice_model_file") for step in plan.steps)
+    slicers = [
+        step for step in plan.steps if step.tool_name.endswith("__shell_execute")
+    ]
+    assert len(slicers) == 2 and all(step.timeout_seconds == 60 for step in slicers)
+    final = next(step for step in plan.steps if step.id.startswith("validate_outputs"))
+    profile = ValidatorConfiguration.model_validate(final.validation).load(
+        str(workspace)
+    )
+    original = json.loads(
+        (
+            REPO
+            / "packages/workspace_service/src/workspace_service/process_validation/profiles/printed-replacement-part-02.json"
+        ).read_bytes()
+    )
+    assert profile.baseline.model_dump(mode="json") == original["baseline"]
+    assert len(profile.checks) == 43
+    actual = {check.id: check.model_dump(mode="json") for check in profile.checks}
+    for check in original["checks"]:
+        if check["id"] != "slice-lineage":
+            assert actual[check["id"]] == check
+    assert (
+        actual["slice-lineage"]["parameters"]["expected_operation"]
+        == "actual_local_orca_slice"
+    )
+    assert (
+        actual["prepared-geometry-lineage"]["parameters"]["rotation"]
+        == module.orca_binding.ROTATIONS[orientation]
+    )
+    assert (
+        actual["comparison-prepared-geometry-lineage"]["parameters"]["prepared_role"]
+        == "comparison_prepared_3mf"
+    )
+    for run_id in ("run-one", "run-two"):
+        resolved = bind_run_paths(plan, run_id).steps
+        review = next(
+            s for s in resolved if s.id.startswith("review_geometry_before_slice")
+        )
+        prepare = [s for s in resolved if s.id.startswith("prepare_build_instance")]
+        native = [s for s in resolved if s.tool_name.endswith("__shell_execute")]
+        assert len(prepare) == len(native) == 2
+        assert resolved.index(review) < min(resolved.index(s) for s in prepare + native)
+        root = result["output_root"] + "/" + run_id + "/"
+        for step in prepare + native:
+            assert root + "repaired_mesh.stl" in step.file_dependencies.values()
+        final_subject = next(s for s in resolved if s.id.startswith("validate_outputs"))
+        assert "comparison_prepared_3mf" in final_subject.validation["subjects"]
+    staged = workspace / Path(result["source_path"]).parent / "inputs"
+    for path in (
+        staged / "orca-slice-call.json",
+        staged / "comparison/orca-slice-call.json",
+    ):
+        arguments = json.loads(path.read_bytes())
+        assert arguments["command"].count("--load-settings") == 2
+        assert not any(arg.startswith("--rotate") for arg in arguments["command"])
+        assert arguments["command"][-1].endswith("/prepared-model.3mf")
+        assert arguments["timeout"] == 60
+    binding = json.loads((staged / "orca-binding.json").read_bytes())
+    assert (
+        binding["original_validation_profile"]["id"]
+        == "printed-replacement-part-02-full"
+    )
+    assert binding["derived_validation_profile"]["id"] == profile.id
+    assert binding["mapped_process_sha256"] == bindings["profiles"]["process"]["sha256"]
+    assert binding["selected_orientation"] == orientation
+    mapping = json.loads((staged / "source-transformation.json").read_bytes())
+    assert mapping["workflow_id"] == bindings["workflow_id"]
+    assert mapping["starter_id"] == "replacement-drawer-handle"
+    assert mapping["execution_authority"] is False
+    assert mapping["additional_task_ids"]["supports_and_slice"] == slicers[0].id
+    assert not list((workspace / result["output_root"]).iterdir())
+    assert "actual_local_bambu_slice" not in source
+    assert not any(step.id.startswith("retain_slice_response") for step in plan.steps)
+    assert not any(
+        step.tool_name.endswith(("__write_text_document", "__inspect_file"))
+        or "inspect_file" in step.task_tool_allowlist
+        for step in plan.steps
+    )
+    for step in slicers:
+        assert step.file_policy == "publish_overwrite"
+        assert step.saved_response_file_port.endswith("provider_response")
+        assert step.output_path.endswith("/slice-provider-response.json")
+        assert step.output_path not in step.expected_files
+        inspector = next(
+            candidate
+            for candidate in plan.steps
+            if candidate.file_dependencies.get(
+                step.id + "." + step.saved_response_file_port
+            )
+            == step.output_path
+        )
+        assert inspector.id.startswith("inspect_slice_handoff")
+    report = next(
+        step for step in plan.steps if step.id.startswith("summarize_preparation")
+    )
+    assert not report.agent_task and not report.server_id
+    assert report.reference_inline_max_bytes == 32768
+    assert "engineering_acceptance=false" in report.prompt
+    assert "inspect_file" not in report.prompt
+    instructions = json.loads((staged / "scenario-instructions.json").read_bytes())
+    assert instructions["version"] == "2"
+    assert report.prompt == instructions["report"]
+    assert {ref.split(".")[-1] for _, ref in report.references} >= {
+        "slice_evidence",
+        "toolpath_summary",
+        "orientation_comparison",
+    }
+
+
+def test_orca_digital_preparation_does_not_require_private_file_tools(
+    orca_configuration,
+):
+    workspace, bindings, tools = orca_configuration
+    bindings.pop("files_server")
+    tools = [
+        tool
+        for tool in tools
+        if tool["tool_name"] not in {"write_text_document", "inspect_file"}
+    ]
+    result = printed_preparer().prepare(
+        workspace, "ordinary-tool-readiness", tools, bindings
+    )
+    plan = compile_prompt_workflow((workspace / result["source_path"]).read_text())
+    assert all(step.server_id != "wright-workspace-files" for step in plan.steps)
+    assert not any(step.task_tool_allowlist == ("inspect_file",) for step in plan.steps)
+
+
+def test_existing_thermal_basis_publishes_an_exact_plain_ai_reference(configuration):
+    """Controlled transport proof using the existing thermal case, not a solver run."""
+    import asyncio
+    import hashlib
+    from workspace_service.workflow_references import WorkflowReference
+    from workspace_service.workflow_source_execution import (
+        _parse,
+        execute_prompt_workflow,
+    )
+    from packages.workspace_service.tests.test_workflow_source_execution import task
+    from packages.workspace_service.tests.test_workflow_mcp_execution import edge
+    from packages.workspace_service.tests.test_workflow_external_action_execution import (
+        service,
+    )
+
+    workspace, _, bindings, tools = configuration
+    result = heat_preparer().prepare(workspace, "plain-response-proof", tools, bindings)
+    sections = _parse((workspace / result["source_path"]).read_text())
+    basis = next(
+        s for s in sections if s["id"] == "define_thermal_case_plain_response_proof"
+    )
+    basis["fields"]["outputs"].append(
+        {"key": "basis_file", "kind": "workspace_file", "name": "Exact thermal basis"}
+    )
+    basis["fields"]["settings"].update(
+        saved_response_file_port="basis_file", file_policy="publish_indexed"
+    )
+    incoming = [
+        s
+        for s in sections
+        if s["kind"] == "connection"
+        and str(s["fields"].get("to", "")).startswith(basis["id"] + ".")
+    ]
+    input_ids = {s["fields"]["from"].split(".")[0] for s in incoming}
+    selected = (
+        [s for s in sections if s["kind"] == "workflow" or s["id"] in input_ids]
+        + [basis]
+        + incoming
+    )
+    text = "\n".join(
+        s["kind"]
+        + " "
+        + s["id"]
+        + "\n"
+        + "\n".join(
+            "  " + key + ": " + json.dumps(value) for key, value in s["fields"].items()
+        )
+        + "\nend"
+        for s in selected
+    )
+    text += "\n" + task(
+        "read_basis",
+        fmt="text",
+        prompt="Read the exact thermal basis, retaining unresolved numerical verification.",
+    ).replace('"kind":"engineering_document"', '"kind":"workspace_file"', 1)
+    text += edge(basis["id"] + ".basis_file", "read_basis.read_basis_prompt")
+    plan = compile_prompt_workflow(text)
+    inputs = {}
+    for key, fields in plan.inputs.items():
+        path = fields["settings"]["workspace_file"]
+        inputs[key] = WorkflowReference.from_bytes(
+            path,
+            (workspace / path).read_bytes(),
+            image=fields["outputs"][0]["kind"] == "reference_images",
+        )
+    calls = []
+    controlled = "# Controlled thermal basis response\n100 mm; 40/60 mm; 2 mm; 4 W. Numerical verification pending."
+
+    async def generate(prompt, fmt, **kwargs):
+        calls.append(prompt)
+        return (
+            controlled
+            if len(calls) == 1
+            else "Controlled downstream receipt observed; no solver or engineering acceptance."
+        )
+
+    final = asyncio.run(
+        execute_prompt_workflow(
+            service=service(workspace),
+            workspace_dir=str(workspace),
+            plan=plan,
+            input_values=inputs,
+            response_generator=generate,
+        )
+    )
+    assert len(calls) == 2 and "k=200 W/(m K)" in calls[0]
+    assert controlled in calls[1]
+    receipt = next(o for o in final["outputs"] if o.get("output_port") == "basis_file")
+    assert (workspace / receipt["output_path"]).read_text() == controlled
+    assert receipt["sha256"] == hashlib.sha256(controlled.encode()).hexdigest()
+    assert receipt["task_id"] == basis["id"]
+
+
+@pytest.mark.parametrize(
+    "fault",
+    [
+        "kind",
+        "version",
+        "executable",
+        "orientation",
+        "mount",
+        "original_hash",
+        "mapping",
+        "extra",
+        "workflow_id",
+    ],
+)
+def test_orca_optin_mismatch_blocks_before_staging(orca_configuration, fault):
+    workspace, bindings, tools = orca_configuration
+    selected = bindings["slice_binding"]
+    if fault in ("kind", "version", "executable", "orientation", "mount"):
+        key = {
+            "version": "engine_version",
+            "orientation": "selected_orientation",
+            "mount": "workspace_mount",
+        }.get(fault, fault)
+        selected[key] = "unsupported"
+    elif fault == "original_hash":
+        selected["original_process_profile"]["sha256"] = "0" * 64
+    elif fault == "extra":
+        selected["automatic_approval"] = True
+    elif fault == "workflow_id":
+        bindings["workflow_id"] = "invalid source id"
+    else:
+        path = Path(bindings["profiles"]["process"]["path"])
+        value = json.loads(path.read_bytes())
+        value["unapproved_setting"] = "changed"
+        path.write_text(json.dumps(value))
+        bindings["profiles"]["process"]["sha256"] = printed_preparer().definition.sha(
+            path.read_bytes()
+        )
+    with pytest.raises(ValueError):
+        printed_preparer().prepare(workspace, "invalid-orca", tools, bindings)
+    assert not (workspace / "process-proofs").exists()

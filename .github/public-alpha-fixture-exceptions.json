@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "exceptions": [
+    {
+      "path": "packages/core/tests/test_workflow_trace.py",
+      "rule": "generic-secret-assignment",
+      "source_line_sha256": "6b6f9b2f0b5b2d96ef6e70e0faedca377e526a80ea90db55d7fd6800be3b49c3",
+      "reason": "Deliberate nonfunctional negative-test canary; exact source line only"
+    },
+    {
+      "path": "tests/unit/test_synthetic_beta_agent.py",
+      "rule": "openai-key",
+      "source_line_sha256": "a2b78589a47742e814687e4f8d28cb2f4091a8e711958cc4bc5a08f442eaa062",
+      "reason": "Deliberate nonfunctional negative-test canary; exact source line only"
+    },
+    {
+      "path": "tests/unit/test_synthetic_beta_provision.py",
+      "rule": "private-key",
+      "source_line_sha256": "213a5e515b7cc336d265f64c12b43125fbbe41186a4c890d77806ef0265f71d9",
+      "reason": "Deliberate nonfunctional negative-test canary; exact source line only"
+    },
+    {
+      "path": "tests/unit/test_synthetic_beta_provision.py",
+      "rule": "private-key",
+      "source_line_sha256": "6f51ce8be48bde81c19c0f3ee256c636903b483ba17dfe7ff7a98ceb16673108",
+      "reason": "Deliberate nonfunctional negative-test canary; exact source line only"
+    }
+  ]
+}

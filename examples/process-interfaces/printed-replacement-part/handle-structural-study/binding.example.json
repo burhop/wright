@@ -1,0 +1,15 @@
+{
+  "schema_version": "printed02.structural-preparation/1",
+  "status": "unexecuted_explicit_binding_example",
+  "workspace_root": "/REVIEWED_WORKSPACE",
+  "input_brep": "/REVIEWED_WORKSPACE/inputs/handle-native.brep",
+  "input_brep_sha256": "62b33b61c84cde47794e7059082853e1b256347c0acd9cc675fb283d2e08e1de",
+  "input_basis": "Exact retained source9 native BREP; import its bytes explicitly. No historical review authority transfers.",
+  "output_dir": "/REVIEWED_WORKSPACE/analysis/{{wright.run_id}}/baseline-coarse",
+  "document_name": "WrightHandleBaseline_{{wright.run_id}}_coarse",
+  "study_revision": "printed02-structural-S1-L1-r1",
+  "mesh_max_mm": 2.0,
+  "mesh_min_mm": 0.75,
+  "engineering_acceptance": false,
+  "physical_acceptance": false
+}

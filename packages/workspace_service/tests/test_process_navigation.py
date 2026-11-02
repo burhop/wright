@@ -7,6 +7,8 @@ import pytest
 
 from core.process_interactions import NavigationTarget
 from workspace_service.process_interfaces.errors import ProcessInterfaceError
+from workspace_service.process_interfaces.artifacts import ProcessArtifactBytes
+from workspace_service.process_interfaces.artifacts import assessment_content_matches
 from workspace_service.process_interfaces.projection import RecordedRun, ProjectionFacts
 from workspace_service.process_interfaces.projection import project_previous_output
 from workspace_service.workflow_results import (
@@ -30,6 +32,26 @@ CAPABILITIES = (
     "process.results",
     "process.navigate",
 )
+
+
+@pytest.mark.parametrize("change", ["duplicate", "omitted", "nonfinite"])
+def test_assessment_content_never_infers_missing_or_ambiguous_evidence(
+    tmp_path, change
+):
+    import json
+
+    report, _, _ = validation_report(tmp_path)
+    payload = report.assessment.model_dump(mode="json")
+    if change == "duplicate":
+        raw = '{"id":' + json.dumps(payload["id"]) + "," + json.dumps(payload)[1:]
+    elif change == "omitted":
+        # An absent optional field must not be filled to manufacture a match.
+        payload.pop("supersedes")
+        raw = json.dumps(payload)
+    else:
+        payload["summary"]["counts"]["pass"] = float("nan")
+        raw = json.dumps(payload)
+    assert not assessment_content_matches(raw.encode(), report.assessment)
 
 
 @pytest.mark.asyncio
@@ -87,6 +109,19 @@ async def test_historical_assessment_navigation_uses_history_alias_and_preserves
             "workspace_service.process_interfaces.navigation.recorded_run_facts",
             read_facts,
         )
+
+        async def read_recorded(scope, process, reference, **kwargs):
+            scope.require(process, "process.results")
+            assert kwargs["run_id"] == "run"
+            assert reference.result_id == old_report.id
+            assert reference.sha256 == digest
+            return ProcessArtifactBytes(
+                reference,
+                report.assessment.model_dump_json(indent=2).encode(),
+                "application/json",
+            )
+
+        monkeypatch.setattr(c.app.artifacts, "read", read_recorded)
         target = NavigationTarget(
             kind="assessment",
             run_id="run",
@@ -302,6 +337,15 @@ async def test_assessment_subject_and_recorded_evidence_are_separate_identities(
             "workspace_service.process_interfaces.navigation.recorded_run_facts",
             read_facts,
         )
+
+        async def read_recorded(scope, process, reference, **kwargs):
+            scope.require(process, "process.results")
+            assert kwargs["run_id"] == "run"
+            assert reference.result_id == evidence.id
+            assert reference.sha256 == digest
+            return ProcessArtifactBytes(reference, raw, "application/json")
+
+        monkeypatch.setattr(c.app.artifacts, "read", read_recorded)
         target = NavigationTarget(
             kind="assessment",
             run_id="run",

@@ -83,6 +83,11 @@
 .wp-muted {
   color: var(--color-text-muted);
 }
+.wp-technical-results > summary {
+  cursor: pointer;
+  padding: var(--space-md) 0;
+  margin-bottom: var(--space-md);
+}
 .wp-field {
   display: flex;
   flex-direction: column;

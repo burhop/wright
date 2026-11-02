@@ -1,0 +1,94 @@
+#cloud-config
+# Recipe only: installing these packages is not desktop/control/auth evidence.
+# Hermes 0.19.0 reuses the native candidate CI's released installation route.
+# The controller must reject unreplaced @@...@@ tokens before generating seed ISO.
+# Runtime test credentials are supplied after cloning, never included here.
+hostname: wright-beta-customer
+manage_etc_hosts: true
+users:
+  - name: customer
+    uid: 1000
+    gecos: Synthetic beta customer
+    groups: [adm, sudo]
+    shell: /bin/bash
+    lock_passwd: true
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    ssh_authorized_keys:
+      - "@@SSH_PUBLIC_KEY@@"
+ssh_pwauth: false
+disable_root: true
+package_update: true
+packages:
+  - ca-certificates
+  - curl
+  - git
+  - python3
+  - python3-venv
+  - python3-pip
+  - xorg
+  - xfce4
+  - xfce4-terminal
+  - lightdm
+  - dbus-x11
+  - policykit-1
+  - snapd
+  - openssh-server
+write_files:
+  - path: /etc/lightdm/lightdm.conf.d/50-beta-customer.conf
+    permissions: '0644'
+    content: |
+      [Seat:*]
+      autologin-user=customer
+      autologin-user-timeout=0
+      user-session=xfce
+  - path: /etc/profile.d/hermes-path.sh
+    permissions: '0644'
+    content: |
+      export PATH="/usr/local/bin:/home/customer/.hermes/hermes-agent/venv/bin:$PATH"
+  - path: /usr/local/bin/hermes
+    permissions: '0755'
+    content: |
+      #!/bin/sh
+      test -d /run/hermes-beta/tmp || { printf '%s\n' 'Prepare temporary Hermes access before starting this test.' >&2; exit 1; }
+      exec env HERMES_HOME=/run/hermes-beta WRIGHT_HOME=/run/hermes-beta/wright-home TMPDIR=/run/hermes-beta/tmp /home/customer/.hermes/hermes-agent/venv/bin/hermes "$@"
+  - path: /usr/local/sbin/wright-beta-freeze
+    permissions: '0755'
+    content: |
+      #!/bin/sh
+      # Only run in the disposable preparation guest, immediately before shutdown.
+      # All later authentication must use runtime-mounted /run credentials.
+      set -eu
+      test "$(id -u)" = 0
+      test -f /var/lib/wright-beta/provisioned.json
+      test ! -e /home/customer/.hermes/auth.json
+      test ! -e /home/customer/.hermes/auth_pool.json
+      test ! -e /home/customer/.hermes/.env
+      test ! -e /home/customer/.codex/auth.json
+      test ! -e /home/customer/.config/wright
+      test ! -e /home/customer/.local/share/wright
+      test ! -e /home/customer/.wright
+      # Test authentication and sessions live only in /run tmpfs. Remove them
+      # explicitly before capture; disable guest swap when supplying test access.
+      rm -rf /run/hermes-beta /home/customer/.hermes/logs
+      # Also inspect browser profile/history and Hermes for unexpected sessions.
+      # A controller must verify the clean-disk inventory, not trust this marker.
+      rm -f /home/customer/.ssh/authorized_keys /home/customer/.bash_history
+      rm -f /root/.bash_history /etc/ssh/ssh_host_*key /etc/ssh/ssh_host_*key.pub
+      cloud-init clean --logs --machine-id
+      # Deleted SSH host keys must not remain recoverable in a reusable disk.
+      # Fill free blocks, remove the zero file, then compact the stopped qcow2.
+      dd if=/dev/zero of=/var/tmp/wright-beta-zero bs=16M status=none || true
+      rm -f /var/tmp/wright-beta-zero
+      sync
+      shutdown -h now
+runcmd:
+  - [mkdir, -p, /var/lib/wright-beta]
+  - [snap, install, firefox]
+  - [runuser, -u, customer, --, mkdir, -p, /home/customer/.hermes]
+  - [runuser, -u, customer, --, python3, -m, venv, /home/customer/.hermes/hermes-agent/venv]
+  - [runuser, -u, customer, --, /home/customer/.hermes/hermes-agent/venv/bin/pip, install, 'hermes-agent==0.19.0']
+  - [sh, -c, 'printf ''%s\n'' ''{"recipe":"hermes-only-arm64-v1","hermes_package":"hermes-agent==0.19.0","credentials":"absent-by-contract-unverified","desktop":"requires-observation"}'' > /var/lib/wright-beta/provisioned.json']
+  - [systemctl, enable, lightdm]
+  - [systemctl, set-default, graphical.target]
+  - [systemctl, restart, lightdm]
+final_message: Hermes-only preparation finished; desktop, model access and cleanliness still require controller verification.

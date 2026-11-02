@@ -22,6 +22,7 @@ import httpx
 import structlog
 from jsonschema import Draft202012Validator, SchemaError, ValidationError
 from core.redaction import redact_mapping, redact_text
+from .hermes_sdk_evidence import sdk_model_observation
 
 from .workflow_observation_projection import (
     TOOL_CONTENT_ENCODING,
@@ -1439,7 +1440,12 @@ class HermesOpenAICompatibilityBridge:
                 if invocation_observer is not None:
                     await invocation_observer(deepcopy(capture))
                 observed = await self._post_json(actual_payload, correlation)
-            capture["upstream_reported_model"] = observed.get("model")
+            if (self.settings.expected_resolution or {}).get(
+                "adapter"
+            ) == "hermes-model-sdk":
+                capture.update(sdk_model_observation(observed.get("model")))
+            else:
+                capture["upstream_reported_model"] = observed.get("model")
             capture["upstream_usage"] = observed.get("usage")
             capture["capture_phase"] = "response"
             if translate:

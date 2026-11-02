@@ -1,0 +1,51 @@
+.provider-setup-guide-button {
+  margin: 10px 0;
+}
+.provider-setup-guide-dialog {
+  width: min(960px, 94vw);
+  height: min(850px, 90vh);
+  max-height: 90vh;
+  padding: 0;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  color: var(--color-primary);
+  background: var(--color-surface);
+  overflow: hidden;
+}
+.provider-setup-guide-dialog[open] {
+  display: flex;
+  flex-direction: column;
+}
+.provider-setup-guide-dialog::backdrop {
+  background: rgb(7 12 24 / 72%);
+}
+.provider-setup-guide-dialog > header {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--color-border);
+}
+.provider-setup-guide-dialog > header h2 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+.provider-setup-guide-dialog__body {
+  min-height: 0;
+  overflow: auto;
+  padding: 20px 24px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+.provider-setup-guide-dialog pre {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  max-height: none;
+}
+.provider-setup-guide-dialog table {
+  display: block;
+  overflow: auto;
+  max-width: 100%;
+}

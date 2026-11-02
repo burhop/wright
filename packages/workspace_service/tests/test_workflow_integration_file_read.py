@@ -80,7 +80,10 @@ def case(tmp_path):
                     if name == INSPECT_TOOL_NAME
                     else "integration_document_write_authorized"
                 )
-                assert events[-1][0] == expected_event
+                if runtime._integration_file_read_authority is not None:
+                    assert events[-1][0] == expected_event
+                else:
+                    assert events == []
             self.calls += 1
             value = await provider.call(
                 self.session,

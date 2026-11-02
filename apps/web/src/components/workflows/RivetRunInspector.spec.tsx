@@ -34,7 +34,9 @@ describe("RivetRunInspector", () => {
   it("opens for running state and can collapse to its compact summary", async () => {
     const user = userEvent.setup();
     renderInspector(runningInspection);
-    expect(await screen.findByTestId("rivet-run-state-running")).toBeVisible();
+    expect(
+      (await screen.findAllByTestId("rivet-run-state-running"))[0],
+    ).toBeVisible();
     expect(screen.getByTestId("rivet-run-inspector")).toHaveClass("is-open");
     await user.click(screen.getByRole("button", { name: /run inspector/i }));
     expect(screen.getByTestId("rivet-run-inspector")).toHaveClass(
@@ -131,7 +133,7 @@ describe("RivetRunInspector", () => {
     );
   });
 
-  it("orders the engineering tabs and discloses retained run inputs", async () => {
+  it("orders the progressive review tabs and discloses retained run inputs", async () => {
     const user = userEvent.setup();
     const input = {
       ...succeededInspection.final_outputs[1],
@@ -147,14 +149,14 @@ describe("RivetRunInspector", () => {
       inputs_state: "available",
     });
     const navigation = screen.getByRole("navigation", {
-      name: "Run Inspector sections",
+      name: "Workflow review sections",
     });
     expect(
       within(navigation)
         .getAllByRole("button")
         .map((button) => button.textContent),
-    ).toEqual(["Inputs", "Outputs", "Steps", "Diagnosis", "History"]);
-    await user.click(screen.getByRole("button", { name: "Inputs" }));
+    ).toEqual(["Results", "Process", "Evidence", "Run history"]);
+    await user.click(screen.getByRole("button", { name: "Evidence" }));
     expect(screen.getByTestId("rivet-run-result-prompt")).toHaveTextContent(
       "Create a bracket",
     );
@@ -183,8 +185,10 @@ describe("RivetRunInspector", () => {
         },
       ],
     });
-    await user.click(screen.getByRole("button", { name: "Steps" }));
-    await user.click(screen.getByText("Inspect box values"));
+    await user.click(screen.getByRole("button", { name: "Process" }));
+    await user.click(screen.getByRole("button", { name: /Inspect CAD/ }));
+    await user.click(screen.getByText("Inputs (1)"));
+    await user.click(screen.getByText("Outputs (0)"));
     expect(screen.getByText("length")).toBeVisible();
     expect(screen.getByText("not retained")).toBeVisible();
   });
@@ -203,25 +207,24 @@ describe("RivetRunInspector", () => {
       screen.getByRole("button", { name: /run saved revision again/i }),
     );
     expect(rerun).toHaveBeenCalledTimes(1);
-    await user.click(screen.getByRole("button", { name: "Steps" }));
+    await user.click(screen.getByRole("button", { name: "Process" }));
     expect(screen.getByText(/Inspect CAD/)).toBeVisible();
-    expect(screen.getByText(/Create feature/)).toBeVisible();
+    expect(
+      screen
+        .getAllByText(/Create feature/)
+        .some((item) => item.closest("button")),
+    ).toBe(true);
   });
 
-  it("explains failed zero-output runs and links directly to Diagnosis", async () => {
-    const user = userEvent.setup();
+  it("explains failed zero-output runs while keeping the diagnostic visible", async () => {
     renderInspector({
       ...failedInspection,
       run: { ...failedInspection.run, has_outputs: false },
       final_outputs: [],
     });
 
-    await user.click(screen.getByRole("button", { name: "Outputs" }));
-    expect(
-      screen.getByText(/no final outputs because it failed/i),
-    ).toBeVisible();
-    await user.click(screen.getByRole("button", { name: "View Diagnosis" }));
-    expect(screen.getByText("Failed box: Create feature")).toBeVisible();
+    expect(screen.getByText(/No final outputs were retained/i)).toBeVisible();
+    expect(screen.getByText(/connection ended/i)).toBeVisible();
   });
 
   it("shows cancellation and technical details without residue warning when cleanup is known", async () => {
@@ -234,7 +237,7 @@ describe("RivetRunInspector", () => {
     fireEvent.click(screen.getByText("Technical details"));
     expect(screen.getByText("RIVET_RUN_CANCELLED")).toBeVisible();
     expect(screen.getByText("trace-child")).toBeVisible();
-    await user.click(screen.getByRole("button", { name: "History" }));
-    expect(screen.getByText(/Revision 1 · historical/)).toBeVisible();
+    await user.click(screen.getByRole("button", { name: "Run history" }));
+    expect(screen.getByText(/Revision 1 \| historical/)).toBeVisible();
   });
 });

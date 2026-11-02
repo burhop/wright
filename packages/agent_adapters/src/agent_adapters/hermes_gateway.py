@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import hashlib
+import json
 import os
 import sys
 from dataclasses import dataclass
@@ -17,6 +19,16 @@ from .gateway import (
     build_installed_wright_gateway_args,
     build_wright_gateway_args,
 )
+
+
+WORKSPACE_TOOLS_REVISION_ENV = "WRIGHT_MCP_WORKSPACE_TOOLS_REVISION"
+
+
+def hermes_workspace_tools_revision(workspace_tools: list[str]) -> str:
+    if not all(isinstance(tool, str) for tool in workspace_tools):
+        raise ValueError("Workspace tool selection must contain string identities")
+    selection = json.dumps(sorted(set(workspace_tools)), separators=(",", ":"))
+    return hashlib.sha256(selection.encode("utf-8")).hexdigest()
 
 
 def hermes_config_paths() -> list[str]:
@@ -56,6 +68,7 @@ def hermes_wright_gateway_profile(
     session_id: str | None = None,
     workspace_id: str | None = None,
     terminal_cwd: str | None = None,
+    workspace_tools: list[str] | None = None,
 ) -> WrightGatewayProfile:
     if (session_id is None) != (workspace_id is None):
         raise ValueError(
@@ -82,6 +95,18 @@ def hermes_wright_gateway_profile(
         command = "uv"
         gateway_project_dir = repo_dir
         resolved_terminal_cwd = terminal_cwd or repo_dir
+    environment = (
+        {"WRIGHT_HOME": os.environ["WRIGHT_HOME"]}
+        if repo_dir is None and os.environ.get("WRIGHT_HOME")
+        else {}
+    )
+    if workspace_tools is not None:
+        # The installed stdio gateway has its own notification hub. Its host
+        # cannot observe API-local tool-change events; retain the selection in
+        # the existing profile revision so normal refresh preflight detects it.
+        environment[WORKSPACE_TOOLS_REVISION_ENV] = hermes_workspace_tools_revision(
+            workspace_tools
+        )
     return WrightGatewayProfile(
         provider_name="hermes",
         server_name="wrightgateway",
@@ -90,6 +115,7 @@ def hermes_wright_gateway_profile(
         terminal_cwd=resolved_terminal_cwd,
         gateway_project_dir=gateway_project_dir,
         workspace_context_filename=".hermes.md",
+        environment=environment or None,
     )
 
 

@@ -1,0 +1,14 @@
+{
+  "workspace_id": "35724349-3d2a-4f53-8d61-dfb5e9d750ac",
+  "session_id": "codex-b2fb0b41-aa6a-4ba5-833e-625c01f4fccd",
+  "frontend": "http://127.0.0.1:15184",
+  "api": "http://127.0.0.1:18184",
+  "route_mocks": false,
+  "workspace_chat_completed": true,
+  "workspace_history_reloaded": true,
+  "workflows_control_opened_editor": true,
+  "workflow_url": "http://127.0.0.1:15184/workspace/35724349-3d2a-4f53-8d61-dfb5e9d750ac?sessionId=codex-b2fb0b41-aa6a-4ba5-833e-625c01f4fccd&workflow=canonical&workflowPath=workflows%2Funtitled-workflow-db26ab24-f64.workflow.wflow",
+  "page_errors": [],
+  "http_errors": [],
+  "result": "PASSED_SERVED_CODEX_CHAT_WORKFLOWS_ENTRY"
+}

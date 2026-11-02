@@ -260,6 +260,7 @@ class CapabilitySnapshotSummary(StrictModel):
 
 class CapabilityList(StrictModel):
     snapshot: CapabilitySnapshotSummary
+    current_platform: str | None = None
     capabilities: list[CapabilityView]
     next_cursor: str | None = None
     total: int = Field(ge=0)

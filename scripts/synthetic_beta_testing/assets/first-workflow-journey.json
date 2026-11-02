@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "id": "first-workflow-v1",
+  "label": "From startup to a useful workflow result",
+  "target_seconds": 1200,
+  "target_basis": "User-proposed 20-minute goal for a bounded starter task; not a measured service guarantee.",
+  "steps": [
+    {"id": "start_environment", "label": "A · Start the test environment"},
+    {"id": "install_wright", "label": "B · Install Wright"},
+    {"id": "open_wright", "label": "C · Open Wright in the browser"},
+    {"id": "describe_job", "label": "D · Describe the job"},
+    {"id": "choose_tools", "label": "E · Choose the needed MCP servers"},
+    {"id": "install_tools", "label": "F · Install and connect the MCP servers"},
+    {"id": "prepare_workspace", "label": "G · Create a workspace with those tools"},
+    {"id": "create_workflow", "label": "H · Create the Wright workflow"},
+    {"id": "run_workflow", "label": "I · Run the workflow"},
+    {"id": "receive_results", "label": "J · Inspect and receive useful results"}
+  ]
+}

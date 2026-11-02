@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from typing import AsyncIterator, Awaitable, Callable
 from dataclasses import dataclass
 import hashlib
-from typing import Literal
+from typing import Any, Literal
 
 
 @dataclass(frozen=True)
@@ -145,6 +145,8 @@ class AgentChatRequest:
     instruction_set: dict | None = None
     # Internal evidence callback; never user-authored invocation/action authority.
     invocation_observer: Callable[[dict], Awaitable[None]] | None = None
+    gateway_handler: Callable[[dict], Awaitable[dict]] | None = None
+    gateway_cleanup: Callable[[], Awaitable[None]] | None = None
 
 
 @dataclass
@@ -168,6 +170,23 @@ class AgentSessionInfo:
 
 
 @dataclass
+class AgentToolCallEvidence:
+    """Read-only projection of matched persisted agent messages, not run authority."""
+
+    session_id: str
+    call_id: str
+    tool_name: str
+    arguments: dict[str, Any] | str | None
+    request_message_id: str | None
+    response_message_id: str | None = None
+    response: str | None = None
+    display_response: str | None = None
+    timestamp: int = 0
+    source: str = "agent.session-messages"
+    record_note: str | None = None
+
+
+@dataclass
 class AgentChatMessage:
     """A single chat message from an agent session's history."""
 
@@ -176,6 +195,7 @@ class AgentChatMessage:
     content: str
     timestamp: int  # epoch ms
     trace_id: str | None = None
+    tool_evidence: tuple[AgentToolCallEvidence, ...] = ()
 
 
 class BaseAgentEngine(ABC):

@@ -3096,6 +3096,38 @@
   color: var(--recovery-teal);
   font-weight: 700;
 }
+.recovery-run-issue {
+  border-top: 1px solid var(--recovery-border);
+  padding-top: 8px;
+}
+.recovery-run-issue dl {
+  margin: 12px 0;
+}
+.recovery-run-issue dl > div {
+  display: grid;
+  grid-template-columns: 110px minmax(0, 1fr);
+  gap: 12px;
+  margin: 8px 0;
+}
+.recovery-run-issue dt {
+  color: var(--recovery-muted);
+}
+.recovery-run-issue dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.recovery-run-issue__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+@media (max-width: 600px) {
+  .recovery-run-issue dl > div {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2px;
+  }
+}
 .recovery-native-run__input {
   flex: 1 1 100%;
   max-height: 132px;
@@ -3759,6 +3791,25 @@
   }
 }
 /* Contextual AI editor: primary controls stay visible without inspector tabs. */
+.recovery-block__tool {
+  padding: 0 12px 6px 51px;
+  color: var(--recovery-muted, #9aa9bb);
+  font-size: 11px;
+  overflow-wrap: anywhere;
+}
+.recovery-mcp-server-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin: 8px 0 16px;
+}
+.recovery-mcp-server-actions .recovery-button {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  font-size: 20px;
+}
 .workflow-recovery .recovery-prompt-editor {
   display: flex;
   flex-direction: column;

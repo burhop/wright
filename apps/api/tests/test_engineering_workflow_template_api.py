@@ -1,6 +1,9 @@
 from __future__ import annotations
 
+import json
 from types import SimpleNamespace
+
+import pytest
 
 from api.main import app
 from api.routers.workspace import get_workspace_service
@@ -16,7 +19,8 @@ class _Service:
         from apps.api.tests.process_interface_fixtures import bind_process_interfaces
 
         bind_process_interfaces(self, root, "workspace-1")
-        self.workflow_sources = WorkspaceWorkflowSourceUseCases(BoundedExecutor())
+        self.executor = BoundedExecutor()
+        self.workflow_sources = WorkspaceWorkflowSourceUseCases(self.executor)
         self.engineering_workflow_templates = EngineeringWorkflowTemplateService(
             self.workflow_sources
         )
@@ -87,7 +91,10 @@ def test_template_list_detail_readiness_and_instance_contract(sync_client, tmp_p
 
     assert listing.status_code == 200
     assert listing.json()["catalog_version"] == "1.0.0"
-    assert len(templates) == 10
+    assert len(templates) == 11
+    assert templates[-1]["template_id"] == "replacement-drawer-handle"
+    assert templates[-1]["version"] == "1.0.3"
+    assert templates[-1]["exploration"]["outcome_status"] == "recorded"
     assert detail.status_code == 200
     assert detail.json()["template"]["source"].startswith("# Built-in")
     assert preview.status_code == 200
@@ -113,6 +120,44 @@ def test_template_list_detail_readiness_and_instance_contract(sync_client, tmp_p
     assert blocked_run.status_code == 409
     assert blocked_run.json()["error_code"] == "workflow_template_setup_required"
     assert "Bambu P1S" in blocked_run.json()["details"]["correction"]
+
+
+def test_handle_starter_installs_supplied_inputs_and_blocks_unconfigured_execution(
+    sync_client, tmp_path
+):
+    service = _Service(tmp_path)
+    app.dependency_overrides[get_workspace_service] = lambda: service
+    try:
+        prefix = "/api/workspace/workflow-source-templates/replacement-drawer-handle"
+        detail = sync_client.get(prefix).json()["template"]
+        created = sync_client.post(
+            prefix + "/instances",
+            json={
+                "session_id": "session-1",
+                "template_version": detail["version"],
+                "expected_source_digest": detail["source_digest"],
+                "workflow_path": "workflows/handle.workflow.wflow",
+                "request_id": "handle-request-0001",
+            },
+        )
+        assert created.status_code == 201, created.text
+        identity = created.json()["workflow_id"].removeprefix("workflow.")
+        assert (tmp_path / "inputs" / identity / "concept.svg").is_file()
+        assert (tmp_path / "inputs" / identity / "validation-profile.json").is_file()
+        assert not (tmp_path / ".wright" / "workflow-runs").exists()
+        blocked = sync_client.post(
+            "/api/workspace/workflow-sources/run",
+            json={
+                "session_id": "session-1",
+                "path": "workflows/handle.workflow.wflow",
+                "expected_storage_digest": created.json()["storage_digest"],
+            },
+        )
+        assert blocked.status_code == 409
+        assert blocked.json()["error_code"] == "workflow_template_setup_required"
+        assert detail["exploration"]["outcome_status"] == "recorded"
+    finally:
+        app.dependency_overrides.pop(get_workspace_service, None)
 
 
 def test_template_api_rejects_stale_digest_collision_and_unknown_workspace(
@@ -161,3 +206,118 @@ def test_template_api_rejects_stale_digest_collision_and_unknown_workspace(
     assert stale.status_code == 409
     assert stale.json()["error_code"] == "template_digest_mismatch"
     assert unknown.status_code == 404
+
+
+def test_recorded_handle_preview_is_versioned_and_does_not_grant_readiness(
+    sync_client, tmp_path
+):
+    service = _Service(tmp_path)
+    app.dependency_overrides[get_workspace_service] = lambda: service
+    try:
+        prefix = "/api/workspace/workflow-source-templates/replacement-drawer-handle"
+        current = sync_client.get(prefix, params={"version": "1.0.3"})
+        preview = sync_client.get(prefix + "/preview", params={"version": "1.0.3"})
+        old = sync_client.get(prefix + "/preview", params={"version": "1.0.0"})
+        readiness = sync_client.post(
+            prefix + "/readiness",
+            json={"session_id": "session-1", "template_version": "1.0.3"},
+        )
+    finally:
+        app.dependency_overrides.pop(get_workspace_service, None)
+    assert current.status_code == 200
+    assert (
+        current.json()["template"]["exploration"]["recorded_result"]["run_id"]
+        == "de60e23084294148a3a8129bf2bcb1b8"
+    )
+    assert preview.status_code == 200
+    assert preview.headers["cache-control"].endswith("immutable")
+    assert b"SUPPLIED SKETCH" in preview.content and b"RECORDED MESH" in preview.content
+    assert old.status_code == 404
+    assert old.json()["error_code"] == "template_not_found"
+    assert readiness.status_code == 200
+    observed = readiness.json()
+    assert observed["state"] == "setup_required"
+    assert not any(
+        observed[key]
+        for key in ("configured", "qualified", "available", "verified_run")
+    )
+    assert not (tmp_path / ".wright/workflow-runs").exists()
+
+
+@pytest.mark.parametrize("revised", [False, True])
+def test_saved_handle_100_origin_remains_readable_with_103_catalog(
+    sync_client, tmp_path, revised
+):
+    service = _Service(tmp_path)
+    app.dependency_overrides[get_workspace_service] = lambda: service
+    try:
+        prefix = "/api/workspace/workflow-source-templates/replacement-drawer-handle"
+        detail = sync_client.get(prefix).json()["template"]
+        path = "workflows/old-handle.workflow.wflow"
+        created = sync_client.post(
+            prefix + "/instances",
+            json={
+                "session_id": "session-1",
+                "template_version": "1.0.3",
+                "expected_source_digest": detail["source_digest"],
+                "workflow_path": path,
+                "request_id": "old-handle-fixture-0001",
+            },
+        )
+        assert created.status_code == 201
+        origin_path = (
+            tmp_path / ".wright/workflow-sources/old-handle/template-origin.json"
+        )
+        origin = json.loads(origin_path.read_text())
+        origin["template_version"] = "1.0.0"
+        origin_path.write_text(json.dumps(origin))
+        before = sync_client.get(
+            "/api/workspace/workflow-sources",
+            params={"session_id": "session-1", "path": path},
+        )
+        assert before.status_code == 200
+        accepted = before.json()
+        if revised:
+            changed = sync_client.put(
+                "/api/workspace/workflow-sources",
+                json={
+                    "session_id": "session-1",
+                    "path": path,
+                    "expected_storage_revision": accepted["storage_revision"],
+                    "expected_storage_digest": accepted["storage_digest"],
+                    "semantic_change_validated": True,
+                    "source": accepted["source"].replace(
+                        'name: "Replace a broken drawer handle"',
+                        'name: "Saved revised handle"',
+                        1,
+                    ),
+                },
+            )
+            assert changed.status_code == 200, changed.text
+            accepted = changed.json()
+        result = sync_client.get(
+            "/api/workspace/workflow-sources/readiness",
+            params={"session_id": "session-1", "path": path},
+        )
+        after = sync_client.get(
+            "/api/workspace/workflow-sources",
+            params={"session_id": "session-1", "path": path},
+        )
+    finally:
+        app.dependency_overrides.pop(get_workspace_service, None)
+    assert result.status_code == 200
+    observed = result.json()
+    assert observed["state"] == ("revised" if revised else "unavailable")
+    if revised:
+        assert observed["template_version"] == "1.0.0"
+        assert all(
+            observed[key] is None
+            for key in ("configured", "qualified", "available", "verified_run")
+        )
+    else:
+        assert "not found" in observed["message"]
+    assert after.status_code == 200
+    assert after.json()["source"] == accepted["source"]
+    assert after.json()["storage_digest"] == accepted["storage_digest"]
+    assert json.loads(origin_path.read_text()) == origin
+    assert not (tmp_path / ".wright/workflow-runs").exists()

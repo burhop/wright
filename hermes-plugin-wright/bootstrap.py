@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import importlib.util
 import os
 import shutil
 import stat
@@ -97,7 +98,38 @@ def _child_environment(root: Path) -> dict[str, str]:
     )
     env.pop("WRIGHT_REPO_DIR", None)
     env.pop("PYTHONPATH", None)
+    _bind_invoking_hermes_sdk(env)
     return env
+
+
+def _bind_invoking_hermes_sdk(env: dict[str, str]) -> None:
+    """Discover a complete current-profile binding, without changing Hermes."""
+    explicit = (
+        "WRIGHT_WORKFLOW_MODEL_TRANSPORT", "HERMES_ROLE_PYTHON",
+        "HERMES_ROLE_RUNTIME_ROOT", "HERMES_ROLE_PROFILE_HOME",
+    )
+    if any(key in env for key in explicit) or not env.get("HERMES_HOME"):
+        return
+    try:
+        profile = Path(env["HERMES_HOME"]).expanduser().resolve(strict=True)
+        specification = importlib.util.find_spec("hermes_cli")
+        if not profile.is_dir() or specification is None or not specification.origin:
+            return
+        runtime = Path(specification.origin).resolve().parent.parent
+        required = (
+            "hermes_cli/runtime_provider.py", "hermes_cli/profiles.py",
+            "hermes_cli/env_loader.py", "agent/auxiliary_client.py", "hermes_constants.py",
+        )
+        if not Path(sys.executable).is_file() or not all((runtime / name).is_file() for name in required):
+            return
+    except (OSError, ImportError, ValueError):
+        return
+    env.update({
+        "WRIGHT_WORKFLOW_MODEL_TRANSPORT": "hermes-model-sdk",
+        "HERMES_ROLE_PYTHON": sys.executable,
+        "HERMES_ROLE_RUNTIME_ROOT": str(runtime),
+        "HERMES_ROLE_PROFILE_HOME": str(profile),
+    })
 
 
 def _install_target() -> tuple[str, list[str]]:

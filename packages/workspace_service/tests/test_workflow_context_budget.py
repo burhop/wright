@@ -55,7 +55,7 @@ def test_large_host_envelope_respects_saved_budget_and_old_guard(tmp_path, budge
     workflow = plan(**({"mcp_context_budget_bytes": budget} if budget else {}))
     native = {
         "observations": [
-            {"id": i, "value": "x" * 260, "disposition": "fail"} for i in range(520)
+            {"id": i, "value": "x" * 260, "disposition": "fail"} for i in range(1040)
         ]
     }
     gateway, runner = runtime()
@@ -69,7 +69,7 @@ def test_large_host_envelope_respects_saved_budget_and_old_guard(tmp_path, budge
         messages.append(conversation)
         if len(messages) == 1:
             return call()
-        assert kwargs["context_budget_bytes"] == 400_000
+        assert kwargs.get("context_budget_bytes") == budget
         result = json.loads(conversation[-1]["content"])
         assert result["result"] == native
         return done("Retained all native failures")

@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 import {
   createNativeProcessClient,
   assertContract,
+  assertProcessReference,
   ProcessClientError,
   type FollowUpdate,
   type ProcessFetch,
@@ -388,15 +389,66 @@ describe("native process client", () => {
     });
     expect(fetch).toHaveBeenCalledTimes(1);
   });
-  it("preserves a structured backend reason and recovery instruction", async () => {
-    const reason = {
-      code: "OPTION_STALE",
-      message: "Material choices changed.",
-      correction: "Refresh options and prepare again.",
-    };
-    await expect(
-      client(fake(async () => json({ detail: { reason } }, 409))).getSnapshot(),
-    ).rejects.toMatchObject({ reason, httpStatus: 409 });
+  it.each(["details", "detail"])(
+    "preserves the validated backend reason and correction from %s",
+    async (key) => {
+      const reason = {
+        code: "READINESS_UNSUPPORTED",
+        message: "Define the thermal case needs a supported execution type.",
+        correction: "Use an AI prompt or an MCP tool block for this run.",
+      };
+      const fetch = fake(async () =>
+        json(
+          {
+            error_code: reason.code,
+            message: reason.message,
+            [key]: { reason, diagnostic: { raw: "private diagnostic" } },
+          },
+          422,
+        ),
+      );
+      try {
+        await client(fetch).getSnapshot();
+        expect.fail("Unsupported readiness must reject");
+      } catch (error) {
+        expect(error).toMatchObject({ reason, httpStatus: 422 });
+        expect((error as ProcessClientError).reason).toEqual(reason);
+        expect(JSON.stringify(error)).not.toContain("private diagnostic");
+      }
+      expect(fetch).toHaveBeenCalledTimes(1);
+    },
+  );
+  it.each([
+    "private diagnostic",
+    { code: "READINESS_UNSUPPORTED", message: "private diagnostic" },
+    {
+      code: "READINESS_UNSUPPORTED",
+      message: "private diagnostic",
+      correction: "Try again",
+      raw_error: "private diagnostic",
+    },
+  ])("rejects a malformed normalized error reason: %j", async (reason) => {
+    const fetch = fake(async () =>
+      json(
+        {
+          error_code: "READINESS_UNSUPPORTED",
+          message: "private diagnostic",
+          details: { reason, correction: "private diagnostic" },
+        },
+        422,
+      ),
+    );
+    try {
+      await client(fetch).getSnapshot();
+      expect.fail("Invalid reason must reject");
+    } catch (error) {
+      expect(error).toMatchObject({
+        reason: { code: "CAPABILITY_UNAVAILABLE" },
+        httpStatus: 422,
+      });
+      expect(JSON.stringify(error)).not.toContain("private diagnostic");
+    }
+    expect(fetch).toHaveBeenCalledTimes(1);
   });
   it("does not render arbitrary raw HTTP failures as user messages", async () => {
     await expect(
@@ -724,6 +776,68 @@ describe("scoped input upload and representation reads", () => {
         ...headers,
       },
     });
+  it.each([171, 8192])(
+    "reads and navigates an exact %i-character file locator without widening source or ID bounds",
+    async (length) => {
+      const path = "outputs/" + "x".repeat(length - "outputs/".length);
+      const longReference = { ...reference, artifact_ref: path };
+      const fetch = fake(async () => binary());
+      await client(fetch).getRepresentation(longReference, {
+        runId: "run-one",
+      });
+      expect(
+        JSON.parse(fetch.mock.calls[0][1]!.body as string).reference,
+      ).toEqual(longReference);
+      const target = { kind: "evidence" as const, artifact_ref: path };
+      const resolution = { process, target, representation: longReference };
+      const navigate = vi.fn(async () => undefined);
+      const navigationFetch = fake(async () => json(resolution));
+      await createNativeProcessClient({
+        process,
+        sessionId: "session",
+        fetch: navigationFetch,
+        navigate,
+      }).navigate(target);
+      expect(navigate).toHaveBeenCalledWith(process, target, resolution);
+      expect(() =>
+        assertProcessReference({ ...process, source_path: path }),
+      ).toThrow();
+      expect(() =>
+        assertProcessReference({ ...process, workspace_id: "w".repeat(161) }),
+      ).toThrow();
+    },
+  );
+  it.each([
+    "x".repeat(8193),
+    "",
+    "../outside",
+    "/outside",
+    "C:/outside",
+    "a\\b",
+    "a//b",
+    "a/./b",
+    "a/../b",
+    "a:b",
+    "a\x00b",
+    "a\nb",
+    "a\tb",
+    "a\x1fb",
+    "a\x7fb",
+    " outputs/result.txt",
+    "outputs/result.txt ",
+  ])(
+    "rejects ambiguous, unconfined or excessive file locators before reading: %s",
+    async (path) => {
+      const fetch = fake(async () => binary());
+      await expect(
+        client(fetch).getRepresentation(
+          { ...reference, artifact_ref: path },
+          { runId: "run-one" },
+        ),
+      ).rejects.toMatchObject({ reason: { code: "RESPONSE_INVALID" } });
+      expect(fetch).not.toHaveBeenCalled();
+    },
+  );
   it("reads passive toolpaths with the same source identity and an exact optional plate", async () => {
     const fetch = fake(async () =>
       binary("data", {

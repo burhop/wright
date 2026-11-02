@@ -2,6 +2,7 @@
   "distribution": "wright-engineering",
   "requirements": [
     "PyYAML>=6,<7",
+    "certifi>=2026.10.19",
     "cryptography>=45,<51",
     "fastapi>=0.115,<1",
     "httpx-sse>=0.4,<1",
@@ -18,9 +19,10 @@
     "pypdfium2>=5,<6",
     "python-multipart>=0.0.32,<1",
     "structlog>=24.1,<27",
+    "uv>=0.9,<1",
     "uvicorn[standard]>=0.30,<1"
   ],
   "schema_version": 1,
-  "uv_lock_sha256": "93a7a13936bd3a6fab68b9e23c30425d5439a49f7cab4878422ddd6049d23bdc",
+  "uv_lock_sha256": "de7f0831c62222088deaeda6f56fa3735eb850daa7993c8773ef7d7b86d4e6b4",
   "version": "0.1.9"
 }

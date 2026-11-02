@@ -451,6 +451,120 @@ def project_graph_inventory(
     return inventory, len(nodes) <= len(inventory)
 
 
+def project_graph_trace(
+    project: str, *, selected_graph: str
+) -> tuple[dict[str, Any], bool]:
+    """Retain bounded review topology and presentation from the executed graph."""
+
+    try:
+        document = yaml.safe_load(project)
+    except yaml.YAMLError:
+        return {}, False
+    data = document.get("data") if isinstance(document, dict) else None
+    raw_graphs = data.get("graphs") if isinstance(data, dict) else None
+    if not isinstance(raw_graphs, dict):
+        return {}, False
+    selected: dict[str, Any] | None = None
+    graph_id = graph_name = ""
+    for serialized_graph_id, raw_graph in raw_graphs.items():
+        if not isinstance(raw_graph, dict):
+            continue
+        metadata = raw_graph.get("metadata")
+        metadata = metadata if isinstance(metadata, dict) else {}
+        candidate_id = str(metadata.get("id") or serialized_graph_id)
+        candidate_name = str(metadata.get("name") or candidate_id)
+        if selected_graph in {candidate_id, candidate_name}:
+            selected, graph_id, graph_name = raw_graph, candidate_id, candidate_name
+            break
+    if selected is None:
+        return {}, False
+    raw_nodes = _nodes(selected)
+    limited_nodes = raw_nodes[:_MAX_INVENTORY_NODES]
+    node_ids = {_node_id(key, value) for key, value in limited_nodes}
+    nodes: list[dict[str, Any]] = []
+    connections: list[dict[str, Any]] = []
+    complete = len(raw_nodes) <= len(limited_nodes)
+    for order, (serialized_id, node) in enumerate(limited_nodes, start=1):
+        node_id = _node_id(serialized_id, node)
+        visual = str(node.get("visualData") or "").split("/")
+        try:
+            x = float(visual[0])
+            y = float(visual[1])
+            width = max(120.0, min(float(visual[2]), 640.0))
+        except (IndexError, TypeError, ValueError):
+            x, y, width = (
+                float((order - 1) % 5) * 260.0,
+                float((order - 1) // 5) * 150.0,
+                220.0,
+            )
+        node_data = node.get("data") if isinstance(node.get("data"), dict) else {}
+        configuration = {
+            key: value
+            for key, value in node_data.items()
+            if key in {"model", "temperature", "maxTokens", "toolName", "dataType"}
+            and isinstance(value, (str, int, float, bool, type(None)))
+        }
+        prompt = next(
+            (
+                str(node_data[key])[:20000]
+                for key in ("prompt", "systemPrompt", "text", "description")
+                if isinstance(node_data.get(key), str) and node_data[key].strip()
+            ),
+            None,
+        )
+        nodes.append(
+            {
+                "node_id": node_id[:128],
+                "node_type": _node_type(serialized_id, node)[:64],
+                "label": (_node_title(serialized_id, node) or "")[:128] or None,
+                "order": order,
+                "x": x,
+                "y": y,
+                "width": width,
+                "prompt": prompt,
+                "configuration": configuration,
+            }
+        )
+        outgoing = node.get("outgoingConnections")
+        if outgoing is None:
+            outgoing = []
+        if not isinstance(outgoing, list):
+            complete = False
+            continue
+        for connection_index, raw in enumerate(outgoing[:100], start=1):
+            if not isinstance(raw, str) or "->" not in raw or "/" not in raw:
+                complete = False
+                continue
+            source_port, destination = raw.split("->", 1)
+            target_part, target_port = destination.rsplit("/", 1)
+            target_tokens = target_part.rsplit(" ", 1)
+            if len(target_tokens) != 2:
+                complete = False
+                continue
+            target_id = target_tokens[1]
+            if target_id not in node_ids:
+                complete = False
+                continue
+            connections.append(
+                {
+                    "connection_id": f"{node_id}:{source_port}:{target_id}:{target_port}",
+                    "source_node_id": node_id,
+                    "target_node_id": target_id,
+                    "source_port": source_port[:128],
+                    "target_port": target_port[:128],
+                    "label": source_port[:128],
+                }
+            )
+        if len(outgoing) > 100:
+            complete = False
+    return {
+        "graph_id": graph_id[:128],
+        "name": graph_name[:256],
+        "nodes": nodes,
+        "connections": connections[:500],
+    }, complete and len(connections) <= 500
+
+
 def _port(node: dict[str, Any]) -> GraphPortSummary | None:
     data = node.get("data")
     if not isinstance(data, dict):

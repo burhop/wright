@@ -1,0 +1,22 @@
+{
+  "status": "passed",
+  "started_at": "2026-10-11T18:06:13.998739+00:00",
+  "scanner_image": "docker.io/aquasec/trivy@sha256:be1190afcb28352bfddc4ddeb71470835d16462af68d310f9f4bca710961a41e",
+  "scanner_version": "0.70.0",
+  "builds": 0,
+  "publications": 0,
+  "findings": [],
+  "image_id": "sha256:19ec7e09db2d3f43302ec8490e00c01f99e80c7220963a3eb1e2ab013425609e",
+  "image_source_commit": "0d45fbbdec914040cc368b426ede898b0c3791c1",
+  "source_commit": "0d45fbbdec914040cc368b426ede898b0c3791c1",
+  "source_tree": "7a35c3e3bcff23f168de84c48d2b2e68fef5447b",
+  "policy_sha256": "88caa73407b405b6a6cd98ce42754c3b4439834b84f14eaa3730e6f3316bb5eb",
+  "raw_report_sha256": "82b99dac7da04d98eceafac6de0ab430943237413eb573209dd2781bf3143127",
+  "database": {
+    "Version": 2,
+    "UpdatedAt": "2026-10-11T13:06:05.155544028Z",
+    "NextUpdate": "2026-10-12T13:06:05.155543797Z",
+    "DownloadedAt": "2026-10-11T18:06:35.18058021Z"
+  },
+  "completed_at": "2026-10-11T18:06:50.328286+00:00"
+}

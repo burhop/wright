@@ -6,6 +6,7 @@ import hashlib
 import asyncio
 import inspect
 from copy import copy, deepcopy
+from datetime import datetime, timezone
 from html import escape
 import json
 import re
@@ -29,13 +30,33 @@ from agent_adapters.workflow_tool_schema import qualify_workflow_tool_schema_dep
 from dataclasses import replace
 from jsonschema import Draft202012Validator, SchemaError
 from tool_registry.gateway_service import SUPPORTED_PROTOCOL_VERSION
-from tool_registry.gateway_models import GatewayError, GatewayWorkspaceScopeError
+from tool_registry.gateway_models import (
+    GatewayError,
+    GatewayErrorCode,
+    GatewayWorkspaceScopeError,
+)
 from .workflow_source_execution import _invalid, _error, WorkflowSourceExecutionError
 from .workspace_document_artifacts import (
     WORKSPACE_DOCUMENT_TOOL_NAME,
     WorkspaceDocumentArtifactError,
     validate_python_source,
 )
+
+
+def model_tool_result_text(value, text):
+    """Omit only a redundant JSON text copy from model context, not evidence."""
+    if not isinstance(text, str) or value is None:
+        return text
+    try:
+        parsed = json.loads(text)
+        # Serialized comparison retains JSON type distinctions (True != 1).
+        if json.dumps(parsed, sort_keys=True, ensure_ascii=False) == json.dumps(
+            value, sort_keys=True, ensure_ascii=False
+        ):
+            return None
+    except (ValueError, TypeError):
+        pass
+    return text
 
 
 def model_action_schema(tool):
@@ -814,6 +835,35 @@ class WorkflowMcpRuntime:
                     prior_dispatch(current_tool)
 
             exact_dispatch = checked_dispatch
+        dispatch_started = False
+        dispatch_guard = exact_dispatch
+
+        def observe_dispatch(current_tool):
+            nonlocal dispatch_started
+            if dispatch_guard is not None:
+                dispatch_guard(current_tool)
+            dispatch_started = True
+
+        async def retain_unknown_outcome(message):
+            if on_event is not None:
+                await on_event(
+                    "operation_progress",
+                    task_id=step.id,
+                    task_title=step.title,
+                    provider_binding=tool.server_id,
+                    provider_schema_digest=schema_digest(tool),
+                    operation_id=None,
+                    request_id=request_id,
+                    tool=tool.name,
+                    state="reconciliation_required",
+                    observed_at=datetime.now(timezone.utc).isoformat(),
+                    observation_source="unknown",
+                    message=message,
+                    limitations=[
+                        "The provider did not return a confirmed operation identity or outcome; the recorded request is not a provider job identifier."
+                    ],
+                )
+
         try:
             result = await self.gateway.call_tool(
                 self.session_id,
@@ -821,7 +871,7 @@ class WorkflowMcpRuntime:
                 step.tool_name,
                 arguments,
                 workspace_approvals=approvals,
-                **({"before_dispatch": exact_dispatch} if exact_dispatch else {}),
+                before_dispatch=observe_dispatch,
                 # Honor the canonical operation budget for ordinary CAD/solver
                 # tools too. Gateway's configured maximum and the enclosing
                 # task deadline still bound this call.
@@ -838,11 +888,37 @@ class WorkflowMcpRuntime:
                 error.recovery_action,
             ) from error
         except GatewayError as error:
+            if (
+                dispatch_started
+                and tool.annotations.get("readOnlyHint") is not True
+                and error.code
+                in {GatewayErrorCode.TIMEOUT, GatewayErrorCode.CHILD_UNAVAILABLE}
+            ):
+                await retain_unknown_outcome(
+                    "Wright lost the tool response after dispatch; the engineering operation may still be working."
+                )
+                raise _error(
+                    "APPLICATION_OUTCOME_UNKNOWN",
+                    f"{step.title}: the tool response ended without a confirmed operation outcome ({error.code}).",
+                    "Inspect the recorded request, engineering application and existing output files before another submission. Do not assume the operation stopped or replay it automatically.",
+                ) from error
+            if error.code is GatewayErrorCode.TIMEOUT:
+                raise _error(
+                    "MCP_CALL_TIMEOUT",
+                    f"{step.title}: Wright stopped waiting for the tool response.",
+                    "Inspect the server and recorded call before choosing a suitable communication deadline.",
+                ) from error
             raise _error(
                 "MCP_CALL_FAILED",
                 f"{step.title}: MCP call failed ({error.code}).",
                 "Check the server in Tool Registry and the step's inputs, then retry.",
             ) from error
+        except asyncio.CancelledError:
+            if dispatch_started and tool.annotations.get("readOnlyHint") is not True:
+                await retain_unknown_outcome(
+                    "Wright stopped waiting after tool dispatch; cancellation of the engineering operation was not confirmed."
+                )
+            raise
         from .workflow_mcp_images import image_observation
 
         safe_content, image_parts, image_evidence, image_errors = image_observation(
@@ -1701,7 +1777,7 @@ class WorkflowMcpRuntime:
                         "tool_call_number": index + 1,
                         "status": status,
                         "result": value,
-                        "text": text,
+                        "text": model_tool_result_text(value, text),
                     },
                     ensure_ascii=False,
                     default=dict,

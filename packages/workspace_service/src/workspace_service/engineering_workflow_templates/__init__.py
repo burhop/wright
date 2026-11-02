@@ -18,6 +18,7 @@ from core.engineering_workflow_templates import (
     TemplateReadiness,
     TemplateReadinessFact,
     TemplateReadinessState,
+    validate_template_exploration,
 )
 
 
@@ -131,7 +132,7 @@ def _reject_sensitive_values(value: object) -> None:
 
 
 class EngineeringWorkflowTemplateCatalog:
-    """Fail-closed loader for the ten built-in canonical-source templates."""
+    """Fail-closed loader for versioned built-in canonical-source templates."""
 
     def __init__(self, resource_root: Path | None = None) -> None:
         self._root = (resource_root or _RESOURCE_ROOT).resolve()
@@ -152,10 +153,10 @@ class EngineeringWorkflowTemplateCatalog:
                 "template_catalog_invalid", "Engineering template catalog is invalid"
             )
         rows = document.get("templates")
-        if not isinstance(rows, list) or len(rows) != 10:
+        if not isinstance(rows, list) or not rows:
             raise EngineeringWorkflowTemplateError(
                 "template_catalog_invalid",
-                "Engineering template catalog must contain exactly ten entries",
+                "Engineering template catalog must contain at least one entry",
             )
         _reject_sensitive_values(document)
         self.catalog_version = "1.0.0"
@@ -186,7 +187,7 @@ class EngineeringWorkflowTemplateCatalog:
             raise EngineeringWorkflowTemplateError(
                 "template_catalog_invalid", "Template catalog entry is invalid"
             )
-        if set(row) != _TEMPLATE_KEYS:
+        if set(row) - {"exploration"} != _TEMPLATE_KEYS:
             raise EngineeringWorkflowTemplateError(
                 "template_catalog_invalid",
                 "Template catalog entry contains missing or unknown fields",
@@ -282,6 +283,11 @@ class EngineeringWorkflowTemplateCatalog:
             definition_status=TemplateDefinitionStatus(str(row["definition_status"])),
             rights=dict(row.get("rights", {})),
             readiness=readiness,
+            exploration=(
+                validate_template_exploration(row["exploration"])
+                if "exploration" in row
+                else None
+            ),
         )
 
     def list(self) -> tuple[EngineeringWorkflowTemplate, ...]:

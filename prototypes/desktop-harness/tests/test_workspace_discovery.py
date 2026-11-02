@@ -137,7 +137,9 @@ def discovery(tmp_path, monkeypatch):
         if not missing:
             directory.mkdir(parents=True)
         session = "desktop-" + name
-        repository.create(name, session, str(directory), workspace_name=name)
+        repository.create(
+            name, session, str(directory), workspace_name=name, agent_id=agent
+        )
         repository.associate_session(name, session, agent_id=agent)
         return directory
 
@@ -1018,7 +1020,9 @@ async def test_disable_requires_operator_and_owned_session_before_mutation(disco
 
 
 @pytest.mark.asyncio
-async def test_local_command_preview_uses_existing_normalizer_without_execution(discovery):
+async def test_local_command_preview_uses_existing_normalizer_without_execution(
+    discovery,
+):
     import json
     from api.services.mcp_services import get_mcp_api_service
     from tool_registry.config_import import preview_configuration
@@ -1029,14 +1033,18 @@ async def test_local_command_preview_uses_existing_normalizer_without_execution(
     owner.preview_import.side_effect = preview_configuration
     app.dependency_overrides[get_mcp_api_service] = lambda: owner
     body = {
-        "workspace_id": "Alpha", "session_id": "desktop-Alpha",
-        "name": "Local provider", "command": "/usr/bin/python3",
+        "workspace_id": "Alpha",
+        "session_id": "desktop-Alpha",
+        "name": "Local provider",
+        "command": "/usr/bin/python3",
         "arguments": ["-m", "existing_mcp", "a path with spaces"],
     }
     async with httpx.AsyncClient(
         transport=httpx.ASGITransport(app), base_url="http://test"
     ) as client:
-        response = await client.post("/api/desktop/connection-imports/preview", json=body)
+        response = await client.post(
+            "/api/desktop/connection-imports/preview", json=body
+        )
         assert response.status_code == 200, response.text
         result = response.json()
         draft = result["preview"]["drafts"][0]
@@ -1045,8 +1053,10 @@ async def test_local_command_preview_uses_existing_normalizer_without_execution(
         assert draft["arguments"] == body["arguments"]
         assert result["preview"]["source_discarded"] is True
         assert json.loads(owner.preview_import.call_args.args[0]) == {
-            "name": body["name"], "type": "stdio",
-            "command": body["command"], "args": body["arguments"],
+            "name": body["name"],
+            "type": "stdio",
+            "command": body["command"],
+            "args": body["arguments"],
         }
         owner.create_install_plan.assert_not_called()
         owner.apply_install_plan.assert_not_called()
@@ -1070,12 +1080,17 @@ async def test_local_command_preview_uses_existing_normalizer_without_execution(
             json={**body, "command": "python;id", "arguments": ["$(id)"]},
         )
         assert unsafe.status_code == 200
-        codes = {item["code"] for item in unsafe.json()["preview"]["drafts"][0]["errors"]}
+        codes = {
+            item["code"] for item in unsafe.json()["preview"]["drafts"][0]["errors"]
+        }
         assert codes == {"command_unsafe", "argument_shell_expression"}
         owner.apply_install_plan.assert_not_called()
 
+
 @pytest.mark.asyncio
-async def test_sealed_credentials_use_existing_owner_and_reject_drift_replay_and_viewers(discovery):
+async def test_sealed_credentials_use_existing_owner_and_reject_drift_replay_and_viewers(
+    discovery,
+):
     import json
     from jwcrypto import jwk, jwe
     from api.services.mcp_services import get_mcp_api_service
@@ -1086,44 +1101,101 @@ async def test_sealed_credentials_use_existing_owner_and_reject_drift_replay_and
     app, _, _, create, _ = discovery
     create("Alpha")
     database = app.state.desktop_service.db_path
-    insert_server(database, McpServer(server_id="custom", name="Custom", type="stdio", command=["example"],
-                                     is_installed=True, is_active=False, status="inactive", created_at=1, updated_at=1))
-    status = {"server_id":"custom", "env_vars":[{"name":"KEY", "label":"API key", "required":True, "secret":True}], "configured":{"KEY":False}}
+    insert_server(
+        database,
+        McpServer(
+            server_id="custom",
+            name="Custom",
+            type="stdio",
+            command=["example"],
+            is_installed=True,
+            is_active=False,
+            status="inactive",
+            created_at=1,
+            updated_at=1,
+        ),
+    )
+    status = {
+        "server_id": "custom",
+        "env_vars": [
+            {"name": "KEY", "label": "API key", "required": True, "secret": True}
+        ],
+        "configured": {"KEY": False},
+    }
     owner = Mock(db_path=database)
-    owner.get_install_plan.return_value = SimpleNamespace(plan_id="p", workspace_id="Alpha", requested_scope="workspace", capability_id="custom", state="completed", plan_digest="a" * 64)
+    owner.get_install_plan.return_value = SimpleNamespace(
+        plan_id="p",
+        workspace_id="Alpha",
+        requested_scope="workspace",
+        capability_id="custom",
+        state="completed",
+        plan_digest="a" * 64,
+    )
     owner.get_credential_status.side_effect = lambda _: status
-    owner.save_credentials.side_effect = lambda _, values: {**status, "configured":{"KEY":True}}
+    owner.save_credentials.side_effect = lambda _, values: {
+        **status,
+        "configured": {"KEY": True},
+    }
     app.dependency_overrides[get_mcp_api_service] = lambda: owner
     app.state.security_settings = SimpleNamespace(enforced=True)
-    scope = {"workspace_id":"Alpha", "session_id":"desktop-Alpha", "plan_digest":"a"*64}
+    scope = {
+        "workspace_id": "Alpha",
+        "session_id": "desktop-Alpha",
+        "plan_digest": "a" * 64,
+    }
     path = "/api/desktop/connection-plans/p/credentials"
-    async with httpx.AsyncClient(transport=httpx.ASGITransport(app), base_url="http://test") as client:
-        assert (await client.post(path+"/form", json=scope)).status_code == 403
+    async with httpx.AsyncClient(
+        transport=httpx.ASGITransport(app), base_url="http://test"
+    ) as client:
+        assert (await client.post(path + "/form", json=scope)).status_code == 403
         owner.get_credential_status.assert_not_called()
         app.dependency_overrides[require_admin] = lambda: None
-        assert (await client.post(path+"/form", json={**scope,"session_id":"other"})).status_code == 403
-        assert (await client.post(path+"/form", json={**scope,"plan_digest":"b"*64})).status_code == 409
-        response = await client.post(path+"/form", json=scope)
-        assert response.headers['cache-control'] == 'no-store'
-        form = response.json()['form']
-        envelope = jwe.JWE(json.dumps({'form_id':form['form_id'],'values':{'KEY':'synthetic-private-value'}}).encode(),
-                           protected={'alg':'RSA-OAEP-256','enc':'A256GCM'},recipient=jwk.JWK(**form['public_key']))
-        body={**scope,'form_id':form['form_id'],'ciphertext':envelope.serialize(compact=True)}
-        assert (await client.post(path+'/save',json={**body,'values':{'KEY':'must-reject'}})).status_code==422
+        assert (
+            await client.post(path + "/form", json={**scope, "session_id": "other"})
+        ).status_code == 403
+        assert (
+            await client.post(path + "/form", json={**scope, "plan_digest": "b" * 64})
+        ).status_code == 409
+        response = await client.post(path + "/form", json=scope)
+        assert response.headers["cache-control"] == "no-store"
+        form = response.json()["form"]
+        envelope = jwe.JWE(
+            json.dumps(
+                {
+                    "form_id": form["form_id"],
+                    "values": {"KEY": "synthetic-private-value"},
+                }
+            ).encode(),
+            protected={"alg": "RSA-OAEP-256", "enc": "A256GCM"},
+            recipient=jwk.JWK(**form["public_key"]),
+        )
+        body = {
+            **scope,
+            "form_id": form["form_id"],
+            "ciphertext": envelope.serialize(compact=True),
+        }
+        assert (
+            await client.post(
+                path + "/save", json={**body, "values": {"KEY": "must-reject"}}
+            )
+        ).status_code == 422
         # Configuration drift cannot consume the saved form for another config.
-        update_server(database,'custom', {'launch_env':{'MODE':'changed'}})
-        assert (await client.post(path+'/save',json=body)).status_code==409
+        update_server(database, "custom", {"launch_env": {"MODE": "changed"}})
+        assert (await client.post(path + "/save", json=body)).status_code == 409
         owner.save_credentials.assert_not_called()
-        update_server(database,'custom', {'launch_env':{}})
-        saved=await client.post(path+'/save',json=body)
-        assert saved.status_code==200 and saved.json()['configured']=={'KEY':True}
-        assert 'synthetic-private-value' not in saved.text
-        owner.save_credentials.assert_called_once_with('custom',{'KEY':'synthetic-private-value'})
-        assert (await client.post(path+'/save',json=body)).status_code==409
+        update_server(database, "custom", {"launch_env": {}})
+        saved = await client.post(path + "/save", json=body)
+        assert saved.status_code == 200 and saved.json()["configured"] == {"KEY": True}
+        assert "synthetic-private-value" not in saved.text
+        owner.save_credentials.assert_called_once_with(
+            "custom", {"KEY": "synthetic-private-value"}
+        )
+        assert (await client.post(path + "/save", json=body)).status_code == 409
         # Existing keys are not silently rotated under old validation/runs.
-        status['configured']['KEY']=True
-        assert (await client.post(path+'/form',json=scope)).status_code==409
+        status["configured"]["KEY"] = True
+        assert (await client.post(path + "/form", json=scope)).status_code == 409
         owner.enable_capability_for_workspace.assert_not_called()
+
 
 @pytest.mark.asyncio
 async def test_configured_command_preview_has_names_and_public_values_only(discovery):
@@ -1133,23 +1205,47 @@ async def test_configured_command_preview_has_names_and_public_values_only(disco
 
     app, _, _, create, _ = discovery
     create("Alpha")
-    owner=Mock()
-    owner.preview_import.side_effect=lambda value: preview_configuration(value)
-    app.dependency_overrides[get_mcp_api_service]=lambda:owner
-    body={"workspace_id":"Alpha","session_id":"desktop-Alpha","name":"Example","command":"uvx","arguments":["example-mcp"],
-          "environment_fields":["API_KEY","RUN_MODE"],"public_environment":{"RUN_MODE":"read-only"}}
-    async with httpx.AsyncClient(transport=httpx.ASGITransport(app),base_url="http://test") as client:
-        assert (await client.post('/api/desktop/connection-imports/preview',json={**body,"session_id":"other"})).status_code==403
-        for patch in ({"public_environment":{"API_KEY":"must-not-be-public"}}, {"environment_fields":["BAD=KEY"]}, {"private_values":{"API_KEY":"must-not-be-accepted"}}):
-            assert (await client.post('/api/desktop/connection-imports/preview',json={**body,**patch})).status_code==422
+    owner = Mock()
+    owner.preview_import.side_effect = lambda value: preview_configuration(value)
+    app.dependency_overrides[get_mcp_api_service] = lambda: owner
+    body = {
+        "workspace_id": "Alpha",
+        "session_id": "desktop-Alpha",
+        "name": "Example",
+        "command": "uvx",
+        "arguments": ["example-mcp"],
+        "environment_fields": ["API_KEY", "RUN_MODE"],
+        "public_environment": {"RUN_MODE": "read-only"},
+    }
+    async with httpx.AsyncClient(
+        transport=httpx.ASGITransport(app), base_url="http://test"
+    ) as client:
+        assert (
+            await client.post(
+                "/api/desktop/connection-imports/preview",
+                json={**body, "session_id": "other"},
+            )
+        ).status_code == 403
+        for patch in (
+            {"public_environment": {"API_KEY": "must-not-be-public"}},
+            {"environment_fields": ["BAD=KEY"]},
+            {"private_values": {"API_KEY": "must-not-be-accepted"}},
+        ):
+            assert (
+                await client.post(
+                    "/api/desktop/connection-imports/preview", json={**body, **patch}
+                )
+            ).status_code == 422
         owner.preview_import.assert_not_called()
-        result=await client.post('/api/desktop/connection-imports/preview',json=body)
-        assert result.status_code==200
-        raw=json.loads(owner.preview_import.call_args.args[0])
-        assert raw['env']=={'API_KEY':'','RUN_MODE':''}
-        assert raw['public_env']=={'RUN_MODE':'read-only'}
-        draft=result.json()['preview']['drafts'][0]
-        assert draft['launch_env']=={'RUN_MODE':'read-only'} and [field['name'] for field in draft['env_vars']]==['API_KEY']
+        result = await client.post("/api/desktop/connection-imports/preview", json=body)
+        assert result.status_code == 200
+        raw = json.loads(owner.preview_import.call_args.args[0])
+        assert raw["env"] == {"API_KEY": "", "RUN_MODE": ""}
+        assert raw["public_env"] == {"RUN_MODE": "read-only"}
+        draft = result.json()["preview"]["drafts"][0]
+        assert draft["launch_env"] == {"RUN_MODE": "read-only"} and [
+            field["name"] for field in draft["env_vars"]
+        ] == ["API_KEY"]
 
 
 @pytest.mark.asyncio
@@ -1169,15 +1265,27 @@ async def test_new_workspace_snapshots_shared_tool_defaults_without_grants(disco
 
     async def create_owned(name, parent, agent, **kwargs):
         create(name)
-        return SimpleNamespace(workspace_id=name, session_id="desktop-" + name, workspace_name=name)
+        return SimpleNamespace(
+            workspace_id=name, session_id="desktop-" + name, workspace_name=name
+        )
 
     service.create_workspace = AsyncMock(side_effect=create_owned)
-    async with httpx.AsyncClient(transport=httpx.ASGITransport(app), base_url="http://test") as client:
+    async with httpx.AsyncClient(
+        transport=httpx.ASGITransport(app), base_url="http://test"
+    ) as client:
         response = await client.post("/api/desktop/workspaces", json={"name": "Handle"})
     assert response.status_code == 201
-    assert repository.enabled_tools("Handle") == ["wright__workspace_status", "CAD", "FEA"]
+    assert repository.enabled_tools("Handle") == [
+        "wright__workspace_status",
+        "CAD",
+        "FEA",
+    ]
     installed.append("Later installed tool")
-    assert service.tools.list_by_workspace("Handle").enabled_tools == ["wright__workspace_status", "CAD", "FEA"]
+    assert service.tools.list_by_workspace("Handle").enabled_tools == [
+        "wright__workspace_status",
+        "CAD",
+        "FEA",
+    ]
     assert repository.enabled_tools("Existing") == ["Existing CAD"]
     # Only repository membership changed: no server/start/approval owner is provided.
     assert service.tools.servers() == []

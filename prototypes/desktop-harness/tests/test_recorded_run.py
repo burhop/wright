@@ -58,7 +58,13 @@ def history(tmp_path, monkeypatch):
     database = str(tmp_path / "state.db")
     upgrade_database(database)
     repository = WorkspaceRepository(database, secrets=Mock())
-    repository.create("alpha", "desktop-alpha", str(root), workspace_name="Alpha")
+    repository.create(
+        "alpha",
+        "desktop-alpha",
+        str(root),
+        workspace_name="Alpha",
+        agent_id="openai-desktop-harness",
+    )
     repository.associate_session(
         "alpha", "desktop-alpha", agent_id="openai-desktop-harness"
     )

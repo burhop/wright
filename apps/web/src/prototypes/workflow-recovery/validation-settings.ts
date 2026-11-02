@@ -2,7 +2,7 @@ import profiles from "./validation-profiles.json";
 import { stableValue } from "./canonical-wire";
 import type { RecoveryCommand } from "./command-system";
 import type { RecoveryBlock, RecoveryWorkflow } from "./model";
-import { sourceKey } from "./prompt-settings";
+import { savedResponsePublication, sourceKey } from "./prompt-settings";
 
 export const validationProfiles = profiles;
 export const isValidatorBlock = (block: RecoveryBlock | null) =>
@@ -251,6 +251,7 @@ function safeValidatorProducer(block: RecoveryBlock): boolean {
     !block.configuration.application_resource &&
     template !== "external-action-approval" &&
     template !== "manual-review" &&
+    !savedResponsePublication(block) &&
     block.configuration.file_policy !== "overwrite"
   );
 }

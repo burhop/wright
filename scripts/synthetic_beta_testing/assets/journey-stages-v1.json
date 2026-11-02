@@ -1,0 +1,83 @@
+{
+  "id": "golden-hour-stages-v1",
+  "stages": [
+    {
+      "id": "environment",
+      "label": "Environment",
+      "color": "#4663a4",
+      "legacy_step_ids": [
+        "start_environment"
+      ]
+    },
+    {
+      "id": "install_wright",
+      "label": "Install Wright",
+      "color": "#3978a1",
+      "legacy_step_ids": [
+        "install_wright"
+      ]
+    },
+    {
+      "id": "open_wright",
+      "label": "Open Wright",
+      "color": "#58a1bd",
+      "legacy_step_ids": [
+        "open_wright"
+      ]
+    },
+    {
+      "id": "define_task",
+      "label": "Define task",
+      "color": "#8871aa",
+      "legacy_step_ids": [
+        "describe_job"
+      ]
+    },
+    {
+      "id": "setup_tools",
+      "label": "Set up tools",
+      "color": "#ba8a45",
+      "legacy_step_ids": [
+        "choose_tools",
+        "install_tools"
+      ]
+    },
+    {
+      "id": "workspace",
+      "label": "Create workspace",
+      "color": "#a5a34d",
+      "legacy_step_ids": [
+        "prepare_workspace"
+      ]
+    },
+    {
+      "id": "build_workflow",
+      "label": "Build workflow",
+      "color": "#62966d",
+      "legacy_step_ids": [
+        "create_workflow"
+      ]
+    },
+    {
+      "id": "run_workflow",
+      "label": "Run workflow",
+      "color": "#198c86",
+      "legacy_step_ids": [
+        "run_workflow"
+      ]
+    },
+    {
+      "id": "review_results",
+      "label": "Review results",
+      "color": "#38677f",
+      "legacy_step_ids": [
+        "receive_results"
+      ]
+    }
+  ],
+  "unmapped": {
+    "id": "unmapped",
+    "label": "Unmapped activity",
+    "color": "#bac5ce"
+  }
+}

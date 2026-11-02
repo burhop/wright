@@ -226,6 +226,7 @@ def test_lifecycle_events_project_all_nodes_and_merge_mcp_detail_by_node_id() ->
     assert inspection["steps"][0] == {
         "step_id": "node:node-prepare",
         "sequence": 1,
+        "attempt": 1,
         "node_id": "node-prepare",
         "node_type": "code",
         "label": "Prepare inputs",

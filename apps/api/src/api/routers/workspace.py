@@ -36,6 +36,12 @@ from agent_adapters.report_generation import (
 from agent_adapters.hermes_gateway import hermes_config_paths
 from core.tracing import traced
 from core.engineering_workflow_templates import EngineeringWorkflowTemplateError
+from workspace_service.handle_setup import (
+    PrintedHandleSetup,
+    SetupScope,
+    SetupProposalRequest,
+    SetupAcceptRequest,
+)
 from api.config import (
     DATABASE_PATH,
     api_mcp_autostart_enabled,
@@ -46,6 +52,7 @@ from api.config import (
     rivet_workflows_enabled,
 )
 from api.routers.agent import get_agent_engine
+from api.services.wright_gateway_sync import workspace_gateway_status
 from api.composition import surface_application, workspace_service
 from workspace_service import (
     WorkspaceConflictError,
@@ -55,6 +62,12 @@ from workspace_service import (
     WorkspaceService,
     WorkspaceServiceError,
     default_workspace_parent_dir,
+)
+from workspace_service.workflow_trace import (
+    TraceExportResource,
+    build_canonical_trace,
+    build_trace_export,
+    canonical_artifact_paths,
 )
 from api.schemas.workspace import (
     WorkspaceNodeResponse,
@@ -183,6 +196,10 @@ from api.schemas.workspace import (
     WorkflowEditorBootstrapResponse,
     WorkflowEditorReadRequest,
     WorkflowEditorSaveRequest,
+)
+from api.schemas.workflow_trace import (
+    WorkflowTraceEvidenceIngestRequest,
+    WorkflowTraceEvidencePageResponse,
 )
 from workspace_service.workflows import (
     WorkflowPersistenceError,
@@ -827,6 +844,11 @@ async def start_engineering_scenario_endpoint(
     engine: BaseAgentEngine = Depends(get_agent_engine),
     service: WorkspaceService = Depends(get_workspace_service),
 ):
+    if getattr(engine, "platform", None) == "codex":
+        raise HTTPException(
+            409,
+            detail="Codex workflow execution is unavailable in the experimental chat pilot",
+        )
     _workflow_feature_enabled()
     _runner_feature_enabled()
     _operations_feature_enabled()
@@ -1045,7 +1067,7 @@ async def read_workflow_source_readiness_endpoint(
     path: str = Query(..., min_length=1, max_length=256),
     service: WorkspaceService = Depends(get_workspace_service),
 ):
-    """Return the same template qualification state used by the run gate.
+    """Project saved-source compilation and lineage without preparing a run.
 
     A hand-authored workflow is deliberately reported as ``not_template``;
     the editor must not imply that an absent catalog provenance record is a
@@ -1055,12 +1077,28 @@ async def read_workflow_source_readiness_endpoint(
     scope = _workflow_source_scope(session_id, service)
     response.headers["Cache-Control"] = "no-store"
     try:
-        await service.workflow_sources.read(scope.workspace_dir, path)
+        document = await service.workflow_sources.read(scope.workspace_dir, path)
+        from workspace_service.workflow_source_execution import (
+            source_execution_diagnostic,
+        )
+
+        diagnostic = await service.executor.run(
+            "workspace.workflow_sources.execution_diagnostic",
+            lambda: source_execution_diagnostic(document.source),
+            timeout_seconds=30.0,
+        )
+        source_status = {
+            "accepted_source_digest": document.storage_digest,
+            "definition_revision": document.definition_revision,
+            "execution_diagnostic": diagnostic,
+        }
         origin = await service.workflow_sources.read_template_origin(
             scope.workspace_dir, path
         )
         if origin is None:
-            return WorkflowSourceReadinessResponse(state="not_template")
+            return WorkflowSourceReadinessResponse(
+                state="not_template", **source_status
+            )
         template_id = origin.get("template_id")
         template_version = origin.get("template_version")
         source_digest = origin.get("template_source_digest")
@@ -1069,16 +1107,41 @@ async def read_workflow_source_readiness_endpoint(
             return WorkflowSourceReadinessResponse(
                 state="unavailable",
                 message="The saved template provenance is incomplete.",
+                **source_status,
+            )
+        from workspace_service.workflow_run_preparation import (
+            has_revised_template_source,
+        )
+
+        provenance = {
+            "template_id": template_id,
+            "template_version": template_version,
+            "source_digest": source_digest if isinstance(source_digest, str) else None,
+            "layout_digest": layout_digest if isinstance(layout_digest, str) else None,
+            "starter_unchanged": (
+                origin["instantiated_source_digest"] == document.storage_digest
+                if isinstance(origin.get("instantiated_source_digest"), str)
+                else None
+            ),
+            **source_status,
+        }
+        if has_revised_template_source(origin, document):
+            return WorkflowSourceReadinessResponse(
+                state="revised",
+                **provenance,
+                message=(
+                    "This accepted revision has changed from the supplied starter. "
+                    "Check its current inputs, tools, model and authority in the working "
+                    "view before starting. The original template's qualification does "
+                    "not qualify this revision."
+                ),
             )
         readiness = service.engineering_workflow_templates.readiness(
             template_id, template_version
         )
         return WorkflowSourceReadinessResponse(
             state=readiness["state"],
-            template_id=template_id,
-            template_version=template_version,
-            source_digest=source_digest if isinstance(source_digest, str) else None,
-            layout_digest=layout_digest if isinstance(layout_digest, str) else None,
+            **provenance,
             definition_valid=readiness.get("definition_valid"),
             configured=readiness.get("configured"),
             qualified=readiness.get("qualified"),
@@ -1545,6 +1608,241 @@ async def workflow_recent_runs(
         ) from error
 
 
+async def _canonical_trace_record(session_id: str, run_path: str, service):
+    scope = _workflow_source_scope(session_id, service)
+    if (
+        not run_path.startswith("runs/")
+        or not run_path.endswith(".json")
+        or ".." in run_path.split("/")
+    ):
+        raise HTTPException(status_code=404, detail="Workflow run was not found")
+    try:
+        raw = await service.files.read_reference(scope.workspace_dir, run_path)
+        if len(raw) > 16 * 1024 * 1024:
+            raise ValueError("workflow run exceeds review limit")
+        record = json.loads(raw)
+        if not isinstance(record, dict):
+            raise ValueError("workflow run record is invalid")
+        return (
+            scope,
+            record,
+            build_canonical_trace(
+                record,
+                workspace_id=scope.workspace_id,
+                session_id=session_id,
+                path=run_path,
+            ),
+        )
+    except (OSError, ValueError, TypeError, json.JSONDecodeError) as error:
+        raise HTTPException(
+            status_code=404, detail="Workflow run was not found"
+        ) from error
+
+
+@router.get("/workflow-sources/run-trace", response_model=RivetRunInspectionResponse)
+@traced("workspace.workflow_sources.run_trace")
+async def workflow_source_run_trace_endpoint(
+    session_id: str,
+    run_path: str,
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    """Project one workspace-owned run log into the shared Trace contract."""
+
+    _scope, _record, inspection = await _canonical_trace_record(
+        session_id, run_path, service
+    )
+    return inspection
+
+
+@router.get("/workflow-sources/run-trace/artifact")
+@traced("workspace.workflow_sources.run_trace.artifact")
+async def workflow_source_run_trace_artifact_endpoint(
+    session_id: str,
+    run_path: str,
+    artifact_id: str,
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    """Return one verified raster preview from a workspace-owned saved run."""
+
+    scope, _record, inspection = await _canonical_trace_record(
+        session_id, run_path, service
+    )
+    artifact = next(
+        (
+            item
+            for item in canonical_artifact_paths(inspection)
+            if item.get("artifact_id") == artifact_id
+        ),
+        None,
+    )
+    if artifact is None:
+        raise HTTPException(status_code=404, detail="Trace artifact was not found")
+    media_type = str(artifact.get("media_type") or "")
+    if media_type not in {"image/png", "image/jpeg", "image/gif", "image/webp"}:
+        raise HTTPException(
+            status_code=415, detail="Trace artifact is not a raster preview"
+        )
+    location = str(artifact.get("workspace_path") or "")
+    try:
+        data = await service.files.read_reference(scope.workspace_dir, location)
+    except (OSError, ValueError) as error:
+        raise HTTPException(
+            status_code=404, detail="Trace artifact was not found"
+        ) from error
+    expected_size = artifact.get("bytes")
+    expected_digest = artifact.get("sha256")
+    if (
+        isinstance(expected_size, int)
+        and expected_size >= 0
+        and len(data) != expected_size
+    ) or (
+        isinstance(expected_digest, str)
+        and len(expected_digest) == 64
+        and hashlib.sha256(data).hexdigest() != expected_digest
+    ):
+        raise HTTPException(
+            status_code=409,
+            detail="Trace artifact no longer matches its saved identity",
+        )
+    label = (
+        str(artifact.get("label") or "preview")
+        .replace('"', "")
+        .replace("\r", "")
+        .replace("\n", "")
+    )
+    return Response(
+        content=data,
+        media_type=media_type,
+        headers={
+            "Cache-Control": "no-store",
+            "Content-Disposition": f'inline; filename="{label}"',
+            "X-Content-Type-Options": "nosniff",
+        },
+    )
+
+
+@router.get("/workflow-sources/run-trace/export")
+@traced("workspace.workflow_sources.run_trace.export")
+async def workflow_source_run_trace_export_endpoint(
+    session_id: str,
+    run_path: str,
+    mode: str = Query(default="report_only", pattern=r"^(report_only|full_data)$"),
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    scope, _record, inspection = await _canonical_trace_record(
+        session_id, run_path, service
+    )
+    resources = []
+    for artifact in canonical_artifact_paths(inspection):
+        data = None
+        media_type = str(artifact.get("media_type") or "application/octet-stream")
+        report_asset = media_type in {
+            "image/png",
+            "image/jpeg",
+            "image/gif",
+            "image/webp",
+        } or (
+            media_type == "image/svg+xml"
+            and isinstance(artifact.get("bytes"), int)
+            and artifact["bytes"] <= 2 * 1024 * 1024
+        )
+        availability = "omitted_from_export" if mode == "report_only" else "retained"
+        location = str(artifact.get("workspace_path") or "")
+        engineering_record = (
+            media_type == "application/json"
+            and isinstance(artifact.get("bytes"), int)
+            and artifact["bytes"] <= 2 * 1024 * 1024
+        )
+        input_text = (
+            artifact.get("role")
+            in {"input", "run_input", "input_reconstruction", "source_document"}
+            and media_type in {"text/plain", "text/markdown"}
+            and isinstance(artifact.get("bytes"), int)
+            and artifact["bytes"] <= 64 * 1024
+        )
+        package_metadata = (
+            media_type == "model/3mf"
+            and isinstance(artifact.get("bytes"), int)
+            and artifact["bytes"] <= 8 * 1024 * 1024
+        )
+        viewer_source = (
+            media_type == "model/stl"
+            and isinstance(artifact.get("bytes"), int)
+            and artifact["bytes"] <= 8 * 1024 * 1024
+        )
+        if location and (
+            mode == "full_data"
+            or report_asset
+            or engineering_record
+            or input_text
+            or package_metadata
+            or viewer_source
+        ):
+            try:
+                data = await service.files.read_reference(scope.workspace_dir, location)
+            except (OSError, ValueError):
+                availability = "missing"
+        digest = artifact.get("sha256")
+        resources.append(
+            TraceExportResource(
+                subject_id=str(artifact["artifact_id"]),
+                name=str(artifact.get("label") or artifact["artifact_id"]),
+                media_type=media_type,
+                data=data,
+                digest=(
+                    str(digest)
+                    if isinstance(digest, str) and len(digest) == 64
+                    else None
+                ),
+                availability=availability,
+                role="input"
+                if artifact.get("role") in {"input", "run_input"}
+                else str(artifact["role"])
+                if artifact.get("role") in {"input_reconstruction", "source_document"}
+                else "output",
+                report_asset=report_asset,
+            )
+        )
+    run_id = inspection["run"]["run_id"]
+    encoded = build_trace_export(
+        inspection=inspection,
+        evidence={
+            "run_id": run_id,
+            "source": "canonical-run-record",
+            "input_provenance": _record.get("trace_input_pack"),
+            "authorization": {
+                key: _record[key]
+                for key in (
+                    "approval_actor",
+                    "approval_evidence",
+                    "execution_kind",
+                    "external_effects",
+                )
+                if key in _record
+            },
+            "approval_events": [
+                event
+                for event in _record.get("step_events", [])
+                if event.get("kind") == "approval_decided"
+            ],
+        },
+        mode=mode,
+        resources=resources,
+        source_record=_record,
+    )
+    return Response(
+        content=encoded,
+        media_type="application/zip",
+        headers={
+            "Cache-Control": "no-store",
+            "Content-Disposition": (
+                f'attachment; filename="wright-workflow-review-{run_id}-{mode}.zip"'
+            ),
+            "X-Content-Type-Options": "nosniff",
+        },
+    )
+
+
 @router.get("/workflow-sources/reviews")
 async def workflow_artifact_reviews(
     session_id: str,
@@ -1627,8 +1925,14 @@ async def run_workflow_source_endpoint(
     body: WorkflowSourceRunRequest,
     request: Request,
     service: WorkspaceService = Depends(get_workspace_service),
+    engine: BaseAgentEngine = Depends(get_agent_engine),
 ):
     """Compatibility view over the same durable backend-owned source run."""
+    if getattr(engine, "platform", None) == "codex":
+        raise HTTPException(
+            409,
+            detail="Codex workflow execution is unavailable in the experimental chat pilot",
+        )
     from uuid import uuid4
     from core.process_interactions import ProcessRef
     from core.redaction import redact_text
@@ -1786,6 +2090,88 @@ async def run_workflow_source_endpoint(
         raise HTTPException(status_code=status_code, detail=info) from error
     except (OSError, ValueError) as error:
         raise HTTPException(status_code=422, detail=detail(error)) from error
+
+
+async def _handle_setup_call(operation, body, request, response, service):
+    from workspace_service.workflow_mcp_execution import WorkflowMcpRuntime
+
+    scope = _workflow_source_scope(body.session_id, service)
+    runtime = WorkflowMcpRuntime(
+        request.app.state.gateway_service,
+        workspace_id=scope.workspace_id,
+        session_id=body.session_id,
+    )
+    response.headers["Cache-Control"] = "no-store"
+    try:
+        setup = PrintedHandleSetup(service.workflow_sources, service.executor)
+        value = await getattr(setup, operation)(
+            scope.workspace_id, scope.workspace_dir, body, runtime.available()
+        )
+        return (
+            _workflow_source_response(scope.workspace_id, value)
+            if operation == "accept"
+            else value
+        )
+    except WorkflowSourceStorageError as error:
+        if error.code == "handle_setup_conflict":
+            raise HTTPException(
+                409, detail={"code": error.code, "message": str(error)}
+            ) from error
+        raise _workflow_source_http_error(error) from error
+    except WorkflowSourceExecutionError as error:
+        raise HTTPException(
+            422,
+            detail={
+                "code": error.code,
+                "message": str(error),
+                "correction": error.correction,
+            },
+        ) from error
+    except (ValueError, OSError) as error:
+        raise HTTPException(
+            422, detail={"code": "handle_setup_invalid", "message": str(error)}
+        ) from error
+    finally:
+        await runtime.close()
+
+
+@router.post("/workflow-source-templates/replacement-drawer-handle/setup/options")
+@traced("workspace.handle_setup.options")
+async def handle_setup_options(
+    body: SetupScope,
+    request: Request,
+    response: Response,
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    return await _handle_setup_call("options", body, request, response, service)
+
+
+@router.post(
+    "/workflow-source-templates/replacement-drawer-handle/setup/proposals",
+    status_code=201,
+)
+@traced("workspace.handle_setup.proposal")
+async def handle_setup_proposal(
+    body: SetupProposalRequest,
+    request: Request,
+    response: Response,
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    return await _handle_setup_call("propose", body, request, response, service)
+
+
+@router.post(
+    "/workflow-source-templates/replacement-drawer-handle/setup/accept",
+    response_model=WorkflowSourceResponse,
+)
+@traced("workspace.handle_setup.accept")
+async def handle_setup_accept(
+    body: SetupAcceptRequest,
+    request: Request,
+    response: Response,
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    return await _handle_setup_call("accept", body, request, response, service)
 
 
 @router.get(
@@ -2650,6 +3036,11 @@ async def start_workflow_run_endpoint(
     engine: BaseAgentEngine = Depends(get_agent_engine),
     service: WorkspaceService = Depends(get_workspace_service),
 ):
+    if getattr(engine, "platform", None) == "codex":
+        raise HTTPException(
+            409,
+            detail="Codex workflow execution is unavailable in the experimental chat pilot",
+        )
     _runner_feature_enabled()
     _operations_feature_enabled()
     workspace = service.lifecycle.get_by_session(body.session_id)
@@ -2788,6 +3179,17 @@ async def workflow_run_inspection_endpoint(
             run_id=run_id,
             after_sequence=after_sequence,
         )
+        trace_projection = getattr(service, "workflow_traces", None)
+        if trace_projection is not None:
+            try:
+                evidence_page = trace_projection.evidence_page(
+                    workspace_id=workspace["workspace_id"],
+                    run_id=run_id,
+                    limit=100,
+                )
+                inspection["evidence_records"] = evidence_page["records"]
+            except KeyError:
+                inspection["evidence_records"] = []
     except (WorkflowOperationsError, WorkflowRunnerError) as error:
         raise HTTPException(
             status_code=404, detail="Workflow run was not found"
@@ -3345,6 +3747,181 @@ async def workflow_run_evidence_export_endpoint(
     )
 
 
+@router.get("/workflows/runs/{run_id}/trace/export")
+@traced("workspace.workflows.trace.export")
+async def workflow_run_trace_export_endpoint(
+    run_id: str,
+    session_id: str = Query(...),
+    mode: str = Query(default="report_only", pattern=r"^(report_only|full_data)$"),
+    engine: BaseAgentEngine = Depends(get_agent_engine),
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    """Build one pinned, non-mutating offline review package."""
+
+    _runner_feature_enabled()
+    _operations_feature_enabled()
+    workspace = service.lifecycle.get_by_session(session_id)
+    if not workspace:
+        raise HTTPException(status_code=404, detail="Workspace not found")
+    try:
+        inspection = service.workflow_operations.inspection(
+            workspace_id=workspace["workspace_id"],
+            session_id=session_id,
+            run_id=run_id,
+        )
+        evidence = service.workflow_operations.run_evidence(
+            workspace_id=workspace["workspace_id"],
+            session_id=session_id,
+            run_id=run_id,
+        )
+    except (WorkflowOperationsError, WorkflowRunnerError) as error:
+        raise HTTPException(
+            status_code=404, detail="Workflow run was not found"
+        ) from error
+    resources: list[TraceExportResource] = []
+    artifact_store = getattr(service, "workspace_document_artifacts", None)
+    workspace_dir = None
+    if artifact_store is not None:
+        workspace_dir = await service.resolve_workspace_dir(session_id, engine)
+    for item in evidence.get("artifacts") or ():
+        if not isinstance(item, dict) or not item.get("artifact_id"):
+            continue
+        artifact_id = str(item["artifact_id"])
+        payload = None
+        name = str(item.get("label") or artifact_id)
+        media_type = str(item.get("media_type") or "application/octet-stream")
+        report_asset = media_type in {
+            "image/png",
+            "image/jpeg",
+            "image/gif",
+            "image/webp",
+        } or (
+            media_type == "image/svg+xml"
+            and isinstance(item.get("bytes"), int)
+            and item["bytes"] <= 2 * 1024 * 1024
+        )
+        viewer_source = (
+            media_type == "model/stl"
+            and isinstance(item.get("bytes"), int)
+            and item["bytes"] <= 8 * 1024 * 1024
+        )
+        digest = str(item.get("sha256")) if item.get("sha256") else None
+        availability = "omitted_from_export" if mode == "report_only" else "retained"
+        if (
+            (
+                mode == "full_data"
+                or report_asset
+                or viewer_source
+                or (
+                    media_type == "application/json"
+                    and isinstance(item.get("bytes"), int)
+                    and item["bytes"] <= 2 * 1024 * 1024
+                )
+            )
+            and artifact_store is not None
+            and workspace_dir
+        ):
+            try:
+                record, payload = artifact_store.read_for_run(
+                    workspace_id=workspace["workspace_id"],
+                    session_id=session_id,
+                    workspace_path=workspace_dir,
+                    run_id=run_id,
+                    artifact_id=artifact_id,
+                )
+                name = record.relative_path.rsplit("/", maxsplit=1)[-1]
+                media_type = record.media_type
+                digest = record.sha256
+            except (WorkspaceDocumentArtifactError, FileNotFoundError, ValueError):
+                availability = "missing"
+        resources.append(
+            TraceExportResource(
+                subject_id=artifact_id,
+                name=name,
+                media_type=media_type,
+                data=payload,
+                digest=digest,
+                availability=availability,
+                report_asset=report_asset,
+            )
+        )
+    encoded = build_trace_export(
+        inspection=inspection,
+        evidence=evidence,
+        mode=mode,
+        resources=resources,
+    )
+    return Response(
+        content=encoded,
+        media_type="application/zip",
+        headers={
+            "Cache-Control": "no-store",
+            "Content-Disposition": (
+                f'attachment; filename="wright-workflow-review-{run_id}-{mode}.zip"'
+            ),
+            "X-Content-Type-Options": "nosniff",
+        },
+    )
+
+
+@router.post(
+    "/workflows/runs/{run_id}/trace/evidence",
+    response_model=dict,
+    status_code=status.HTTP_201_CREATED,
+)
+@traced("workspace.workflows.trace.evidence.ingest")
+async def workflow_run_trace_evidence_ingest_endpoint(
+    run_id: str,
+    body: WorkflowTraceEvidenceIngestRequest,
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    workspace = service.lifecycle.get_by_session(body.session_id)
+    if not workspace:
+        raise HTTPException(status_code=404, detail="Workspace not found")
+    try:
+        return service.workflow_traces.ingest_evidence(
+            workspace_id=workspace["workspace_id"],
+            run_id=run_id,
+            envelope=body.evidence,
+        )
+    except KeyError as error:
+        raise HTTPException(
+            status_code=404, detail="Workflow run was not found"
+        ) from error
+    except ValueError as error:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT, detail=str(error)
+        ) from error
+
+
+@router.get(
+    "/workflows/runs/{run_id}/trace/evidence",
+    response_model=WorkflowTraceEvidencePageResponse,
+)
+@traced("workspace.workflows.trace.evidence.list")
+async def workflow_run_trace_evidence_list_endpoint(
+    run_id: str,
+    session_id: str = Query(...),
+    after_id: str = Query(default="", max_length=240),
+    limit: int = Query(default=100, ge=1, le=200),
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    workspace = service.lifecycle.get_by_session(session_id)
+    if not workspace:
+        raise HTTPException(status_code=404, detail="Workspace not found")
+    try:
+        return service.workflow_traces.evidence_page(
+            workspace_id=workspace["workspace_id"],
+            run_id=run_id,
+            after_id=after_id,
+            limit=limit,
+        )
+    except KeyError as error:
+        raise HTTPException(
+            status_code=404, detail="Workflow run was not found"
+        ) from error
+
+
 @router.get("/workflows/{slug}/graph", response_model=WorkflowGraphResponse)
 @traced("workspace.workflows.graph.inspect")
 async def inspect_workflow_graph_endpoint(
@@ -3649,6 +4226,9 @@ async def recover_workflow_endpoint(
 
 def _active_agent_id(request: Request | None = None) -> str:
     if request is not None:
+        bound = getattr(getattr(request, "state", None), "agent_platform", None)
+        if bound:
+            return bound
         sync_manager = getattr(request.app.state, "agent_sync_manager", None)
         if sync_manager and getattr(sync_manager, "active_agent", None):
             return sync_manager.active_agent
@@ -4121,6 +4701,9 @@ async def toggle_workspace_tool_endpoint(
         state = service.set_workspace_tool_enabled(
             body.session_id, body.server_id, body.is_enabled
         )
+        sync_manager = getattr(request.app.state, "agent_sync_manager", None)
+        if sync_manager is not None:
+            sync_manager.sync_workspace_tools(state.session_id)
     except WorkspaceServiceError as error:
         raise _workspace_service_http_exception(error)
 
@@ -4145,11 +4728,47 @@ async def _workspace_mcp_status_response(
         mcp_engine=mcp_engine,
         config_paths=hermes_config_paths(),
     )
+    if request is not None and result["status"] == "configured":
+        sync_manager = getattr(request.app.state, "agent_sync_manager", None)
+        advice = workspace_gateway_status(
+            workspace,
+            service.db_path,
+            sync_manager,
+            hermes_config_paths(),
+        )
+        if advice is not None and advice["status"] == "refresh_required":
+            try:
+                engine = get_agent_engine(request)
+                runtime_identity = getattr(engine, "gateway_runtime_identity", None)
+                if not callable(runtime_identity):
+                    raise RuntimeError("Gateway runtime observation is unavailable")
+                observed = await sync_manager.observe_gateway_before_refresh(
+                    str(workspace_id), runtime_identity
+                )
+                if not observed:
+                    advice = {
+                        "status": "warning",
+                        "message": "Connection status changed. Reopen this workspace before restarting Hermes.",
+                    }
+            except Exception as error:
+                logger.warning(
+                    "workspace_gateway_observation_unavailable",
+                    workspace_id=workspace_id,
+                    error_type=type(error).__name__,
+                )
+                advice = {
+                    "status": "warning",
+                    "message": "Cannot check the Hermes connection. Check its gateway and Model Setup before reconnecting tools.",
+                }
+        if advice is not None:
+            result = {**result, **advice}
     return WorkspaceMcpStatusResponse(
         workspace_id=workspace_id,
         status=result["status"],
         message=result["message"],
         running_mcps=[RunningMcpInfo(**item) for item in result["running_mcps"]],
+        restart_command=result.get("restart_command"),
+        restart_command_shell=result.get("restart_command_shell"),
     )
 
 
@@ -4159,7 +4778,11 @@ def _api_owned_mcp_engine(request: Request | None):
     if request is None or not api_mcp_autostart_enabled():
         return None
     sync_manager = getattr(request.app.state, "agent_sync_manager", None)
-    if getattr(sync_manager, "active_agent", "") == "hermes":
+    if getattr(
+        getattr(request, "state", None),
+        "agent_platform",
+        getattr(sync_manager, "active_agent", ""),
+    ) in {"hermes", "codex"}:
         return None
     return getattr(request.app.state, "mcp_engine", None)
 
@@ -4337,12 +4960,16 @@ async def get_workspace_tools_by_id_endpoint(
 async def toggle_workspace_tool_by_id_endpoint(
     workspace_id: str,
     body: WorkspaceToolToggleByIdRequest,
+    request: Request,
     service: WorkspaceService = Depends(get_workspace_service),
 ):
     try:
         state = service.set_workspace_tool_enabled_by_workspace(
             workspace_id, body.server_id, body.is_enabled
         )
+        sync_manager = getattr(request.app.state, "agent_sync_manager", None)
+        if sync_manager is not None:
+            sync_manager.sync_workspace_tools(state.session_id)
     except WorkspaceServiceError as error:
         raise _workspace_service_http_exception(error)
     return WorkspaceToolToggleByIdResponse(

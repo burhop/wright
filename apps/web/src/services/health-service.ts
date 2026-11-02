@@ -18,7 +18,7 @@ export class LiveHealthService {
     },
     {
       serviceId: "hermes-agent",
-      name: "Hermes Agent",
+      name: "Agent",
       endpoint: "/api/agent/health",
       state: "unknown",
       lastChecked: null,

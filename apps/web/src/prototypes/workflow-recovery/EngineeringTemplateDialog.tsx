@@ -3,8 +3,10 @@ import { useEffect, useId, useMemo, useRef, useState } from "react";
 import {
   workspaceService,
   type EngineeringWorkflowTemplate,
+  type EngineeringWorkflowTemplateDetail,
 } from "../../services/workspace-service";
 import "./engineering-template-dialog.css";
+import { TemplateToolSetup } from "./TemplateToolSetup";
 
 interface EngineeringTemplateDialogProps {
   open: boolean;
@@ -42,8 +44,14 @@ const readinessLabels: Record<
 > = {
   reference: "Reference workflow",
   setup_required: "Setup required",
-  ready: "Ready to run",
-  verified: "Verified runnable",
+  ready: "Ready in qualified setup",
+  verified: "Verified example",
+};
+
+const previewLabels = {
+  supplied_sketch: "Supplied sketch",
+  workflow_illustration: "Workflow illustration",
+  recorded_result: "Recorded result",
 };
 
 export function EngineeringTemplateDialog({
@@ -67,6 +75,10 @@ export function EngineeringTemplateDialog({
   const attempt = useRef<{ key: string; requestId: string } | undefined>(
     undefined,
   );
+  const [setupShown, setSetupShown] = useState(false);
+  const [detail, setDetail] = useState<EngineeringWorkflowTemplateDetail>();
+  const [detailError, setDetailError] = useState("");
+  const [detailRequest, setDetailRequest] = useState(0);
   const selected = useMemo(
     () =>
       templates.find((template) => template.template_id === selectedId) ?? null,
@@ -91,13 +103,18 @@ export function EngineeringTemplateDialog({
     let current = true;
     setState("loading");
     setError("");
+    setTemplates([]);
+    setSelectedId("");
+    setName("");
+    setSetupShown(false);
     void service
       .getEngineeringWorkflowTemplates()
       .then((items) => {
         if (!current) return;
         setTemplates(items);
-        setSelectedId(items[0]?.template_id ?? "");
-        setName(items[0]?.title ?? "");
+        const initial = items.find((item) => item.exploration) ?? items[0];
+        setSelectedId(initial?.template_id ?? "");
+        setName(initial?.title ?? "");
         setState("idle");
       })
       .catch((reason: unknown) => {
@@ -114,10 +131,43 @@ export function EngineeringTemplateDialog({
     };
   }, [open, service]);
 
+  useEffect(() => {
+    setDetail(undefined);
+    setDetailError("");
+    if (!open || !selected || !setupShown) return;
+    let current = true;
+    void workspaceService
+      .getEngineeringWorkflowTemplate(selected.template_id, selected.version)
+      .then((loaded) => {
+        if (!current) return;
+        if (
+          loaded.template_id !== selected.template_id ||
+          loaded.version !== selected.version ||
+          loaded.source_digest !== selected.source_digest
+        )
+          throw new Error(
+            "The starter changed while its requirements were loading. Reopen the example list before creating a copy.",
+          );
+        setDetail(loaded);
+      })
+      .catch((reason: unknown) => {
+        if (!current) return;
+        setDetailError(
+          reason instanceof Error
+            ? reason.message
+            : "Unable to load this job's setup requirements.",
+        );
+      });
+    return () => {
+      current = false;
+    };
+  }, [open, selected, detailRequest, setupShown]);
+
   const choose = (template: EngineeringWorkflowTemplate) => {
     setSelectedId(template.template_id);
     setName(template.title);
     setError("");
+    setSetupShown(false);
   };
 
   const create = async () => {
@@ -191,8 +241,8 @@ export function EngineeringTemplateDialog({
           </p>
           <h2 id={`${id}-title`}>Start from an engineering workflow</h2>
           <p>
-            Choose an editable example. Readiness describes the current live
-            tool path.
+            Explore a job, its inputs and its results before setting up tools.
+            Browsing does not run an engineering process.
           </p>
         </div>
         <button
@@ -207,7 +257,7 @@ export function EngineeringTemplateDialog({
       </header>
 
       {state === "loading" ? (
-        <p role="status">Loading ten engineering workflows…</p>
+        <p role="status">Loading engineering workflows…</p>
       ) : (
         <div className="engineering-template-dialog__body">
           <div
@@ -267,10 +317,30 @@ export function EngineeringTemplateDialog({
               data-testid="workflow-template-details"
               aria-live="polite"
             >
-              <div
-                className="engineering-template-dialog__preview"
-                data-preview-available={Boolean(previewUrl(selected))}
-              >
+              <h3>{selected.title}</h3>
+              <p>{selected.summary}</p>
+              {detailError && (
+                <div role="status">
+                  <p>
+                    Tool setup information could not be loaded. You can still
+                    browse the example.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => setDetailRequest((request) => request + 1)}
+                  >
+                    Retry tool setup
+                  </button>
+                </div>
+              )}
+              {detail?.template_id === selected.template_id &&
+                detail.source_digest === selected.source_digest && (
+                  <TemplateToolSetup
+                    key={`${sessionId}:${workspaceId}:${selected.template_id}:${selected.version}:${selected.source_digest}`}
+                    requirements={detail.capability_requirements}
+                  />
+                )}
+              <figure className="engineering-template-dialog__preview">
                 {previewUrl(selected) ? (
                   <img src={previewUrl(selected)!} alt={selected.preview.alt} />
                 ) : (
@@ -278,17 +348,127 @@ export function EngineeringTemplateDialog({
                     Template image preview is not available in this host yet.
                   </p>
                 )}
-              </div>
-              <h3>{selected.title}</h3>
-              <p>{selected.summary}</p>
+                <figcaption>
+                  <strong>
+                    {selected.exploration
+                      ? previewLabels[selected.exploration.preview_kind]
+                      : "Workflow illustration"}
+                  </strong>
+                  {selected.exploration && (
+                    <span>{selected.exploration.preview_caption}</span>
+                  )}
+                </figcaption>
+              </figure>
+              {selected.exploration && (
+                <>
+                  <section
+                    className="engineering-template-dialog__outcome"
+                    data-testid="workflow-template-outcome"
+                    aria-label="Example outcome"
+                  >
+                    <h4>
+                      {selected.exploration.outcome_status === "recorded"
+                        ? "Recorded outcome"
+                        : "Recorded outcome pending"}
+                    </h4>
+                    <p>{selected.exploration.outcome_summary}</p>
+                    {selected.exploration.outcome_status === "recorded" &&
+                      selected.exploration.recorded_result && (
+                        <details>
+                          <summary data-testid="workflow-template-recorded-evidence">
+                            Recorded result evidence
+                          </summary>
+                          <p>{selected.exploration.recorded_result.scope}</p>
+                          <dl>
+                            <div>
+                              <dt>Run</dt>
+                              <dd>
+                                {selected.exploration.recorded_result.run_id}
+                              </dd>
+                            </div>
+                            <div>
+                              <dt>Source digest</dt>
+                              <dd>
+                                {
+                                  selected.exploration.recorded_result
+                                    .source_digest
+                                }
+                              </dd>
+                            </div>
+                            <div>
+                              <dt>Artifact digest</dt>
+                              <dd>
+                                {
+                                  selected.exploration.recorded_result
+                                    .artifact_digest
+                                }
+                              </dd>
+                            </div>
+                            <div>
+                              <dt>Evidence</dt>
+                              <dd>
+                                {
+                                  selected.exploration.recorded_result
+                                    .evidence_reference
+                                }
+                              </dd>
+                            </div>
+                          </dl>
+                        </details>
+                      )}
+                    <p>
+                      Live results appear in the working view after you start
+                      your own run.
+                    </p>
+                  </section>
+                  <section aria-label="Engineering tool handoffs">
+                    <h4>How the tools work together</h4>
+                    <ol className="engineering-template-dialog__stages">
+                      {selected.exploration.stages.map((stage, index) => (
+                        <li key={`${index}-${stage.title}`}>
+                          <strong>{stage.title}</strong>
+                          <p>
+                            {stage.tool} — {stage.contribution}
+                          </p>
+                          <dl>
+                            <div>
+                              <dt>Receives</dt>
+                              <dd>{stage.input}</dd>
+                            </div>
+                            <div>
+                              <dt>Produces</dt>
+                              <dd>{stage.output}</dd>
+                            </div>
+                          </dl>
+                        </li>
+                      ))}
+                    </ol>
+                  </section>
+                  {selected.exploration.limitations.length > 0 && (
+                    <section aria-label="Example limitations">
+                      <h4>What this example establishes</h4>
+                      <ul>
+                        {selected.exploration.limitations.map((limit) => (
+                          <li key={limit}>{limit}</li>
+                        ))}
+                      </ul>
+                    </section>
+                  )}
+                </>
+              )}
               <div
                 data-testid="workflow-template-readiness"
                 className="engineering-template-dialog__readiness"
               >
+                <p>Packaged starter status</p>
                 <b>{readinessLabels[selected.readiness.state]}</b>
                 {selected.readiness.blocking_reasons.map((reason) => (
                   <p key={reason}>{reason}</p>
                 ))}
+                <p>
+                  Your workspace's current tools and inputs are checked in the
+                  working view before a run.
+                </p>
               </div>
               <dl>
                 <div>
@@ -318,6 +498,88 @@ export function EngineeringTemplateDialog({
                   </dd>
                 </div>
               </dl>
+              <button
+                type="button"
+                className="recovery-button recovery-button--secondary"
+                data-testid="workflow-template-setup"
+                aria-expanded={setupShown}
+                aria-controls={`${id}-setup`}
+                onClick={() => setSetupShown((shown) => !shown)}
+              >
+                {setupShown ? "Hide setup requirements" : "Set up this job"}
+              </button>
+              {setupShown && (
+                <section
+                  id={`${id}-setup`}
+                  className="engineering-template-dialog__setup"
+                  aria-label="Setup requirements"
+                >
+                  <h4>Tools for this process</h4>
+                  <p>
+                    {selected.template_id === "replacement-drawer-handle"
+                      ? "Create an editable copy, then choose Set up this job in its editor. Select your local tools and exact profile files, inspect and accept the proposed revision, then open its working view and choose Prepare and check inputs."
+                      : "Create an editable copy, review its inputs, then open its working view and choose Prepare and check inputs."}{" "}
+                    Creating a copy does not install tools or start work.
+                  </p>
+                  {!detail && !detailError && (
+                    <p role="status">Loading packaged requirements…</p>
+                  )}
+                  {detailError && (
+                    <>
+                      <p role="alert">{detailError}</p>
+                      <button
+                        type="button"
+                        data-testid="workflow-template-setup-retry"
+                        className="recovery-button recovery-button--secondary"
+                        onClick={() =>
+                          setDetailRequest((request) => request + 1)
+                        }
+                      >
+                        Retry requirements
+                      </button>
+                    </>
+                  )}
+                  {detail && (
+                    <>
+                      <ul>
+                        {detail.capability_requirements.map(
+                          (requirement, index) => (
+                            <li key={index}>
+                              <strong>
+                                {String(
+                                  requirement.title ??
+                                    requirement.operation ??
+                                    "Engineering capability",
+                                ).replaceAll("_", " ")}
+                              </strong>
+                              {typeof requirement.description === "string" && (
+                                <p>{requirement.description}</p>
+                              )}
+                              {typeof requirement.qualification ===
+                                "string" && (
+                                <span>
+                                  {" "}
+                                  · Qualification: {requirement.qualification}
+                                </span>
+                              )}
+                            </li>
+                          ),
+                        )}
+                      </ul>
+                      {detail.readiness.facts.length > 0 && (
+                        <ul aria-label="Recorded qualification facts">
+                          {detail.readiness.facts.map((fact) => (
+                            <li key={fact.code}>
+                              {fact.label}:{" "}
+                              {fact.satisfied ? "recorded" : "still needed"}
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </>
+                  )}
+                </section>
+              )}
               <label htmlFor={`${id}-name`}>Workflow name</label>
               <input
                 id={`${id}-name`}

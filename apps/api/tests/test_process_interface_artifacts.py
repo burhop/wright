@@ -4,6 +4,7 @@ import asyncio
 from dataclasses import replace
 import hashlib
 import json
+from pathlib import Path
 from types import SimpleNamespace
 
 import pytest
@@ -24,6 +25,11 @@ from packages.workspace_service.tests.test_process_input_readiness import (
 
 
 PREFIX = "/api/workspace/process-interfaces"
+REPOSITORY = Path(__file__).resolve().parents[3]
+THERMAL_SOURCE = (
+    REPOSITORY
+    / "tests/datasets/process-validation/processes/heat-validation.workflow.wflow"
+).read_text(encoding="utf-8")
 
 
 def test_pdf_preview_uses_exact_recorded_result_without_execution(
@@ -182,6 +188,387 @@ def read(client, case, reference, snapshot_id, **extra):
             **extra,
         },
     )
+
+
+def record_thermal_assessment(
+    case, *, duplicate=False, encoding="original", changed_field=None
+):
+    """Controlled recorder proof, with real thermal validation and no tool/model run."""
+    from core.process_validation import (
+        ProducerIdentity,
+        SubjectBinding,
+        ValidationRequest,
+        canonical_digest,
+    )
+    from workspace_service.process_validation.application import ValidationApplication
+    from workspace_service.process_validation.profiles import load_profile
+    from workspace_service.workflow_results import (
+        EngineeringResult,
+        Provenance,
+        Representation,
+        file_result,
+    )
+    from workspace_service.workflow_run_record import record_workflow_run
+
+    run_id = "thermal-assessment-run"
+    profile = load_profile("heat-spreader-sizing-01")
+    validation = ValidationApplication(case.owner.db_path, "workspace", str(case.root))
+    files = {
+        "baseline_coarse": "baseline-coarse.csv",
+        "baseline_fine": "baseline-fine.csv",
+        "revision_coarse": "revision-coarse.csv",
+        "revision_fine": "revision-fine.csv",
+        "decision": "decision.json",
+    }
+    subjects, declared = [], []
+    for role, name in files.items():
+        content = (
+            REPOSITORY / "tests/datasets/process-validation/thermal" / name
+        ).read_bytes()
+        relative = f"thermal/fields/{name}"
+        target = case.root / relative
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_bytes(content)
+        digest = hashlib.sha256(content).hexdigest()
+        result = file_result(
+            {
+                "output_path": relative,
+                "output_format": target.suffix[1:],
+                "output_bytes": len(content),
+                "sha256": digest,
+            },
+            Provenance(run_id, "produce", role),
+        )
+        subject = SubjectBinding(
+            id=role.replace("_", "-"),
+            role=role,
+            result_id=result.id,
+            producer=ProducerIdentity(
+                run_id=run_id, step_id="produce", attempt=1, output_port=role
+            ),
+            kind="file",
+            locator=relative,
+            format=target.suffix[1:],
+            encoding="raw-bytes",
+            sha256=digest,
+        )
+        validation.repository.register_output("workspace", subject)
+        subjects.append(subject)
+        declared.append(result.to_dict())
+    outcome = validation.service.evaluate(
+        ValidationRequest(
+            trace_id="thermal-artifact-transport",
+            workspace_id="workspace",
+            invocation_id="thermal-validation",
+            run_id=run_id,
+            check_step_id="inspect",
+            subjects=tuple(subjects),
+            profile_ref=profile.reference(),
+            baseline_ref=profile.baseline.reference(),
+            idempotency_key="thermal-validation",
+        ),
+        profile,
+    )
+    assert outcome.release_eligible
+    assert len(outcome.assessment.measurements) == 15
+    assert outcome.assessment.summary.counts["pass"] == 15
+    ledger_content = outcome.assessment.model_dump_json(indent=2).encode("utf-8")
+    payload = json.loads(ledger_content)
+    if changed_field == "summary":
+        payload["summary"]["requirements_compliant"] = False
+    elif changed_field == "count":
+        payload["summary"]["counts"]["pass"] += 1
+    elif changed_field == "id":
+        payload["id"] = "assessment-unowned-thermal"
+    content = (
+        ledger_content
+        if changed_field is None
+        else json.dumps(payload, indent=2).encode("utf-8")
+    )
+    if encoding == "compact":
+        content = json.dumps(payload, separators=(",", ":")).encode("utf-8")
+    elif encoding == "reordered":
+        content = reordered_assessment_json(content)
+    assert (json.loads(content) == json.loads(ledger_content)) == (
+        changed_field is None
+    )
+    if encoding != "original":
+        assert content != ledger_content
+    digest = hashlib.sha256(content).hexdigest()
+    # The declared value card is intentionally distinct from its saved report.
+    card = EngineeringResult(
+        f"{run_id}:inspect:assessment",
+        "structured",
+        "Thermal validation disposition",
+        (
+            Representation(
+                "value",
+                "steps/inspect/assessment",
+                "json",
+                sha256=canonical_digest({"assessment_id": outcome.assessment.id}),
+            ),
+        ),
+        Provenance(run_id, "inspect", "assessment"),
+    ).to_dict()
+    declared.append(card)
+    diagnostics = []
+    for index in range(2 if duplicate else 1):
+        # No guessed assessment filename or directory is part of the read contract.
+        relative = (
+            f"unrelated/retained-evidence/check-{index}/numerical-observations.json"
+        )
+        target = case.root / relative
+        target.parent.mkdir(parents=True, exist_ok=True)
+        recorded_content = (
+            reordered_assessment_json(content)
+            if index == 1 and duplicate == "reordered"
+            else content
+        )
+        target.write_bytes(recorded_content)
+        diagnostics.append(
+            file_result(
+                {
+                    "output_path": relative,
+                    "output_format": "json",
+                    "output_bytes": len(recorded_content),
+                    "sha256": hashlib.sha256(recorded_content).hexdigest(),
+                    "artifact_role": "verification",
+                },
+                Provenance(run_id, "inspect", f"diagnostic:{relative}"),
+            ).to_dict()
+        )
+
+    declared = json.loads(json.dumps(declared))
+    diagnostics = json.loads(json.dumps(diagnostics))
+
+    async def execute(emit):
+        for row in declared + diagnostics:
+            await emit(
+                {
+                    "kind": "result_ready",
+                    "task_id": row["provenance"]["task_id"],
+                    "task_title": "Thermal evidence",
+                    "engineering_result": row,
+                }
+            )
+        return {"run_id": run_id, "results": declared, "outputs": [], "steps": []}
+
+    recorded = asyncio.run(
+        record_workflow_run(
+            service=case.owner.workspace,
+            workspace_dir=str(case.root),
+            workspace_id="workspace",
+            source_path=case.query["path"],
+            source_digest=case.query["expected_storage_digest"],
+            run_id=run_id,
+            execute=execute,
+        )
+    )
+    record_path = case.root / recorded["run_log_path"]
+    record = json.loads(record_path.read_bytes())
+    assert record["status"] == "completed"
+    assert record["result"]["results"] == declared
+    assert all(row["id"] in record["partial_results"] for row in diagnostics)
+    return SimpleNamespace(
+        run_id=run_id,
+        assessment=outcome.assessment,
+        content=content,
+        digest=digest,
+        record_path=record_path,
+        declared=declared,
+        diagnostics=diagnostics,
+        card=card,
+    )
+
+
+def reordered_assessment_json(content):
+    # Change every object key order and whitespace, preserving all JSON values.
+    value = json.loads(content, object_pairs_hook=lambda pairs: dict(reversed(pairs)))
+    return json.dumps(value, indent=1).encode("utf-8")
+
+
+def thermal_snapshot(client, case, run):
+    response = client.get(
+        f"{PREFIX}/interaction", params={**case.query, "run_id": run.run_id}
+    )
+    assert response.status_code == 200, response.text
+    snapshot = response.json()
+    assert snapshot["state"] == "completed"
+    assert not snapshot["interactions"]
+    assert not any(action["enabled"] for action in snapshot["actions"])
+    targets = [
+        target for target in snapshot["navigation"] if target["kind"] == "assessment"
+    ]
+    assert len(targets) == 5
+    assert {target["assessment_id"] for target in targets} == {run.assessment.id}
+    assert {
+        (item["assessment_id"], item["outcome"], item["currentness"])
+        for output in snapshot["outputs"]
+        for item in output["assessments"]
+    } == {(run.assessment.id, "pass", "current")}
+    return snapshot, targets
+
+
+@pytest.mark.parametrize("artifact_case", [THERMAL_SOURCE], indirect=True)
+@pytest.mark.parametrize("encoding", ["original", "compact", "reordered"])
+def test_completed_thermal_subject_links_read_actual_partial_only_assessment(
+    sync_client,
+    artifact_case,
+    encoding,
+):
+    c = artifact_case
+    run = record_thermal_assessment(c, encoding=encoding)
+    before = run.record_path.read_bytes()
+    snapshot, targets = thermal_snapshot(sync_client, c, run)
+    assert {row["result_id"] for row in snapshot["outputs"]} == {
+        row["id"] for row in run.declared + run.diagnostics
+    }
+    card = next(
+        row for row in snapshot["outputs"] if row["result_id"] == run.card["id"]
+    )
+    assert card["port_id"] == "assessment" and not card["representations"]
+    for target in targets:
+        response = sync_client.post(
+            f"{PREFIX}/navigation", json={**c.query, "target": target}
+        )
+        assert response.status_code == 200, response.text
+        reference = response.json()["representation"]
+        assert reference["result_id"] == run.diagnostics[0]["id"]
+        assert (
+            reference["artifact_ref"]
+            == run.diagnostics[0]["representations"][0]["location"]
+        )
+        assert reference["sha256"] == run.digest
+        raw = read(sync_client, c, reference, None, run_id=run.run_id)
+        assert raw.status_code == 200, raw.text
+        assert (
+            raw.content == run.content
+            and raw.headers["content-type"] == "application/json"
+        )
+        assert raw.headers["x-wright-artifact-sha256"] == run.digest
+    preview = read(
+        sync_client, c, reference, None, run_id=run.run_id, preview="validation-report"
+    )
+    assert preview.status_code == 200, preview.text
+    assert run.assessment.id in preview.text and "HEAT-SELECTION" in preview.text
+    assert run.record_path.read_bytes() == before
+    assert (c.root / reference["artifact_ref"]).read_bytes() == run.content
+
+
+@pytest.mark.parametrize("artifact_case", [THERMAL_SOURCE], indirect=True)
+@pytest.mark.parametrize("changed_field", ["summary", "count", "id"])
+def test_recorded_thermal_json_cannot_replace_authoritative_assessment(
+    sync_client, artifact_case, changed_field
+):
+    c = artifact_case
+    run = record_thermal_assessment(c, changed_field=changed_field)
+    before = run.record_path.read_bytes()
+    _, targets = thermal_snapshot(sync_client, c, run)
+    row = run.diagnostics[0]
+    reference = {
+        "artifact_ref": row["representations"][0]["location"],
+        "sha256": run.digest,
+        "result_id": row["id"],
+    }
+    # Exact file membership permits a raw download, not a different assessment.
+    raw = read(sync_client, c, reference, None, run_id=run.run_id)
+    assert raw.status_code == 200 and raw.content == run.content
+    assert hashlib.sha256(raw.content).hexdigest() == reference["sha256"]
+    navigation = sync_client.post(
+        f"{PREFIX}/navigation", json={**c.query, "target": targets[0]}
+    )
+    preview = read(
+        sync_client, c, reference, None, run_id=run.run_id, preview="validation-report"
+    )
+    for response in (navigation, preview):
+        assert response.status_code == 503, response.text
+        assert response.json()["error_code"] == "CAPABILITY_UNAVAILABLE"
+    assert run.record_path.read_bytes() == before
+    assert (c.root / reference["artifact_ref"]).read_bytes() == run.content
+
+
+@pytest.mark.parametrize("artifact_case", [THERMAL_SOURCE], indirect=True)
+def test_semantically_equal_thermal_assessment_files_are_still_ambiguous(
+    sync_client, artifact_case
+):
+    c = artifact_case
+    run = record_thermal_assessment(c, duplicate="reordered")
+    before = run.record_path.read_bytes()
+    _, targets = thermal_snapshot(sync_client, c, run)
+    refs = [row["representations"][0] for row in run.diagnostics]
+    assert refs[0]["sha256"] != refs[1]["sha256"]
+    contents = [(c.root / ref["location"]).read_bytes() for ref in refs]
+    assert json.loads(contents[0]) == json.loads(contents[1])
+    response = sync_client.post(
+        f"{PREFIX}/navigation", json={**c.query, "target": targets[0]}
+    )
+    assert response.status_code == 503, response.text
+    assert response.json()["error_code"] == "CAPABILITY_UNAVAILABLE"
+    assert run.record_path.read_bytes() == before
+    assert [(c.root / ref["location"]).read_bytes() for ref in refs] == contents
+
+
+@pytest.mark.parametrize("artifact_case", [THERMAL_SOURCE], indirect=True)
+@pytest.mark.parametrize(
+    "change", ["ambiguous", "missing", "tampered", "removed", "foreign"]
+)
+def test_completed_thermal_assessment_links_fail_closed(
+    sync_client,
+    artifact_case,
+    change,
+):
+    c = artifact_case
+    run = record_thermal_assessment(c, duplicate=change == "ambiguous")
+    _, targets = thermal_snapshot(sync_client, c, run)
+    row = run.diagnostics[0]
+    reference = {
+        "artifact_ref": row["representations"][0]["location"],
+        "sha256": run.digest,
+        "result_id": row["id"],
+    }
+    path = c.root / reference["artifact_ref"]
+    if change == "missing":
+        path.unlink()
+    elif change == "tampered":
+        path.write_bytes(run.content + b"\n")
+    elif change == "removed":
+        record = json.loads(run.record_path.read_bytes())
+        del record["partial_results"][row["id"]]
+        run.record_path.write_text(json.dumps(record), encoding="utf-8")
+    before = run.record_path.read_bytes()
+    if change in {"ambiguous", "removed"}:
+        response = sync_client.post(
+            f"{PREFIX}/navigation", json={**c.query, "target": targets[0]}
+        )
+        assert response.status_code == 503, response.text
+        assert response.json()["error_code"] == "CAPABILITY_UNAVAILABLE"
+        if change == "removed":
+            assert (
+                read(sync_client, c, reference, None, run_id=run.run_id).status_code
+                == 403
+            )
+            assert (
+                path.read_bytes() == run.content
+            )  # Disk existence grants no membership.
+    elif change == "foreign":
+        for extra, status in (
+            ({"session_id": "foreign"}, 404),
+            ({"run_id": "foreign-run"}, 503),
+            ({"expected_storage_digest": "0" * 64}, 403),
+        ):
+            response = read(
+                sync_client, c, reference, None, **{"run_id": run.run_id, **extra}
+            )
+            assert response.status_code == status, response.text
+    else:
+        response = read(sync_client, c, reference, None, run_id=run.run_id)
+        assert response.status_code == (503 if change == "missing" else 409), (
+            response.text
+        )
+        assert response.json()["error_code"] == (
+            "CAPABILITY_UNAVAILABLE" if change == "missing" else "SUBJECT_STALE"
+        )
+    assert run.record_path.read_bytes() == before
 
 
 def test_upload_prepare_and_read_exact_bytes_without_execution(

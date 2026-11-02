@@ -103,6 +103,28 @@ export function RivetRunResult({
       ? readableValue(result.value)
       : serialized;
   const displayed = displayedValue(result, rendered);
+  const artifactMediaType =
+    result.artifact && typeof result.artifact.media_type === "string"
+      ? result.artifact.media_type
+      : "";
+  const artifactPreview =
+    result.artifact &&
+    typeof result.artifact.preview_url === "string" &&
+    ["image/png", "image/jpeg", "image/gif", "image/webp"].includes(
+      artifactMediaType,
+    )
+      ? result.artifact.preview_url
+      : null;
+  const imageSource =
+    result.kind === "link" &&
+    typeof result.value === "string" &&
+    (result.data_type.startsWith("image/") ||
+      /\.(?:png|jpe?g|gif|webp)(?:[?#].*)?$/i.test(result.value))
+      ? result.value
+      : artifactPreview;
+  const unsupportedModel =
+    /(?:step|3mf)/i.test(artifactMediaType) ||
+    /(?:step|3mf)/i.test(result.data_type);
   const copy = async () => {
     if (navigator.clipboard) await navigator.clipboard.writeText(serialized);
   };
@@ -122,12 +144,25 @@ export function RivetRunResult({
           <span className="rivet-run-warning">Redacted</span>
         )}
       </header>
+      {imageSource && (
+        <img
+          className="rivet-run-result__image"
+          src={imageSource}
+          alt={`Recorded preview for ${result.name}`}
+        />
+      )}
       <pre
         className={expanded ? "is-expanded" : ""}
         data-testid={`rivet-run-result-value-${result.name}`}
       >
         {displayed}
       </pre>
+      {unsupportedModel && (
+        <p className="rivet-run-empty">
+          Interactive geometry preview is unavailable for this format. Open the
+          original or a recorded display representation in Wright.
+        </p>
+      )}
       <div className="rivet-run-actions">
         {rendered.length > 240 && (
           <button

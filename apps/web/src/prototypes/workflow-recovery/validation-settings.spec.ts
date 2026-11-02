@@ -211,34 +211,37 @@ describe("validator authoring uses the accepted command/source model", () => {
     ).toBe(false);
   });
 
-  it("does not offer tool or overwrite producers for automatic correction", () => {
-    const selected = configured();
-    const block = selected.workflow.blocks.find((b) => b.id === selected.id)!;
-    const source = selected.workflow.ports.find(
-      (port) =>
-        port.direction === "output" &&
-        port.ownerBlockId !== block.id &&
-        port.typeId === "type.document.engineering",
-    )!;
-    const connected = apply(
-      selected.workflow,
-      selected.layout,
-      validationSubjectCommands(
-        block,
+  it.each(["overwrite", "publish_indexed", "publish_overwrite"])(
+    "does not offer %s producers for automatic correction",
+    (policy) => {
+      const selected = configured();
+      const block = selected.workflow.blocks.find((b) => b.id === selected.id)!;
+      const source = selected.workflow.ports.find(
+        (port) =>
+          port.direction === "output" &&
+          port.ownerBlockId !== block.id &&
+          port.typeId === "type.document.engineering",
+      )!;
+      const connected = apply(
         selected.workflow,
-        block.inputPortIds[0]!,
-        source.id,
-      ),
-    );
-    const owner = connected.workflow.blocks.find(
-      (b) => b.id === source.ownerBlockId,
-    )!;
-    owner.configuration.file_policy = "overwrite";
-    expect(validationRevisionTargets(block, connected.workflow)).toEqual([]);
-    expect(() =>
-      validationRevisionCommands(block, connected.workflow, owner.id),
-    ).toThrow(/ordinary AI producer/);
-  });
+        selected.layout,
+        validationSubjectCommands(
+          block,
+          selected.workflow,
+          block.inputPortIds[0]!,
+          source.id,
+        ),
+      );
+      const owner = connected.workflow.blocks.find(
+        (b) => b.id === source.ownerBlockId,
+      )!;
+      owner.configuration.file_policy = policy;
+      expect(validationRevisionTargets(block, connected.workflow)).toEqual([]);
+      expect(() =>
+        validationRevisionCommands(block, connected.workflow, owner.id),
+      ).toThrow(/ordinary AI producer/);
+    },
+  );
 
   it("undoes and redoes profile selection through the existing history commands", () => {
     const selected = configured();

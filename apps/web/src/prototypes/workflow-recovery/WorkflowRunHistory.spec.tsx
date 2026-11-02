@@ -1,7 +1,20 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
-import { afterEach, expect, it, vi } from "vitest";
+import {
+  act,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from "@testing-library/react";
+import { afterEach, beforeEach, expect, it, vi } from "vitest";
 import { workspaceService } from "../../services/workspace-service";
+import { failedInspection } from "../../components/workflows/rivet-run-inspector.fixtures";
 import { WorkflowRunHistory } from "./WorkflowRunHistory";
+
+beforeEach(() => {
+  vi.spyOn(workspaceService, "getWorkspaceWorkflowRunTrace").mockResolvedValue(
+    failedInspection,
+  );
+});
 
 afterEach(() => vi.restoreAllMocks());
 
@@ -33,6 +46,9 @@ it("opens the exact saved run in its working view without starting it", async ()
     screen.getByRole("button", { name: "Open run in working view" }),
   );
   expect(open).toHaveBeenCalledExactlyOnceWith("existing-run", "accepted");
+  expect(
+    await screen.findByRole("region", { name: "Run results" }),
+  ).toBeVisible();
 });
 
 it.each([
@@ -79,6 +95,12 @@ it.each([
     fireEvent.click(screen.getByRole("button", { name: "Open saved run log" }));
     expect(openFile).toHaveBeenCalledWith("runs/task/old.json");
     expect(open).not.toHaveBeenCalled();
+    expect(
+      await screen.findByRole("region", { name: "Run results" }),
+    ).toBeVisible();
+    expect(
+      screen.queryByRole("button", { name: "Open run in working view" }),
+    ).toBeNull();
   },
 );
 
@@ -99,6 +121,19 @@ it("reports an interrupted operation without restarting and opens its existing l
         },
       },
     ]);
+  let completeTrace!: (value: typeof failedInspection) => void;
+  const pendingTrace = new Promise<typeof failedInspection>((resolve) => {
+    completeTrace = resolve;
+  });
+  const trace = vi
+    .spyOn(workspaceService, "getWorkspaceWorkflowRunTrace")
+    .mockReturnValue(pendingTrace);
+  const start = vi
+    .spyOn(workspaceService, "runWorkspaceWorkflowSource")
+    .mockRejectedValue(new Error("History must not start work"));
+  const resume = vi
+    .spyOn(workspaceService, "resumeWorkflowApproval")
+    .mockRejectedValue(new Error("History must not resume work"));
   const open = vi.fn();
   render(
     <WorkflowRunHistory
@@ -116,5 +151,50 @@ it("reports an interrupted operation without restarting and opens its existing l
   fireEvent.click(screen.getByRole("button", { name: "Open saved run log" }));
   expect(open).toHaveBeenCalledWith("runs/task/run.json");
   expect(fetch).toHaveBeenCalledWith("session", "workflows/task.wflow");
-  fetch.mockRestore();
+  await waitFor(() =>
+    expect(trace).toHaveBeenCalledWith("session", "runs/task/run.json"),
+  );
+  expect(screen.queryByRole("region", { name: "Run results" })).toBeNull();
+  await act(async () => completeTrace(failedInspection));
+  expect(
+    await screen.findByRole("region", { name: "Run results" }),
+  ).toBeVisible();
+  expect(trace).toHaveBeenCalledWith("session", "runs/task/run.json");
+  expect(start).not.toHaveBeenCalled();
+  expect(resume).not.toHaveBeenCalled();
+});
+
+it("opens a results-first Trace review from normal workflow history", async () => {
+  vi.spyOn(workspaceService, "getWorkspaceWorkflowRuns").mockResolvedValue([
+    {
+      path: "runs/task/completed.json",
+      status: "completed",
+      started_at: "2026-09-07T10:00:00Z",
+      completed_at: "2026-09-07T10:01:00Z",
+      source_digest: "a".repeat(64),
+      results: [],
+    },
+  ]);
+  const trace = vi
+    .spyOn(workspaceService, "getWorkspaceWorkflowRunTrace")
+    .mockResolvedValue({
+      ...failedInspection,
+      run: { ...failedInspection.run, state: "succeeded" },
+      diagnostic: null,
+    });
+  render(
+    <WorkflowRunHistory
+      sessionId="session"
+      path="workflows/task.wflow"
+      refreshKey=""
+    />,
+  );
+  fireEvent.click(screen.getByText("Previous runs"));
+  const run = await screen.findByText(/Completed ·/);
+  fireEvent.click(run);
+  expect(
+    await screen.findByRole("region", { name: "Run results" }),
+  ).toBeVisible();
+  expect(screen.getByText("Created artifacts")).toBeVisible();
+  expect(trace).toHaveBeenCalledWith("session", "runs/task/completed.json");
 });

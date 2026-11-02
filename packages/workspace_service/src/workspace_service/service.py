@@ -26,6 +26,7 @@ from data_vault import (
     WorkflowRepository,
     WorkflowReviewRepository,
     WorkflowRunRepository,
+    WorkflowTraceRepository,
     WorkspaceRepository,
     create_default_secret_provider,
 )
@@ -77,6 +78,7 @@ from .engineering_scenario_service import EngineeringScenarioService
 from .engineering_workflow_template_service import EngineeringWorkflowTemplateService
 from .workflow_external_actions import WorkflowExternalActionService
 from .workflow_integration_policy import WorkflowIntegrationPolicyService
+from .workflow_trace import WorkflowTraceCapture, WorkflowTraceProjection
 from .workspace_path import WorkspacePath
 
 logger = get_logger(__name__)
@@ -278,6 +280,11 @@ class WorkspaceService:
             runner_adapter = PosixProcessAdapter()
         runner_settings = RunnerSettings.from_env()
         runner_supervisor = ProcessSupervisor(adapter=runner_adapter)
+        self.workflow_trace_repository = WorkflowTraceRepository(db_path)
+        self.workflow_trace_capture = WorkflowTraceCapture(
+            self.workflow_trace_repository
+        )
+        self.workflow_traces = WorkflowTraceProjection(self.workflow_trace_repository)
         self.workflow_runner = WorkspaceWorkflowRunner(
             supervisor=runner_supervisor,
             settings=runner_settings,
@@ -289,6 +296,8 @@ class WorkspaceService:
                 maximum_output_bytes=runner_settings.captured_output_bytes,
                 maximum_event_bytes=runner_settings.maximum_event_bytes,
             ),
+            trace_run_callback=self.workflow_trace_capture.register_rivet_run,
+            trace_event_callback=self.workflow_trace_capture.append_rivet_event,
         )
         self.workflow_operations = WorkspaceWorkflowOperations(
             WorkflowReviewRepository(db_path), self.workflow_runner
@@ -514,10 +523,28 @@ class WorkspaceService:
     async def reconcile_runtime(
         self, session_id: str, *, mcp_engine: Any | None, sync_manager: Any | None
     ) -> None:
-        if mcp_engine is not None:
+        platform = self.repository.session_platform(session_id)
+        if mcp_engine is not None and platform != "codex":
             await sync_workspace_runners(self.db_path, session_id, mcp_engine)
         if sync_manager is not None:
-            sync_manager.sync_workspace_tools(session_id)
+            sync = getattr(sync_manager, "sync_workspace_tools_for_agent", None)
+            if callable(sync):
+                sync(session_id, platform or "hermes")
+            else:
+                sync_manager.sync_workspace_tools(session_id)
+
+    async def _create_agent_session(self, engine, workspace_path):
+        if getattr(engine, "platform", None) == "codex":
+            from agent_adapters.workflow_instructions import embedded_instruction_set
+
+            defaults = self.workflow_instruction_settings.read()
+            return await engine.create_session(
+                workspace_path,
+                instructions=embedded_instruction_set(defaults["instructions"])
+                .resolve("chat")
+                .text,
+            )
+        return await engine.create_session(workspace_path)
 
     @traced("workspace.create")
     async def create_workspace(
@@ -530,9 +557,13 @@ class WorkspaceService:
         WorkspaceManager(workspace_path)
 
         try:
-            session_info = await engine.create_session(workspace_path)
+            session_info = await self._create_agent_session(engine, workspace_path)
             session_id = session_info.session_id
         except Exception as exc:
+            if agent_id == "codex":
+                raise WorkspaceInvalidRequestError(
+                    "Codex is not ready; no substitute session was created"
+                ) from exc
             session_id = f"wright-local-{uuid.uuid4()}"
             logger.warning(
                 "workspace_create_agent_session_failed_using_local_session",
@@ -541,7 +572,9 @@ class WorkspaceService:
                 error=redact_text(exc),
             )
 
-        row = self.repository.create_dashboard(name, workspace_path, session_id)
+        row = self.repository.create_dashboard(
+            name, workspace_path, session_id, agent_id=agent_id
+        )
         self.repository.associate_session(
             row["workspace_id"], session_id, agent_id=agent_id, title=name
         )
@@ -724,12 +757,14 @@ class WorkspaceService:
         if not workspace:
             raise WorkspaceNotFoundError("Workspace not found")
         self.ensure_workspace_path_safe(workspace["local_path"])
-        session_info = await engine.create_session(workspace["local_path"])
+        session_info = await self._create_agent_session(engine, workspace["local_path"])
         existing_titles = [
             row.get("title") for row in self.repository.list_sessions(workspace_id)
         ]
         title = _unique_session_title(session_info.title, existing_titles)
-        self.repository.update_session(workspace_id, session_info.session_id)
+        self.repository.update_session(
+            workspace_id, session_info.session_id, agent_id=agent_id
+        )
         self.repository.associate_session(
             workspace_id,
             session_info.session_id,
@@ -989,6 +1024,9 @@ class WorkspaceService:
             sessions = await engine.list_sessions()
             session_ids = {session.session_id for session in sessions}
             if session_id in session_ids:
+                return session_id
+            if getattr(engine, "platform", None) == "codex":
+                # Missing native history is explicit; never replace a saved Codex chat.
                 return session_id
             if not allow_fallback:
                 return session_id

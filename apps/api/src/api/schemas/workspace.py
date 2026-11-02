@@ -205,13 +205,21 @@ class WorkflowSourceResponse(BaseModel):
     layout_status: Literal["missing", "current", "stale"] = "missing"
 
 
+class WorkflowSourceExecutionDiagnostic(BaseModel):
+    code: str
+    message: str
+    correction: str
+    block_id: str | None = None
+
+
 class WorkflowSourceReadinessResponse(BaseModel):
-    """Authoritative readiness for a stored workflow's template provenance."""
+    """Saved-source diagnostics and lineage; runtime checks retain authority."""
 
     state: Literal[
         "not_template",
         "reference",
         "setup_required",
+        "revised",
         "ready",
         "verified",
         "unavailable",
@@ -220,6 +228,10 @@ class WorkflowSourceReadinessResponse(BaseModel):
     template_version: str | None = None
     source_digest: str | None = None
     layout_digest: str | None = None
+    accepted_source_digest: str | None = None
+    definition_revision: int | None = Field(default=None, ge=1)
+    execution_diagnostic: WorkflowSourceExecutionDiagnostic | None = None
+    starter_unchanged: bool | None = None
     definition_valid: bool | None = None
     configured: bool | None = None
     qualified: bool | None = None
@@ -570,6 +582,7 @@ class RivetRunResultResponse(BaseModel):
 class RivetRunStepResponse(BaseModel):
     step_id: str
     sequence: int
+    attempt: int = 1
     node_id: str | None = None
     node_type: str | None = None
     label: str
@@ -622,6 +635,8 @@ class RivetRunInspectionResponse(BaseModel):
     events: List[Dict[str, Any]] = Field(default_factory=list)
     run_inputs: List[RivetRunResultResponse] = Field(default_factory=list)
     inputs_state: str = "not-retained"
+    graph: Dict[str, Any] | None = None
+    evidence_records: List[Dict[str, Any]] = Field(default_factory=list)
     steps: List[RivetRunStepResponse] = Field(default_factory=list)
     final_outputs: List[RivetRunResultResponse] = Field(default_factory=list)
     diagnostic: RivetRunDiagnosticResponse | None = None
@@ -1242,6 +1257,8 @@ class WorkspaceMcpStatusResponse(BaseModel):
     message: str
     running_mcps: Optional[List[RunningMcpInfo]] = None
     workspace_id: Optional[str] = None
+    restart_command: Optional[str] = None
+    restart_command_shell: Optional[Literal["posix", "powershell"]] = None
 
 
 class FileBackupRequest(BaseModel):

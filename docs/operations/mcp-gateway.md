@@ -34,10 +34,16 @@ requests. A transport session ID presented with another binding receives 404.
 
 Defaults are loopback binding, 1 MiB request bodies, 16 concurrent transport
 requests, 120 requests/minute per local principal, a 30-second operation timeout,
-a 120-second maximum, and a 30-minute session idle timeout. Override with
+a 600-second maximum, and a 30-minute session idle timeout. Override with
 `WRIGHT_MCP_MAX_BODY_BYTES`, `WRIGHT_MCP_MAX_CONCURRENCY`,
 `WRIGHT_MCP_REQUESTS_PER_MINUTE`, `WRIGHT_MCP_TIMEOUT`,
 `WRIGHT_MCP_MAX_TIMEOUT`, and `WRIGHT_MCP_SESSION_IDLE_TIMEOUT`.
+
+Ordinary MCP calls default to 30 seconds. A workflow can explicitly request a
+longer wait, bounded by the 600-second maximum; `WRIGHT_MCP_MAX_TIMEOUT` overrides
+that ceiling. Set a task's wait to cover its provider's operation and response
+time. A timed-out call may leave external work running, so reconcile the existing
+operation before retrying it.
 
 Client disconnect does not imply protocol cancellation. Send
 `notifications/cancelled` with the owned request ID. Shutdown stops accepting new

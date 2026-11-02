@@ -79,10 +79,16 @@ jobs:
           git config --global user.email "test-ci@example.com"
           git config --global user.name "CI Test Runner"
 
+      - name: Validate program control contracts
+        run: uv run --extra runtime python -m pytest -q tests/program_control_plane
+
+      - name: Enforce ratcheted release-code coverage
+        # Default-context native/release contracts run once, before the broader
+        # package tests. Installed-artifact and platform jobs remain independent.
+        run: uv run --with pytest-cov python -m pytest -q tests/release tests/native_runtime --cov=scripts.release --cov=wright_engineering --cov-report=term --cov-fail-under=85
+
       - name: Run Tests with pytest
         run: |
-          uv run --extra runtime python -m pytest -q tests/program_control_plane
-          uv run python -m pytest -q tests/native_runtime tests/release/test_native_workflow_policy.py
           for python_suite in \
             apps/api/tests \
             packages/agent_adapters/tests \
@@ -100,9 +106,6 @@ jobs:
           uv run --extra runtime --extra engineering-models python -m pytest -q tests \
             --ignore=tests/program_control_plane \
             --ignore=tests/native_runtime
-
-      - name: Enforce ratcheted release-code coverage
-        run: uv run --with pytest-cov python -m pytest -q tests/release tests/native_runtime --cov=scripts.release --cov=wright_engineering --cov-report=term --cov-fail-under=85
 
   public-package-matrix:
     strategy:

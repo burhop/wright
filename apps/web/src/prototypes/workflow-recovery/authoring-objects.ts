@@ -431,6 +431,61 @@ export const AUTHORING_TEMPLATES: readonly AuthoringTemplate[] = [
   },
 ];
 
+/** An unfinished work step can gain an operation without replacing its graph identity. */
+export function canAssignMcpWorkOperation(block: RecoveryBlock): boolean {
+  const settings = block.configuration;
+  return (
+    recoveryAuthoringSectionKind(block) === "task" &&
+    block.kind === "work" &&
+    block.executionKind !== "human" &&
+    block.bindingId === null &&
+    block.componentRef === null &&
+    ![
+      "mcp-task",
+      "mcp-tool",
+      "ai-prompt",
+      "manual-review",
+      "human-input",
+      "external-action-approval",
+      "process-validator",
+    ].includes(String(settings.authoring_template)) &&
+    ![
+      RECOVERY_AUTHORING_APPROVAL_OBJECTS_KEY,
+      "approval_binding",
+      "action_kind",
+      "validation",
+      "interaction_input",
+      "cad",
+      "application_resource",
+      "mcp_server",
+      "mcp_tool",
+    ].some((key) => settings[key] !== undefined)
+  );
+}
+
+export function assignMcpWorkOperation(block: RecoveryBlock): RecoveryBlock {
+  if (!canAssignMcpWorkOperation(block))
+    throw new Error(
+      "Only an unassigned work step can be configured here. Keep reviews and existing operations intact.",
+    );
+  const next = structuredClone(block);
+  const settings = next.configuration;
+  const activeField =
+    settings[RECOVERY_AUTHORING_INSTRUCTION_FIELD_KEY] ??
+    (block.executionKind === "ai_capable" ? "prompt" : "instructions");
+  if (activeField === "instructions") {
+    // Keep an explicitly authored instructions field as well as the task prompt.
+    const priorPrompt = settings[RECOVERY_AUTHORING_SECONDARY_INSTRUCTION_KEY];
+    settings[RECOVERY_AUTHORING_SECONDARY_INSTRUCTION_KEY] = block.instructions;
+    if (typeof priorPrompt === "string") next.instructions = priorPrompt;
+  }
+  // Prompt is the new role's default field; its parser omits a redundant marker.
+  delete settings[RECOVERY_AUTHORING_INSTRUCTION_FIELD_KEY];
+  settings.authoring_template = "mcp-task";
+  next.executionKind = "ai_capable";
+  return next;
+}
+
 export function createAuthoringObject(
   templateId: string,
   workflow: RecoveryWorkflow,

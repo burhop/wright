@@ -265,8 +265,8 @@ def test_ai_task_requires_each_declared_file_before_execution(tmp_path, mapping)
             '  discipline: "engineering"\n  reviewed_ai_suggestions: false',
         )
         .replace(
-            "  step_type: work",
-            '  purpose: "Produce files"\n  group: null\n  step_type: work',
+            "\n  step_type: work\n",
+            '\n  purpose: "Produce files"\n  group: null\n  step_type: work\n',
         )
     )
     lines = []
@@ -287,5 +287,6 @@ def test_ai_task_requires_each_declared_file_before_execution(tmp_path, mapping)
         lines.append(line)
     with pytest.raises(ProcessInterfaceError) as readiness:
         asyncio.run(prepare(tmp_path, "\n".join(lines) + "\n"))
+    assert readiness.value.reason.navigation is not None, readiness.value.reason
     assert readiness.value.reason.navigation.kind == "block"
     assert readiness.value.reason.navigation.block_id == "produce"

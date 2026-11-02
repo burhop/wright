@@ -1,0 +1,321 @@
+{
+  "schema": "wright.codex-baseline-npm-audit/1",
+  "scope": "npm audit of unchanged committed frontend/root dependency lock; advisory presence does not establish exposure or exploitability",
+  "baseline": "ba2fad68c181165b96b9c15c40b1a1f63c88acb3",
+  "unchanged_inputs": {
+    "package.json": {
+      "sha256": "e02bf5446ef82e14bd52edd958c8766063761d03a0b72a2b67260880d00b60da",
+      "unchanged_from_dev": true
+    },
+    "package-lock.json": {
+      "sha256": "b564c602f56f18caaf80254d35d2a435963daaa99ec8c8e147897fd6151cd247",
+      "unchanged_from_dev": true
+    },
+    "apps/web/package.json": {
+      "sha256": "c802719946e3cdde92c779496c268ad78b8bdc5cb2025f206c0bb313f245c260",
+      "unchanged_from_dev": true
+    }
+  },
+  "counts": {
+    "info": 0,
+    "low": 1,
+    "moderate": 6,
+    "high": 5,
+    "critical": 1,
+    "total": 13
+  },
+  "findings": [
+    {
+      "name": "@modelcontextprotocol/sdk",
+      "severity": "high",
+      "direct": true,
+      "range": "1.12.0 - 1.30.1",
+      "fix_available": {
+        "name": "@modelcontextprotocol/sdk",
+        "version": "1.32.1",
+        "isSemVerMajor": false
+      },
+      "advisories": [
+        {
+          "title": "MCP TypeScript SDK: OAuth client could send credentials to an authorization server chosen by the MCP server",
+          "url": "https://github.com/advisories/GHSA-6qxp-vccf-f47h",
+          "severity": "high"
+        }
+      ]
+    },
+    {
+      "name": "@vitest/mocker",
+      "severity": "moderate",
+      "direct": false,
+      "range": "2.1.0 - 4.1.10",
+      "fix_available": true,
+      "advisories": [
+        {
+          "title": "Vitest: Path Traversal / Arbitrary File Read via @vitest/mocker Redirect Mock",
+          "url": "https://github.com/advisories/GHSA-82fw-gwwq-j7x9",
+          "severity": "moderate"
+        }
+      ]
+    },
+    {
+      "name": "baseline-browser-mapping",
+      "severity": "moderate",
+      "direct": false,
+      "range": ">=2.0.0 <2.11.0",
+      "fix_available": true,
+      "advisories": [
+        {
+          "title": "baseline-browser-mapping process termination on invalid input causes denial of service",
+          "url": "https://github.com/advisories/GHSA-w5vr-8v7q-w6rv",
+          "severity": "moderate"
+        }
+      ]
+    },
+    {
+      "name": "brace-expansion",
+      "severity": "high",
+      "direct": false,
+      "range": "4.0.0 - 5.0.11",
+      "fix_available": true,
+      "advisories": [
+        {
+          "title": "brace-expansion: Quadratic-time expansion of the `{a},b}` rewrite causes CPU denial of service",
+          "url": "https://github.com/advisories/GHSA-q2hr-2g5m-vwhr",
+          "severity": "moderate"
+        },
+        {
+          "title": "brace-expansion: DoS via uncontrolled recursion on nested brace groups causing stack exhaustion",
+          "url": "https://github.com/advisories/GHSA-qhr7-859c-m2p7",
+          "severity": "high"
+        },
+        {
+          "title": "brace-expansion: DoS via uncontrolled recursion in parseCommaParts causing stack exhaustion",
+          "url": "https://github.com/advisories/GHSA-6j4f-fj2g-mc7p",
+          "severity": "high"
+        }
+      ]
+    },
+    {
+      "name": "dompurify",
+      "severity": "low",
+      "direct": true,
+      "range": "<=3.4.15",
+      "fix_available": {
+        "name": "dompurify",
+        "version": "3.4.16",
+        "isSemVerMajor": false
+      },
+      "advisories": [
+        {
+          "title": "DOMPurify: IN_PLACE: node-removing afterSanitize hook leaves detached subtree event handlers armed, causing DOM XSS",
+          "url": "https://github.com/advisories/GHSA-p98j-92pf-mc4p",
+          "severity": "low"
+        },
+        {
+          "title": "DOMPurify: IN_PLACE returns a force-removed rawtext root whose text carries attacker markup \u2014 pure HTML reparse executes",
+          "url": "https://github.com/advisories/GHSA-6688-9rhm-gjv2",
+          "severity": "low"
+        }
+      ]
+    },
+    {
+      "name": "fast-uri",
+      "severity": "high",
+      "direct": false,
+      "range": "3.0.0 - 3.1.7",
+      "fix_available": true,
+      "advisories": [
+        {
+          "title": "fast-uri vulnerable to authority injection via an unvalidated port in serialize",
+          "url": "https://github.com/advisories/GHSA-qw65-cvwx-89v3",
+          "severity": "high"
+        },
+        {
+          "title": "fast-uri vulnerable to host confusion via an unclosed bracket in the URI authority",
+          "url": "https://github.com/advisories/GHSA-58mr-gqgx-xq4g",
+          "severity": "high"
+        },
+        {
+          "title": "fast-uri vulnerable to inconsistent host case normalization via percent-encoded octets",
+          "url": "https://github.com/advisories/GHSA-hrr3-gc8f-f4qj",
+          "severity": "moderate"
+        }
+      ]
+    },
+    {
+      "name": "hono",
+      "severity": "moderate",
+      "direct": false,
+      "range": "<=4.13.6",
+      "fix_available": true,
+      "advisories": [
+        {
+          "title": "Hono: Incomplete fix for CVE-2026-39408: `toSSG()` still writes files outside the output directory",
+          "url": "https://github.com/advisories/GHSA-gqvv-2mrq-wpjv",
+          "severity": "moderate"
+        },
+        {
+          "title": "Hono: Unbounded dot-notation nesting in `parseBody()` can cause memory exhaustion",
+          "url": "https://github.com/advisories/GHSA-g6gw-c38x-mqfc",
+          "severity": "moderate"
+        },
+        {
+          "title": "Hono: Query parser reads parameters after the URL fragment, causing cache-key and proxy interpretation differentials",
+          "url": "https://github.com/advisories/GHSA-crvj-82cr-hjcx",
+          "severity": "moderate"
+        },
+        {
+          "title": "hono/jsx renders plain strings unescaped in boundary components, leading to XSS",
+          "url": "https://github.com/advisories/GHSA-hxh3-vqpv-xpqv",
+          "severity": "moderate"
+        }
+      ]
+    },
+    {
+      "name": "ip-address",
+      "severity": "moderate",
+      "direct": false,
+      "range": "<=10.7.0",
+      "fix_available": true,
+      "advisories": [
+        {
+          "title": "ip-address: Address6.isLinkLocal() recognizes fe80::/64 rather than fe80::/10, allowing SSRF and trust-boundary bypass to on-link hosts",
+          "url": "https://github.com/advisories/GHSA-rpw4-54j3-4h4q",
+          "severity": "moderate"
+        },
+        {
+          "title": "ip-address: no classifier recognizes the NAT64 local-use range 64:ff9b:1::/48, allowing SSRF and trust-boundary bypass",
+          "url": "https://github.com/advisories/GHSA-2vr4-cq9g-pvrc",
+          "severity": "moderate"
+        },
+        {
+          "title": "ip-address: isInSubnet() and isHostInSubnet() compare addresses of different families as if they shared an address space, allowing an allowlist check to admit an address outside its range",
+          "url": "https://github.com/advisories/GHSA-j6r3-76f7-8jcv",
+          "severity": "moderate"
+        },
+        {
+          "title": "ip-address: Address6 builds a parse diagnostic proportional to the input with no length bound, allowing a single long string to stall or crash the process",
+          "url": "https://github.com/advisories/GHSA-h3mg-xc3c-68pw",
+          "severity": "moderate"
+        }
+      ]
+    },
+    {
+      "name": "moment",
+      "severity": "moderate",
+      "direct": false,
+      "range": "2.29.2 - 2.30.1",
+      "fix_available": true,
+      "advisories": [
+        {
+          "title": "moment vulnerable to Path Traversal via crafted non-string locale name",
+          "url": "https://github.com/advisories/GHSA-4p3w-j4w9-5jqw",
+          "severity": "moderate"
+        }
+      ]
+    },
+    {
+      "name": "proxy-addr",
+      "severity": "critical",
+      "direct": false,
+      "range": "1.1.0 - 2.0.7",
+      "fix_available": true,
+      "advisories": [
+        {
+          "title": "proxy-addr vulnerable to IP spoofing via IPv4-mapped IPv6 trust subnet",
+          "url": "https://github.com/advisories/GHSA-jqcg-44mw-7w3h",
+          "severity": "critical"
+        }
+      ]
+    },
+    {
+      "name": "source-map-js",
+      "severity": "high",
+      "direct": false,
+      "range": "1.0.0 - 1.2.1",
+      "fix_available": true,
+      "advisories": [
+        {
+          "title": "source-map-js allows event-loop denial of service through indexed source-map section offsets",
+          "url": "https://github.com/advisories/GHSA-68fv-2mgg-jv7q",
+          "severity": "high"
+        }
+      ]
+    },
+    {
+      "name": "undici",
+      "severity": "high",
+      "direct": false,
+      "range": "8.0.0 - 8.10.1",
+      "fix_available": true,
+      "advisories": [
+        {
+          "title": "undici vulnerable to Denial of Service via unhandled error in WebSocket permessage-deflate decompression",
+          "url": "https://github.com/advisories/GHSA-3wwx-pv8p-q78v",
+          "severity": "moderate"
+        },
+        {
+          "title": "undici vulnerable to Denial of Service via orphaned RetryHandler response body",
+          "url": "https://github.com/advisories/GHSA-pmjh-fq2x-6v4x",
+          "severity": "moderate"
+        },
+        {
+          "title": "undici vulnerable to downstream response splitting via retry interceptor",
+          "url": "https://github.com/advisories/GHSA-r53p-7pc4-xj5r",
+          "severity": "low"
+        },
+        {
+          "title": "undici vulnerable to Denial of Service via unrequested WebSocket subprotocol",
+          "url": "https://github.com/advisories/GHSA-rfgv-xxqx-mfg5",
+          "severity": "high"
+        },
+        {
+          "title": "undici vulnerable to Denial of Service via unbounded decompression of compressed responses",
+          "url": "https://github.com/advisories/GHSA-3xpg-4rpp-hhhm",
+          "severity": "moderate"
+        },
+        {
+          "title": "undici vulnerable to cross-user cookie disclosure via Set-Cookie caching in shared caches",
+          "url": "https://github.com/advisories/GHSA-2jfj-6hjv-fm6j",
+          "severity": "moderate"
+        },
+        {
+          "title": "undici vulnerable to response truncation via oversized chunked responses in the dump interceptor",
+          "url": "https://github.com/advisories/GHSA-2gqq-gqf2-x968",
+          "severity": "low"
+        },
+        {
+          "title": "undici vulnerable to TLS certificate validation bypass via dropped connect options in BalancedPool",
+          "url": "https://github.com/advisories/GHSA-w293-vg96-wgc3",
+          "severity": "high"
+        },
+        {
+          "title": "undici vulnerable to caching and replay of unsafe HTTP method responses",
+          "url": "https://github.com/advisories/GHSA-8436-99hf-9mmv",
+          "severity": "low"
+        },
+        {
+          "title": "undici vulnerable to Denial of Service via WebSocketStream unclean close",
+          "url": "https://github.com/advisories/GHSA-rx4f-c7p8-82vq",
+          "severity": "moderate"
+        }
+      ]
+    },
+    {
+      "name": "vitest",
+      "severity": "moderate",
+      "direct": true,
+      "range": "2.1.0-beta.1 - 4.1.10",
+      "fix_available": true,
+      "advisories": [
+        {
+          "title": "Vitest: Path Traversal / Arbitrary File Read via @vitest/mocker Redirect Mock",
+          "url": "https://github.com/advisories/GHSA-82fw-gwwq-j7x9",
+          "severity": "moderate"
+        }
+      ]
+    }
+  ],
+  "versions_changed": false,
+  "automatic_audit_fix_run": false
+}

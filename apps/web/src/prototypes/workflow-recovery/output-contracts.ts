@@ -76,6 +76,28 @@ export function configuredOutputs(
   } catch {
     /* An incomplete draft has no declared file contract yet. */
   }
+  const responsePort = block.configuration.saved_response_file_port;
+  if (
+    typeof responsePort === "string" &&
+    responsePort &&
+    block.configuration.save_output === true &&
+    ["publish_indexed", "publish_overwrite"].includes(
+      String(block.configuration.file_policy),
+    )
+  ) {
+    const filename = block.configuration.output_filename;
+    contracts.set(responsePort, {
+      format: String(
+        block.configuration.output_format ??
+          (block.configuration.authoring_template === "mcp-tool"
+            ? "json"
+            : "text"),
+      ),
+      path: typeof filename === "string" ? filename : undefined,
+      name:
+        typeof filename === "string" && filename ? filename : "Saved response",
+    });
+  }
   for (const setting of ["cad", "application_resource"] as const) {
     let value: { kind?: string; exports?: ExportContract[] };
     try {

@@ -43,12 +43,16 @@ async def test_lifespan_fails_before_runtime_construction_on_migration_error(
 
 
 @pytest.mark.asyncio
-async def test_lifespan_orders_migration_secret_catalog_before_runtimes(monkeypatch):
+@pytest.mark.parametrize("active_agent", ["hermes", "codex"])
+async def test_lifespan_orders_migration_secret_catalog_before_runtimes(
+    monkeypatch, active_agent
+):
     from api import main
     from api.database import migrate, secret_migration
     from tool_registry import catalog_reconcile
 
     events: list[str] = []
+    monkeypatch.setenv("WRIGHT_MCP_MAX_TIMEOUT", "120")
 
     monkeypatch.setattr(migrate, "run_migrations", lambda: events.append("migration"))
     monkeypatch.setattr(
@@ -66,20 +70,25 @@ async def test_lifespan_orders_migration_secret_catalog_before_runtimes(monkeypa
         "reconcile_wright_managed_servers",
         lambda path: events.append("wright-managed"),
     )
-    monkeypatch.setattr(
-        main,
-        "create_agent_engine",
-        lambda **kwargs: events.append("agent") or object(),
-    )
+
+    def create_selected_engine(agent_name=None, **kwargs):
+        assert agent_name == active_agent
+        events.append("agent")
+        return object()
+
+    monkeypatch.setattr(main, "create_agent_engine", create_selected_engine)
     monkeypatch.setattr(
         main,
         "AgentSyncManager",
-        lambda *args: events.append("sync") or object(),
+        lambda *args: (
+            events.append("sync") or SimpleNamespace(active_agent=active_agent)
+        ),
     )
 
     class FakeMcpEngine:
         def __init__(self, *args, **kwargs):
             events.append("mcp")
+            self.db_path = args[0]
             # Per-call gateway deadlines may exceed the 30-second default.
             assert kwargs["operation_timeout"] == 120.0
 
@@ -114,8 +123,8 @@ async def test_lifespan_orders_migration_secret_catalog_before_runtimes(monkeypa
         "secret",
         "catalog",
         "wright-managed",
-        "agent",
         "sync",
+        "agent",
         "mcp",
         "reconcile",
         "native-build",

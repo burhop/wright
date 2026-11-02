@@ -28,7 +28,13 @@ async def draft_api(tmp_path, monkeypatch):
     database = str(tmp_path / "state.db")
     upgrade_database(database)
     repository = WorkspaceRepository(database, secrets=Mock())
-    repository.create("alpha", "desktop-alpha", str(root), workspace_name="Alpha")
+    repository.create(
+        "alpha",
+        "desktop-alpha",
+        str(root),
+        workspace_name="Alpha",
+        agent_id="openai-desktop-harness",
+    )
     repository.associate_session(
         "alpha", "desktop-alpha", agent_id="openai-desktop-harness"
     )
@@ -172,6 +178,8 @@ async def test_mcp_ports_are_app_only_closed_and_never_retry(monkeypatch):
         client.call.assert_awaited_once()
         client.call.reset_mock()
     client.scope.side_effect = WrightRequestRejected(403, "PRIVATE scope diagnostic")
-    value = (await bridge.call_tool("wright_editor_draft_save", {"request": request}))[1]
+    value = (await bridge.call_tool("wright_editor_draft_save", {"request": request}))[
+        1
+    ]
     assert value["error"]["outcome_known"] is True and "PRIVATE" not in str(value)
     client.call.assert_not_awaited()

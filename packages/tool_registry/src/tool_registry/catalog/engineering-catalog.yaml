@@ -3755,6 +3755,7 @@ servers:
 - id: rosbag-mcp-pypi
   name: ROSBag MCP
   vendor: Junhyeok Choi
+  license: MIT
   description: Packaged MCP server for offline ROS 1, ROS 2 SQLite, and MCAP inspection, message queries, analysis, filtering, and export.
   domains:
   - robotics

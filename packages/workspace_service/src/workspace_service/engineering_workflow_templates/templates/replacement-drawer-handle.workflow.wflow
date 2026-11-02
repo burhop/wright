@@ -1,0 +1,551 @@
+# Built-in Printed02 starter. Supplied intent is inspectable offline; qualify providers before execution.
+workflow __instance__
+  name: "Replace a broken drawer handle"
+  purpose: "Align a dimensioned bow handle, compare real print preparations, and inspect a digital package before any physical work."
+  discipline: "additive.manufacturing"
+  reviewed_ai_suggestions: true
+end
+
+input design_basis___instance__
+  name: "Inspect the supplied handle and dimensions"
+  purpose: "Resolve design intent before any provider work."
+  step_type: "work"
+  group: null
+  provided_by: "engineer"
+  inputs: []
+  outputs: [{"key":"design_basis___instance___intent_out","name":"Supplied dimensional sketch","kind":"reference_images","item":null,"required":true,"quantity":"one","description":"Supplied dimensional sketch"}]
+  instructions: "Read the original request, context and supplied sketch. Written millimetre dimensions govern; the drawing is not to scale. Preserve every original requirement and disclose any changed requirement as a new accepted revision."
+  settings: {"input_mode":"workspace-file","workspace_file":"__input_root__/concept.png","rights_file":"__input_root__/rights.json","required_reference_dimension":true,"reference_dimension_mm":96.0,"units":"mm"}
+  tool: null
+  reusable_step: null
+end
+
+task review_intent___instance__
+  name: "Confirm visual intent"
+  purpose: "Persist a declared review before geometry preparation."
+  step_type: "review"
+  group: null
+  performed_by: "engineer"
+  inputs: [{"key":"review_intent___instance___intent_in","name":"Supplied dimensional sketch","kind":"reference_images","item":null,"required":true,"quantity":"one","description":"Supplied dimensional sketch"},{"key":"review_intent___instance___context_in","name":"context.md","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"context.md"},{"key":"review_intent___instance___request_in","name":"prompt.txt","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"prompt.txt"},{"key":"review_intent___instance___user_profile_in","name":"user-profile.md","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"user-profile.md"},{"key":"review_intent___instance___assignment_in","name":"scenario.json","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"scenario.json"},{"key":"review_intent___instance___validation_in","name":"validation-profile.json","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"validation-profile.json"},{"key":"review_intent___instance___rights_in","name":"rights.json","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"rights.json"},{"key":"review_intent___instance___raster_sketch_in","name":"concept.png","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"concept.png"}]
+  outputs: []
+  instructions: "Review the supplied sketch and original request: 96 mm bolt spacing, 4.5 mm M4 holes, 18 by 24 by 5 mm pads, 118 by 28 by 34 mm maximum envelope, at least 25 mm clearance across the central 65 mm, oval 12 by 9 mm grip, 1.5 mm thumb recess over 40 mm, and original blend/edge/keepout requirements. Resolve required inputs and explicitly accept the design basis before continuing."
+  settings: {"authoring_template":"external-action-approval","action_kind":"local_review","approval_binding":{"server":"wright","tool":"review_artifacts","schema":"f11ab6c48e47a727cdfc1cd8efefb6f21cf08483c801e0e2cc882a825d96a338"},"approval_destination":{"kind":"local_review","id":"workspace"},"approval_settings":{"review_task_id":"review_intent___instance__"},"approval_action":{"kind":"local_review","mode":"review_only"}}
+  tool: null
+  reusable_step: null
+end
+
+task create_mesh___instance__
+  name: "Create the handle geometry"
+  purpose: "Use an independent geometry provider to produce editable evidence and a source mesh."
+  step_type: "work"
+  group: null
+  performed_by: "configured_tool"
+  inputs: [{"key":"create_mesh___instance___intent_in","name":"Supplied dimensional sketch","kind":"reference_images","item":null,"required":true,"quantity":"one","description":"Supplied dimensional sketch"},{"key":"create_mesh___instance___context_in","name":"context.md","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"context.md"},{"key":"create_mesh___instance___request_in","name":"prompt.txt","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"prompt.txt"},{"key":"create_mesh___instance___user_profile_in","name":"user-profile.md","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"user-profile.md"},{"key":"create_mesh___instance___assignment_in","name":"scenario.json","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"scenario.json"},{"key":"create_mesh___instance___validation_in","name":"validation-profile.json","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"validation-profile.json"},{"key":"create_mesh___instance___rights_in","name":"rights.json","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"rights.json"},{"key":"create_mesh___instance___raster_sketch_in","name":"concept.png","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"concept.png"}]
+  outputs: [{"key":"create_mesh___instance___source_mesh_out","name":"Source handle mesh","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Source handle mesh"}]
+  instructions: "Create the bow from the original prompt and context. Retain the supplied user request, qualified model/provider/instruction identities, geometry preview and source mesh. No tool success or attractive preview establishes compliance."
+  settings: {"artifact_role":"source_mesh","live_output_required":true}
+  tool: null
+  reusable_step: null
+end
+
+task repair_measure___instance__
+  name: "Repair and measure the handle"
+  purpose: "Keep source and repaired artifacts distinct and check the repaired revision."
+  step_type: "work"
+  group: null
+  performed_by: "configured_tool"
+  inputs: [{"key":"repair_measure___instance___source_mesh_in","name":"Source handle mesh","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Source handle mesh"}]
+  outputs: [{"key":"repair_measure___instance___repaired_mesh_out","name":"Measured repaired handle mesh","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Measured repaired handle mesh"}]
+  instructions: "Consume the actual source mesh. Preserve all dimensions and grip/mounting features; retain distinct source and repaired digests, independent envelope/topology observations, geometry preview and unresolved engineering checks. A physical fit or strength claim is outside this digital assignment."
+  settings: {"artifact_role":"repaired_mesh","acceptance_profile":"printed-replacement-part-02-full"}
+  tool: null
+  reusable_step: null
+end
+
+task review_geometry___instance__
+  name: "Review geometry before slicing"
+  purpose: "Persist the exact geometry review before downstream preparation."
+  step_type: "review"
+  group: null
+  performed_by: "engineer"
+  inputs: [{"key":"review_geometry___instance___repaired_mesh_in","name":"Measured repaired handle mesh","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Measured repaired handle mesh"}]
+  outputs: []
+  instructions: "Review the actual repaired-mesh revision, dimension evidence, mounting holes, finger clearance, oval grip, rounds and thumb recess against the supplied sketch and every original requirement. Any correction creates a visible accepted revision and invalidates affected evidence."
+  settings: {"authoring_template":"external-action-approval","action_kind":"local_review","approval_binding":{"server":"wright","tool":"review_artifacts","schema":"f11ab6c48e47a727cdfc1cd8efefb6f21cf08483c801e0e2cc882a825d96a338"},"approval_destination":{"kind":"local_review","id":"workspace"},"approval_settings":{"review_task_id":"review_geometry___instance__"},"approval_action":{"kind":"local_review","mode":"review_only"}}
+  tool: null
+  reusable_step: null
+end
+
+task compare_preparations___instance__
+  name: "Compare pads-down and side preparations"
+  purpose: "Use a qualified independent slicer on the actual geometry with the original profiles."
+  step_type: "work"
+  group: null
+  performed_by: "configured_tool"
+  inputs: [{"key":"compare_preparations___instance___repaired_mesh_in","name":"Measured repaired handle mesh","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Measured repaired handle mesh"}]
+  outputs: [{"key":"compare_preparations___instance___comparison_out","name":"Actual orientation and support evidence","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Actual orientation and support evidence"}]
+  instructions: "Compare both required orientations with real support/toolpath previews, support-contact locations, and profile identities. Preserve P1S 0.4 mm nozzle, PETG, 0.20 mm layers, five walls and 40% infill. Unknown time and provider cost remain unknown; disclose configured limits before long work."
+  settings: {"printer":"Bambu P1S","nozzle_mm":0.4,"material":"PETG","layer_height_mm":0.2,"wall_loops":5,"infill_percent":40,"orientation_comparison":true,"supports":"required_when_needed"}
+  tool: null
+  reusable_step: null
+end
+
+task choose_preparation___instance__
+  name: "Choose a print orientation"
+  purpose: "Record the orientation choice separately from engineering approval."
+  step_type: "work"
+  group: null
+  performed_by: "engineer"
+  inputs: [{"key":"choose_preparation___instance___comparison_in","name":"Actual orientation and support evidence","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Actual orientation and support evidence"}]
+  outputs: [{"key":"choose_preparation___instance___decision_out","name":"Recorded selected preparation","kind":"structured_result","item":null,"required":true,"quantity":"one","description":"Recorded selected preparation"}]
+  instructions: "Choose pads-down or side after inspecting the actual comparison. This answer selects an orientation; it does not approve the geometry, supports or final package."
+  settings: {"authoring_template":"human-input","human_interaction":{"version":1,"kind":"input","instructions":"Select the orientation to prepare from the actual pads-down and side comparison. The next declared review must approve the exact comparison and selection before final package preparation.","response_schema":{"type":"object","properties":{"orientation":{"type":"string","enum":["pads_down","side"],"title":"Print orientation"}},"required":["orientation"],"additionalProperties":false},"output_port":"choose_preparation___instance___decision_out"}}
+  tool: null
+  reusable_step: null
+end
+
+task review_preparation___instance__
+  name: "Review the selected preparation"
+  purpose: "Bind the selected orientation to its exact mesh, supports and profiles."
+  step_type: "review"
+  group: null
+  performed_by: "engineer"
+  inputs: [{"key":"review_preparation___instance___comparison_in","name":"Actual orientation and support evidence","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Actual orientation and support evidence"},{"key":"review_preparation___instance___selection_in","name":"Selected print orientation","kind":"structured_result","item":null,"required":true,"quantity":"one","description":"The recorded choice, not engineering approval"}]
+  outputs: []
+  instructions: "Review both actual preparations and the separately recorded orientation choice. A changed selection must produce a newly bound final package and invalidate affected checks and decisions. Merely viewing another result does not regenerate the package."
+  settings: {"authoring_template":"external-action-approval","action_kind":"local_review","approval_binding":{"server":"wright","tool":"review_artifacts","schema":"f11ab6c48e47a727cdfc1cd8efefb6f21cf08483c801e0e2cc882a825d96a338"},"approval_destination":{"kind":"local_review","id":"workspace"},"approval_settings":{"review_task_id":"review_preparation___instance__"},"approval_action":{"kind":"local_review","mode":"review_only"}}
+  tool: null
+  reusable_step: null
+end
+
+task inspect_package___instance__
+  name: "Inspect the final digital package"
+  purpose: "Run exact-output validation on source/repaired geometry, actual slice package and evidence."
+  step_type: "work"
+  group: null
+  performed_by: "configured_tool"
+  inputs: [{"key":"inspect_package___instance___comparison_in","name":"Actual orientation/support and package evidence","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Actual orientation/support and package evidence"},{"key":"inspect_package___instance___repaired_mesh_in","name":"Reviewed repaired mesh","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Reviewed repaired mesh"},{"key":"inspect_package___instance___decision_in","name":"Recorded selected preparation","kind":"structured_result","item":null,"required":true,"quantity":"one","description":"Recorded selected preparation"},{"key":"inspect_package___instance___context_in","name":"context.md","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"context.md"},{"key":"inspect_package___instance___request_in","name":"prompt.txt","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"prompt.txt"},{"key":"inspect_package___instance___user_profile_in","name":"user-profile.md","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"user-profile.md"},{"key":"inspect_package___instance___assignment_in","name":"scenario.json","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"scenario.json"},{"key":"inspect_package___instance___validation_in","name":"validation-profile.json","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"validation-profile.json"},{"key":"inspect_package___instance___rights_in","name":"rights.json","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"rights.json"},{"key":"inspect_package___instance___raster_sketch_in","name":"concept.png","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"concept.png"}]
+  outputs: [{"key":"inspect_package___instance___slice_package_out","name":"Inspected 3MF and supporting evidence","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Inspected 3MF and supporting evidence"}]
+  instructions: "Retain source and repaired meshes, support preview, final 3MF, profile data, requirement assessment and a digest-bound clearly simulated local transfer receipt. Use the original Printed02 validation profile and declared engineering review. Keep failed requirements and limitations visible. Use only a declared test:// destination; no physical printer connection, dispatch or print is authorized."
+  settings: {"package":"3mf","acceptance_profile":"printed-replacement-part-02-full","destination_kind":"test","physical_operation":false}
+  tool: null
+  reusable_step: null
+end
+
+connection intent_handoff___instance__
+  type: "item"
+  from: "design_basis___instance__.design_basis___instance___intent_out"
+  to: "review_intent___instance__.review_intent___instance___intent_in"
+  label: "intent evidence"
+  when: null
+end
+
+connection source_handoff___instance__
+  type: "item"
+  from: "create_mesh___instance__.create_mesh___instance___source_mesh_out"
+  to: "repair_measure___instance__.repair_measure___instance___source_mesh_in"
+  label: "source evidence"
+  when: null
+end
+
+connection geometry_handoff___instance__
+  type: "item"
+  from: "repair_measure___instance__.repair_measure___instance___repaired_mesh_out"
+  to: "review_geometry___instance__.review_geometry___instance___repaired_mesh_in"
+  label: "geometry evidence"
+  when: null
+end
+
+connection slicer_handoff___instance__
+  type: "item"
+  from: "repair_measure___instance__.repair_measure___instance___repaired_mesh_out"
+  to: "compare_preparations___instance__.compare_preparations___instance___repaired_mesh_in"
+  label: "slicer evidence"
+  when: null
+end
+
+connection comparison_handoff___instance__
+  type: "item"
+  from: "compare_preparations___instance__.compare_preparations___instance___comparison_out"
+  to: "review_preparation___instance__.review_preparation___instance___comparison_in"
+  label: "comparison evidence"
+  when: null
+end
+
+connection order_0___instance__
+  type: "order"
+  from: "design_basis___instance__"
+  to: "review_intent___instance__"
+  label: "declared prerequisite"
+  when: null
+end
+
+connection order_1___instance__
+  type: "order"
+  from: "review_intent___instance__"
+  to: "create_mesh___instance__"
+  label: "declared prerequisite"
+  when: null
+end
+
+connection order_2___instance__
+  type: "order"
+  from: "create_mesh___instance__"
+  to: "repair_measure___instance__"
+  label: "declared prerequisite"
+  when: null
+end
+
+connection order_3___instance__
+  type: "order"
+  from: "repair_measure___instance__"
+  to: "review_geometry___instance__"
+  label: "declared prerequisite"
+  when: null
+end
+
+connection order_4___instance__
+  type: "order"
+  from: "review_geometry___instance__"
+  to: "compare_preparations___instance__"
+  label: "declared prerequisite"
+  when: null
+end
+
+connection order_5___instance__
+  type: "order"
+  from: "compare_preparations___instance__"
+  to: "choose_preparation___instance__"
+  label: "declared prerequisite"
+  when: null
+end
+
+connection order_6___instance__
+  type: "order"
+  from: "review_preparation___instance__"
+  to: "inspect_package___instance__"
+  label: "declared prerequisite"
+  when: null
+end
+
+connection creation_intent___instance__
+  type: "item"
+  from: "design_basis___instance__.design_basis___instance___intent_out"
+  to: "create_mesh___instance__.create_mesh___instance___intent_in"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection final_evidence___instance__
+  type: "item"
+  from: "compare_preparations___instance__.compare_preparations___instance___comparison_out"
+  to: "inspect_package___instance__.inspect_package___instance___comparison_in"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection final_geometry___instance__
+  type: "item"
+  from: "repair_measure___instance__.repair_measure___instance___repaired_mesh_out"
+  to: "inspect_package___instance__.inspect_package___instance___repaired_mesh_in"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection final_decision___instance__
+  type: "item"
+  from: "choose_preparation___instance__.choose_preparation___instance___decision_out"
+  to: "inspect_package___instance__.inspect_package___instance___decision_in"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+input supplied_context___instance__
+  name: "context.md"
+  purpose: "Original supplied assignment dependency; preserve exact bytes and provenance."
+  step_type: "work"
+  group: null
+  provided_by: "engineer"
+  inputs: []
+  outputs: [{"key":"supplied_context___instance___out","name":"context.md","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"context.md"}]
+  instructions: "Read this original supplied dependency alongside the dimensional sketch. Preserve its requirements and stated scope."
+  settings: {"input_mode":"workspace-file","workspace_file":"__input_root__/context.md"}
+  tool: null
+  reusable_step: null
+end
+
+connection review_intent_context_binding___instance__
+  type: "item"
+  from: "supplied_context___instance__.supplied_context___instance___out"
+  to: "review_intent___instance__.review_intent___instance___context_in"
+  label: "original assignment dependency"
+  when: null
+end
+
+connection create_mesh_context_binding___instance__
+  type: "item"
+  from: "supplied_context___instance__.supplied_context___instance___out"
+  to: "create_mesh___instance__.create_mesh___instance___context_in"
+  label: "original assignment dependency"
+  when: null
+end
+
+connection inspect_package_context_binding___instance__
+  type: "item"
+  from: "supplied_context___instance__.supplied_context___instance___out"
+  to: "inspect_package___instance__.inspect_package___instance___context_in"
+  label: "original assignment dependency"
+  when: null
+end
+
+input supplied_request___instance__
+  name: "prompt.txt"
+  purpose: "Original supplied assignment dependency; preserve exact bytes and provenance."
+  step_type: "work"
+  group: null
+  provided_by: "engineer"
+  inputs: []
+  outputs: [{"key":"supplied_request___instance___out","name":"prompt.txt","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"prompt.txt"}]
+  instructions: "Read this original supplied dependency alongside the dimensional sketch. Preserve its requirements and stated scope."
+  settings: {"input_mode":"workspace-file","workspace_file":"__input_root__/prompt.txt"}
+  tool: null
+  reusable_step: null
+end
+
+connection review_intent_request_binding___instance__
+  type: "item"
+  from: "supplied_request___instance__.supplied_request___instance___out"
+  to: "review_intent___instance__.review_intent___instance___request_in"
+  label: "original assignment dependency"
+  when: null
+end
+
+connection create_mesh_request_binding___instance__
+  type: "item"
+  from: "supplied_request___instance__.supplied_request___instance___out"
+  to: "create_mesh___instance__.create_mesh___instance___request_in"
+  label: "original assignment dependency"
+  when: null
+end
+
+connection inspect_package_request_binding___instance__
+  type: "item"
+  from: "supplied_request___instance__.supplied_request___instance___out"
+  to: "inspect_package___instance__.inspect_package___instance___request_in"
+  label: "original assignment dependency"
+  when: null
+end
+
+input supplied_user_profile___instance__
+  name: "user-profile.md"
+  purpose: "Original supplied assignment dependency; preserve exact bytes and provenance."
+  step_type: "work"
+  group: null
+  provided_by: "engineer"
+  inputs: []
+  outputs: [{"key":"supplied_user_profile___instance___out","name":"user-profile.md","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"user-profile.md"}]
+  instructions: "Read this original supplied dependency alongside the dimensional sketch. Preserve its requirements and stated scope."
+  settings: {"input_mode":"workspace-file","workspace_file":"__input_root__/user-profile.md"}
+  tool: null
+  reusable_step: null
+end
+
+connection review_intent_user_profile_binding___instance__
+  type: "item"
+  from: "supplied_user_profile___instance__.supplied_user_profile___instance___out"
+  to: "review_intent___instance__.review_intent___instance___user_profile_in"
+  label: "original assignment dependency"
+  when: null
+end
+
+connection create_mesh_user_profile_binding___instance__
+  type: "item"
+  from: "supplied_user_profile___instance__.supplied_user_profile___instance___out"
+  to: "create_mesh___instance__.create_mesh___instance___user_profile_in"
+  label: "original assignment dependency"
+  when: null
+end
+
+connection inspect_package_user_profile_binding___instance__
+  type: "item"
+  from: "supplied_user_profile___instance__.supplied_user_profile___instance___out"
+  to: "inspect_package___instance__.inspect_package___instance___user_profile_in"
+  label: "original assignment dependency"
+  when: null
+end
+
+input supplied_assignment___instance__
+  name: "scenario.json"
+  purpose: "Original supplied assignment dependency; preserve exact bytes and provenance."
+  step_type: "work"
+  group: null
+  provided_by: "engineer"
+  inputs: []
+  outputs: [{"key":"supplied_assignment___instance___out","name":"scenario.json","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"scenario.json"}]
+  instructions: "Read this original supplied dependency alongside the dimensional sketch. Preserve its requirements and stated scope."
+  settings: {"input_mode":"workspace-file","workspace_file":"__input_root__/scenario.json"}
+  tool: null
+  reusable_step: null
+end
+
+connection review_intent_assignment_binding___instance__
+  type: "item"
+  from: "supplied_assignment___instance__.supplied_assignment___instance___out"
+  to: "review_intent___instance__.review_intent___instance___assignment_in"
+  label: "original assignment dependency"
+  when: null
+end
+
+connection create_mesh_assignment_binding___instance__
+  type: "item"
+  from: "supplied_assignment___instance__.supplied_assignment___instance___out"
+  to: "create_mesh___instance__.create_mesh___instance___assignment_in"
+  label: "original assignment dependency"
+  when: null
+end
+
+connection inspect_package_assignment_binding___instance__
+  type: "item"
+  from: "supplied_assignment___instance__.supplied_assignment___instance___out"
+  to: "inspect_package___instance__.inspect_package___instance___assignment_in"
+  label: "original assignment dependency"
+  when: null
+end
+
+input supplied_validation___instance__
+  name: "validation-profile.json"
+  purpose: "Original supplied assignment dependency; preserve exact bytes and provenance."
+  step_type: "work"
+  group: null
+  provided_by: "engineer"
+  inputs: []
+  outputs: [{"key":"supplied_validation___instance___out","name":"validation-profile.json","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"validation-profile.json"}]
+  instructions: "Read this original supplied dependency alongside the dimensional sketch. Preserve its requirements and stated scope."
+  settings: {"input_mode":"workspace-file","workspace_file":"__input_root__/validation-profile.json"}
+  tool: null
+  reusable_step: null
+end
+
+connection review_intent_validation_binding___instance__
+  type: "item"
+  from: "supplied_validation___instance__.supplied_validation___instance___out"
+  to: "review_intent___instance__.review_intent___instance___validation_in"
+  label: "original assignment dependency"
+  when: null
+end
+
+connection create_mesh_validation_binding___instance__
+  type: "item"
+  from: "supplied_validation___instance__.supplied_validation___instance___out"
+  to: "create_mesh___instance__.create_mesh___instance___validation_in"
+  label: "original assignment dependency"
+  when: null
+end
+
+connection inspect_package_validation_binding___instance__
+  type: "item"
+  from: "supplied_validation___instance__.supplied_validation___instance___out"
+  to: "inspect_package___instance__.inspect_package___instance___validation_in"
+  label: "original assignment dependency"
+  when: null
+end
+
+input supplied_rights___instance__
+  name: "rights.json"
+  purpose: "Original supplied assignment dependency; preserve exact bytes and provenance."
+  step_type: "work"
+  group: null
+  provided_by: "engineer"
+  inputs: []
+  outputs: [{"key":"supplied_rights___instance___out","name":"rights.json","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"rights.json"}]
+  instructions: "Read this original supplied dependency alongside the dimensional sketch. Preserve its requirements and stated scope."
+  settings: {"input_mode":"workspace-file","workspace_file":"__input_root__/rights.json"}
+  tool: null
+  reusable_step: null
+end
+
+connection review_intent_rights_binding___instance__
+  type: "item"
+  from: "supplied_rights___instance__.supplied_rights___instance___out"
+  to: "review_intent___instance__.review_intent___instance___rights_in"
+  label: "original assignment dependency"
+  when: null
+end
+
+connection create_mesh_rights_binding___instance__
+  type: "item"
+  from: "supplied_rights___instance__.supplied_rights___instance___out"
+  to: "create_mesh___instance__.create_mesh___instance___rights_in"
+  label: "original assignment dependency"
+  when: null
+end
+
+connection inspect_package_rights_binding___instance__
+  type: "item"
+  from: "supplied_rights___instance__.supplied_rights___instance___out"
+  to: "inspect_package___instance__.inspect_package___instance___rights_in"
+  label: "original assignment dependency"
+  when: null
+end
+
+input supplied_raster_sketch___instance__
+  name: "concept.png"
+  purpose: "Original supplied assignment dependency; preserve exact bytes and provenance."
+  step_type: "work"
+  group: null
+  provided_by: "engineer"
+  inputs: []
+  outputs: [{"key":"supplied_raster_sketch___instance___out","name":"concept.png","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"concept.png"}]
+  instructions: "Read this original supplied dependency alongside the dimensional sketch. Preserve its requirements and stated scope."
+  settings: {"input_mode":"workspace-file","workspace_file":"__input_root__/concept.png"}
+  tool: null
+  reusable_step: null
+end
+
+connection review_intent_raster_sketch_binding___instance__
+  type: "item"
+  from: "supplied_raster_sketch___instance__.supplied_raster_sketch___instance___out"
+  to: "review_intent___instance__.review_intent___instance___raster_sketch_in"
+  label: "original assignment dependency"
+  when: null
+end
+
+connection create_mesh_raster_sketch_binding___instance__
+  type: "item"
+  from: "supplied_raster_sketch___instance__.supplied_raster_sketch___instance___out"
+  to: "create_mesh___instance__.create_mesh___instance___raster_sketch_in"
+  label: "original assignment dependency"
+  when: null
+end
+
+connection inspect_package_raster_sketch_binding___instance__
+  type: "item"
+  from: "supplied_raster_sketch___instance__.supplied_raster_sketch___instance___out"
+  to: "inspect_package___instance__.inspect_package___instance___raster_sketch_in"
+  label: "original assignment dependency"
+  when: null
+end
+
+connection choice_comparison_handoff___instance__
+  type: "item"
+  from: "compare_preparations___instance__.compare_preparations___instance___comparison_out"
+  to: "choose_preparation___instance__.choose_preparation___instance___comparison_in"
+  label: "comparison evidence"
+  when: null
+end
+
+connection choice_for_review___instance__
+  type: "item"
+  from: "choose_preparation___instance__.choose_preparation___instance___decision_out"
+  to: "review_preparation___instance__.review_preparation___instance___selection_in"
+  label: "Selected orientation is not approval"
+  when: null
+end
+
+connection review_after_choice___instance__
+  type: "order"
+  from: "choose_preparation___instance__"
+  to: "review_preparation___instance__"
+  label: "Review the recorded selection"
+  when: null
+end

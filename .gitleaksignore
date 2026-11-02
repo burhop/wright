@@ -14,3 +14,9 @@ ea4e67186bac84fcffd9f424e0a23b4da6b5b761:prototypes/desktop-harness/engineering-
 # Verified from introducing commit; API hashes boolean configuration status, not secrets.
 764619df0a018adbfafbece81f5727bdfd8660fb:prototypes/desktop-harness/engineering-experience/evidence/robot-provider-current/workspace-setup-receipt.json:generic-api-key:30
 764619df0a018adbfafbece81f5727bdfd8660fb:prototypes/desktop-harness/engineering-experience/evidence/robot-provider-current/workspace-setup-receipt.json:generic-api-key:70
+
+# Two immutable historical occurrences of the explicitly approved negative-test
+# canaries. Exact commit/path/rule/line only; whole source-line hashes are checked
+# against public-alpha-fixture-exceptions.json by the scanner regression owner.
+c88f2721150a80bf26741d2af933d2f31142224f:packages/core/tests/test_workflow_trace.py:generic-api-key:113
+b001bf6a93da855ccf5bebe92cc7d6d3627a5cf6:tests/unit/test_synthetic_beta_provision.py:private-key:427

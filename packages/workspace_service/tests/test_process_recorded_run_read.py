@@ -118,6 +118,161 @@ def test_completed_segment_uses_its_final_result_authority(tmp_path):
     assert [row["id"] for row in view["results"]] == [final["id"]]
 
 
+def diagnostic_row(*, role="verification", path="reports/exact-check.json"):
+    from workspace_service.workflow_results import Provenance, file_result
+
+    return file_result(
+        {
+            "output_path": path,
+            "output_format": "json",
+            "output_bytes": 2,
+            "sha256": hashlib.sha256(b"{}").hexdigest(),
+            "artifact_role": role,
+        },
+        Provenance("run-1", "validate", f"diagnostic:{path}"),
+    ).to_dict()
+
+
+def diagnostic_event(row):
+    return {
+        "kind": "result_ready",
+        "task_id": row["provenance"]["task_id"],
+        "engineering_result": row,
+    }
+
+
+@pytest.mark.parametrize("role", ["diagnostic", "verification"])
+def test_completed_run_keeps_emitted_report_file_beside_final_outputs(tmp_path, role):
+    final, earlier, report = (
+        result_row("final"),
+        result_row("earlier"),
+        diagnostic_row(role=role),
+    )
+    path, _ = saved(
+        tmp_path,
+        status="completed",
+        events=[diagnostic_event(report)],
+        partial_results={row["id"]: row for row in (earlier, report)},
+        result={"run_id": "run-1", "results": [final]},
+    )
+    before = path.read_bytes()
+    for view in (
+        recorder.read_workflow_run(tmp_path, SOURCE, "run-1", complete_results=True),
+        recorder.recent_workflow_runs(tmp_path, SOURCE)[0],
+    ):
+        assert [row["id"] for row in view["results"]] == [final["id"], report["id"]]
+        assert view["results"][1]["representations"] == json.loads(
+            json.dumps(report["representations"])
+        )
+    assert path.read_bytes() == before
+
+
+@pytest.mark.parametrize("removed", [True, False])
+def test_completed_diagnostic_removed_or_invalidated_is_not_revived(tmp_path, removed):
+    final, report = result_row("final"), diagnostic_row()
+    events = [diagnostic_event(report)]
+    if not removed:
+        events.append({"kind": "design_revision", "invalidated_task_ids": ["validate"]})
+    saved(
+        tmp_path,
+        status="completed",
+        events=events,
+        partial_results={} if removed else {report["id"]: report},
+        result={"run_id": "run-1", "results": [final]},
+    )
+    view = recorder.read_workflow_run(tmp_path, SOURCE, "run-1", complete_results=True)
+    assert [row["id"] for row in view["results"]] == [final["id"]]
+    if not removed:
+        assert view["previous_results"][0]["original_result_id"] == report["id"]
+
+
+def test_completed_diagnostic_requires_recorded_event_and_deduplicates_final(tmp_path):
+    report = diagnostic_row()
+    saved(
+        tmp_path,
+        status="completed",
+        events=[],
+        partial_results={report["id"]: report},
+        result={"run_id": "run-1", "results": []},
+    )
+    assert recorder.read_workflow_run(tmp_path, SOURCE, "run-1")["results"] == []
+    saved(
+        tmp_path,
+        status="completed",
+        events=[diagnostic_event(report)],
+        partial_results={report["id"]: report},
+        result={"run_id": "run-1", "results": [report]},
+    )
+    assert len(recorder.read_workflow_run(tmp_path, SOURCE, "run-1")["results"]) == 1
+
+
+def test_legacy_unpinned_diagnostic_remains_visible_without_a_file_grant(tmp_path):
+    from workspace_service.process_interfaces.projection import project_output
+    from workspace_service.workflow_execution_continuation import restore_result
+
+    report = diagnostic_row()
+    report["representations"][0]["sha256"] = None
+    saved(
+        tmp_path,
+        status="completed",
+        events=[diagnostic_event(report)],
+        partial_results={report["id"]: report},
+        result={"run_id": "run-1", "results": []},
+    )
+    view = recorder.read_workflow_run(tmp_path, SOURCE, "run-1", complete_results=True)
+    assert len(view["results"]) == 1
+    output = project_output(restore_result(view["results"][0]))
+    assert output.result_id == report["id"]
+    assert output.representations == ()
+
+
+@pytest.mark.parametrize("corruption", ["event", "final", "foreign_run", "file_path"])
+def test_completed_diagnostic_identity_conflicts_fail_closed(tmp_path, corruption):
+    import copy
+
+    report = diagnostic_row()
+    event = diagnostic_event(copy.deepcopy(report))
+    final = []
+    if corruption == "event":
+        event["engineering_result"]["representations"][0]["sha256"] = "a" * 64
+    elif corruption == "final":
+        final = [copy.deepcopy(report)]
+        final[0]["name"] = "Contradictory identity"
+    elif corruption == "foreign_run":
+        report["provenance"]["run_id"] = "foreign"
+        event = diagnostic_event(copy.deepcopy(report))
+    elif corruption == "file_path":
+        report["representations"][0]["location"] = "different.json"
+        event = diagnostic_event(copy.deepcopy(report))
+    saved(
+        tmp_path,
+        status="completed",
+        events=[event],
+        partial_results={report["id"]: report},
+        result={"run_id": "run-1", "results": final},
+    )
+    with pytest.raises(recorder.WorkflowRunReadError) as error:
+        recorder.read_workflow_run(tmp_path, SOURCE, "run-1", complete_results=True)
+    assert error.value.code == "invalid"
+
+
+def test_completed_supplemental_report_respects_existing_inventory_bound(
+    tmp_path, monkeypatch
+):
+    final, report = result_row("final"), diagnostic_row()
+    saved(
+        tmp_path,
+        status="completed",
+        events=[diagnostic_event(report)],
+        partial_results={report["id"]: report},
+        result={"run_id": "run-1", "results": [final]},
+    )
+    monkeypatch.setattr(recorder, "_MAX_RESULT_INVENTORY_ITEMS", 1)
+    with pytest.raises(recorder.WorkflowRunReadError) as error:
+        recorder.read_workflow_run(tmp_path, SOURCE, "run-1", complete_results=True)
+    assert error.value.code == "result_inventory_limit"
+
+
 def test_attachment_finds_requested_run_instead_of_latest(tmp_path):
     saved(tmp_path, "newer", name="20260930T120100Z-bbbbbbbbbbbb.json")
     path, _ = saved(tmp_path, "older", status="completed")

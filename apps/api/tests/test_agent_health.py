@@ -164,3 +164,21 @@ async def test_active_agent_accepts_openclaw_stub_runtime(client):
     assert response.status_code == 200
     assert response.json() == {"agent": "openclaw"}
     assert app.state.agent_sync_manager.active_agent == "openclaw"
+
+
+@pytest.mark.asyncio
+async def test_codex_selection_reports_failed_qualification_without_replacing_engine(
+    client,
+    monkeypatch,
+):
+    from api.main import app
+
+    app.state.agent_sync_manager.active_agent = "hermes"
+    monkeypatch.delenv("WRIGHT_CODEX_CHAT_EXPERIMENTAL", raising=False)
+    original_engine = app.state.agent_engine
+    response = await client.post("/api/agent/active", json={"agent": "codex"})
+
+    assert response.status_code == 400
+    assert "native-tool chat exception" in response.json()["message"]
+    assert app.state.agent_sync_manager.active_agent == "hermes"
+    assert app.state.agent_engine is original_engine

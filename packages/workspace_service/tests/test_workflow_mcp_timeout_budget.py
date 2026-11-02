@@ -98,5 +98,6 @@ async def test_declared_budget_and_gateway_hard_limit(maximum, succeeds):
         result = await runtime.call(step, {})
         assert "Actual delayed operation finished" in str(result)
     else:
-        with pytest.raises(WorkflowSourceExecutionError, match="timeout"):
+        with pytest.raises(WorkflowSourceExecutionError) as timeout:
             await runtime.call(step, {})
+        assert timeout.value.code == "MCP_CALL_TIMEOUT"

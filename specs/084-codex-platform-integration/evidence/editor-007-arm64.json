@@ -1,0 +1,87 @@
+{
+  "title": "New workflow authoring through the served source workspace",
+  "summary": "Continue the newly saved scratch workflow through type rejection, layout persistence, zoom and concurrent-save protection. No process execution or engineering review.",
+  "overall": "pass",
+  "updated": "2026-10-11T17:36:30.981Z",
+  "manualSteps": [
+    {
+      "label": "Workspace",
+      "instruction": "Open the isolated workspace and click Workflows."
+    },
+    {
+      "label": "New workflow",
+      "instruction": "Choose Workflow files, then New workflow."
+    },
+    {
+      "label": "Author",
+      "instruction": "Read the creation instructions, provide a name and create the verification workflow."
+    }
+  ],
+  "steps": [
+    {
+      "id": "S10",
+      "state": "pass",
+      "label": "Incompatible socket rejection",
+      "summary": "A connection diagnostic is visible and the semantic digest is unchanged.",
+      "purpose": "Preserve normal-workspace authoring behavior.",
+      "action": "Try connecting Response output to its reference-image input using Enter.",
+      "controls": [
+        "AI prompt",
+        "Response output",
+        "Reference image input"
+      ],
+      "expected": "Explain incompatible types without changing the accepted graph.",
+      "actual": "A connection diagnostic is visible and the semantic digest is unchanged.",
+      "raw": "screenshots/raw/S10.png",
+      "annotated": "screenshots/annotated/S10.png"
+    },
+    {
+      "id": "S11",
+      "state": "pass",
+      "label": "Dragging persists only layout",
+      "summary": "The node moves live; position commits on release and reopens exactly while semantics/revision remain unchanged; the full layout digest includes server revision metadata.",
+      "purpose": "Preserve normal-workspace authoring behavior.",
+      "action": "Drag Text input, release, Save and reload.",
+      "controls": [
+        "Text input",
+        "Save"
+      ],
+      "expected": "Movement changes saved layout without changing semantics or definition revision.",
+      "actual": "The node moves live; position commits on release and reopens exactly while semantics/revision remain unchanged; the full layout digest includes server revision metadata.",
+      "raw": "screenshots/raw/S11.png",
+      "annotated": "screenshots/annotated/S11.png"
+    },
+    {
+      "id": "S12",
+      "state": "pass",
+      "label": "Canvas zoom controls",
+      "summary": "Zoom changes the canvas transform and all three controls remain reachable.",
+      "purpose": "Preserve normal-workspace authoring behavior.",
+      "action": "Use Zoom in, Zoom out and Fit workflow to view.",
+      "controls": [
+        "Zoom in",
+        "Zoom out",
+        "Fit workflow to view"
+      ],
+      "expected": "Canvas navigation controls work within the editor.",
+      "actual": "Zoom changes the canvas transform and all three controls remain reachable.",
+      "raw": "screenshots/raw/S12.png",
+      "annotated": "screenshots/annotated/S12.png"
+    },
+    {
+      "id": "S12-pan",
+      "state": "pass",
+      "label": "Canvas panning",
+      "summary": "Actual pointer panning changes the viewport transform; accepted semantics remain unchanged.",
+      "purpose": "Preserve normal-workspace authoring behavior.",
+      "action": "Drag empty canvas background.",
+      "controls": [
+        "Canvas"
+      ],
+      "expected": "Panning moves the view without editing the graph.",
+      "actual": "Actual pointer panning changes the viewport transform; accepted semantics remain unchanged.",
+      "raw": "screenshots/raw/S12-pan.png",
+      "annotated": "screenshots/annotated/S12-pan.png"
+    }
+  ]
+}

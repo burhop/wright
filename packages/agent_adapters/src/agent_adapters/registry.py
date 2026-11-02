@@ -32,11 +32,13 @@ class AgentRuntimeProvider:
     support_level: SupportLevel = "supported"
     is_default: bool = False
     factory: AgentEngineFactory | None = None
+    unavailable_reason: str | None = None
 
     def create_engine(self, db_path: str | None = None) -> BaseAgentEngine:
         if not self.supported or self.factory is None:
             raise UnsupportedAgentRuntimeError(
-                f"Agent runtime '{self.name}' is known but not implemented."
+                self.unavailable_reason
+                or f"Agent runtime '{self.name}' is known but not implemented."
             )
         return self.factory(db_path)
 
@@ -63,6 +65,7 @@ class AgentEngineRegistry:
                 support_level=provider.support_level,
                 is_default=provider.is_default,
                 factory=provider.factory,
+                unavailable_reason=provider.unavailable_reason,
             )
 
         defaults = [provider for provider in normalized.values() if provider.is_default]
@@ -97,7 +100,8 @@ class AgentEngineRegistry:
             )
         if not provider.supported:
             raise UnsupportedAgentRuntimeError(
-                f"Agent runtime '{normalized}' is known but not implemented."
+                provider.unavailable_reason
+                or f"Agent runtime '{normalized}' is known but not implemented."
             )
         return provider
 
@@ -120,8 +124,16 @@ def _create_openclaw_stub_engine(db_path: str | None = None) -> BaseAgentEngine:
     return OpenClawStubEngine(db_path)
 
 
+def _create_codex_engine(db_path: str | None = None) -> BaseAgentEngine:
+    raise UnsupportedAgentRuntimeError(
+        "Codex chat requires Wright application composition with a durable session storage port"
+    )
+
+
 @lru_cache(maxsize=1)
 def default_agent_registry() -> AgentEngineRegistry:
+    from .codex_policy import NO_TOOLS_REASON
+
     return AgentEngineRegistry(
         [
             AgentRuntimeProvider(
@@ -140,6 +152,15 @@ def default_agent_registry() -> AgentEngineRegistry:
                 supported=True,
                 support_level="stub",
                 factory=_create_openclaw_stub_engine,
+            ),
+            AgentRuntimeProvider(
+                name="codex",
+                display_name="Codex (experimental)",
+                description="Experimental text chat with a documented native-tool exception. "
+                + NO_TOOLS_REASON,
+                supported=True,
+                support_level="experimental",
+                factory=_create_codex_engine,
             ),
             AgentRuntimeProvider(
                 name="pi",

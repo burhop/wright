@@ -1,0 +1,53 @@
+{
+  "run_id": "de60e23084294148a3a8129bf2bcb1b8",
+  "source_revision": 9,
+  "source_digest": "a215916fa57e9cc7813bf0b1ea3f2fff6066b8e362764dc2bab0f461a6feb617",
+  "state": "completed",
+  "events": 217,
+  "completed_at": "2026-10-23T22:12:02.578824+00:00",
+  "assessment_id": "assessment-22994316a67c40f1b78d4886ade9106a",
+  "assessment_raw_file_sha256": "f84fe135acab8306270091b5bf38e0ebf29649f8154fdb90b0520d312add05bb",
+  "assessment_summary": {
+    "content_verified": true,
+    "requirements_compliant": true,
+    "evaluation_complete": true,
+    "release_eligible": true,
+    "physical_validation": "not_assessed",
+    "counts": {
+      "pass": 43,
+      "fail": 0,
+      "blocked": 0,
+      "inconclusive": 0,
+      "error": 0,
+      "not_applicable": 0
+    }
+  },
+  "subjects": 17,
+  "review_ids": [
+    "review-8e31065864dd4aec979189550fda7156",
+    "review-b76b547f9e344164a5ef24b2e9ad1e42",
+    "review-ac8c604ace6c4664ad875706345e675a",
+    "review-4b57ee73976b4747bc6284cda8dba02f",
+    "review-754bfa7556df480999b4363418143354",
+    "review-6ed45b369a644e958f6bd903e00e8cbc"
+  ],
+  "human_review_actor": "local-control-plane",
+  "human_checkpoint": "checkpoint-b70fa6f11a25a206680e2509",
+  "human_subject_digest": "c3c28c379812eaa51f96bb930364bbfa30813b3e3909d2df490caa788bdbc18a",
+  "human_review_packet_manifest_sha256": "2e5466a00557bbeb499825ef323fa5464fa9954b674822a1681f911186dc9165",
+  "step_started_counts": {
+    "define_geometry_basis_printed_handle_084_side_native": 1,
+    "create_mesh_printed_handle_084_side_native": 1,
+    "repair_measure_orient_printed_handle_084_side_native": 1,
+    "prepare_build_instance_printed_handle_084_side_native": 1,
+    "supports_and_slice_printed_handle_084_side_native": 1,
+    "inspect_slice_handoff_printed_handle_084_side_native": 1,
+    "prepare_build_instance_printed_handle_084_side_native_comparison": 1,
+    "slice_candidate_printed_handle_084_side_native_comparison": 1,
+    "inspect_slice_handoff_printed_handle_084_side_native_comparison": 1,
+    "compare_orientations_printed_handle_084_side_native": 1,
+    "summarize_preparation_printed_handle_084_side_native": 1,
+    "validate_outputs_printed_handle_084_side_native": 1
+  },
+  "scope": "Actual source9 full fresh correction completed after real user digital review. All43 checks pass; earlier3decisions retain synthetic attribution. Digital profile eligibility grants no physical printing/fit/strength/certification, customer acceptance or comparative superiority."
+}

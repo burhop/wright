@@ -21,6 +21,14 @@ The caller may narrow scope but cannot request arbitrary fields. Unknown keys,
 path-like values, excessive identifiers, and a scope outside the authorized
 workspace are rejected.
 
+Feature 084 adds `scope.source_run_id` for a source workflow run. It cannot be
+combined with `session_id` or `scenario_run_id`. The server resolves its immutable
+start receipt and workspace-confined recorder; callers supply no file locator.
+An optional `snapshot.source_run` contains bounded recorded timing/identity
+metadata. Its canonical record digest participates in export staleness checks.
+Unverifiable evidence returns `DIAGNOSTIC_SOURCE_EVIDENCE_UNAVAILABLE` with no
+raw path or provider error body.
+
 Response `200`:
 
 ```json
@@ -72,4 +80,3 @@ Errors: `401 UNAUTHENTICATED`, `403 DIAGNOSTIC_EXPORT_DENIED`,
   log inclusion, user-selected raw fields, or background export.
 - No token, prompt, path, command, tool argument/result, model feature,
   engineering artifact body, or reusable run authority may appear.
-

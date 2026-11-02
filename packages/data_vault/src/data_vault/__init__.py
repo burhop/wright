@@ -58,6 +58,10 @@ from .workflow_runs import (
     WorkflowRunRecord,
     WorkflowRunRepository,
 )
+from .workflow_trace_repository import (
+    WorkflowTraceRepository as WorkflowTraceRepository,
+    WorkflowTraceStorageError as WorkflowTraceStorageError,
+)
 from .workspace_artifacts import (
     WorkspaceArtifactConflict,
     WorkspaceArtifactRecord,

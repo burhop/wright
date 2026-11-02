@@ -51,6 +51,8 @@ async def setup_case(
     include_supplied_files=False,
     run_paths=False,
     run_receipt=False,
+    local_simulation_kind=None,
+    local_simulation_static_input=False,
 ):
     run_id = uuid4().hex
     services = service(tmp_path)
@@ -177,6 +179,87 @@ async def setup_case(
         connection["fields"].update(
             type="item",
             **{"from": "package.uploaded_document", "to": "approve.review_document"},
+        )
+    if local_simulation_kind:
+        from workspace_service.workflow_external_actions import (
+            LOCAL_SIMULATION_BINDING,
+            LOCAL_SIMULATION_DESTINATION,
+        )
+
+        run_receipt = True
+        package = next(block for block in sections if block["id"] == "package")
+        package["fields"]["settings"].update(
+            saved_response_file_port="package_file", file_policy="publish_indexed"
+        )
+        approval = next(block for block in sections if block["id"] == "approve")
+        approval["fields"]["settings"].update(
+            action_kind=local_simulation_kind,
+            approval_binding=LOCAL_SIMULATION_BINDING,
+            approval_destination=LOCAL_SIMULATION_DESTINATION,
+            approval_settings={"simulation": True},
+            approval_action={
+                "kind": local_simulation_kind,
+                "mode": "local_simulation",
+                "simulation": True,
+            },
+        )
+        approval["fields"]["inputs"] = [
+            {"key": "review_package", "kind": "workspace_file", "name": "Exact package"}
+        ]
+        connection = next(
+            block for block in sections if block["id"] == "package_to_approval"
+        )
+        connection["fields"].update(
+            type="item",
+            **{"from": "package.package_file", "to": "approve.review_package"},
+        )
+    if local_simulation_static_input:
+        approval = next(block for block in sections if block["id"] == "approve")
+        approval["fields"]["inputs"].append(
+            {
+                "key": "review_profile",
+                "kind": "workspace_file",
+                "name": "Static profile",
+            }
+        )
+        sections.extend(
+            [
+                {
+                    "kind": "input",
+                    "id": "profile",
+                    "fields": {
+                        "name": "Original static profile",
+                        "step_type": "work",
+                        "provided_by": "engineer",
+                        "inputs": [],
+                        "outputs": [
+                            {
+                                "key": "original_profile",
+                                "kind": "workspace_file",
+                                "name": "Profile",
+                            }
+                        ],
+                        "instructions": "Retain the original profile.",
+                        "settings": {
+                            "input_mode": "workspace-file",
+                            "workspace_file": "brief.md",
+                        },
+                        "tool": None,
+                        "reusable_step": None,
+                    },
+                },
+                {
+                    "kind": "connection",
+                    "id": "profile_to_approval",
+                    "fields": {
+                        "type": "item",
+                        "from": "profile.original_profile",
+                        "to": "approve.review_profile",
+                        "label": "Original profile",
+                        "when": None,
+                    },
+                },
+            ]
         )
     text = ""
     for block in sections:

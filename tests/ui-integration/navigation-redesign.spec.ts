@@ -270,7 +270,7 @@ test.describe("UI Navigation Redesign E2E", () => {
 
   test("should display the condensed dashboard cards with health statuses and system telemetry", async ({ page }) => {
     // Mock workspaces list on dashboard
-    await page.route('**/api/workspace/recent', async (route) => {
+    await page.route(/\/api\/workspace\/(?:recent|list)$/, async (route) => {
       await route.fulfill({
         status: 200,
         contentType: 'application/json',
@@ -340,13 +340,16 @@ test.describe("UI Navigation Redesign E2E", () => {
 
     // Verify updates / news card details
     await expect(page.getByTestId("card-news")).toBeVisible();
-    await expect(page.getByText("v0.22.0 Release Modernized Navigation")).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Start with your job", exact: true })).toBeVisible();
+    await expect(page.getByText("Open or create a workspace.", { exact: true })).toBeVisible();
+    await expect(page.getByText("Review the tools and process before running.", { exact: true })).toBeVisible();
 
     // Verify system telemetry card details
     const telemetryCard = page.getByTestId("card-telemetry");
     await expect(telemetryCard).toBeVisible();
-    await expect(telemetryCard.getByText("state.db")).toBeVisible();
-    await expect(telemetryCard.getByText("Active Agent Chat Sessions:")).toBeVisible();
+    await expect(telemetryCard.getByRole("heading", { name: "Your work", exact: true })).toBeVisible();
+    await expect(telemetryCard.getByText("Workspaces:", { exact: true }).locator("..").locator("strong")).toHaveText("1");
+    await expect(telemetryCard.getByText("Conversations listed:", { exact: true }).locator("..").locator("strong")).toHaveText("1");
   });
 
   test("should support logs filtering and launching Hermes Diagnostic drawer via selection context menu", async ({ page }) => {

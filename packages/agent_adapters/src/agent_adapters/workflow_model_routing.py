@@ -2,6 +2,7 @@
 
 import hashlib
 import os
+from pathlib import Path
 
 import httpx
 
@@ -15,6 +16,15 @@ class ModelRouteChangedError(ValueError):
 
 
 def _profile():
+    home = os.getenv("HERMES_ROLE_PROFILE_HOME", "")
+    if os.getenv("WRIGHT_WORKFLOW_MODEL_TRANSPORT") == "hermes-model-sdk" and home:
+        path = Path(home).expanduser()
+        if not path.is_absolute() or not path.is_dir():
+            raise ValueError("The configured SDK profile home is unavailable")
+        return (
+            "profile-home:"
+            + hashlib.sha256(str(path.resolve(strict=True)).encode()).hexdigest()
+        )
     return (
         os.getenv("WRIGHT_HERMES_PROFILE") or os.getenv("HERMES_PROFILE") or "wright"
     ).strip() or "wright"

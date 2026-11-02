@@ -1,4 +1,5 @@
 import asyncio
+from dataclasses import asdict
 from contextlib import suppress
 import json
 import os
@@ -11,23 +12,25 @@ from typing import Optional, List, AsyncIterator
 import httpx
 from fastapi import APIRouter, Depends, Request, HTTPException, status, Query
 from fastapi.responses import StreamingResponse
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 import structlog
 from opentelemetry import trace
 from core.tracing import traced
-from api.config import DATABASE_PATH, api_mcp_autostart_enabled
+from api.config import DATABASE_PATH, HERMES_API_BASE_URL, api_mcp_autostart_enabled
+from api.agent_platform_engines import create_agent_engine
 
 from agent_adapters import (
     BaseAgentEngine,
     AgentChatRequest,
     UnsupportedAgentRuntimeError,
-    create_agent_engine,
     default_agent_registry,
     GenericProgressProjector,
     official_hermes_cli_path,
     resolve_agent_api_settings,
 )
+from agent_adapters.hermes_config import hermes_gateway_start_command
 from workspace_service import WorkspaceInvalidRequestError, WorkspaceService
+from workspace_service.agent_sync import GatewayRefreshNotObserved
 from workspace_service.adapters.runtime import (
     get_active_gateway_session,
     get_workspace_by_session,
@@ -37,6 +40,7 @@ from workspace_service.adapters.runtime import (
     update_workspace_session,
 )
 from tool_registry import ApprovalContext
+from tool_registry.gateway_models import GatewayError
 from tool_registry.db import get_servers
 from api.routers.vault import attachment_data_urls
 
@@ -99,9 +103,32 @@ def _restart_hermes_gateway_process() -> None:
         )
         return
 
-    executable = shutil.which("hermes") or official_hermes_cli_path()
+    executable = official_hermes_cli_path() or shutil.which("hermes")
     if not executable:
         raise RuntimeError("Hermes CLI was not found; gateway binding cannot refresh")
+    if hermes_gateway_start_command(HERMES_API_BASE_URL) is not None:
+        # Native users may run a foreground gateway without a system service.
+        # Hermes's own CLI retains profile scoping and its supervision guard.
+        # Readiness and replacement identity are checked by the existing owner.
+        log_dir = (
+            Path(os.environ.get("HERMES_HOME", str(Path.home() / ".hermes"))) / "logs"
+        )
+        log_dir.mkdir(parents=True, exist_ok=True)
+        with (log_dir / "wright-gateway-reconnect.log").open("ab") as log:
+            subprocess.Popen(
+                [executable, "gateway", "run", "--replace"],
+                stdin=subprocess.DEVNULL,
+                stdout=log,
+                stderr=subprocess.STDOUT,
+                start_new_session=os.name != "nt",
+                creationflags=(
+                    getattr(subprocess, "CREATE_NO_WINDOW", 0)
+                    | getattr(subprocess, "DETACHED_PROCESS", 0)
+                )
+                if os.name == "nt"
+                else 0,
+            )
+        return
     _run_gateway_restart_command(
         [executable, "gateway", "restart"], "Hermes gateway restart"
     )
@@ -224,8 +251,23 @@ class ChatStreamJob:
             heartbeat_task.cancel()
             with suppress(asyncio.CancelledError):
                 await heartbeat_task
+            if self.request.gateway_cleanup is not None:
+                try:
+                    await self.request.gateway_cleanup()
+                except Exception:
+                    await self._append(
+                        "error",
+                        {
+                            "message": "Chat gateway cleanup failed; reconciliation is required."
+                        },
+                    )
             if not self.cancelled and not saw_stream_end:
-                await self._append("stream_end", {})
+                outcome = (
+                    {"status": "unknown"}
+                    if getattr(self.engine, "platform", None) == "codex"
+                    else {}
+                )
+                await self._append("stream_end", outcome)
             await self._finish()
 
     async def stream_from(self, index: int = 0) -> AsyncIterator[tuple[str, dict]]:
@@ -244,6 +286,9 @@ class ChatStreamJob:
             yield event
 
     async def cancel(self) -> bool:
+        if getattr(self.engine, "platform", None) == "codex":
+            # Keep observing the native terminal receipt after interruption.
+            return await self.engine.cancel_chat(self.session_id)
         self.cancelled = True
         if self._task and not self._task.done():
             self._task.cancel()
@@ -318,15 +363,49 @@ def get_chat_stream_registry(request: Request) -> ChatStreamRegistry:
 
 
 #  Dependency injection helper
-def get_agent_engine(request: Request) -> BaseAgentEngine:
-    """Extract BaseAgentEngine from app state."""
+async def get_agent_engine(request: Request) -> BaseAgentEngine:
+    """Resolve durable session routing; default selection applies to creation."""
     engine = getattr(request.app.state, "agent_engine", None)
     if not engine:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Agent engine not initialized in app state",
         )
-    return engine
+    session_id = request.path_params.get("session_id") or request.query_params.get(
+        "session_id"
+    )
+    if not session_id and request.method in {"POST", "PUT", "PATCH"}:
+        try:
+            body = await request.json()
+            if isinstance(body, dict):
+                session_id = body.get("session_id")
+        except (ValueError, UnicodeDecodeError):
+            pass
+    sync_manager = getattr(request.app.state, "agent_sync_manager", None)
+    default_platform = getattr(sync_manager, "active_agent", "hermes")
+    platform = default_platform
+    if isinstance(session_id, str) and session_id:
+        from api.composition import workspace_service
+
+        platform = (
+            workspace_service().repository.session_platform(session_id)
+            or default_platform
+        )
+    request.state.agent_platform = platform
+    if platform == default_platform:
+        return engine
+    engines = getattr(request.app.state, "agent_engines", None)
+    if engines is None:
+        engines = request.app.state.agent_engines = {}
+    if platform not in engines:
+        try:
+            engines[platform] = create_agent_engine(platform, db_path=DATABASE_PATH)
+        except (UnsupportedAgentRuntimeError, ValueError) as error:
+            raise HTTPException(
+                503,
+                detail="The saved session platform is unavailable; no alternate platform was selected",
+            ) from error
+    return engines[platform]
 
 
 def get_current_trace_id() -> str:
@@ -344,13 +423,24 @@ async def ensure_workspace_mcp_servers_active(
 
     if not api_mcp_autostart_enabled():
         return
+    if getattr(getattr(request, "state", None), "agent_platform", None) == "codex":
+        # The pilot binds only its qualified read-only gateway operation.
+        # Do not start every enabled engineering server as a chat side effect.
+        return
 
     # Hermes calls workspace tools through its bound Wright gateway process.
     # Starting the same servers in the API process creates two lifecycle owners;
     # OAuth callbacks then compete for one loopback port and can invalidate each
     # other's saved login. Other agent adapters retain the legacy API preflight.
     sync_manager = getattr(request.app.state, "agent_sync_manager", None)
-    if getattr(sync_manager, "active_agent", "") == "hermes":
+    if (
+        getattr(
+            getattr(request, "state", None),
+            "agent_platform",
+            getattr(sync_manager, "active_agent", ""),
+        )
+        == "hermes"
+    ):
         return
 
     mcp_engine = getattr(request.app.state, "mcp_engine", None)
@@ -692,12 +782,27 @@ def _build_model_options_response(payload: dict) -> HermesModelOptionsResponse:
     )
 
 
+class ChatToolEvidence(BaseModel):
+    session_id: str
+    call_id: str
+    tool_name: str
+    arguments: dict | str | None = None
+    request_message_id: Optional[str] = None
+    response_message_id: Optional[str] = None
+    response: Optional[str] = None
+    display_response: Optional[str] = None
+    timestamp: int = 0
+    source: str
+    record_note: Optional[str] = None
+
+
 class ChatHistoryMessage(BaseModel):
     id: str
     role: str
     content: str
     timestamp: int
     trace_id: Optional[str] = None
+    tool_evidence: List[ChatToolEvidence] = Field(default_factory=list)
 
 
 class ChatHistoryResponse(BaseModel):
@@ -785,6 +890,10 @@ async def get_session_history(
                     content=m.content,
                     timestamp=m.timestamp,
                     trace_id=m.trace_id,
+                    tool_evidence=[
+                        ChatToolEvidence(**asdict(record))
+                        for record in getattr(m, "tool_evidence", ())
+                    ],
                 )
                 for m in messages
             ],
@@ -820,13 +929,27 @@ async def create_new_session(
         if authorization.created:
             WorkspaceManager(workspace_path)
 
-        session_info = await engine.create_session(workspace_path)
+        if getattr(engine, "platform", None) == "codex":
+            from agent_adapters.workflow_instructions import embedded_instruction_set
+
+            defaults = workspace_service.workflow_instruction_settings.read()
+            session_info = await engine.create_session(
+                workspace_path,
+                instructions=embedded_instruction_set(defaults["instructions"])
+                .resolve("chat")
+                .text,
+            )
+        else:
+            session_info = await engine.create_session(workspace_path)
         log.info("create_session_success", session_id=session_info.session_id)
 
         workspace_id = authorization.workspace_id or str(uuid.uuid4())
         if authorization.workspace_id:
             update_workspace_session(
-                DATABASE_PATH, authorization.workspace_id, session_info.session_id
+                DATABASE_PATH,
+                authorization.workspace_id,
+                session_info.session_id,
+                agent_id=getattr(request.state, "agent_platform", "hermes"),
             )
             log.info(
                 "create_session_associated_with_existing_workspace",
@@ -840,10 +963,15 @@ async def create_new_session(
                 session_info.session_id,
                 workspace_path,
                 workspace_name=os.path.basename(workspace_path),
+                agent_id=getattr(request.state, "agent_platform", "hermes"),
             )
 
         sync_manager = getattr(request.app.state, "agent_sync_manager", None)
-        agent_id = getattr(sync_manager, "active_agent", "hermes")
+        agent_id = getattr(
+            request.state,
+            "agent_platform",
+            getattr(sync_manager, "active_agent", "hermes"),
+        )
         workspace_service.refresh_agent_context_for_path(
             workspace_path,
             agent_id=agent_id,
@@ -875,6 +1003,7 @@ async def create_new_session(
 @router.get("/sessions", response_model=SessionsListResponse)
 @traced("agent.session.list")
 async def list_agent_sessions(
+    request: Request,
     workspace_id: Optional[str] = None,
     engine: BaseAgentEngine = Depends(get_agent_engine),
 ):
@@ -903,6 +1032,7 @@ async def list_agent_sessions(
                         title=session.title,
                         created_at=session.created_at,
                         updated_at=session.updated_at,
+                        agent_id=getattr(request.state, "agent_platform", "hermes"),
                     )
             else:
                 sessions = []
@@ -981,10 +1111,17 @@ async def chat(
     # until the MCP servers assigned to this workspace are available.
     sync_manager = getattr(request.app.state, "agent_sync_manager", None)
     gateway_restart_required = False
-    if sync_manager:
+    session_platform = getattr(request.state, "agent_platform", "hermes")
+    if sync_manager and session_platform == "hermes":
         try:
             gateway_restart_required = bool(
-                sync_manager.sync_workspace_tools(body.session_id)
+                getattr(
+                    sync_manager,
+                    "sync_workspace_tools_for_agent",
+                    lambda session, platform: sync_manager.sync_workspace_tools(
+                        session
+                    ),
+                )(body.session_id, session_platform)
             )
         except Exception as e:
             log.warn("Failed to sync workspace tools", error=str(e))
@@ -995,7 +1132,7 @@ async def chat(
             or os.getenv("WRIGHT_HERMES_GATEWAY_CONTROL") == "manual"
         )
         and sync_manager
-        and getattr(sync_manager, "active_agent", "") == "hermes"
+        and session_platform == "hermes"
     ):
         try:
             control = os.getenv("WRIGHT_HERMES_GATEWAY_CONTROL", "service")
@@ -1014,12 +1151,42 @@ async def chat(
                     refresh.start, wait_ready=refresh.wait_ready
                 )
             elif control == "service":
+                runtime_identity = getattr(engine, "gateway_runtime_identity", None)
+                if not callable(runtime_identity):
+                    raise RuntimeError(
+                        "The configured Hermes adapter cannot confirm gateway replacement. "
+                        "Check the installed Hermes API compatibility before reconnecting tools."
+                    )
+                if hermes_gateway_start_command(HERMES_API_BASE_URL) is not None:
+                    replacement_idle = getattr(
+                        engine, "gateway_replacement_is_idle", None
+                    )
+                    if not callable(replacement_idle) or not await replacement_idle():
+                        raise RuntimeError(
+                            "Hermes is still working, or its work state is unavailable. "
+                            "Let existing requests finish, then send your message again. "
+                            "No gateway was replaced and no message was sent to the model."
+                        )
                 await sync_manager.refresh_gateway_if_needed(
                     lambda: asyncio.to_thread(_restart_hermes_gateway_process),
                     wait_ready=lambda: _wait_for_hermes_gateway(engine),
+                    runtime_identity=runtime_identity,
                 )
             else:
                 raise RuntimeError("Unsupported Hermes gateway control mode")
+        except GatewayRefreshNotObserved as exc:
+            log.warning("workspace_gateway_refresh_not_observed")
+            raise HTTPException(
+                status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+                detail=(
+                    "Wright saved this workspace's tool connection, but Hermes has "
+                    "not restarted to load it. Restart your existing Hermes gateway "
+                    "using its normal controls. If you started it in a terminal, "
+                    "press Ctrl+C there and run the same profile-specific "
+                    "`hermes gateway run` command again. Then return here and resend "
+                    "your message. No message was sent to the model."
+                ),
+            ) from exc
         except Exception as exc:
             log.exception("workspace_gateway_rebind_failed", error=str(exc))
             raise HTTPException(
@@ -1027,9 +1194,10 @@ async def chat(
                 detail=str(exc),
             ) from exc
 
-    _mirror_active_rivet_workflow_to_gateway_binding(
-        body.session_id, body.active_rivet_slug
-    )
+    if session_platform == "hermes":
+        _mirror_active_rivet_workflow_to_gateway_binding(
+            body.session_id, body.active_rivet_slug
+        )
 
     await ensure_llm_backend_ready(engine)
     await ensure_workspace_mcp_servers_active(request, body.session_id)
@@ -1076,8 +1244,28 @@ async def chat(
         instruction_set=instruction_defaults["instructions"],
         invocation_observer=invocation_recorder.observe,
     )
+    if session_platform == "codex":
+        from api.services.codex_chat_gateway import prepare_codex_chat_gateway
+
+        try:
+            handler, cleanup = await prepare_codex_chat_gateway(
+                request, engine, chat_scope, body.session_id
+            )
+            chat_request.gateway_handler, chat_request.gateway_cleanup = (
+                handler,
+                cleanup,
+            )
+        except (ValueError, GatewayError) as error:
+            raise HTTPException(
+                503, detail="Codex's read-only Wright gateway binding is unavailable"
+            ) from error
     registry = get_chat_stream_registry(request)
-    job = await registry.start(chat_request, engine)
+    try:
+        job = await registry.start(chat_request, engine)
+    except BaseException:
+        if chat_request.gateway_cleanup:
+            await chat_request.gateway_cleanup()
+        raise
 
     async def sse_generator() -> AsyncIterator[str]:
         yield f"event: stream_start\ndata: {json.dumps({'stream_id': job.stream_id, 'session_id': body.session_id, 'started_at': job.started_at_ms})}\n\n"
@@ -1103,7 +1291,34 @@ async def chat(
 
 @router.get("/models", response_model=HermesModelOptionsResponse)
 @traced("agent.models.list")
-async def list_hermes_models(refresh: bool = False):
+async def list_hermes_models(
+    refresh: bool = False, engine: BaseAgentEngine = Depends(get_agent_engine)
+):
+    if getattr(engine, "platform", None) == "codex":
+        models = await engine.get_models()
+        return HermesModelOptionsResponse(
+            current_value=_model_option_value("codex", engine.model),
+            current_provider="codex",
+            current_model=engine.model,
+            groups=[
+                HermesModelOptionGroup(
+                    provider="codex",
+                    label="Codex (experimental)",
+                    options=[
+                        HermesModelOption(
+                            value=_model_option_value("codex", row["model"]),
+                            label=row["displayName"],
+                            provider="codex",
+                            model=row["model"],
+                            is_current=row["model"] == engine.model,
+                        )
+                        for row in models
+                    ],
+                )
+            ],
+            selection_supported=False,
+            selection_message="Codex model and reasoning effort are fixed for each session. Configure a new session to change them.",
+        )
     # This endpoint owns authoring chat. Workflow SDK readiness has its own owner.
     payload = await _hermes_json_request(
         "GET",
@@ -1120,7 +1335,13 @@ async def list_hermes_models(refresh: bool = False):
 
 @router.post("/model", response_model=SetHermesModelResponse)
 @traced("agent.model.set")
-async def set_hermes_model(body: SetHermesModelRequest):
+async def set_hermes_model(
+    body: SetHermesModelRequest, engine: BaseAgentEngine = Depends(get_agent_engine)
+):
+    if getattr(engine, "platform", None) == "codex":
+        raise HTTPException(
+            409, detail="Codex session model is frozen. No model was changed."
+        )
     from agent_adapters.workflow_sdk import sdk_transport_selected
 
     if sdk_transport_selected() and not body.session_id:
@@ -1218,16 +1439,32 @@ async def set_active_agent_endpoint(
 
     from api.config import DATABASE_PATH
 
-    request.app.state.agent_engine = create_agent_engine(
-        provider.name, db_path=DATABASE_PATH, registry=registry
-    )
     sync_manager = getattr(request.app.state, "agent_sync_manager", None)
+    engines = getattr(request.app.state, "agent_engines", None)
+    if engines is None:
+        engines = request.app.state.agent_engines = {}
+    previous = getattr(sync_manager, "active_agent", "hermes")
+    engines[previous] = request.app.state.agent_engine
+    try:
+        engine = engines.get(provider.name) or create_agent_engine(
+            provider.name, db_path=DATABASE_PATH, registry=registry
+        )
+    except (UnsupportedAgentRuntimeError, ValueError) as error:
+        raise HTTPException(400, detail=str(error)) from error
+    engines[provider.name] = engine
+    request.app.state.agent_engine = engine
     if sync_manager:
         sync_manager.active_agent = provider.name
-        if session_id:
+        if session_id and provider.name == "hermes":
             # Sync tools immediately for the active workspace session
             try:
-                sync_manager.sync_workspace_tools(session_id)
+                from api.composition import workspace_service
+
+                if workspace_service().repository.session_platform(session_id) in {
+                    None,
+                    "hermes",
+                }:
+                    sync_manager.sync_workspace_tools(session_id)
             except Exception as e:
                 logger.error("Failed to sync tools on agent switch: %s", e)
         return ActiveAgentResponse(agent=sync_manager.active_agent)

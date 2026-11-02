@@ -56,6 +56,23 @@ export function getSetupStatus(
     };
   }
   if (
+    capability.compatibility.reasons.some(
+      (reason) => reason.code === "host_software_unobserved",
+    ) &&
+    !capability.compatibility.reasons.some(
+      (reason) =>
+        reason.code === "host_software_missing" ||
+        reason.code === "system_dependency_missing",
+    )
+  ) {
+    return {
+      label: "Check app connection",
+      color: "var(--color-warning)",
+      summary:
+        "The automatic check could not confirm the engineering application. Use the setup guide to connect your existing installation or install it if needed. The MCP package can still be installed.",
+    };
+  }
+  if (
     /host_software|host software|required host|could not be confirmed/.test(
       evidence,
     )

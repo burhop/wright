@@ -66,7 +66,7 @@
           "artifact_ref": {
             "anyOf": [
               {
-                "maxLength": 160,
+                "maxLength": 8192,
                 "minLength": 1,
                 "type": "string"
               },
@@ -264,7 +264,7 @@
           "technical_details_ref": {
             "anyOf": [
               {
-                "maxLength": 160,
+                "maxLength": 8192,
                 "minLength": 1,
                 "type": "string"
               },
@@ -507,7 +507,7 @@
           "artifact_ref": {
             "anyOf": [
               {
-                "maxLength": 160,
+                "maxLength": 8192,
                 "minLength": 1,
                 "type": "string"
               },
@@ -705,7 +705,7 @@
           "technical_details_ref": {
             "anyOf": [
               {
-                "maxLength": 160,
+                "maxLength": 8192,
                 "minLength": 1,
                 "type": "string"
               },
@@ -784,7 +784,7 @@
         "additionalProperties": false,
         "properties": {
           "artifact_ref": {
-            "maxLength": 160,
+            "maxLength": 8192,
             "minLength": 1,
             "title": "Artifact Ref",
             "type": "string"
@@ -1418,7 +1418,7 @@
         "additionalProperties": false,
         "properties": {
           "artifact_ref": {
-            "maxLength": 160,
+            "maxLength": 8192,
             "minLength": 1,
             "title": "Artifact Ref",
             "type": "string"
@@ -1971,7 +1971,7 @@
           "artifact_ref": {
             "anyOf": [
               {
-                "maxLength": 160,
+                "maxLength": 8192,
                 "minLength": 1,
                 "type": "string"
               },
@@ -2653,7 +2653,7 @@
           "technical_details_ref": {
             "anyOf": [
               {
-                "maxLength": 160,
+                "maxLength": 8192,
                 "minLength": 1,
                 "type": "string"
               },
@@ -2987,7 +2987,7 @@
           "artifact_ref": {
             "anyOf": [
               {
-                "maxLength": 160,
+                "maxLength": 8192,
                 "minLength": 1,
                 "type": "string"
               },
@@ -3613,7 +3613,7 @@
           "artifact_ref": {
             "anyOf": [
               {
-                "maxLength": 160,
+                "maxLength": 8192,
                 "minLength": 1,
                 "type": "string"
               },
@@ -3811,7 +3811,7 @@
           "technical_details_ref": {
             "anyOf": [
               {
-                "maxLength": 160,
+                "maxLength": 8192,
                 "minLength": 1,
                 "type": "string"
               },
@@ -3929,7 +3929,7 @@
         "additionalProperties": false,
         "properties": {
           "artifact_ref": {
-            "maxLength": 160,
+            "maxLength": 8192,
             "minLength": 1,
             "title": "Artifact Ref",
             "type": "string"
@@ -3995,7 +3995,7 @@
           "artifact_ref": {
             "anyOf": [
               {
-                "maxLength": 160,
+                "maxLength": 8192,
                 "minLength": 1,
                 "type": "string"
               },
@@ -4611,7 +4611,7 @@
       "run_log_path": {
         "anyOf": [
           {
-            "maxLength": 160,
+            "maxLength": 8192,
             "minLength": 1,
             "type": "string"
           },

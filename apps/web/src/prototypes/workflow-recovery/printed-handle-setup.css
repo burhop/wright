@@ -1,0 +1,56 @@
+.printed-handle-setup {
+  width: min(940px, 94vw);
+}
+.printed-handle-setup__body {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding: 20px 24px;
+}
+.printed-handle-setup fieldset {
+  display: grid;
+  gap: 12px;
+  margin: 18px 0;
+  padding: 16px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+}
+.printed-handle-setup label {
+  display: grid;
+  gap: 6px;
+  margin: 10px 0;
+}
+.printed-handle-setup input:not([type="checkbox"]),
+.printed-handle-setup select,
+.printed-handle-setup textarea {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  padding: 8px;
+  color: var(--color-primary);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+}
+.printed-handle-setup details {
+  margin: 16px 0;
+}
+.printed-handle-setup summary {
+  cursor: pointer;
+}
+.printed-handle-setup pre {
+  max-height: 300px;
+  overflow: auto;
+  white-space: pre-wrap;
+}
+.printed-handle-setup code,
+.printed-handle-setup li {
+  overflow-wrap: anywhere;
+}
+.printed-handle-setup li {
+  margin-bottom: 8px;
+}
+.printed-handle-setup .printed-handle-setup__confirmation {
+  display: flex;
+  align-items: flex-start;
+}

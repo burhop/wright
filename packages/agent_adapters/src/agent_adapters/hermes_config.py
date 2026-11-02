@@ -1,9 +1,11 @@
 import os
+import shlex
 import shutil
 import subprocess
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Mapping
+from urllib.parse import urlsplit
 
 
 @dataclass(frozen=True)
@@ -50,6 +52,70 @@ def official_hermes_cli_path(
             if _is_accessible_file(candidate):
                 return str(candidate)
     return None
+
+
+def hermes_gateway_start_command(
+    api_base_url: str, env: Mapping[str, str] | None = None
+) -> dict[str, str] | None:
+    """Describe local native recovery; never run it or copy credential values."""
+    env = os.environ if env is None else env
+    if env.get("WRIGHT_NATIVE_RUNTIME") != "1":
+        return None
+    try:
+        endpoint = urlsplit(api_base_url)
+        if endpoint.scheme not in {"http", "https"} or endpoint.hostname not in {
+            "localhost",
+            "127.0.0.1",
+            "::1",
+        }:
+            return None
+    except ValueError:
+        return None
+    executable = official_hermes_cli_path(env) or shutil.which(
+        "hermes", path=env.get("PATH")
+    )
+    if not executable:
+        return None
+    selection = {
+        key: env[key]
+        for key in (
+            "HERMES_HOME",
+            "HERMES_PROFILE",
+            "HERMES_CONFIG_PATH",
+            "HERMES_ENV_PATH",
+            "API_SERVER_HOST",
+            "API_SERVER_PORT",
+        )
+        if env.get(key)
+    }
+    if any(
+        ord(character) < 32
+        for value in [executable, *selection.values()]
+        for character in value
+    ):
+        return None
+    if os.name == "nt":
+
+        def quote(value: str) -> str:
+            return "'" + value.replace("'", "''") + "'"
+
+        prefix = "".join(
+            f"$env:{key}={quote(value)}; " for key, value in selection.items()
+        )
+        command = f"{prefix}& {quote(executable)} gateway run --replace"
+        shell = "powershell"
+    else:
+        args = [
+            "env",
+            *(f"{key}={value}" for key, value in selection.items()),
+            executable,
+            "gateway",
+            "run",
+            "--replace",
+        ]
+        command = shlex.join(args)
+        shell = "posix"
+    return {"restart_command": command, "restart_command_shell": shell}
 
 
 def _parse_env_value(value: str) -> str:

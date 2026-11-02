@@ -4,6 +4,8 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
+import json
 import re
 import subprocess
 import sys
@@ -141,7 +143,9 @@ def tracked_files(include_untracked: bool = False) -> list[Path]:
         )
         paths.extend(ROOT / line for line in result.stdout.splitlines() if line)
 
-    return [path for path in paths if path.exists() and path.is_file() and should_scan(path)]
+    return [
+        path for path in paths if path.exists() and path.is_file() and should_scan(path)
+    ]
 
 
 def read_text(path: Path) -> str | None:
@@ -154,11 +158,50 @@ def read_text(path: Path) -> str | None:
         return None
 
 
-def scan_file(path: Path) -> list[Finding]:
+def fixture_exceptions() -> set[tuple[str, str, str]]:
+    """Accept only reviewed, whole-line canaries; malformed policy fails closed."""
+    policy = ROOT / ".github/public-alpha-fixture-exceptions.json"
+    if not policy.exists():
+        return set()
+    value = json.loads(policy.read_text(encoding="utf-8"))
+    if set(value) != {"schema_version", "exceptions"} or value["schema_version"] != 1:
+        raise ValueError("Invalid fixture exception policy")
+    if not isinstance(value["exceptions"], list):
+        raise ValueError("Invalid fixture exception entries")
+    result = set()
+    rules = {kind for kind, _ in PATTERNS}
+    for entry in value["exceptions"]:
+        if (
+            not isinstance(entry, dict)
+            or set(entry) != {"path", "rule", "source_line_sha256", "reason"}
+            or not all(isinstance(item, str) for item in entry.values())
+        ):
+            raise ValueError("Invalid fixture exception entry")
+        path = Path(entry["path"])
+        if (
+            path.is_absolute()
+            or ".." in path.parts
+            or path.as_posix() != entry["path"]
+            or entry["rule"] not in rules
+            or re.fullmatch(r"[0-9a-f]{64}", entry["source_line_sha256"]) is None
+            or not entry["reason"].strip()
+        ):
+            raise ValueError("Invalid fixture exception scope")
+        key = (entry["path"], entry["rule"], entry["source_line_sha256"])
+        if key in result:
+            raise ValueError("Duplicate fixture exception")
+        result.add(key)
+    return result
+
+
+def scan_file(
+    path: Path, *, exceptions: set[tuple[str, str, str]] | None = None
+) -> list[Finding]:
     text = read_text(path)
     if text is None:
         return []
 
+    allowed = fixture_exceptions() if exceptions is None else exceptions
     findings: list[Finding] = []
     for line_number, line in enumerate(text.splitlines(), start=1):
         if is_placeholder(line):
@@ -170,6 +213,13 @@ def scan_file(path: Path) -> list[Finding]:
             if kind == "generic-secret-assignment" and not looks_like_generic_secret(
                 match.group(1)
             ):
+                continue
+            fingerprint = (
+                path.relative_to(ROOT).as_posix(),
+                kind,
+                hashlib.sha256(line.encode("utf-8")).hexdigest(),
+            )
+            if fingerprint in allowed:
                 continue
             if not is_placeholder(match.group(0)):
                 findings.append(
@@ -186,8 +236,9 @@ def scan_file(path: Path) -> list[Finding]:
 
 def scan_paths(paths: list[Path]) -> list[Finding]:
     findings: list[Finding] = []
+    allowed = fixture_exceptions()
     for path in paths:
-        findings.extend(scan_file(path))
+        findings.extend(scan_file(path, exceptions=allowed))
     return findings
 
 

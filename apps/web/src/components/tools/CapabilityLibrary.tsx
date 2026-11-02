@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   mcpService,
   type CapabilityListResponse,
@@ -35,12 +35,19 @@ export function CapabilityLibrary({
   const [selected, setSelected] = useState<CapabilityView | null>(null);
   const [loading, setLoading] = useState(true);
   const [observing, setObserving] = useState(false);
+  const [observationNotice, setObservationNotice] = useState<
+    "complete" | "failed" | null
+  >(null);
+  const observationRequest = useRef(0);
   const [error, setError] = useState<string | null>(null);
   const [retryToken, setRetryToken] = useState(0);
 
   const query = useMemo(
     () => ({
-      curation: [filters.curation],
+      curation:
+        filters.curation === "all" && filters.installed !== "true"
+          ? ["curated", "follow_up"]
+          : [filters.curation],
       engineering_stage: filters.engineeringStage
         ? [filters.engineeringStage]
         : undefined,
@@ -50,7 +57,7 @@ export function CapabilityLibrary({
       lifecycle_stage: filters.lifecycleStage
         ? [filters.lifecycleStage]
         : undefined,
-      platform: filters.platform ? [filters.platform] : undefined,
+      platform: filters.platform === "all" ? undefined : [filters.platform],
       maturity: filters.maturity ? [filters.maturity] : undefined,
       evidence_class: filters.evidenceClass
         ? [filters.evidenceClass]
@@ -166,15 +173,33 @@ export function CapabilityLibrary({
               }
     : null;
 
+  const selectCapability = (capability: CapabilityView | null) => {
+    observationRequest.current += 1;
+    setObserving(false);
+    setObservationNotice(null);
+    setSelected(capability);
+  };
+
+  useEffect(
+    () => () => {
+      observationRequest.current += 1;
+    },
+    [],
+  );
+
   const observeSelected = async () => {
     if (!selected) return;
+    const request = ++observationRequest.current;
     setObserving(true);
+    setObservationNotice(null);
     try {
       const observed = await mcpService.observeCapability(
         selected.capability_id,
       );
+      if (request !== observationRequest.current) return;
       const updated = { ...selected, compatibility: observed.compatibility };
       setSelected(updated);
+      setObservationNotice("complete");
       setResult((current) =>
         current
           ? {
@@ -187,8 +212,12 @@ export function CapabilityLibrary({
             }
           : current,
       );
+    } catch {
+      if (request === observationRequest.current) {
+        setObservationNotice("failed");
+      }
     } finally {
-      setObserving(false);
+      if (request === observationRequest.current) setObserving(false);
     }
   };
 
@@ -220,6 +249,23 @@ export function CapabilityLibrary({
           <p style={{ color: "var(--color-text-muted)", margin: 0 }}>
             Find and install MCP servers for engineering applications.
           </p>
+          {!loading &&
+            !error &&
+            visibleCapabilities.length === 0 &&
+            filters.curation !== "all" && (
+              <div style={{ marginTop: "var(--space-sm)" }}>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const next = { ...filters, curation: "all" as const };
+                    writeCapabilityFilters(next);
+                    setFilters(next);
+                  }}
+                >
+                  Browse all MCP servers
+                </button>
+              </div>
+            )}
         </div>
         <div
           style={{ display: "flex", gap: "var(--space-sm)", flexWrap: "wrap" }}
@@ -254,7 +300,11 @@ export function CapabilityLibrary({
         </div>
       </div>
 
-      <CapabilityFilters value={filters} onChange={setFilters} />
+      <CapabilityFilters
+        value={filters}
+        onChange={setFilters}
+        currentPlatform={result?.current_platform}
+      />
 
       <details>
         <summary>What do the setup labels mean?</summary>
@@ -278,16 +328,28 @@ export function CapabilityLibrary({
         </div>
       )}
       {result?.curation_counts && !loading && !error && (
-        <div data-testid="capability-curation-summary" role="status">
-          {result.curation_counts.curated || 0} curated for this environment ·{" "}
-          {result.curation_counts.follow_up || 0} follow up ·{" "}
-          {result.curation_counts.removed || 0} removed from discovery{" "}
+        <div
+          data-testid="capability-curation-summary"
+          role="status"
+          style={{
+            display: "flex",
+            alignItems: "center",
+            flexWrap: "wrap",
+            gap: "var(--space-md)",
+          }}
+        >
+          <span>
+            {result.curation_counts.curated || 0} curated matching these filters
+            · {result.curation_counts.follow_up || 0} follow up
+          </span>
           <button
             type="button"
+            style={{ textDecoration: "underline" }}
             onClick={() => {
               const next = {
                 ...filters,
                 curation: "all" as const,
+                platform: "all",
                 installed: "true" as const,
               };
               writeCapabilityFilters(next);
@@ -380,11 +442,11 @@ export function CapabilityLibrary({
                 ) &&
                 !firstVisibleMatch.user_state?.active
               ) {
-                setSelected(null);
+                selectCapability(null);
                 onPlanOnboarding(firstVisibleMatch.capability_id);
                 return;
               }
-              setSelected(firstVisibleMatch);
+              selectCapability(firstVisibleMatch);
             }}
           >
             {primaryAction.label}
@@ -395,6 +457,14 @@ export function CapabilityLibrary({
         <div data-testid="capability-empty-state">
           <h2>No MCP servers match these filters</h2>
           <p>Clear one or more filters, or report a missing MCP candidate.</p>
+          {filters.curation !== "all" && (
+            <div>
+              <p>
+                Try searching all catalog records. You can review each server's
+                requirements before installing it.
+              </p>
+            </div>
+          )}
           {filters.curation === "curated" && (
             <div>
               <p>
@@ -438,8 +508,32 @@ export function CapabilityLibrary({
             <CapabilityCard
               key={capability.capability_id}
               capability={capability}
-              onOpen={setSelected}
+              onOpen={selectCapability}
               onInstall={onPlanOnboarding}
+              onConnectionChecked={(evidence) =>
+                setResult((current) =>
+                  current
+                    ? {
+                        ...current,
+                        capabilities: current.capabilities.map((item) =>
+                          item.capability_id === capability.capability_id
+                            ? {
+                                ...item,
+                                local_validation: {
+                                  evidence_id: evidence.evidence_id,
+                                  state: evidence.state,
+                                  observed_at: evidence.observed_at,
+                                  reason_codes: evidence.reason_codes,
+                                  limitation:
+                                    evidence.read_only_probe?.limitation,
+                                },
+                              }
+                            : item,
+                        ),
+                      }
+                    : current,
+                )
+              }
             />
           ))}
         </div>
@@ -448,17 +542,18 @@ export function CapabilityLibrary({
         <CapabilityDetails
           capability={selected}
           observing={observing}
+          observationNotice={observationNotice}
           onObserve={observeSelected}
           onPlan={
             onPlanOnboarding
               ? () => {
                   const capabilityId = selected.capability_id;
-                  setSelected(null);
+                  selectCapability(null);
                   onPlanOnboarding(capabilityId);
                 }
               : undefined
           }
-          onClose={() => setSelected(null)}
+          onClose={() => selectCapability(null)}
         />
       )}
     </section>

@@ -54,12 +54,29 @@ class _UnavailableRole:
         )
 
 
-def get_process_ui_authoring(request: Request, service=Depends(get_workspace_service)):
+async def get_process_ui_authoring(
+    request: Request, service=Depends(get_workspace_service)
+):
+    selected = None
+    # Codex chat's native-tool exception cannot release the confined authoring role.
+    # Check model-entry routes before consulting a previously cached Hermes owner.
+    # Existing job status/cancellation and saved views retain their durable owner.
+    if (
+        request.url.path.endswith(("/authoring-capabilities", "/authoring-jobs"))
+        and getattr(request.app.state, "agent_engine", None) is not None
+    ):
+        from api.routers.agent import get_agent_engine
+
+        selected = await get_agent_engine(request)
+        if getattr(selected, "platform", None) == "codex":
+            return ProcessInterfaceAuthoring(
+                service.process_interfaces, selected, discover_build_toolchain()
+            )
     application = service.process_interfaces
     existing = application.__dict__.get("_authoring")
     if existing is not None:
         return existing
-    engine = getattr(request.app.state, "agent_engine", None)
+    engine = selected or getattr(request.app.state, "agent_engine", None)
     toolchain = discover_build_toolchain()
     if engine is None or not callable(
         getattr(engine, "get_invocation_capabilities", None)

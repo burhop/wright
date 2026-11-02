@@ -93,3 +93,12 @@ def test_wright_system_hint_retries_deterministic_non_mutating_validation_errors
     assert "apply every deterministic correction" in lowered
     assert "one revised tool call and retry" in lowered
     assert "repeats the same failure" in lowered
+
+
+def test_native_gateway_binds_only_the_nonsecret_root_for_isolated_stdio(monkeypatch):
+    monkeypatch.setenv("WRIGHT_HOME", "/tmp/isolated-wright")
+    monkeypatch.setenv("WRIGHT_API_TOKEN", "must-not-copy")
+    monkeypatch.setenv("OPENAI_API_KEY", "must-not-copy-either")
+    profile = hermes_wright_gateway_profile(None, terminal_cwd="/tmp/workspace")
+    assert profile.mcp_server_config()["env"] == {"WRIGHT_HOME": "/tmp/isolated-wright"}
+    assert "env" not in hermes_wright_gateway_profile("/repo").mcp_server_config()

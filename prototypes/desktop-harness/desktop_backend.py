@@ -1057,7 +1057,7 @@ class DesktopBackend:
                 elif body.operation == "uninstall":
                     # This shared owner stops and marks uninstalled, retaining
                     # configuration/credentials. No session-specific agent sync.
-                    await service.uninstall_server(body.server_id)
+                    await service.uninstall_server(body.server_id, sync_agent_profile=False)
                 else:
                     service.set_tool_enabled(
                         body.tool_id, body.operation == "tool-enable"

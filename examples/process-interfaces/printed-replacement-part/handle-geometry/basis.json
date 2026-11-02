@@ -1,0 +1,329 @@
+{
+  "schema_version": 1,
+  "scenario_id": "printed-replacement-part-02",
+  "status": "proposed_native_solid_recipe_construction_qualified_independent_repair_pending",
+  "engineering_acceptance": false,
+  "physical_acceptance": false,
+  "original_inputs": [
+    {
+      "path": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/02-repair-cart-bow-handle/concept.png",
+      "sha256": "467f9fe327ccaf085c507487c2907503bd2e50bdd055cbcf6bdeff706b705fb0"
+    },
+    {
+      "path": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/02-repair-cart-bow-handle/concept.svg",
+      "sha256": "06567d143fe7d3d06641da7e60262eaed6f562878bb2fd080b93f298f2fe447f"
+    },
+    {
+      "path": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/02-repair-cart-bow-handle/context.md",
+      "sha256": "2b4ad39c8d07368fa4d0b5bfb257625cbafe5098a0cc106ca80103929cc378ee"
+    },
+    {
+      "path": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/02-repair-cart-bow-handle/prompt.txt",
+      "sha256": "95eb1233ff0498c5bc96d5659b7f9538a89f98c4bdc916a61442cf5f3da41834"
+    },
+    {
+      "path": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/02-repair-cart-bow-handle/scenario.json",
+      "sha256": "4d0ec7d6c8cff674507cb5a5f418bacee3c5eef2f27002370fe3d9e60f44e6a5"
+    },
+    {
+      "path": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/02-repair-cart-bow-handle/user-profile.md",
+      "sha256": "64784f2ce75bda54ab4dc0fbbf499b629837d36bba57cc713c1ba565e8d02e0d"
+    }
+  ],
+  "original_validation_profile": {
+    "path": "packages/workspace_service/src/workspace_service/process_validation/profiles/printed-replacement-part-02.json",
+    "sha256": "60e164adeb1f41686ead462bd803ff7b194b679afab8a07f9210e17d0a482f3c"
+  },
+  "supplied_requirements": {
+    "frame": "mm; X drawer width, Y vertical, Z outward; mounting plane Z0",
+    "mounting": {
+      "bolt_centers_xy_mm": [
+        [
+          0,
+          0
+        ],
+        [
+          96,
+          0
+        ]
+      ],
+      "center_spacing_mm": 96,
+      "pad_xyz_mm": [
+        18,
+        24,
+        5
+      ],
+      "through_hole_diameter_mm": 4.5,
+      "hardware": "Existing M4 through bolts and external washers; no threaded plastic bosses; human selects bolt lengths after the measured prototype"
+    },
+    "envelope_max_xyz_mm": [
+      118,
+      28,
+      34
+    ],
+    "label_keepout": "No part below Y=-18mm",
+    "finger_clearance": {
+      "minimum_z_mm": 25,
+      "central_span_mm": 65
+    },
+    "nominal_grip_yz_mm": [
+      12,
+      9
+    ],
+    "rounds": "Internal blends at least3mm where space permits; touched edges at least1mm rounding",
+    "thumb_recess": {
+      "maximum_depth_mm": 1.5,
+      "central_extent_mm": 40
+    },
+    "process": "P1S,0.4mm nozzle,PETG,0.20mm layers,five walls,40% infill; compare pads-down and side orientation; retain actual support preview/contact locations; review dimensions before any slicing; preserve source/repaired meshes and final3MF; digest-bound simulated transfer only",
+    "use_limits": "Prototype convenience drawer pull,40N opening load is intent only;10–40C wipe-clean use; no lifting/fatigue/strength/fit/food/dishwasher/certification claim"
+  },
+  "proposed_geometry": {
+    "pads": {
+      "centers_xy_mm": [
+        [
+          0,
+          5.8
+        ],
+        [
+          96,
+          5.8
+        ]
+      ],
+      "bounds_z_mm": [
+        0,
+        5
+      ],
+      "dimensions_xyz_mm": [
+        18,
+        24,
+        5
+      ],
+      "edge_round_request_mm": 1.02,
+      "contact": "Planar Z0 interiors retained; perimeter and hole rims rounded; require actual plane/area/footprint inspection",
+      "placement_basis": "Written dimensions and bolt centers govern; pad geometric centers were not fixed. This visible revision raises both unchanged18x24x5 pads to Y5.8, leaving holes atY0 and reserving material for root/edge blends and a provisional10mm washer. Confirm this eccentric placement at the declared basis review.",
+      "bounds_y_mm": [
+        -6.2,
+        17.8
+      ]
+    },
+    "bow": {
+      "method": "Native FreeCAD constant circular roots, variable-profile upper pipes and a homogeneous-C1 rational ellipse tensor central grip; full native BOP and continuity gates precede tessellation.",
+      "leg_centers_xy_mm": [
+        [
+          2,
+          10.5
+        ],
+        [
+          94,
+          10.5
+        ]
+      ],
+      "leg_bottom_z_mm": 2,
+      "constant_root_cylinder": {
+        "diameter_mm": 5,
+        "z_extent_mm": [
+          2,
+          10.5
+        ]
+      },
+      "lower_leg_interpretation": "The original nominal12x9 section describes the grip. This explicit tapered-leg proposal uses circular5mm roots and smoothly grows to the full oval at the shoulder endpoint; strength/fatigue remain unverified,40N remains intent only.",
+      "shoulder_center_xz_mm": [
+        [
+          15.5,
+          16
+        ],
+        [
+          80.5,
+          16
+        ]
+      ],
+      "shoulder_centerline_radius_mm": 13.5,
+      "upper_section_law": "At declared pipe stations, u=arc_length/upper_length and g=6u^5−15u^4+10u^3; radiusY=2.5+3.5g, perpendicularradius=2.5+2g. Actual native interpolation and curvature require observations; do not infer exact continuous-law equality.",
+      "central_span_x_mm": [
+        15.5,
+        80.5
+      ],
+      "central_back_front_z_mm": [
+        25,
+        34
+      ],
+      "nominal_section_yz_mm": [
+        12,
+        9
+      ],
+      "central_y_center": "10.5+48*t^2*(1−t)^2−depth/2, t=(X−15.5)/65; ellipseYradius=6−depth/2,Zradius4.5",
+      "central_representation": "Exact rational conic multiplied homogeneously by positive h(v)=1+v−v^2 to permit C1 knots; piecewise quartic axial coefficients,1e−10mm knot-removal bound; explicit outward caps. No profile interpolation drift at grip joins.",
+      "clearance_tradeoff": "25mm clearance plus9mm thickness consumes the full34mm depth over central65mm. The front arch changesY; shoulder curvature stays outside that span.",
+      "root_blend_request_mm": 3.05,
+      "root_blend_method": "Native fillet around each full circular root/pad intersection, with enough pad material for separate1.02mm exposed rounds.",
+      "root_blend_native_overlap_clamp": false,
+      "root_blend_achieved_radius": "Candidate005 actual native tori report minor3.05,major5.55,centersZ8.05; complete actual STL sections and repaired geometry remain required.",
+      "other_exposed_edge_round_request_mm": 1.02,
+      "other_edge_round_overlap_clamp": false,
+      "remaining_sharp_guard_rad": 1e-05
+    },
+    "thumb_recess": {
+      "x_extent_mm": [
+        28,
+        68
+      ],
+      "depth_function": "24*u^2*(1−u)^2, u=(X−28)/40 withinX28..68; zero outside",
+      "upper_profile": "The upperY edge losesdepth; centerY and Yradius each decreasebydepth/2, preserving the lowerY edge and9mmZ extent. Explicit C1 joins atX28/68.",
+      "center_depth_mm": 1.5,
+      "center_section_height_mm": 10.5,
+      "interpretation": "A smooth40mm depression,1.5mm maximum depth, rather than a flat-bottom40mm pocket; confirm at the basis review."
+    },
+    "bores": {
+      "axis": "Z at X0/96,Y0",
+      "through_diameter_minimum_mm": 4.5,
+      "cutter": "Exact native cylinder radius2.25/cos(pi/96) with explicit tessellation allowance; nominal straight barrel4.502411mm and continuous actual clearance at least4.5mm must be measured.",
+      "rim_round_request_mm": 1.02,
+      "barrel_z_mm": [
+        1.02,
+        3.98
+      ],
+      "mouth_rule": "SeparateR1.02 rounded mouths;4.503 maximum applies to nominal barrel only. Retain minimum4.5 clearance through the full5mm pad and explicit analytic mouth bounds."
+    },
+    "washer_access": {
+      "proposed_reserve_diameter_mm": 10,
+      "status": "design assumption for review,not measured existing washer OD",
+      "unchanged_requirements": "Do not widen holes,shrink pads or remove original blend requirements to create the reserve",
+      "limitation": "Actual existing washerOD/thickness and tool approach remain unknown. Candidate005 native Boolean intersection with provisionalØ10 cylinders aboveZ5 is zero; complete actual mesh occupancy and flat seating remain separate checks. This does not establish hardware fit."
+    },
+    "repair": {
+      "merge_tolerance_mm": 0.001,
+      "degenerate_tolerance_mm": 1e-06,
+      "rotation_deg": [
+        0,
+        0,
+        0
+      ],
+      "translation_mm": [
+        0,
+        0,
+        0
+      ],
+      "force_voxel_remesh": false,
+      "distinct_source_and_repaired": true
+    },
+    "triangle_limit": 80000,
+    "outputs": [
+      "source_mesh.stl",
+      "source-native.brep",
+      "native-geometry-observations.json",
+      "repaired_mesh.stl",
+      "mesh-preview.png"
+    ],
+    "preview_scope": "Actual reimported repaired mesh only; not support/toolpath evidence,engineering acceptance or physical proof",
+    "construction_cleanup": {
+      "native_BOP_required": true,
+      "native_remaining_sharp_angle_rad": 1e-05,
+      "coordinate_area_minimum_mm2": 1e-10,
+      "voxel_remesh": false,
+      "rule": "No generic native repair, radius fallback, overlap override or capacity increase. Preserve failed inputs/evidence; exact output checks remain required."
+    },
+    "tessellation": {
+      "linear_deflection_mm": 0.02,
+      "angular_deflection_rad": 0.12,
+      "relative": false,
+      "status": "Exact canonical construction qualified on fresh 76742-triangle output; independent repair/full-feature checks and declared engineering review remain pending",
+      "rule": "Do not infer preserved features from settings. Enforce all original dimensions, bore clearance, rounds, topology, intersections and80000triangle processing limit on actual output."
+    },
+    "nominal_grip_mesh_fidelity": {
+      "version": "printed02-freecad-repair/3",
+      "maximum_absolute_error_mm": 0.03,
+      "quantities": [
+        "measured section thickness versus9mm",
+        "height versus nominal oval minus declared recess",
+        "Y center versus exact quartic",
+        "complete contour radial-deviation bound"
+      ],
+      "basis": "Original grip dimensions are nominal; the retained exact native conic is distinct from tessellated STL. Fresh v2 inspection retained thickness error0.0013..0.01294mm and maximum conservative radial bound0.02742mm. The earlier5e-5/.002mm proposal equalities were too tight for this tessellation. This explicit new proposal accepts at most0.03mm fidelity; it does not change supplied dimensions, hard clearance/envelope/bore bounds, rounds, topology or80k capacity.",
+      "limitation": "Not a manufacturing tolerance, fit/strength claim, blanket surface accuracy certificate or authority to approve an existing source. Retain raw observed values and revalidate every source/repaired/reimported artifact."
+    },
+    "root_mesh_fidelity": {
+      "version": "printed02-root-mesh-fidelity/1",
+      "meridian_q_window_mm": [
+        2.48,
+        5.57
+      ],
+      "meridian_z_window_mm": [
+        5,
+        8.05
+      ],
+      "maximum_endpoint_coverage_error_mm": 0.03,
+      "maximum_excess_above_nominal_radius_mm": 0.02,
+      "nominal_radius_mm": 3.05,
+      "original_minimum_radius_mm": 3.0,
+      "original_minimum_numeric_epsilon_mm": 5e-05,
+      "basis": "Retain inscribed mesh endpoints rather than cutting them at nominal q2.5. Exact unchanged STL host observation passes all32 original minimum-radius predicates; maximum endpoint coverage0.02000000000000046mm, continuous annular radius3.04510152518..3.05113295624mm. This explicit proposal conformity allowance is distinct from the unchanged minimumR3 requirement.",
+      "scope": "32 complete clipped meridian conformity observations plus native torus/continuity evidence; finite meridians do not certify arbitrary local curvature or unsampled surfaces.",
+      "evidence": "artifacts/first-contact/084/provider-readiness/root-mesh-fidelity-001/"
+    }
+  },
+  "provider_contract": {
+    "construction": {
+      "provider": "neka-nat/freecad-mcp",
+      "source_revision": "63acb305573194a011641ab13ccfb391fe95769f",
+      "package": "0.1.18",
+      "native_version": "FreeCAD1.1.1/OCCT7.8.1",
+      "tool": "execute_code",
+      "operation_asset_keys": [
+        "code"
+      ],
+      "operation_budget": "Bounded<64KiB fixed operation, exact run directory and expected filenames; native synchronous90seconds; inspect uncertain outcomes without blind replay."
+    },
+    "repair": {
+      "provider": "ahujasid/blender-mcp",
+      "source_revision": "5f8ddaf6e987c4aa0c3467fcc548838b28f64477",
+      "package": "1.9.1",
+      "native_version": "Blender4.3.2",
+      "tool": "execute_blender_code",
+      "operation_asset_keys": [
+        "code"
+      ],
+      "caller_adds": "user_prompt with the original prompt bytes decoded unchanged,including CRLF",
+      "safe_mode": true,
+      "telemetry": false,
+      "operation_budget": "Both inputs below64KiB; existing configured task timeout360seconds; no retry after uncertain native outcome"
+    }
+  },
+  "binding": {
+    "unconfigured_output_root": "/WRIGHT_HANDLE_OUTPUTS/{{wright.run_id}}",
+    "proposed_selected_mount": "/tmp/wright-first-contact-084-native-777akcxz/wright-home/data/workspaces/handle-workspace",
+    "proposed_attempt": "printed-handle-084-first",
+    "expected_relative_output": "process-proofs/printed-replacement-part/printed-handle-084-first/outputs/{{wright.run_id}}",
+    "rule": "The installed setup authors an inspectable source/dependency proposal from pinned trusted assets and the exact selected shared mount, then requires separate source acceptance. Preserve the run token and review exact operation hashes. Generic assets refuse their unconfigured output root; no execution authority is granted by code or metadata."
+  },
+  "measured_feature_inspection": [
+    "Before native work: frozen original-input hashes,versioned requirements,qualified schema,immutable operation hashes,declared review and fresh owned output directory.",
+    "Actual source and reimported repaired STL: finite coordinates,binary triangle count<=80000,closed/wound topology,one component,positive volume,expected genus2; independent inspection must also assess self-intersections and retain exact artifact hashes.",
+    "Clip every actual triangle to X15.5..80.5 and inspect its minimumZ>=25; globalZmax<=34,mountZ0; entireXYZ envelope<=118x28x34 and Y>=-18.",
+    "Inspect each actual pad footprint18x24,height5 and planar Z0 contact; sample bore sections at Z2.5,fit both centers,separation96 and minimum4.5 clearance; inspect complete through paths and both rounded mouths.",
+    "Measure actual grip sections at declared X stations; nominal12x9 outside recess,center10.5x9; measure depression/support extent against the unchanged nominal arch,not a rendered silhouette.",
+    "Measure complete actual root meridian sections againstR3, and retain native face/radius/continuity inventory for the touchedR1 surfaces. Finite sections alone are not a blanket certificate for every surface or upper-transition curvature; unresolved predicates remain visible at review.",
+    "Observe original washer OD/thickness and required tool approach; inspect the continuous exact postfillet seat/access volume. The proposed10mm reserve and sparse axial rays are not hardware-fit evidence.",
+    "Human dimension/intent review occurs before any slicing. Later compare actual pads-down and side packages/support contacts under unchanged profiles,retain original-frame validation subject and original full18-check profile.",
+    "Physical fit,40N behavior,fatigue,PETG shrinkage and actual printing remain unverified; simulated transfer evidence cannot satisfy them.",
+    {
+      "feature": "bore_midplane_method",
+      "version": "triangle-plane-closed-contours/1",
+      "plane_z_mm": 2.5,
+      "radial_observations": 128,
+      "method": "Exact current loop triangles intersected with plane in Python double precision; deduplicated complete nonbranching contours and inclusive shared endpoints. Nearest radial intersections retain all directions. Complete inner-contour point-to-segment minimum and vertex maximum additionally enforce original diameter bounds.",
+      "endpoint_key_mm": 1e-09,
+      "engineering_thresholds_changed": false,
+      "scope": "Complete closed-contour bore observation with nominal barrel/mouth distinctions; continuous through-clearance and provisional washer occupancy remain separate full-triangle checks. Physical fit is unverified."
+    }
+  ],
+  "qualification_status": {
+    "native_construction": "Exact canonical asset46f55ae6b3a8687e2d399bf2d4f4795c5dc20cf78204e017adf819f55182d906 passed fresh FreeCAD1.1.1/OCCT7.8.1 construction in23.403 native seconds. Actual sourcef72ccd2198ecf3a742cac74446a4c1b1bce9482539e4036655db6b59abf89962 has76742 triangles, native BOP/continuity/intersection gates and independent topology clear. Fine meshes and failed proposals remain retained separately. This is standalone capability qualification, not an accepted workflow run or engineering acceptance.",
+    "native_repair": "Version2 exact operation failed nominal-grip5e-5/.002mm proposal equalities before export. Read-only grip/root diagnosis and exact-STL host controls establish over-tight nominal equalities and root endpoint clipping. Version4 visibly proposes0.03mm nominal-grip fidelity and separate root conformity allowances, retaining minimumR3 and all original hard constraints. Full native repair/reimport/preview qualification remains pending.",
+    "central_field": "Standalone C1 tensor matches30300 native field samples within5.90e−14mm and endpoint normals within1e−5rad. Native Volume differs0.00782% from analytic integral; cause unestablished; no mass correspondence claim or new mass requirement.",
+    "human_acceptance": "pending",
+    "physical_acceptance": "not established",
+    "construction_evidence": "artifacts/first-contact/084/provider-readiness/freecad-canonical-construction-001/README.md"
+  },
+  "proposal_revision": 4
+}

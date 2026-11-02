@@ -1,0 +1,260 @@
+{
+  "schema_version": 1,
+  "recorded_at": "2026-09-16",
+  "authority": "specs/081-engineering-workflow-templates/dataset-campaign/rapid-output-loop-checkpoint-2026-09-14.md",
+  "checkpoint_metrics": {
+    "datasets": 30,
+    "processes_with_complete_output_sets": 24,
+    "content_validated": 0
+  },
+  "bundle": {
+    "bundle_id": "campaign-081-20260916T210825Z",
+    "local_record_root": ".local-run/feature-083-imports/campaign-081",
+    "local_record_root_available": true,
+    "file_count": 10530,
+    "bytes": 3170643606,
+    "sha256sums_digest": "db179dfa39f9262f37a6c9456ec337a7299e8a87030e6ff95e5f297db99f41bd",
+    "sqlite_integrity_check": "ok",
+    "sqlite_journal_mode": "delete"
+  },
+  "acceptance_summary": {
+    "selected_cases": 24,
+    "trace_acceptance_passed": 24,
+    "artifact_count_verified": 786,
+    "artifact_bytes_verified": 148252227,
+    "step_occurrences_projected": 220,
+    "content_validated": 0
+  },
+  "selection": [
+    {
+      "case_id": "printed-replacement-part-01",
+      "attempt_id": "attempt-003",
+      "run_id": "1114664a543e4d8ea60c8b063c75f002",
+      "run_path": "output/printed-replacement-part-01/attempt-003/run.json",
+      "checkpoint_output": "complete",
+      "local_record": "available",
+      "trace_acceptance": "passed"
+    },
+    {
+      "case_id": "printed-replacement-part-02",
+      "attempt_id": "attempt-002",
+      "run_id": "591640da6e7a4a9bb9c564cdae93eea9",
+      "run_path": "output/printed-replacement-part-02/attempt-002/run.json",
+      "checkpoint_output": "complete",
+      "local_record": "available",
+      "trace_acceptance": "passed"
+    },
+    {
+      "case_id": "printed-replacement-part-03",
+      "attempt_id": "attempt-016",
+      "run_id": "61478eaa61504daea2d40d5bfffeaf20",
+      "run_path": "output/printed-replacement-part-03/attempt-016/run.json",
+      "checkpoint_output": "complete",
+      "local_record": "available",
+      "trace_acceptance": "passed"
+    },
+    {
+      "case_id": "raspberry-pi-enclosure-01",
+      "attempt_id": "attempt-032",
+      "run_id": "ef9ed5964df742d69029db3e6cc7e581",
+      "run_path": "output/raspberry-pi-enclosure-01/attempt-032/run.json",
+      "checkpoint_output": "complete",
+      "local_record": "available",
+      "trace_acceptance": "passed"
+    },
+    {
+      "case_id": "raspberry-pi-enclosure-02",
+      "attempt_id": "attempt-031",
+      "run_id": "8b15f2a87321460c8bdeddf6f462c3ac",
+      "run_path": "output/raspberry-pi-enclosure-02/attempt-031/run.json",
+      "checkpoint_output": "complete",
+      "local_record": "available",
+      "trace_acceptance": "passed"
+    },
+    {
+      "case_id": "raspberry-pi-enclosure-03",
+      "attempt_id": "attempt-046",
+      "run_id": "d3e6f8ead48d4626a40af9fdf2a58ce5",
+      "run_path": "output/raspberry-pi-enclosure-03/attempt-046/run.json",
+      "checkpoint_output": "complete",
+      "local_record": "available",
+      "trace_acceptance": "passed"
+    },
+    {
+      "case_id": "parametric-drill-jig-01",
+      "attempt_id": "attempt-012",
+      "run_id": "fe86f96a2cf4403eacfe2c5ad92f960d",
+      "run_path": "output/parametric-drill-jig-01/attempt-012/run.json",
+      "checkpoint_output": "complete",
+      "local_record": "available",
+      "trace_acceptance": "passed"
+    },
+    {
+      "case_id": "parametric-drill-jig-02",
+      "attempt_id": "attempt-012",
+      "run_id": "f4cd5dfc9f4b4db29d30958bbf9e737a",
+      "run_path": "output/parametric-drill-jig-02/attempt-012/run.json",
+      "checkpoint_output": "complete",
+      "local_record": "available",
+      "trace_acceptance": "passed"
+    },
+    {
+      "case_id": "parametric-drill-jig-03",
+      "attempt_id": "attempt-011",
+      "run_id": "78df6664477345ca9493745399be7fbc",
+      "run_path": "output/parametric-drill-jig-03/attempt-011/run.json",
+      "checkpoint_output": "complete",
+      "local_record": "available",
+      "trace_acceptance": "passed"
+    },
+    {
+      "case_id": "robot-tracking-diagnosis-01",
+      "attempt_id": "attempt-003",
+      "run_id": "c743dbaa80484be89a4cd2a1bbb3f2f4",
+      "run_path": "output/robot-tracking-diagnosis-01/attempt-003/run.json",
+      "checkpoint_output": "complete",
+      "local_record": "available",
+      "trace_acceptance": "passed"
+    },
+    {
+      "case_id": "robot-tracking-diagnosis-02",
+      "attempt_id": "attempt-004",
+      "run_id": "36fef702fa0c451386546676f7f69f3d",
+      "run_path": "output/robot-tracking-diagnosis-02/attempt-004/run.json",
+      "checkpoint_output": "complete",
+      "local_record": "available",
+      "trace_acceptance": "passed"
+    },
+    {
+      "case_id": "robot-tracking-diagnosis-03",
+      "attempt_id": "attempt-005",
+      "run_id": "aa2574e23d6e4735991f84231ec89e4a",
+      "run_path": "output/robot-tracking-diagnosis-03/attempt-005/run.json",
+      "checkpoint_output": "complete",
+      "local_record": "available",
+      "trace_acceptance": "passed"
+    },
+    {
+      "case_id": "heat-spreader-sizing-01",
+      "attempt_id": "attempt-008",
+      "run_id": "69249b1c3d484edcbc06c0158c779fc4",
+      "run_path": "output/heat-spreader-sizing-01/attempt-008/run.json",
+      "checkpoint_output": "complete",
+      "local_record": "available",
+      "trace_acceptance": "passed"
+    },
+    {
+      "case_id": "heat-spreader-sizing-02",
+      "attempt_id": "attempt-010",
+      "run_id": "ccff6df7f70744e2a076087dd74a48a0",
+      "run_path": "output/heat-spreader-sizing-02/attempt-010/run.json",
+      "checkpoint_output": "complete",
+      "local_record": "available",
+      "trace_acceptance": "passed"
+    },
+    {
+      "case_id": "heat-spreader-sizing-03",
+      "attempt_id": "attempt-008",
+      "run_id": "35c5d4f266dd4d3996e646189d9567ea",
+      "run_path": "output/heat-spreader-sizing-03/attempt-008/run.json",
+      "checkpoint_output": "complete",
+      "local_record": "available",
+      "trace_acceptance": "passed"
+    },
+    {
+      "case_id": "sensor-fan-harness-01",
+      "attempt_id": "attempt-003",
+      "run_id": "614ce0b3a46e4b81bfdf4324b5322ec5",
+      "run_path": "output/sensor-fan-harness-01/attempt-003/run.json",
+      "checkpoint_output": "complete",
+      "local_record": "available",
+      "trace_acceptance": "passed"
+    },
+    {
+      "case_id": "sensor-fan-harness-02",
+      "attempt_id": "attempt-003",
+      "run_id": "0d30e2a981be4e53b98205450c793839",
+      "run_path": "output/sensor-fan-harness-02/attempt-003/run.json",
+      "checkpoint_output": "complete",
+      "local_record": "available",
+      "trace_acceptance": "passed"
+    },
+    {
+      "case_id": "sensor-fan-harness-03",
+      "attempt_id": "attempt-003",
+      "run_id": "115b5a9c20ec4ac0b963464ac861ee13",
+      "run_path": "output/sensor-fan-harness-03/attempt-003/run.json",
+      "checkpoint_output": "complete",
+      "local_record": "available",
+      "trace_acceptance": "passed"
+    },
+    {
+      "case_id": "sensor-interface-pcb-01",
+      "attempt_id": "attempt-007",
+      "run_id": "e1c50913b3434948a4f21072249eaddb",
+      "run_path": "output/sensor-interface-pcb-01/attempt-007/run.json",
+      "checkpoint_output": "complete",
+      "local_record": "available",
+      "trace_acceptance": "passed"
+    },
+    {
+      "case_id": "sensor-interface-pcb-02",
+      "attempt_id": "attempt-021",
+      "run_id": "5b091b55afd943e0ae9ff98ddbfe97d2",
+      "run_path": "output/sensor-interface-pcb-02/attempt-021/run.json",
+      "checkpoint_output": "complete",
+      "local_record": "available",
+      "trace_acceptance": "passed"
+    },
+    {
+      "case_id": "sensor-interface-pcb-03",
+      "attempt_id": "attempt-015",
+      "run_id": "012f53935fd542438e69ef725dc9ca5d",
+      "run_path": "output/sensor-interface-pcb-03/attempt-015/run.json",
+      "checkpoint_output": "complete",
+      "local_record": "available",
+      "trace_acceptance": "passed"
+    },
+    {
+      "case_id": "water-heater-sizing-01",
+      "attempt_id": "attempt-005",
+      "run_id": "66b82651d9f1452f9a471d7a3418d64d",
+      "run_path": "output/water-heater-sizing-01/attempt-005/run.json",
+      "checkpoint_output": "complete",
+      "local_record": "available",
+      "trace_acceptance": "passed"
+    },
+    {
+      "case_id": "water-heater-sizing-02",
+      "attempt_id": "attempt-003",
+      "run_id": "f62ce8a479284106859d902be7299fd8",
+      "run_path": "output/water-heater-sizing-02/attempt-003/run.json",
+      "checkpoint_output": "complete",
+      "local_record": "available",
+      "trace_acceptance": "passed"
+    },
+    {
+      "case_id": "water-heater-sizing-03",
+      "attempt_id": "attempt-003",
+      "run_id": "ff1caf87d0014a42bfa5b8059d90eae3",
+      "run_path": "output/water-heater-sizing-03/attempt-003/run.json",
+      "checkpoint_output": "complete",
+      "local_record": "available",
+      "trace_acceptance": "passed"
+    }
+  ],
+  "excluded_incomplete": [
+    "lightweight-equipment-bracket-01",
+    "lightweight-equipment-bracket-02",
+    "lightweight-equipment-bracket-03",
+    "sheet-metal-supplier-handoff-01",
+    "sheet-metal-supplier-handoff-02",
+    "sheet-metal-supplier-handoff-03"
+  ],
+  "notes": [
+    "Checkpoint completion and Trace acceptance confirm retained output identity and report projection, not engineering content validation.",
+    "Every selected artifact was size- and SHA-256-verified before its run received Trace acceptance.",
+    "The latest completed PCB02 attempt is selected; its earlier completed attempt remains retained as iteration history.",
+    "Synthetic fixtures cover exceptional states but are not counted in this real-corpus result."
+  ]
+}

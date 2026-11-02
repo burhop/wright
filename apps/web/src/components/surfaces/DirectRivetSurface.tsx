@@ -1230,6 +1230,16 @@ export function DirectRivetSurface({
                 )
             : undefined
         }
+        onExportTrace={
+          inspection
+            ? (mode) =>
+                void workspaceService.exportRivetRunTrace(
+                  sessionId,
+                  inspection.run.run_id,
+                  mode,
+                )
+            : undefined
+        }
         onOpenArtifact={(artifact) => void openRunArtifact(artifact)}
       />
     </div>

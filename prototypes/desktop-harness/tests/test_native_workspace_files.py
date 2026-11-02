@@ -57,7 +57,9 @@ async def native_files(tmp_path, monkeypatch):
     def create(name="alpha", *, agent="openai-desktop-harness", outside=False):
         root = tmp_path / ("outside" if outside else "workspaces") / name
         root.mkdir(parents=True)
-        repository.create(name, "desktop-" + name, str(root), workspace_name=name)
+        repository.create(
+            name, "desktop-" + name, str(root), workspace_name=name, agent_id=agent
+        )
         repository.associate_session(name, "desktop-" + name, agent_id=agent)
         return root
 

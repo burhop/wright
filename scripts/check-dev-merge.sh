@@ -92,6 +92,8 @@ run "$GATE_PYTHON" -m pytest tests/test_docker_smoke_contract.py -q -k hermes_se
 run "$GATE_PYTHON" -m pytest packages/workspace_service/tests/test_workspace_path.py -q
 # Observe real late-worker cleanup before expensive suites (Windows PR165).
 run "$GATE_PYTHON" -m pytest packages/workspace_service/tests/test_native_process_runtime.py -q -k deadline_prevents_late_worker_artifact_publication
+# Fail early on the full Windows portability failure set (PR180).
+run "$GATE_PYTHON" -m pytest -q tests/release/test_dev_push_process.py tests/unit/test_synthetic_beta_agent.py tests/unit/test_synthetic_beta_cli.py tests/unit/test_synthetic_beta_dashboard.py tests/unit/test_synthetic_beta_guest.py tests/unit/test_synthetic_beta_reports.py tests/unit/test_synthetic_beta_vm.py
 run "$GATE_PYTHON" -m scripts.release.audit_runtime_dependencies
 run "$GATE_PYTHON" -m scripts.release.audit_node_dependencies
 run "$GATE_PYTHON" -m scripts.release.scan_image --allow-unavailable-local-host
@@ -124,7 +126,8 @@ fi
 run npx tsc --noEmit -p apps/web/tsconfig.app.json
 # Check LF/CRLF cold reconstruction before expensive suites (PR163).
 run npm run test --workspace=apps/web -- --run \
-  src/prototypes/workflow-recovery/WorkflowDocumentReconstruction.spec.tsx --maxWorkers=1
+  src/prototypes/workflow-recovery/WorkflowDocumentReconstruction.spec.tsx \
+    src/prototypes/workflow-recovery/WorkflowRunHistory.spec.tsx --maxWorkers=1
 
 run uv run --with mypy mypy scripts/release scripts/program_control src/wright_engineering --ignore-missing-imports
 run uv run --with mypy mypy "${PYTHON_WORKSPACE_PATHS[@]}" --ignore-missing-imports || {
@@ -134,14 +137,10 @@ run uv run --with mypy mypy "${PYTHON_WORKSPACE_PATHS[@]}" --ignore-missing-impo
 run env PYTHON="$PYTHON_BIN" scripts/build-python-distributions.sh --dry-run packages/core packages/tool_registry
 run uv run python -c "from pathlib import Path; from scripts.release.workflow_policy import validate_scoped_workflows; validate_scoped_workflows(Path('.'))"
 run uv run --extra runtime python -m pytest -q tests/program_control_plane
-run uv run python -m pytest -q tests/release
-run uv run python -m pytest -q \
-  tests/native_runtime \
-  tests/release/test_native_release_evidence.py \
-  tests/release/test_native_release_rehearsal.py \
-  tests/release/test_native_workflow_policy.py \
-  tests/test_public_python_distribution.py
-run uv run --with pytest-cov python -m pytest -q tests/release tests/native_runtime --cov=scripts.release --cov=wright_engineering --cov-report=term --cov-fail-under=85
+# Run the default-context release/native union once, with the existing coverage
+# floor. Keep the unique public-distribution check and the later runtime/extras
+# contexts; their distinct claims are not covered by this consolidation.
+run uv run --with pytest-cov python -m pytest -q tests/release tests/native_runtime tests/test_public_python_distribution.py --cov=scripts.release --cov=wright_engineering --cov-report=term --cov-fail-under=85
 # Build once with the developer's installed lockfile dependencies. Native packaging
 # reuses the fresh dist without running npm ci against a live Wright node_modules.
 run env VITE_WRIGHT_PROCESS_DEFINITION_VIEW=1 \

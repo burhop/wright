@@ -175,7 +175,7 @@ class McpTransportSettings:
     maximum_concurrency: int = 16
     requests_per_minute: int = 120
     operation_timeout_seconds: float = 30.0
-    maximum_timeout_seconds: float = 120.0
+    maximum_timeout_seconds: float = 600.0
     session_idle_timeout_seconds: float = 1800.0
 
     @classmethod
@@ -185,7 +185,7 @@ class McpTransportSettings:
             maximum_concurrency=int(os.getenv("WRIGHT_MCP_MAX_CONCURRENCY", "16")),
             requests_per_minute=int(os.getenv("WRIGHT_MCP_REQUESTS_PER_MINUTE", "120")),
             operation_timeout_seconds=float(os.getenv("WRIGHT_MCP_TIMEOUT", "30")),
-            maximum_timeout_seconds=float(os.getenv("WRIGHT_MCP_MAX_TIMEOUT", "120")),
+            maximum_timeout_seconds=float(os.getenv("WRIGHT_MCP_MAX_TIMEOUT", "600")),
             session_idle_timeout_seconds=float(
                 os.getenv("WRIGHT_MCP_SESSION_IDLE_TIMEOUT", "1800")
             ),

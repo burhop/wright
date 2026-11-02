@@ -1,10 +1,11 @@
 import type { ChatMessage } from "../../store/types";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { ToolCallEvidence } from "./ToolCallEvidence";
 
 interface MessageBubbleProps {
   message: ChatMessage;
-  onOpenFile?: (path: string) => void;
+  onOpenFile?: (path: string, resolveFilename?: boolean) => void;
   activeSessionId?: string;
   workspacePath?: string;
 }
@@ -124,8 +125,8 @@ function preprocessContent(
         }
 
         if (relPathNoSlash) {
-          // Prepend leading slash to match tree path format
-          return `[${relPathNoSlash}](file:///${relPathNoSlash})`;
+          // Preserve a bare name's intent until the click handler normalizes it.
+          return `[${relPathNoSlash}](file://${relPathNoSlash})`;
         }
 
         return match;
@@ -235,6 +236,16 @@ export function MessageBubble({
                 a: ({ href, children, ...props }) => {
                   if (href && href.startsWith("file://")) {
                     let filePath = href.substring(7);
+                    const resolveFilename = /^[^/\\]+$/.test(filePath);
+                    const workspaceRoot = workspacePath
+                      ?.replace(/\\/g, "/")
+                      .replace(/\/+$/, "");
+                    if (
+                      workspaceRoot &&
+                      filePath.startsWith(`${workspaceRoot}/`)
+                    ) {
+                      filePath = filePath.slice(workspaceRoot.length);
+                    }
                     if (filePath.startsWith("//")) {
                       filePath = filePath.substring(1);
                     }
@@ -246,7 +257,7 @@ export function MessageBubble({
                         onClick={(e) => {
                           e.preventDefault();
                           if (onOpenFile) {
-                            onOpenFile(filePath);
+                            onOpenFile(filePath, resolveFilename);
                           }
                         }}
                         style={{
@@ -310,6 +321,13 @@ export function MessageBubble({
           <span>{new Date(message.timestamp).toLocaleTimeString()}</span>
         </div>
       </div>
+      {!!message.toolEvidence?.length && (
+        <ToolCallEvidence
+          records={message.toolEvidence}
+          sessionId={activeSessionId}
+          forRequest={isUser}
+        />
+      )}
     </div>
   );
 }

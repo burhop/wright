@@ -17,6 +17,11 @@ from workspace_service.workflow_run_paths import VERSION as RUN_PATH_VERSION, TO
 REPO = Path(__file__).resolve().parents[2]
 
 
+def resource(reference):
+    from workspace_service.handle_setup_resources import source_resource
+    return source_resource(reference, repository=REPO)
+
+
 def sha(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
 
@@ -60,10 +65,9 @@ class Definition:
         self.input_root = self.relative + "/inputs"
         self.suffix = attempt.replace("-", "_")
         self.tools = tools
-        template_path = (
-            REPO
-            / "packages/workspace_service/src/workspace_service/engineering_workflow_templates/templates"
-            / (template + ".workflow.wflow")
+        template_path = resource(
+            "packages/workspace_service/src/workspace_service/engineering_workflow_templates/templates/"
+            + template + ".workflow.wflow"
         )
         self.template_bytes = template_path.read_bytes()
         self.sections = _parse(
@@ -268,18 +272,20 @@ class Definition:
             settings=settings,
         )
 
-    def validator(self, profile_resource, sources, *, budget=None):
-        path = (
-            REPO
-            / "packages/workspace_service/src/workspace_service/process_validation/profiles"
-            / (profile_resource + ".json")
+    def validator(self, profile_resource, sources, *, budget=None, scenario_id=None):
+        path = resource(
+            "packages/workspace_service/src/workspace_service/process_validation/profiles/"
+            + profile_resource + ".json"
         )
         coverage = json.loads((path.parent / "coverage.json").read_bytes())
-        selected = next(
-            item["full_profile"]
-            for item in coverage["scenarios"]
-            if item["scenario_id"] == self.case + "-01"
-        )
+        identity = self.case + "-01" if scenario_id is None else scenario_id
+        matches = [item for item in coverage["scenarios"]
+                   if item["scenario_id"] == identity and item["family"] == self.case]
+        if len(matches) != 1:
+            raise ValueError("Unknown validation scenario for this template")
+        selected = matches[0]["full_profile"]
+        if selected["profile_resource"] != profile_resource:
+            raise ValueError("Validation profile does not match the declared scenario")
         step = self.stage("validate_outputs", "Check exact current engineering outputs")
         step["fields"].update(
             prompt="",

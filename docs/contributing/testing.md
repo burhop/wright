@@ -61,14 +61,18 @@ Executes happy-path end-to-end smoke tests against a live local server, validati
 
 ## 3. Running All Quality Gates
 
-To run lint check, typecheck, pytest, and vitest suites sequentially on your host before committing:
+During local iteration, run the focused checks for the behavior being changed.
+Local commits do not themselves require a complete quality run. To explicitly
+run the broad lint, typecheck, pytest, and vitest suites on your host:
 
 ```bash
 make check
 ```
 
-`make check` is intended for the fast development loop. Before merging a feature
-branch to `dev`, run the CI-equivalent merge gate:
+`make check` is a broad check, not the default fast development loop. The
+[development push runbook](dev-push-runbook.md) owns required push/merge boundaries
+and permitted evidence reuse. Before merging a feature branch to `dev`, run the
+CI-equivalent merge gate:
 
 ```bash
 make check-dev-merge

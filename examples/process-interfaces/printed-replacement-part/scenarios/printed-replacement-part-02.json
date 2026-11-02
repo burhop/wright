@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "template_id": "printed-replacement-part",
+  "scenario_id": "printed-replacement-part-02",
+  "starter_id": "replacement-drawer-handle",
+  "reference_dimension_mm": 96.0,
+  "inputs": [
+    {
+      "path": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/02-repair-cart-bow-handle/concept.png",
+      "sha256": "467f9fe327ccaf085c507487c2907503bd2e50bdd055cbcf6bdeff706b705fb0"
+    },
+    {
+      "path": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/02-repair-cart-bow-handle/concept.svg",
+      "sha256": "06567d143fe7d3d06641da7e60262eaed6f562878bb2fd080b93f298f2fe447f"
+    },
+    {
+      "path": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/02-repair-cart-bow-handle/context.md",
+      "sha256": "2b4ad39c8d07368fa4d0b5bfb257625cbafe5098a0cc106ca80103929cc378ee"
+    },
+    {
+      "path": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/02-repair-cart-bow-handle/prompt.txt",
+      "sha256": "95eb1233ff0498c5bc96d5659b7f9538a89f98c4bdc916a61442cf5f3da41834"
+    },
+    {
+      "path": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/02-repair-cart-bow-handle/scenario.json",
+      "sha256": "4d0ec7d6c8cff674507cb5a5f418bacee3c5eef2f27002370fe3d9e60f44e6a5"
+    },
+    {
+      "path": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/02-repair-cart-bow-handle/user-profile.md",
+      "sha256": "64784f2ce75bda54ab4dc0fbbf499b629837d36bba57cc713c1ba565e8d02e0d"
+    }
+  ],
+  "baseline_profile": {
+    "path": "packages/workspace_service/src/workspace_service/process_validation/profiles/printed-replacement-part-02.json",
+    "sha256": "60e164adeb1f41686ead462bd803ff7b194b679afab8a07f9210e17d0a482f3c"
+  },
+  "instructions": "printed-replacement-part-02.instructions.json",
+  "live_bindings_qualification": "pending",
+  "final_boundary": "digital-preparation-review"
+}

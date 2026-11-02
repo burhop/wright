@@ -13,8 +13,10 @@ from data_vault.workflow_continuation_repository import WorkflowContinuationChec
 
 from .workflow_execution_continuation import input_identities
 from .workflow_external_actions import (
+    LOCAL_SIMULATION_BINDING,
     WorkflowExternalActionError,
     approval_subject_digest,
+    validate_local_simulation,
 )
 from .workflow_integration_policy import (
     LOCAL_REVIEW_BINDING,
@@ -192,6 +194,11 @@ async def _prepare(
                         "approval_stale", "A reviewed input or artifact changed"
                     )
         context = state.get("execution_context")
+        if checkpoint.subject["binding"] == LOCAL_SIMULATION_BINDING:
+            _action_dispatch_kind(checkpoint.action_kind, checkpoint.subject, context)
+            _check_local_simulation_subject(
+                checkpoint, plan, plan.steps[cursor], workspace_dir
+            )
         if context and context.get("integration_policy_digest"):
             policy_digest = context.get("integration_policy_digest")
             grant = service.workflow_integration_policies.get(policy_digest)
@@ -344,6 +351,12 @@ async def decide_workflow_approval(
     reason = reason.strip()
     async with _lease(workspace_id, checkpoint):
         current = _current(service, checkpoint, workspace_id, subject_digest)
+        if auto and current.subject["binding"] == LOCAL_SIMULATION_BINDING:
+            raise _error(
+                "WORKFLOW_EXTERNAL_DISPATCH_UNSUPPORTED",
+                "Local simulation requires a manual decision for the exact artifacts.",
+                "Review and approve this subject through the ordinary review action.",
+            )
         _, _, runtime, context = await _prepare(
             service=service,
             workspace_id=workspace_id,
@@ -395,28 +408,132 @@ async def decide_workflow_approval(
                 await runtime.close()
 
 
-def _dispatch_kind(checkpoint, context):
-    subject = checkpoint.subject
+def _action_dispatch_kind(action_kind, subject, context):
     if (
-        checkpoint.action_kind == "local_review"
+        action_kind == "local_review"
         and subject["binding"] == LOCAL_REVIEW_BINDING
         and subject["destination"] == LOCAL_REVIEW_DESTINATION
         and subject["action"] == {"kind": "local_review", "mode": "review_only"}
     ):
         return "local_review"
+    if subject["binding"] == LOCAL_SIMULATION_BINDING:
+        try:
+            validate_local_simulation(
+                {"action_kind": action_kind, **subject}, bound=True
+            )
+            if (context or {}).get("integration_policy_digest"):
+                raise ValueError("Local simulation does not use enrolled authority.")
+        except ValueError as error:
+            raise _error(
+                "WORKFLOW_EXTERNAL_DISPATCH_UNSUPPORTED",
+                "This local simulation declaration is unsupported.",
+                "Use the fixed local simulation binding with manual approval and a run-scoped receipt.",
+            ) from error
+        return "local_simulation"
     if (context or {}).get("integration_policy_digest") and subject[
         "binding"
     ] == TEST_HANDOFF_BINDING:
         # authorize() has checked the exact enrolled test URI and confined
         # receipt path against every canonical action immediately before this.
         return "test_handoff"
-    if checkpoint.action_kind == "mcp-operation":
+    if action_kind == "mcp-operation":
         return "mcp-operation"
     raise _error(
         "WORKFLOW_EXTERNAL_DISPATCH_UNSUPPORTED",
         "This canonical external action has no supported authorized dispatcher.",
-        "Configure an enrolled integration test destination or the required live transport adapter.",
+        "Configure a supported manually approved local simulation, enrolled test destination, or qualified live operation.",
     )
+
+
+def _dispatch_kind(checkpoint, context):
+    return _action_dispatch_kind(checkpoint.action_kind, checkpoint.subject, context)
+
+
+def qualify_workflow_action_dispatch(plan, context):
+    """Reject unsupported final actions during ordinary readiness, before work."""
+    for step in plan.steps:
+        if step.external_action:
+            try:
+                _action_dispatch_kind(
+                    step.external_action["action_kind"], step.external_action, context
+                )
+            except WorkflowSourceExecutionError as error:
+                raise WorkflowSourceExecutionError(
+                    error.code,
+                    f"{step.title}: {error}",
+                    error.correction,
+                    block_id=step.id,
+                ) from error
+
+
+def _check_local_simulation_subject(checkpoint, plan, step, workspace_dir):
+    """Require a run-owned receipt and sealed files from connected upstream work."""
+    relative = checkpoint.subject["settings"]["receipt_path"]
+    parts = relative.split("/")
+    sealed = {
+        (item["path"], item["sha256"])
+        for item in checkpoint.continuation.get("artifact_files", [])
+    }
+    file_sources = {
+        f"{producer.id}.{port}"
+        for producer in plan.steps
+        for port, kind in producer.output_ports
+        if kind == "workspace_file"
+    }
+    connected_groups = [
+        checkpoint.continuation.get("artifacts_by_output", {}).get(source_id, [])
+        for _, source_id in step.references
+        if source_id in file_sources
+    ]
+    connected = [item for group in connected_groups for item in group]
+    valid = (
+        parts.count(checkpoint.run_id) == 1
+        and checkpoint.run_id in parts[:-1]
+        and relative.lower().endswith(".json")
+        and connected_groups
+        and all(connected_groups)
+        and all(
+            (item.get("output_path"), item.get("sha256")) in sealed
+            and item.get("sha256") in checkpoint.subject["artifact_digests"]
+            for item in connected
+        )
+    )
+    try:
+        WorkspacePath(workspace_dir).resolve(relative)
+        if not valid:
+            raise ValueError("Missing exact file or run receipt identity")
+    except ValueError as error:
+        raise _error(
+            "WORKFLOW_EXTERNAL_DISPATCH_UNSUPPORTED",
+            "Local simulation requires connected, sealed artifacts and a run-scoped JSON receipt.",
+            "Prepare the exact upstream package and review the current local simulation subject.",
+        ) from error
+
+
+def _check_approved_files(checkpoint, workspace_dir):
+    """Recheck the exact accepted source and sealed files at the action boundary."""
+    files = [
+        {
+            "path": checkpoint.workflow_id,
+            "sha256": checkpoint.subject["definition_digest"],
+        },
+        *checkpoint.continuation.get("input_files", []),
+        *checkpoint.continuation.get("artifact_files", []),
+    ]
+    paths = WorkspacePath(workspace_dir)
+    try:
+        for item in files:
+            target = paths.resolve(item["path"], must_exist=True)
+            with target.open("rb") as stream:
+                current = hashlib.file_digest(stream, "sha256").hexdigest()
+            if current != item["sha256"]:
+                raise ValueError("Identity mismatch")
+    except (OSError, ValueError) as error:
+        raise _error(
+            "WORKFLOW_CONTINUATION_STALE",
+            "An approved file changed before dispatch.",
+            "Inspect the exact saved action; it has not been replayed.",
+        ) from error
 
 
 async def _dispatch(*, service, workspace_dir, checkpoint, kind, context):
@@ -428,6 +545,9 @@ async def _dispatch(*, service, workspace_dir, checkpoint, kind, context):
         }
     subject = checkpoint.subject
     relative = subject["settings"]["receipt_path"]
+    local_simulation = kind == "local_simulation"
+    if local_simulation:
+        _check_approved_files(checkpoint, workspace_dir)
     receipt = {
         "schema_version": 1,
         "integration_test": True,
@@ -437,22 +557,31 @@ async def _dispatch(*, service, workspace_dir, checkpoint, kind, context):
         "checkpoint_id": checkpoint.checkpoint_id,
         "subject_digest": checkpoint.subject_digest,
         "action_id": checkpoint.external_action["action_id"],
-        "campaign_id": context["campaign_id"],
-        "dataset_id": context["dataset_id"],
-        "integration_policy_digest": context["integration_policy_digest"],
         "destination": subject["destination"],
         "action_kind": checkpoint.action_kind,
         "artifact_digests": subject["artifact_digests"],
         "network_dispatch": False,
+        **(
+            {
+                "authority_mode": "manual_local_simulation",
+                "approval_actor": checkpoint.actor,
+            }
+            if local_simulation
+            else {
+                "campaign_id": context["campaign_id"],
+                "dataset_id": context["dataset_id"],
+                "integration_policy_digest": context["integration_policy_digest"],
+            }
+        ),
     }
     text = json.dumps(receipt, ensure_ascii=False, indent=2)
     actual = await service.files.write_generated(
-        workspace_dir, relative, text, "indexed"
+        workspace_dir, relative, text, "exclusive" if local_simulation else "indexed"
     )
     if actual != relative:
         raise _error(
             "WORKFLOW_RECEIPT_COLLISION",
-            "The enrolled receipt path was occupied during dispatch.",
+            "The approved receipt path was occupied during dispatch.",
             "Inspect the preserved receipt and reconcile the operation; it cannot be replayed.",
         )
     raw = text.encode("utf-8")
@@ -463,9 +592,14 @@ async def _dispatch(*, service, workspace_dir, checkpoint, kind, context):
             "Inspect receipt storage and reconcile the existing action.",
         )
     return {
-        "operation": "test_handoff",
+        "operation": "local_simulate_handoff" if local_simulation else "test_handoff",
         "integration_test": True,
         "simulated_handoff": True,
+        **(
+            {"authority_mode": "manual_local_simulation", "network_dispatch": False}
+            if local_simulation
+            else {}
+        ),
         "produced_files": [
             {
                 "output_path": actual,
@@ -551,28 +685,7 @@ def _operation_dispatch_check(checkpoint, workspace_dir, runtime=None, step=None
                 "The approved provider changed before dispatch.",
                 "Reconcile this action before preparing another submission.",
             )
-        files = [
-            {
-                "path": checkpoint.workflow_id,
-                "sha256": checkpoint.subject["definition_digest"],
-            },
-            *checkpoint.continuation.get("input_files", []),
-            *checkpoint.continuation.get("artifact_files", []),
-        ]
-        paths = WorkspacePath(workspace_dir)
-        try:
-            for item in files:
-                target = paths.resolve(item["path"], must_exist=True)
-                with target.open("rb") as stream:
-                    current = hashlib.file_digest(stream, "sha256").hexdigest()
-                if current != item["sha256"]:
-                    raise ValueError("Identity mismatch")
-        except (OSError, ValueError) as error:
-            raise _error(
-                "WORKFLOW_CONTINUATION_STALE",
-                "An approved file changed before dispatch.",
-                "Inspect the exact saved action; it has not been replayed.",
-            ) from error
+        _check_approved_files(checkpoint, workspace_dir)
 
     return check
 
@@ -647,7 +760,7 @@ async def resume_workflow_approval(
                         "Reconcile its existing evidence; do not dispatch it again.",
                     )
             else:
-                if kind == "test_handoff" or (
+                if kind in {"test_handoff", "local_simulation"} or (
                     kind == "mcp-operation"
                     and current.subject["settings"].get("receipt_path")
                 ):
@@ -657,7 +770,7 @@ async def resume_workflow_approval(
                     if receipt.exists():
                         raise _error(
                             "WORKFLOW_RECEIPT_COLLISION",
-                            "The enrolled receipt path already exists.",
+                            "The approved receipt path already exists.",
                             "Use a fresh isolated attempt instead of overwriting existing output.",
                         )
                 current = service.workflow_external_actions.consume_for_dispatch(

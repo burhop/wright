@@ -121,6 +121,7 @@ def test_docker_runtime_serves_image_built_frontend_dist() -> None:
         "packages/core/tests/fixtures/workflow_drafts/representative-workflow.json",
         "specs/080-canonical-workflow-recovery/fixtures/mounting-bracket.workflow.json",
         "prototypes/desktop-harness/engineering-experience/handle/replacement-handle-draft.workflow.wflow",
+        "docs/mcp-catalog/usage-guides/",
     ):
         assert f"COPY {build_fixture} {build_fixture}" in dockerfile
     assert (
@@ -183,6 +184,23 @@ def test_docker_smoke_strictly_reconciles_hermes_security_overrides() -> None:
     assert 'vendored.__version__ == "1.2.3"' in smoke
     assert 'version !== "6.29.1"' in smoke
     assert dockerfile.count("libbrotli1=1.1.0-2+deb13u1") == 2
+    assert '"certifi==2026.10.19"' in dockerfile
+    assert "aiohttp==3.14.4" in dockerfile
+    for fixed_package in (
+        "curl=8.14.1-2+deb13u7",
+        "libcurl4t64=8.14.1-2+deb13u7",
+        "libexpat1=2.9.0-1~deb13u1",
+    ):
+        assert dockerfile.count(fixed_package) == 2
+    assert (
+        'cp -a /tmp/pip-security-overrides/certifi "${pip_vendor}/certifi"'
+        in dockerfile
+    )
+    assert "assert s.count(old)==4" in dockerfile
+    assert "'pip._vendor.certifi'" in dockerfile
+    assert "certifi.__version__=='2026.10.19'" in dockerfile
+    assert "Path(certifi.where()).read_bytes()" in dockerfile
+    assert "pkg:pypi/certifi@2026.10.19" in dockerfile
     assert '"tornado==6.5.9"' in dockerfile
     assert "aiohttp==3.14.4" in dockerfile
     assert "certifi==2026.10.19" in dockerfile

@@ -14,6 +14,7 @@ const ids = [
   "heat-spreader-sizing",
   "sensor-fan-harness",
   "water-heater-sizing",
+  "replacement-drawer-handle",
 ];
 const sources = import.meta.glob(
   "../../../../../packages/workspace_service/src/workspace_service/engineering_workflow_templates/templates/*.workflow.wflow",
