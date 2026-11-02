@@ -5224,7 +5224,7 @@ the full license text.
 ---
 
 Name: plotly.js-dist-min
-Version: 4.1.2
+Version: 3.7.0
 License: MIT
 Private: false
 Description: Ready-to-use minified plotly.js distributed bundle.
