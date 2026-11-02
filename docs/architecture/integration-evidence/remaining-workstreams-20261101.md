@@ -1,6 +1,6 @@
 # Consolidated outstanding workstreams — 1 November 2026
 
-Status: local integration candidate; qualification and GitHub checks pending.
+Status: local integration checkpoint; final gate and current-head CI receipts belong on the integration PR.
 This records implementation and observed checks, not native Windows acceptance.
 
 ## Scope and ownership
@@ -84,24 +84,34 @@ Actual Windows panel rendering, viewer preference persistence, file delivery and
 chat-switch restoration must not be inferred from local or simulated tests.
 Existing UI capabilities and usable common-view fallback remain required.
 
-## Remaining candidate blockers
+## Qualification checkpoint
 
-The consolidated branch is not merge-qualified yet. The root preflight found
-older synthetic-VM storage fixtures that expected a whole-runtime tmpfs instead of
-the incoming fresh disk-software/private-tmpfs layout. The user approved the
-mapped test update on 1 November. All original protections are retained against
-the current layout: wrong mount identity, size/options/UID, existing-state
-preservation, no parent remount and immutable root-owned verifier enforcement.
-No production storage guard was changed and no real mount or guest was used.
+The approved storage and scanner corrections are implemented, with original
+negative-test literals preserved. The root preflight passed 2,088 tests (66
+skipped); release/native preflight passed 395 (7 skipped), with 86.48% coverage
+against the 85% floor. Blocking release types pass. Current lint, formatting,
+TypeScript and frontend build pass; workspace creation preserves its original
+error cause, with four focused workspace regressions passing.
 
-The user also approved four exact negative-test fixture exceptions for the public
-leak checker. Its policy matches the entire source-line hash, exact path and
-scanner rule; the original literals and detector rules remain unchanged. Changed
-values, adjacent secrets, another path or rule remain blocking. Malformed policy
-fails closed. Combined scanner, storage and original negative-test owners:
-**104 passed**. Gitleaks and other security scanners are unchanged.
+The product checkpoint is `50d35b493fc15d5202b2abe5adcd13f948a4ca19`.
+Its rebuilt ARM64 image is
+`sha256:03a1a62a98189d61d77e27306160eaa412ca4cb50ae55b6cd48f5fb70ce83dc7`.
+The complete merge gate runs on that frozen source. A separate clean qualification
+worktree runs the normal pre-push gate against `origin/dev`, using its own
+dependencies, database and ports. Browser fixture corrections follow the visible
+workspace picker/New workflow interaction and keep the editor/process mocks on
+one exact saved filename; all exact source, result and no-dispatch checks remain.
+These test-only corrections do not change the product image.
 
-The full merge gate was stopped while these findings were reconciled. It and the
-normal pre-push gate must run to completion, followed by all current-head CI.
-There is no push or PR for this consolidated branch yet. Actual Windows/native
-acceptance remains separate from all local and simulated-host results.
+Chromium and Firefox launch using isolated lockfile-matched browser downloads.
+GB10 WebKit cannot launch because `libgstreamer-plugins-bad1.0-0` and `libavif16`
+are absent. The local full-gate browser limitation is documented; normal pre-push
+Chromium coverage and required CI remain mandatory. No system libraries or live
+services were changed for qualification.
+
+This checkpoint does not claim complete gates or CI before their receipts exist.
+Merge still requires successful full merge/pre-push qualification and every
+required current-head CI result. Actual Windows/native acceptance remains
+separate from all local and simulated-host results. No engineering run,
+Roadster/protected campaign, physical operation, personal sign-in or production
+release is authorized by these qualification records.
