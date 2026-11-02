@@ -172,6 +172,10 @@ for path in "${allowlist[@]}"; do
   fi
 done
 
+if [ "$CHANNEL" = development ] && [ -f "$SOURCE_DIR/dev-runtime.json" ]; then
+  cp "$SOURCE_DIR/dev-runtime.json" "$OUTPUT_DIR/runtime-release.json"
+fi
+
 if [ ! -f "$OUTPUT_DIR/LICENSE" ] && [ ! -f "$OUTPUT_DIR/LICENSE.md" ]; then
   if [ -f "$ROOT_DIR/LICENSE" ]; then
     cp "$ROOT_DIR/LICENSE" "$OUTPUT_DIR/LICENSE"

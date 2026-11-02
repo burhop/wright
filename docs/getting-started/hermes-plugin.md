@@ -13,6 +13,16 @@ Hermes' documented command:
 hermes plugins install https://github.com/burhop/hermes-plugin-wright --enable
 ```
 
+For a development test, use the full dev mirror commit SHA supplied with that
+candidate: `hermes plugins install https://github.com/burhop/hermes-plugin-wright
+--ref <full-40-character-dev-mirror-sha> --enable`. Hermes does not accept `dev`
+as `--ref`. Development mirrors bind an exact verified TestPyPI wheel and fetch
+its dependencies from normal PyPI automatically on `/wright start`. No manual
+Python install, wheelhouse or environment setup is needed. SHA-pinned adapters
+require an explicit reinstall with `--force --ref <new-full-sha>` to change their
+revision. Existing healthy Wright runtimes require `/wright update <exact-version>`
+to change application versions; start does not silently replace a running app.
+
 The adapter is standard-library-only at import time. It stores no Wright
 application code in Hermes state; `/wright start` resolves the exact compatible
 `wright-engineering` artifact into Wright-owned `WRIGHT_HOME` (default
