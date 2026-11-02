@@ -750,3 +750,14 @@ all rejection, no-staging, explicit-CAS, stale-revision and no-execution checks;
 do not normalize the accepted source or relax its digest to satisfy a fixture.
 This is a test-only correction: retain the exact green product full-gate receipt,
 run affected checks plus the normal push gate, and require fresh current-head CI.
+
+
+Windows CI also exposed a 65,537-byte negative XML fixture being used verbatim
+as a pytest case ID. Pytest copies the node ID into PYTEST_CURRENT_TEST; Windows
+rejects environment variables over 32,767 characters before the test body runs.
+Keep the complete malformed/oversized/DTD payloads and parser assertions, use
+short descriptive parameter IDs, and assert the actual selected node ID stays
+bounded on every host. The all-root collection audit found only this case above
+the Windows-safe ceiling; existing sub-limit cases are unchanged. This is a
+test-label correction, with the green product full gate retained and the normal
+push gate plus fresh current-head Windows CI required.

@@ -1096,8 +1096,11 @@ def test_3mf_producer_metadata_is_read_without_loading_geometry(mode):
         b"x" * 65537,
         b'<!DOCTYPE model [<!ENTITY x "untrusted">]><model>&x;</model>',
     ],
+    ids=["malformed-xml", "oversized-xml", "doctype-entity"],
 )
-def test_unusable_package_metadata_does_not_become_a_software_version(xml):
+def test_unusable_package_metadata_does_not_become_a_software_version(xml, request):
+    # Pytest places this label in an environment variable, capped at 32767 on Windows.
+    assert len(request.node.nodeid) < 4096
     output = io.BytesIO()
     with zipfile.ZipFile(output, "w") as package:
         package.writestr("3D/3dmodel.model", xml)
