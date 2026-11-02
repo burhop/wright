@@ -151,3 +151,24 @@ The old desktop worktrees were compared before integration:
 
 No local experiment is represented as Windows acceptance. Fresh current-head
 pre-push and GitHub CI results still govern publication and merge.
+
+### Onboarding selector correction and retained checks
+
+The cumulative normal pre-push at `c1936631` passed security/history scans,
+dependency and exact-image audits, every selected Python suite, 2,308 frontend
+unit tests, the production build and all 57 selected Chromium journeys. It then
+**failed** four onboarding browser cases using obsolete `Review install plan`
+and `Continue to installation` selectors; the live read-only case passed. That
+run is retained as failed, not promoted to a green receipt.
+
+The correction changes only the onboarding test's accessible control names and
+its existing remote/local distinction. All exact apply-count, credential-boundary,
+no-effect, source-normalization and changed-plan conflict assertions remain.
+The five-case owner suite passes against an isolated API (32 seconds).
+Under the runbook's test-only correction rule, the completed unchanged checks
+are retained while the normal fast gate runs against frozen candidate `c1936631`
+as its explicit change base. It retains the normal browser baseline, corrected
+onboarding suite, read-only live case, frontend checks and strict docs. Full
+current-head GitHub CI remains mandatory. This is transparent retained
+qualification plus correction checks, not a claim that the failed cumulative
+run succeeded.
