@@ -76,6 +76,17 @@ its released runtime, and candidate selection must be configured explicitly.
 If publication succeeded but verification failed, rerun verification only; never
 rebuild or re-upload that same version.
 
+## Native wheel layout validation
+
+Run `python -m scripts.release.wheel_policy PATH.whl` with the pinned
+`check-wheel-contents==0.6.3` tool. It reuses native artifact validation and runs
+every generic wheel check. Exact reviewed subjects classify the copied validator
+profile, common working-view layout resources, two editor icon assets and
+path-addressed setup scripts. These assets keep their existing names and bytes.
+An unknown duplicate group, added script, extra package root or other finding
+still fails. No global W002/W004 ignore is introduced. The same owner runs in
+native PR builds, the complete local merge gate and both release modes.
+
 ## Private component packages
 
 `wright-core`, `wright-tool-registry`, `wright-workspace-service`,
