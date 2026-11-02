@@ -85,6 +85,11 @@ def test_sync_exports_allowlisted_root_plugin_files_and_provenance(
     assert re.fullmatch(r"[0-9a-f]{40}", provenance["commit_sha"])
     assert provenance["source_paths"] == ["hermes-plugin-wright"]
 
+    release = json.loads((output_dir / "runtime-release.json").read_text())
+    assert release == json.loads((ROOT / "hermes-plugin-wright/dev-runtime.json").read_text())
+    assert release["channel"] == "test"
+    run_script("validate-hermes-plugin-mirror.sh", "--mirror-dir", str(output_dir), "--channel", "development")
+
 
 def test_sync_dry_run_lists_mirror_files_without_writing(tmp_path: Path) -> None:
     output_dir = tmp_path / "not-created"
@@ -122,6 +127,8 @@ def test_sync_stable_mirror_is_self_contained(tmp_path: Path) -> None:
     )
 
     pyproject_text = (output_dir / "pyproject.toml").read_text(encoding="utf-8")
+    assert not (output_dir / "runtime-release.json").exists()
+    assert not (output_dir / "dev-runtime.json").exists()
     assert "[tool.uv.sources]" not in pyproject_text
     assert "git+https://github.com/burhop/wright.git" not in pyproject_text
     assert "wright-tool-registry" not in pyproject_text

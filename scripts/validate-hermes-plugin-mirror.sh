@@ -60,6 +60,20 @@ case "$CHANNEL" in stable|development) ;; *) echo "--channel must be stable or d
 failures=()
 fail() { failures+=("$1"); }
 
+if [ "$CHANNEL" = stable ] && [ -f "$MIRROR_DIR/runtime-release.json" ]; then
+  fail "stable mirror must not select a TestPyPI runtime"
+fi
+if [ -f "$MIRROR_DIR/runtime-release.json" ]; then
+  "${PYTHON_CMD[@]}" -B - "$MIRROR_DIR" <<'PY' || fail "invalid pinned development runtime"
+import importlib.util, pathlib, sys
+root = pathlib.Path(sys.argv[1])
+spec = importlib.util.spec_from_file_location("mirror_bootstrap_validation", root / "bootstrap.py")
+module = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(module)
+assert module._runtime_release() is not None
+PY
+fi
+
 required=(plugin.yaml __init__.py bootstrap.py commands.py pyproject.toml README.md verify_plugin.py tests)
 for path in "${required[@]}"; do
   [ -e "$MIRROR_DIR/$path" ] || fail "missing required root path: $path"

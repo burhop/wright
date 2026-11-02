@@ -72,7 +72,14 @@ Use the exact version and wheel URL from the successful run to install a snapsho
 Keep TestPyPI package selection separate from runtime dependency resolution on
 PyPI; do not combine the indexes with `--extra-index-url`. A Hermes adapter's
 Git branch does not itself select this snapshot: the stable adapter still pins
-its released runtime, and candidate selection must be configured explicitly.
+its released runtime. Set the reviewed `hermes-plugin-wright/dev-runtime.json`
+to the successful candidate's exact version, source commit, public wheel URL and
+SHA-256. Development mirror generation exports it as `runtime-release.json`;
+stable mirror generation omits it. The adapter verifies the pinned wheel and its
+embedded provenance, downloads dependencies from normal PyPI, and hands its
+complete cache to the existing native installer. Users install the published dev
+mirror's full commit SHA (`--ref` does not accept branch names) and run `/wright
+start` without configuring package indexes, local wheels or environment variables.
 If publication succeeded but verification failed, rerun verification only; never
 rebuild or re-upload that same version.
 

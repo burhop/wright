@@ -55,6 +55,14 @@ def test_valid_mirror_fixture_passes_stable_validation(tmp_path: Path) -> None:
     assert "Mirror validation passed" in result.stdout
 
 
+def test_stable_mirror_rejects_development_runtime(tmp_path: Path) -> None:
+    mirror = copy_fixture(tmp_path)
+    (mirror / "runtime-release.json").write_text("{}", encoding="utf-8")
+    result = run_validate(mirror, "stable")
+    assert result.returncode != 0
+    assert "stable mirror must not select a TestPyPI runtime" in result.stderr
+
+
 def test_validator_rejects_prohibited_monorepo_paths(tmp_path: Path) -> None:
     mirror = copy_fixture(tmp_path)
     (mirror / "apps").mkdir()

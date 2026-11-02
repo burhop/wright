@@ -94,6 +94,26 @@ repeat the command with that code before removing the adapter.
 
 ## Development validation
 
+Hermes `--ref` accepts a full 40-character commit SHA, not a branch name.
+For an explicitly selected development build, install the published `dev`
+mirror commit shown in its release instructions:
+
+```text
+hermes plugins install https://github.com/burhop/hermes-plugin-wright --ref <full-dev-mirror-commit-sha> --enable
+```
+
+The development mirror includes `runtime-release.json`, binding one verified
+TestPyPI version, source commit, wheel URL and SHA-256. `/wright start` downloads
+and verifies that wheel and its embedded source identity, resolves runtime
+dependencies from normal PyPI, and passes a complete cache to Wright's existing
+native installer. Users do not configure wheelhouses or environment variables.
+Bootstrap environments are versioned so an existing stable bootstrap cannot
+silently satisfy a development install. Stable mirrors omit this manifest.
+If Wright is already running another version, use `/wright update <exact-version>`
+with the version in the selected development manifest; `/wright start` preserves
+an already healthy running instance. A SHA-pinned Hermes adapter stays pinned;
+reinstall with `--force --ref <new-full-sha>` to select a later adapter.
+
 Feature and pull-request validation uses an isolated local Git repository and
 candidate wheelhouse. Do not install an unreleased branch as a production
 substitute. The release train verifies the mirror commit, its generated
