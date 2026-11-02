@@ -37,6 +37,13 @@ def _bash() -> str:
     return bash
 
 
+def test_workflow_edits_select_exact_trusted_publishing_contract() -> None:
+    gate = _read("scripts/check-dev-push.sh")
+    start = gate.index("    .github/workflows/*|.github/codeql/*|")
+    selection = gate[start : gate.index(";;", start)]
+    assert "tests/test_publish_python_packages_workflow.py" in selection
+
+
 def test_windows_selector_uses_git_bash_instead_of_wsl(tmp_path, monkeypatch):
     git = tmp_path / "Git/cmd/git.exe"
     git.parent.mkdir(parents=True)

@@ -40,6 +40,42 @@ Publishing does not support a reusable workflow as the publisher identity. The
 build-once wheel and sdist are identified by SHA-256, installed from TestPyPI,
 and passed unchanged to PyPI.
 
+## Development snapshots on TestPyPI
+
+Use the existing trusted publisher in `release.yml` for an explicitly requested
+development package. This mode publishes only to TestPyPI; it does not create a
+release tag or enter the production PyPI, container, docs, or GitHub Release jobs.
+Manual dispatch without `publish_dev` remains a non-publishing rehearsal.
+
+The `testpypi` GitHub environment must allow the `dev` branch in addition to its
+existing release-tag policy. Preserve its required reviewer and the TestPyPI
+trusted-publisher binding to `release.yml` and the `testpypi` environment. A
+temporary feature-branch dispatch requires an exact branch deployment rule and
+the same environment review; remove that rule after integration.
+
+```powershell
+$devCommit = gh api repos/burhop/wright/git/ref/heads/dev --jq .object.sha
+gh workflow run release.yml --repo burhop/wright --ref dev -f publish_dev=true -f dev_source_sha=$devCommit
+```
+
+The build checks out `dev` and refuses a different source commit. It stamps only
+the disposable build checkout with a unique next-patch development version,
+such as `0.1.10.dev<run-id><attempt>`. Packaged `dev-release.json` records the
+exact source and workflow run. Existing packaging builds and inspects the full
+API/UI wheel and sdist once; Python 3.11–3.14 install checks precede publication.
+Public verification retries bounded propagation delays, compares both published
+file hashes with the original candidate, installs the downloaded wheel with
+runtime dependencies from PyPI, and runs CLI diagnostics outside the source tree.
+This is package qualification, not engineering workflow or physical acceptance.
+
+Use the exact version and wheel URL from the successful run to install a snapshot.
+Keep TestPyPI package selection separate from runtime dependency resolution on
+PyPI; do not combine the indexes with `--extra-index-url`. A Hermes adapter's
+Git branch does not itself select this snapshot: the stable adapter still pins
+its released runtime, and candidate selection must be configured explicitly.
+If publication succeeded but verification failed, rerun verification only; never
+rebuild or re-upload that same version.
+
 ## Private component packages
 
 `wright-core`, `wright-tool-registry`, `wright-workspace-service`,

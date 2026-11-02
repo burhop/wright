@@ -139,6 +139,12 @@ the changes since the branch's last pushed tip, plus staged, unstaged, and
 untracked files. A new branch falls back to `origin/dev`; the full merge gate
 validates the whole pull-request diff. Outside the bounded correction modes above,
 gate or workflow changes run all slices.
+Workflow changes also select `tests/test_publish_python_packages_workflow.py`.
+PR #187 exposed its omission when the dev-only TestPyPI job expanded the
+publisher set. The contract checks the exact named OIDC/publishing jobs, each
+protected environment, distribution-only staging and the production publication
+order. Adding an explicitly isolated test publisher must not grant OIDC to an
+unrelated job or weaken the existing production checks.
 PR #166 exposed completion assertions against a deliberately collapsed progress
 section. Browser contracts must check the visible terminal summary and results,
 then expand Run details when inspecting progress. Keep exact run/result identity,

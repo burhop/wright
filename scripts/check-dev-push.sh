@@ -344,6 +344,7 @@ while IFS= read -r changed_file; do
         tests/release/test_dev_push_process.py
         tests/test_alpha_release_readiness.py
         tests/test_release_engineering_scripts.py
+        tests/test_publish_python_packages_workflow.py
         tests/test_security_scanner_setup.py
       )
       ;;
