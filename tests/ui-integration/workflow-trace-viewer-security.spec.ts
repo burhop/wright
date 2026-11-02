@@ -1,5 +1,7 @@
-import { readFileSync } from "node:fs";
-import { resolve } from "node:path";
+import { execFileSync } from "node:child_process";
+import { mkdtempSync, readFileSync, rmSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join, resolve } from "node:path";
 import { expect, test } from "@playwright/test";
 
 test.use({ launchOptions: { args: ["--enable-unsafe-swiftshader"] } });
@@ -100,4 +102,123 @@ test("paints a model without insecure randomness or network access", async ({
   await page.screenshot({
     path: testInfo.outputPath("secure-offline-model.png"),
   });
+});
+
+test("paints an included PDF and keeps zoom usable without network access", async ({
+  page,
+}, testInfo) => {
+  const root = mkdtempSync(join(tmpdir(), "wright-trace-pdf-"));
+  try {
+    const urls = JSON.parse(
+      execFileSync(
+        "uv",
+        [
+          "run",
+          "python",
+          "tests/ui-integration/fixtures/build-workflow-trace-export.py",
+          root,
+          "pdf",
+        ],
+        { encoding: "utf8" },
+      ),
+    ) as { full_data: string };
+    const requests: string[] = [];
+    await page.route(/^https?:/, (route) => {
+      requests.push(route.request().url());
+      return route.abort();
+    });
+    await page.goto(urls.full_data);
+    await page
+      .getByRole("button", { name: "Run-level files (1)", exact: true })
+      .click();
+    const dialog = page.getByRole("dialog");
+    await dialog.getByRole("button", { name: /^Housing/ }).click();
+    const viewer = dialog.locator("[data-pdf-viewer]");
+    await expect(viewer).toHaveAttribute("data-pdf-state", "ready");
+    const canvas = viewer.locator("canvas");
+    await expect(canvas).toBeVisible();
+    await expect(canvas).toBeInViewport();
+    const observePaint = (element: HTMLCanvasElement) => {
+      const pixels = element
+        .getContext("2d")!
+        .getImageData(0, 0, element.width, element.height).data;
+      let orange = 0;
+      for (let i = 0; i < pixels.length; i += 4)
+        if (
+          Math.abs(pixels[i] - 220) < 25 &&
+          Math.abs(pixels[i + 1] - 60) < 25 &&
+          Math.abs(pixels[i + 2] - 20) < 25
+        )
+          orange++;
+      return {
+        orange,
+        total: element.width * element.height,
+        width: element.width,
+      };
+    };
+    const painted = await canvas.evaluate(observePaint);
+    expect(painted.orange).toBeGreaterThan(painted.total / 2);
+    await viewer.getByRole("button", { name: "Zoom in", exact: true }).click();
+    await expect(viewer.locator("[data-pdf-scale]")).toHaveText("125%");
+    await expect(viewer).toHaveAttribute("data-pdf-state", "ready");
+    const zoomed = await canvas.evaluate(observePaint);
+    expect(zoomed.width).toBeGreaterThan(painted.width);
+    expect(zoomed.orange).toBeGreaterThan(zoomed.total / 2);
+    await expect(
+      viewer.getByRole("button", { name: "Zoom out", exact: true }),
+    ).toBeEnabled();
+    expect(requests).toEqual([]);
+    await page.screenshot({
+      path: testInfo.outputPath("secure-offline-pdf.png"),
+    });
+    await page.goto("about:blank");
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test("renders Markdown tables while keeping executable content inert offline", async ({
+  page,
+}) => {
+  const requests: string[] = [];
+  await page.route(/^https?:/, (route) => {
+    requests.push(route.request().url());
+    return route.abort();
+  });
+  await page.setContent('<div id="document"></div>');
+  await page.addScriptTag({
+    content: readFileSync(
+      resolve(
+        "packages/workspace_service/src/workspace_service/workflow_trace/portable/document-viewer.js",
+      ),
+      "utf8",
+    ),
+  });
+  await page.evaluate(() => {
+    const state = window as unknown as {
+      markdownExecuted: boolean;
+      WrightDocumentViewer: { markdown: (source: string) => string };
+    };
+    state.markdownExecuted = false;
+    document.getElementById("document")!.innerHTML =
+      state.WrightDocumentViewer.markdown(
+        '## Synthetic result\n\n| Load | Value |\n| --- | --- |\n| Design load | 20 N |\n\n<img src="https://invalid.example/image" onerror="window.markdownExecuted=true">\n\n[unsafe](javascript:window.markdownExecuted=true)',
+      );
+  });
+  await expect(
+    page.getByRole("heading", { name: "Synthetic result" }),
+  ).toBeVisible();
+  await expect(page.getByRole("table")).toContainText("20 N");
+  await expect(
+    page.locator(
+      '#document img, #document script, #document iframe, #document a[href^="javascript:"]',
+    ),
+  ).toHaveCount(0);
+  expect(
+    await page.evaluate(
+      () =>
+        (window as unknown as { markdownExecuted: boolean }).markdownExecuted,
+    ),
+  ).toBe(false);
+  expect(requests).toEqual([]);
 });
