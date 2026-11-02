@@ -82,7 +82,7 @@ def test_fast_gate_includes_isolated_live_mcp_onboarding() -> None:
     assert "CI=1 PLAYWRIGHT_INCLUDE_LIVE=1" in command
     assert 'WRIGHT_WEB_API_PROXY_TARGET="http://127.0.0.1:${GATE_API_PORT}"' in command
     assert (
-        "npx playwright test tests/ui-integration/mcp-onboarding.spec.ts --project=chromium"
+        "npx playwright test tests/ui-integration/mcp-onboarding.spec.ts tests/ui-integration/mcp-directory.spec.ts --project=chromium"
         in command
     )
 
@@ -679,3 +679,55 @@ def test_python_selection_routes_helpers_to_owner_suites(
         text=True,
     )
     assert result.stdout.splitlines() == [expected]
+
+
+def test_browser_baseline_covers_first_contact_and_real_viewer_visibility():
+    gate = _read("scripts/check-dev-push.sh")
+    baseline = gate[gate.index("  PLAYWRIGHT_TARGETS+=(\n") :]
+    baseline = baseline[: baseline.index("\n  )")]
+    for name in (
+        "dashboard",
+        "navigation-redesign",
+        "viewer-panel-lifecycle",
+        "workflow-recovery-accessibility",
+    ):
+        assert f"tests/ui-integration/{name}.spec.ts" in baseline
+    live = gate[gate.index("# Source-review controls must also retain") :]
+    assert "tests/ui-integration/mcp-directory.spec.ts" in live
+
+
+@pytest.mark.parametrize(
+    "path",
+    [
+        "packages/workspace_service/src/workspace_service/workflow_trace/portable/stl-viewer.js",
+        "packages/workspace_service/src/workspace_service/workflow_trace/portable/secure-random.js",
+        "scripts/build-workflow-trace-model-viewer.mjs",
+    ],
+)
+def test_portable_viewer_inputs_select_actual_offline_browser_owners(path):
+    gate = _read("scripts/check-dev-push.sh")
+    start = gate.index(
+        "    packages/workspace_service/src/workspace_service/workflow_trace/portable/*|"
+    )
+    route = gate[start : gate.index(";;", start) + 2]
+    result = subprocess.run(
+        [
+            "bash",
+            "-c",
+            'CHECK_PYTHON=0; CHECK_FRONTEND=0; PYTHON_TEST_TARGETS=(); PLAYWRIGHT_TARGETS=(); changed_file="$1"; '
+            'case "$changed_file" in\n'
+            + route
+            + '\nesac\nprintf "%s %s\\n" "$CHECK_PYTHON" "$CHECK_FRONTEND"; printf "%s\\n" "${PYTHON_TEST_TARGETS[@]}" "${PLAYWRIGHT_TARGETS[@]}"',
+            "viewer-selection",
+            path,
+        ],
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    assert result.stdout.splitlines() == [
+        "1 1",
+        "packages/workspace_service/tests",
+        "tests/ui-integration/workflow-trace-export.spec.ts",
+        "tests/ui-integration/workflow-trace-viewer-security.spec.ts",
+    ]

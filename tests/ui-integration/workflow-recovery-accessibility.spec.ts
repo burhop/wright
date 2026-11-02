@@ -186,7 +186,14 @@ test("keeps the complete screen-reader contract available at a two-times page sc
       (violation) =>
         violation.impact === "serious" || violation.impact === "critical",
     )
-    .map((violation) => violation.id);
+    .map((violation) => ({
+      id: violation.id,
+      nodes: violation.nodes.map((node) => ({
+        html: node.html,
+        target: node.target,
+        summary: node.failureSummary,
+      })),
+    }));
   expect(serious).toEqual([]);
 
   const geometry = await page.evaluate(() => ({

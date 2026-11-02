@@ -703,3 +703,22 @@ browser export-fixture generator must not fail the gate with pytest exit 5.
 Conftest changes still select their directory, and all existing broad/focused
 collection and duplicate-import protections remain in place. The gate regression
 executes the real shell selection for helpers, tests and conftest paths.
+
+### First-contact and portable-viewer CI coverage
+
+PR #180 exposed stale dashboard/onboarding text, a viewer fixture made of twenty
+zero bytes instead of a PNG, and an Overview map accessible name that omitted its
+visible label. The normal browser baseline now also checks dashboard navigation,
+viewer lifecycle and complete editor accessibility; the read-only live onboarding
+slice includes the advanced directory preview. Keep health/telemetry, exact file
+scope, successful decode, invalid-image recovery and zero-serious-violation
+assertions. Do not restore obsolete copy or weaken rendering checks to pass.
+
+Portable viewer assets and their pinned generator select relocated-export and
+secure-rendering browser tests as well as the Python owner. The secure-rendering
+fixture uses an actual software WebGL render, denies network and makes
+Math.random throw while observing Web Crypto calls. It does not establish GPU,
+engineering or native Windows panel acceptance. Dashboard URL guards reject
+executable schemes and retain HTTP(S) and local-file report navigation.
+CodeQL still analyzes maintained sources and generated viewer output; no query,
+alert or new asset path is excluded.

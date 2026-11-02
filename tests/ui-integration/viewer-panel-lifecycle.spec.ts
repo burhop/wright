@@ -1,5 +1,10 @@
 import { test, expect } from "@playwright/test";
 
+const validImage = Buffer.from(
+  "iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAIAAAD91JpzAAAAEklEQVR4nGNU6lZiYGBgYgADAAneANOjadKoAAAAAElFTkSuQmCC",
+  "base64",
+);
+
 test.describe("Pluggable Viewer Panel Lifecycle E2E", () => {
   test.beforeEach(async ({ page }) => {
     // Mock setup status
@@ -192,7 +197,7 @@ test.describe("Pluggable Viewer Panel Lifecycle E2E", () => {
           body: buffer,
         });
       } else if (filePath.endsWith(".png")) {
-        const buffer = Buffer.alloc(20);
+        const buffer = validImage;
         await route.fulfill({
           status: 200,
           contentType: "image/png",
@@ -388,9 +393,59 @@ test.describe("Pluggable Viewer Panel Lifecycle E2E", () => {
     // Verify image inside the viewer-container
     const imgElement = page.locator('[data-testid="image-viewer-img"]');
     await expect(imgElement).toBeVisible();
+    expect(
+      await imgElement.evaluate(
+        (img: HTMLImageElement) =>
+          img.complete && img.naturalWidth === 2 && img.naturalHeight === 2,
+      ),
+    ).toBe(true);
     const src = await imgElement.getAttribute("src");
     expect(src).toContain("path=%2Fimage.png");
     expect(src).toContain("session_id=session-1");
+  });
+
+  test("reports invalid image bytes and retries the same file without changing its scope", async ({
+    page,
+  }) => {
+    const imageRequests: string[] = [];
+    await page.route("**/api/workspace/files/content?*", async (route) => {
+      const url = new URL(route.request().url());
+      if (url.searchParams.get("path") !== "/image.png")
+        return route.fallback();
+      imageRequests.push(url.href);
+      await route.fulfill({
+        status: 200,
+        contentType: "image/png",
+        body: imageRequests.length === 1 ? Buffer.alloc(20) : validImage,
+      });
+    });
+    await page.goto("/workspace/ws-1");
+    await page.getByTestId("file-node-/").click();
+    await page.getByTestId("file-node-/image.png").click();
+    await expect(
+      page.getByText(
+        "Could not display image.png. Check its location in Files or reopen the result.",
+        { exact: true },
+      ),
+    ).toBeVisible();
+    const image = page.getByTestId("image-viewer-img");
+    await expect(image).toBeHidden();
+    const before = imageRequests.length;
+    await page
+      .getByRole("button", { name: "Retry image", exact: true })
+      .click();
+    await expect(image).toBeVisible();
+    expect(
+      await image.evaluate(
+        (img: HTMLImageElement) => img.complete && img.naturalWidth === 2,
+      ),
+    ).toBe(true);
+    expect(imageRequests).toHaveLength(before + 1);
+    for (const request of imageRequests) {
+      const url = new URL(request);
+      expect(url.searchParams.get("path")).toBe("/image.png");
+      expect(url.searchParams.get("session_id")).toBe("session-1");
+    }
   });
 
   test("should open and mount the HTML Previewer when clicking sandbox.html", async ({

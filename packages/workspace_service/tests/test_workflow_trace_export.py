@@ -3,6 +3,8 @@ import base64
 import hashlib
 import json
 import re
+import subprocess
+from pathlib import Path
 import zipfile
 
 import pytest
@@ -1475,3 +1477,45 @@ def test_review_preserves_recorded_lane_labels_without_inventing_missing_groups(
             "Workflow execution",
         ]
         assert [step["lane"] for step in review["steps"]] == review["lanes"]
+
+
+def test_portable_viewer_uses_web_crypto_without_random_fallback():
+    portable = (
+        Path(__file__).parents[1] / "src/workspace_service/workflow_trace/portable"
+    )
+    script = r"""
+import assert from 'node:assert/strict';
+import {pathToFileURL} from 'node:url';
+const {secureViewerRandom} = await import(pathToFileURL(process.argv[1]).href);
+const previous = Object.getOwnPropertyDescriptor(globalThis, 'crypto');
+try {
+  let calls = 0;
+  Object.defineProperty(globalThis, 'crypto', {configurable:true, value:{getRandomValues(values) {
+    assert.ok(values instanceof Uint32Array); assert.equal(values.length,1);
+    values[0] = calls++ === 0 ? 0 : 4294967295; return values;
+  }}});
+  Math.random = () => {throw new Error('Insecure randomness must not be used');};
+  assert.equal(secureViewerRandom(), 0);
+  const high = secureViewerRandom();
+  assert.ok(high > 0.999 && high < 1); assert.equal(calls,2);
+  Object.defineProperty(globalThis, 'crypto', {configurable:true, value:undefined});
+  assert.throws(() => secureViewerRandom(), /Secure random values are unavailable/);
+} finally {
+  if (previous) Object.defineProperty(globalThis,'crypto',previous);
+}
+"""
+    subprocess.run(
+        [
+            "node",
+            "--input-type=module",
+            "-e",
+            script,
+            str(portable / "secure-random.js"),
+        ],
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    bundle = (portable / "stl-viewer.js").read_text()
+    assert "Math.random" not in bundle
+    assert "getRandomValues" in bundle

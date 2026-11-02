@@ -401,6 +401,15 @@ while IFS= read -r changed_file; do
       CHECK_PYTHON=1
       PYTHON_TEST_TARGETS+=(apps/api/tests tests/test_docker_smoke_contract.py)
       ;;
+    packages/workspace_service/src/workspace_service/workflow_trace/portable/*|scripts/build-workflow-trace-model-viewer.mjs)
+      CHECK_PYTHON=1
+      CHECK_FRONTEND=1
+      PYTHON_TEST_TARGETS+=(packages/workspace_service/tests)
+      PLAYWRIGHT_TARGETS+=(
+        tests/ui-integration/workflow-trace-export.spec.ts
+        tests/ui-integration/workflow-trace-viewer-security.spec.ts
+      )
+      ;;
     packages/*/*)
       CHECK_PYTHON=1
       IFS=/ read -r package_parent package_name _ <<<"$changed_file"
@@ -588,6 +597,10 @@ if [[ "$CHECK_FRONTEND" == "1" ]]; then
   done
 
   PLAYWRIGHT_TARGETS+=(
+    tests/ui-integration/dashboard.spec.ts
+    tests/ui-integration/navigation-redesign.spec.ts
+    tests/ui-integration/viewer-panel-lifecycle.spec.ts
+    tests/ui-integration/workflow-recovery-accessibility.spec.ts
     tests/ui-integration/navigation.spec.ts
     tests/ui-integration/agent-chat.spec.ts
     tests/ui-integration/workspace-surfaces/focus-layout.spec.ts
@@ -613,7 +626,7 @@ if [[ "$CHECK_FRONTEND" == "1" ]]; then
     CI=1 PLAYWRIGHT_INCLUDE_LIVE=1 \
     WRIGHT_PLAYWRIGHT_PORT="$GATE_UI_PORT" \
     WRIGHT_WEB_API_PROXY_TARGET="http://127.0.0.1:${GATE_API_PORT}" \
-    npx playwright test tests/ui-integration/mcp-onboarding.spec.ts --project=chromium
+    npx playwright test tests/ui-integration/mcp-onboarding.spec.ts tests/ui-integration/mcp-directory.spec.ts --project=chromium
 fi
 
 if [[ "$CHECK_DOCS" == "1" ]]; then

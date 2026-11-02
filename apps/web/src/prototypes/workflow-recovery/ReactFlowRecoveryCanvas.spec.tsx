@@ -314,7 +314,7 @@ describe("ReactFlowRecoveryCanvas component contract", () => {
             );
           });
         expect(screen.queryByTestId("rf__minimap")).not.toBeInTheDocument();
-        expect(toggle).toHaveAttribute("aria-label", "Show minimap");
+        expect(toggle).toHaveAttribute("aria-label", "Show overview map");
         fireEvent.click(toggle);
         expect(screen.getByTestId("rf__minimap")).toBeInTheDocument();
         expect(toggle).toHaveAttribute("aria-expanded", "true");

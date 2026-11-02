@@ -172,3 +172,37 @@ onboarding suite, read-only live case, frontend checks and strict docs. Full
 current-head GitHub CI remains mandatory. This is transparent retained
 qualification plus correction checks, not a claim that the failed cumulative
 run succeeded.
+
+## PR #180 first-cycle correction
+
+Head `2de84ad6` reached GitHub CI. CodeQL identified three DOM-derived URL
+assignments in the Golden hour dashboard and five insecure-randomness findings
+in the bundled Three.js viewer. Dashboard links/images now parse URLs and reject
+executable schemes while retaining HTTP(S) and relocated file-report support.
+The pinned viewer build injects a small Web Crypto random source using Rolldown's
+existing property-injection interface; it changes neither global Math nor the
+third-party renderer's source. No CodeQL rule, alert or asset path is excluded.
+Hostile-scheme and unavailable-crypto tests execute the maintained helpers; the
+real software-WebGL browser test paints geometry with Math.random throwing,
+observed Web Crypto calls, no network requests and non-background pixels.
+
+The first browser CI run also found five distinct failures: obsolete dashboard
+and onboarding labels, a fake PNG containing twenty zero bytes, and an Overview
+map accessible name that omitted its visible label. The label is corrected; the
+viewer contract now verifies decoded PNG dimensions and separately exercises bad
+bytes followed by an exact same-file retry. Dashboard tests preserve workspace,
+health and conversation checks using the accepted first-contact presentation.
+Accessibility still rejects every serious/critical violation and now reports
+the actual affected elements. All 18 combined correction browser cases pass
+against isolated state, alongside 70 dashboard/export owner tests, 17 canvas
+component cases and 59 gate contracts. These are scoped preflights, not final
+full-gate or current-head CI completion.
+
+The ordinary push gate now includes these dashboard/viewer/accessibility
+journeys, advanced read-only directory setup, and portable-viewer owner selection.
+The corrected native panel and packaged web assets are rebuilt locally; the
+installed plugin, live services and historical runs remain unchanged. Product
+security changes require a fresh exact image and full qualification. The second
+push waits for the entire first-cycle result set and local gates. Inherited
+CodeQL alerts 58 and 72 are separate from the eight new findings; none is
+silently dismissed. Native Windows UI acceptance remains unverified.

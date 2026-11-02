@@ -6,6 +6,7 @@ from datetime import timedelta
 import json
 from pathlib import Path
 import shutil
+import subprocess
 import sys
 
 import pytest
@@ -761,3 +762,50 @@ def test_timed_completion_never_overrules_independent_assessment(campaign):
             "outside_callbacks_seconds",
         )
     ) == pytest.approx(s["elapsed_seconds"])
+
+
+def test_dashboard_resource_links_reject_executable_schemes():
+    script = r"""
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const vm = require('node:vm');
+const html = fs.readFileSync(process.argv[1], 'utf8');
+const helpers = html.slice(html.indexOf('const make='), html.indexOf('const time='));
+function load(base) {
+  return vm.runInNewContext(helpers + '\n({resourceUrl,link})', {
+    URL, location: new URL(base), document: {baseURI: base, createElement(tag) {
+      return {tag, setAttribute(name,value) {this[name]=value;}};
+    }},
+  });
+}
+const live = load('https://wright.example/reports/index.html');
+for (const url of ['javascript:alert(1)', ' \nJaVaScRiPt:alert(1)', 'java\tscript:alert(1)',
+ 'data:text/html,<script>alert(1)</script>', 'blob:https://wright.example/x', 'http://[', '', null]) {
+  assert.equal(live.resourceUrl(url), null);
+  const node = live.link('<img onerror=alert(1)>', url);
+  assert.equal(node.href, undefined);
+  assert.equal(node['aria-disabled'], 'true');
+  assert.equal(node.textContent, '<img onerror=alert(1)>');
+  assert.equal(node.innerHTML, undefined);
+}
+assert.equal(live.resourceUrl('../evidence/part.png'), 'https://wright.example/evidence/part.png');
+assert.equal(live.link('Report', 'https://example.com/report').href, 'https://example.com/report');
+assert.equal(live.resourceUrl('file:///private/report.html'), null);
+const offline = load('file:///export/review/index.html');
+assert.equal(offline.resourceUrl('../outputs/part.step'), 'file:///export/outputs/part.step');
+assert.equal(offline.link('Original', 'outputs/view%20one.png').href, 'file:///export/review/outputs/view%20one.png');
+"""
+    subprocess.run(
+        [
+            "node",
+            "-e",
+            script,
+            str(
+                ROOT
+                / "scripts/synthetic_beta_testing/assets/golden-hour-dashboard.html"
+            ),
+        ],
+        check=True,
+        capture_output=True,
+        text=True,
+    )

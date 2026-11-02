@@ -11,6 +11,14 @@ const portable = resolve(
 const bundle = await rolldown({
   input: resolve(portable, "stl-viewer-entry.js"),
   platform: "browser",
+  transform: {
+    inject: {
+      "Math.random": [
+        resolve(portable, "secure-random.js"),
+        "secureViewerRandom",
+      ],
+    },
+  },
 });
 try {
   const { output } = await bundle.generate({ format: "iife", minify: true });

@@ -1611,7 +1611,9 @@ export const ReactFlowRecoveryCanvas: DraftCanvasRenderer = ({
           type="button"
           className={`recovery-minimap-toggle nodrag nopan${minimapVisible ? " is-open" : ""}`}
           data-testid="workflow-recovery-minimap-toggle"
-          aria-label={minimapVisible ? "Hide minimap" : "Show minimap"}
+          aria-label={
+            minimapVisible ? "Hide overview map" : "Show overview map"
+          }
           aria-expanded={minimapVisible}
           onClick={() => setMinimapVisible((visible) => !visible)}
         >
