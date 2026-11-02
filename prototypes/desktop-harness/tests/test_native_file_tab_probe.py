@@ -1,7 +1,9 @@
 import asyncio
 import hashlib
 import json
+import os
 from pathlib import Path
+import subprocess
 from types import SimpleNamespace
 from unittest.mock import AsyncMock
 
@@ -14,7 +16,8 @@ def probe(tmp_path, monkeypatch, request):
     monkeypatch.syspath_prepend(str(Path(__file__).resolve().parents[1]))
     from native_file_tab_probe import register_native_file_tab_probe
 
-    source = tmp_path / "part.workflow.wflow"
+    source = tmp_path / "inputs" / "part.workflow.wflow"
+    source.parent.mkdir()
     source.write_text("workflow { title: Test }\n")
     digest = hashlib.sha256(source.read_bytes()).hexdigest()
     html = tmp_path / "launcher.html"
@@ -155,7 +158,23 @@ def test_symlink_replacement_rejected_even_with_matching_bytes(probe, tmp_path):
     target = tmp_path / "replacement.wflow"
     target.write_bytes(probe.source.read_bytes())
     probe.source.unlink()
-    probe.source.symlink_to(target)
+    try:
+        probe.source.symlink_to(target)
+    except OSError as error:
+        if os.name != "nt" or error.winerror != 1314:
+            raise
+        # Retain actual reparse-point coverage without requiring Developer Mode.
+        replacement = tmp_path / "replacement-directory"
+        replacement.mkdir()
+        (replacement / probe.source.name).write_bytes(target.read_bytes())
+        probe.source.parent.rmdir()
+        subprocess.run(
+            ["cmd", "/c", "mklink", "/J", str(probe.source.parent), str(replacement)],
+            check=True,
+            capture_output=True,
+        )
+        assert probe.source.parent.is_junction()
+    assert probe.source.read_bytes() == target.read_bytes()
     with pytest.raises(Exception, match="without symlinks"):
         call(probe)
     probe.client.call.assert_not_awaited()
