@@ -2,7 +2,7 @@
   "version": "wright.process-ui-build/1",
   "packages": {
     "typescript": "5.9.3",
-    "vite": "8.2.4",
+    "vite": "8.3.5",
     "react": "19.3.1",
     "react-dom": "19.3.1",
     "react-markdown": "10.1.0",
@@ -10,7 +10,7 @@
     "three": "0.185.1",
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
-    "@types/three": "0.185.4",
+    "@types/three": "0.186.0",
     "@wright/process-client": "1.0.0",
     "@wright/ui-kit": "1.0.0"
   }

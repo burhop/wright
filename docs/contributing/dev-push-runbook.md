@@ -238,6 +238,13 @@ fixed interface compiler. `validate_scoped_workflows` checks this preparation in
 both gates. Fixture rendezvous must surface an already-failed task and use a
 bounded wait; absent compiler dependencies must not cause an hours-long wait.
 
+When upgrading the frontend compiler dependencies, reconcile the exact package
+versions in `process_interfaces/resources/toolchain.json` with the lockfile.
+The dependency consolidation qualifies Vite 8.3.5 and `@types/three` 0.186.0
+through the actual compiler build, unsafe-source rejection and bounded child
+disposal tests. Keep exact-version rejection and frozen build provenance;
+an outdated envelope is a readiness failure, not grounds to bypass that check.
+
 Review actual stage durations before removing tests. A previously passing full
 gate can be retained for permitted corrections; rerun affected checks and full
 current-head CI. Duplicate execution can be consolidated only with exact unique
