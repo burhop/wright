@@ -4,6 +4,7 @@ import pytest
 
 from scripts.release.workflow_policy import (
     WorkflowPolicyError,
+    job_blocks,
     validate_checkout_readiness,
     validate_scoped_workflows,
 )
@@ -67,7 +68,17 @@ def test_release_builds_each_subject_once_and_publishes_release_last() -> None:
     docker = (ROOT / ".github/workflows/docker-build.yml").read_text(encoding="utf-8")
     pyproject = (ROOT / "pyproject.toml").read_text(encoding="utf-8")
     prod_gate = (ROOT / "scripts/check-prod-merge.sh").read_text(encoding="utf-8")
-    assert release.count("scripts/build-python-distributions.sh") == 1
+    builds = dict(job_blocks(release))
+    assert (
+        builds["preflight-and-python-build"].count(
+            "scripts/build-python-distributions.sh"
+        )
+        == 1
+    )
+    assert (
+        builds["dev-python-build"].count("scripts/build-python-distributions.sh") == 1
+    )
+    assert release.count("scripts/build-python-distributions.sh") == 2
     assert "check-wheel-contents==0.6.3" in release
     assert "check-wheel-contents==0.6.3" in prod_gate
     assert "[tool.check-wheel-contents]\n" in pyproject
