@@ -67,7 +67,7 @@ def test_makefile_exposes_mirror_and_package_validation_targets() -> None:
 def test_mirror_scripts_respect_explicit_python_interpreter() -> None:
     for script_name, expected_uses in [
         ("sync-hermes-plugin-mirror.sh", 4),
-        ("validate-hermes-plugin-mirror.sh", 1),
+        ("validate-hermes-plugin-mirror.sh", 2),
     ]:
         script = (ROOT / "scripts" / script_name).read_text(encoding="utf-8")
 
