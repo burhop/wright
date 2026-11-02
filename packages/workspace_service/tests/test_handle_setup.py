@@ -3,6 +3,7 @@
 import asyncio
 import hashlib
 import json
+import os
 import shutil
 from pathlib import Path
 
@@ -27,6 +28,12 @@ from workspace_service.workflow_source_execution import _parse, compile_prompt_w
 from workspace_service.workflow_sources import (
     WorkspaceWorkflowSourceUseCases,
     WorkflowSourceStorageError,
+)
+
+
+requires_posix_recipe = pytest.mark.skipif(
+    os.name == "nt",
+    reason="Installed Printed02 recipe requires an exact shared POSIX workspace mount; native rejection is tested separately",
 )
 
 
@@ -107,6 +114,7 @@ async def fixture(root):
     )
 
 
+@requires_posix_recipe
 def test_installed_customer_setup_proposes_then_cas_accepts_without_execution(tmp_path):
     async def run():
         setup, sources, executor, instance, available, request = await fixture(tmp_path)
@@ -240,7 +248,14 @@ def test_installed_customer_setup_proposes_then_cas_accepts_without_execution(tm
 
 
 @pytest.mark.parametrize(
-    "fault", ["tool", "mount", "profile", "original_input", "source_scope"]
+    "fault",
+    [
+        "tool",
+        "mount",
+        pytest.param("profile", marks=requires_posix_recipe),
+        pytest.param("original_input", marks=requires_posix_recipe),
+        "source_scope",
+    ],
 )
 def test_setup_rejects_incompatible_inputs_before_acceptance(tmp_path, fault):
     async def run():
@@ -283,6 +298,7 @@ def test_setup_rejects_incompatible_inputs_before_acceptance(tmp_path, fault):
         "source",
     ],
 )
+@requires_posix_recipe
 def test_setup_accept_rechecks_scope_snapshots_recipe_and_enabled_tools(
     tmp_path, fault, monkeypatch
 ):
@@ -348,6 +364,7 @@ def test_setup_request_rejects_arbitrary_geometry_code_and_unknown_fields():
         )
 
 
+@requires_posix_recipe
 def test_installed_resource_tree_has_no_repository_or_dataset_dependency(
     tmp_path, monkeypatch
 ):
@@ -411,6 +428,7 @@ def test_installed_resource_tree_has_no_repository_or_dataset_dependency(
 @pytest.mark.parametrize(
     "outside", ["../outside.json", "/tmp/outside.json", "linked.json"]
 )
+@requires_posix_recipe
 def test_setup_profiles_cannot_escape_workspace(tmp_path, outside):
     async def run():
         setup, sources, executor, instance, available, request = await fixture(tmp_path)
@@ -432,6 +450,7 @@ def test_setup_profiles_cannot_escape_workspace(tmp_path, outside):
     asyncio.run(run())
 
 
+@requires_posix_recipe
 def test_profile_snapshot_is_explicit_and_remains_stable_when_original_is_edited(
     tmp_path,
 ):
@@ -486,6 +505,42 @@ def test_setup_requires_exact_construction_capability_before_staging(tmp_path, f
                     )
             assert await sources.read(str(tmp_path), request.path) == instance.document
             assert not (tmp_path / ".wright/handle-setup").exists()
+        finally:
+            await executor.close()
+
+    asyncio.run(run())
+
+
+@pytest.mark.parametrize("mount", ["native", "windows", "different"])
+def test_setup_rejects_unqualified_mount_without_staging(tmp_path, mount):
+    async def run():
+        setup, sources, executor, instance, available, request = await fixture(tmp_path)
+        try:
+            request.workspace_mount = {
+                "native": str(tmp_path),
+                "windows": r"C:\wright\workspace",
+                "different": "/different-workspace",
+            }[mount]
+            if mount == "native" and os.name != "nt":
+                proposal = await setup.propose(
+                    "workspace-setup", str(tmp_path), request, available
+                )
+                assert proposal["summary"]["step_count"] == 16
+                assert (
+                    await sources.read(str(tmp_path), request.path) == instance.document
+                )
+                assert not (tmp_path / ".wright/workflow-runs").exists()
+                return
+            with pytest.raises(
+                WorkflowSourceStorageError, match="exact managed POSIX workspace path"
+            ):
+                await setup.propose(
+                    "workspace-setup", str(tmp_path), request, available
+                )
+            assert await sources.read(str(tmp_path), request.path) == instance.document
+            assert not (tmp_path / ".wright/handle-setup").exists()
+            assert not (tmp_path / ".wright/workflow-runs").exists()
+            assert not list(tmp_path.rglob("*.stl"))
         finally:
             await executor.close()
 

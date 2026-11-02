@@ -722,3 +722,19 @@ engineering or native Windows panel acceptance. Dashboard URL guards reject
 executable schemes and retain HTTP(S) and local-file report navigation.
 CodeQL still analyzes maintained sources and generated viewer output; no query,
 alert or new asset path is excluded.
+
+
+### Qualified recipe mounts versus native Windows setup
+
+PR #180's first Windows API suite exposed a native-path fixture expecting the
+Printed02 shared-POSIX recipe to accept a Windows workspace. Keep the existing
+exact-mount guard: a Windows drive path is not a qualified provider mount.
+The HTTP and service owner tests now exercise native, Windows-shaped and
+mismatched paths, requiring an explicit rejection before staging on unsupported
+hosts. Full source proposal, explicit CAS, snapshot and tamper/confinement checks
+remain intact on POSIX; their recipe-dependent cases are explicitly unavailable
+on native Windows. Unknown sessions, forbidden fields and missing/changed tool
+capabilities remain tested on both platforms. This is a recipe limitation, not
+Windows qualification of that manufacturing process or a restriction on the
+independent Windows pilot. Both gates and Windows CI already collect these
+owners; no suite or production validation is excluded.

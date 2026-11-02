@@ -206,3 +206,20 @@ security changes require a fresh exact image and full qualification. The second
 push waits for the entire first-cycle result set and local gates. Inherited
 CodeQL alerts 58 and 72 are separate from the eight new findings; none is
 silently dismissed. Native Windows UI acceptance remains unverified.
+
+
+The completed first cycle also failed Windows API setup: the fixture used its
+native `C:` workspace for a deliberately POSIX-only shared-provider recipe.
+No production guard is relaxed. HTTP/service probes now distinguish successful
+native POSIX preparation from explicit unsupported/mismatched-mount rejection,
+checking unchanged source and absence of proposals/runs/output on rejection.
+Recipe-dependent proposal/CAS/snapshot/confinement tests retain their complete
+POSIX assertions and declare their native Windows limitation; early tool, schema
+and session validation remains cross-platform. Actual Windows CI must verify
+this correction; it does not qualify Printed02 provider execution on Windows.
+
+Local correction preflight: all 4 HTTP setup cases and all 25 service owner
+cases pass on Linux. Native Windows results remain pending CI. Restricted
+sandbox execution lost asyncio thread-result wakeups even in a minimal probe;
+the same probe and isolated tests passed outside that restriction. The stalled
+owned tests were stopped; no product workaround or timeout was introduced.

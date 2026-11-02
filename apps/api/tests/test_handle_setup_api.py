@@ -1,8 +1,11 @@
 """HTTP proof of the installed setup route, with discovery metadata only."""
 
 import json
+import re
 from types import SimpleNamespace
 from unittest.mock import AsyncMock
+
+import pytest
 from api.main import app
 from api.routers.workspace import get_workspace_service
 from apps.api.tests.test_engineering_workflow_template_api import _Service
@@ -12,8 +15,9 @@ from workspace_service.workflow_mcp_execution import WorkflowMcpRuntime
 PREFIX = "/api/workspace/workflow-source-templates/replacement-drawer-handle"
 
 
+@pytest.mark.parametrize("mount", ["native", "windows", "different"])
 def test_handle_setup_http_proposes_inspectable_revision_then_explicit_cas(
-    sync_client, tmp_path, monkeypatch
+    sync_client, tmp_path, monkeypatch, mount
 ):
     monkeypatch.setattr(
         app.state,
@@ -90,10 +94,25 @@ def test_handle_setup_http_proposes_inspectable_revision_then_explicit_cas(
                 for role, tool in zip(resources.contract()["tools"], tools)
             },
             "profiles": profiles,
-            "workspace_mount": str(tmp_path),
+            "workspace_mount": {
+                "native": str(tmp_path),
+                "windows": r"C:\wright\workspace",
+                "different": "/different-workspace",
+            }[mount],
             "selected_orientation": "side",
         }
         proposed = sync_client.post(PREFIX + "/setup/proposals", json=body)
+        if mount != "native" or not re.fullmatch(r"/[A-Za-z0-9_/-]+", str(tmp_path)):
+            # This installed recipe has only qualified a shared POSIX mount.
+            # Native Windows must diagnose it before staging or accepting source.
+            assert proposed.status_code == 400, proposed.text
+            assert proposed.json()["error_code"] == "handle_setup_invalid"
+            assert "exact managed POSIX workspace path" in proposed.json()["message"]
+            assert (tmp_path / document["path"]).read_text() == document["source"]
+            assert not (tmp_path / ".wright/handle-setup").exists()
+            assert not (tmp_path / ".wright/workflow-runs").exists()
+            assert not list(tmp_path.rglob("*.stl"))
+            return
         assert proposed.status_code == 201, proposed.text
         proposal = proposed.json()
         assert proposal["expected_storage_digest"] == document["storage_digest"]
