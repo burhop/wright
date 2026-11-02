@@ -2179,6 +2179,7 @@ workspace-surfaces-test = [
 [package.dev-dependencies]
 dev = [
     { name = "build" },
+    { name = "check-wheel-contents" },
     { name = "hatchling" },
     { name = "pytest" },
     { name = "pytest-asyncio" },
@@ -2223,6 +2224,7 @@ provides-extras = ["codex", "engineering-models", "runtime", "workspace-surfaces
 [package.metadata.requires-dev]
 dev = [
     { name = "build", specifier = ">=1.2,<2" },
+    { name = "check-wheel-contents", specifier = "==0.6.3" },
     { name = "hatchling", specifier = ">=1.27,<2" },
     { name = "pytest", specifier = ">=8.0" },
     { name = "pytest-asyncio", specifier = ">=0.23" },

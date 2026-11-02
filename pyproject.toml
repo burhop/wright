@@ -125,6 +125,7 @@ markers = [
 [dependency-groups]
 dev = [
     "build>=1.2,<2",
+    "check-wheel-contents==0.6.3",
     "hatchling>=1.27,<2",
     "pytest>=8.0",
     "pytest-asyncio>=0.23",

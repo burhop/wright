@@ -148,6 +148,7 @@ run env VITE_WRIGHT_PROCESS_DEFINITION_VIEW=1 \
   VITE_WORKSPACE_SURFACES_ENABLED=1 npm run build --workspace=apps/web
 run env WRIGHT_NATIVE_SKIP_FRONTEND_BUILD=1 PYTHON="$PYTHON_BIN" scripts/build-python-distributions.sh --dist-root "$ROOT_DIR/dist/dev-merge-python" .
 run uv run python -c "from pathlib import Path; from scripts.release.python_artifacts import validate_native_distribution; artifacts=[p for p in Path('dist/dev-merge-python').rglob('*') if p.suffix == '.whl' or p.name.endswith('.tar.gz')]; assert len(artifacts) == 2; [validate_native_distribution(p) for p in artifacts]"
+run uv run --with check-wheel-contents==0.6.3 python -m scripts.release.wheel_policy "$ROOT_DIR"/dist/dev-merge-python/*/*.whl
 
 # Keep the request-to-cookie, request-to-filesystem/process, and exception-to-response
 # regression boundaries visible as a dedicated gate. GitHub CodeQL remains the

@@ -145,6 +145,13 @@ publisher set. The contract checks the exact named OIDC/publishing jobs, each
 protected environment, distribution-only staging and the production publication
 order. Adding an explicitly isolated test publisher must not grant OIDC to an
 unrelated job or weaken the existing production checks.
+The first TestPyPI development build then exposed generic wheel warnings for
+intentional resource copies and path-addressed Python setup scripts. Native PR
+builds and both merge gates now use `scripts.release.wheel_policy`, as do the
+TestPyPI and production publication paths. It runs the pinned checker with exact
+resource classifications; new duplicate subjects, nonimportable scripts, package
+roots and all other findings remain blocking. Existing engineering resource
+bindings and bytes are preserved.
 PR #166 exposed completion assertions against a deliberately collapsed progress
 section. Browser contracts must check the visible terminal summary and results,
 then expand Run details when inspecting progress. Keep exact run/result identity,

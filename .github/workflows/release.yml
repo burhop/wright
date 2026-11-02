@@ -75,7 +75,7 @@ jobs:
           cp src/wright_engineering/dev-release.json dist/candidate/
           cp dist/build-once/wright-engineering/native-build-evidence.json dist/candidate/
           python -m twine check --strict dist/candidate/*.whl dist/candidate/*.tar.gz
-          check-wheel-contents dist/candidate/*.whl
+          python -m scripts.release.wheel_policy dist/candidate/*.whl
           (cd dist/candidate && sha256sum * > SHA256SUMS)
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
@@ -273,7 +273,7 @@ jobs:
           find dist/build-once -type f \( -name '*.whl' -o -name '*.tar.gz' \) -exec cp {} dist/candidate/ \;
           find dist/build-once -type f -name 'native-build-evidence.json' -exec cp {} dist/candidate/native-build-evidence.json \;
           python -m twine check --strict dist/candidate/*.whl dist/candidate/*.tar.gz
-          check-wheel-contents dist/candidate/*.whl
+          python -m scripts.release.wheel_policy dist/candidate/*.whl
           (cd dist/candidate && sha256sum * > SHA256SUMS)
       - name: Upload immutable Python candidate
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2

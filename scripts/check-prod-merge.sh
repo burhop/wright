@@ -21,7 +21,7 @@ if [[ -z "$wheel_path" ]]; then
   echo "Production wheel content check could not find the dev-gate wheel."
   exit 1
 fi
-run uv run --with check-wheel-contents==0.6.3 check-wheel-contents "$wheel_path"
+run uv run --with check-wheel-contents==0.6.3 python -m scripts.release.wheel_policy "$wheel_path"
 run scripts/security-scan.sh --include-untracked
 run scripts/alpha-release-check.sh
 
