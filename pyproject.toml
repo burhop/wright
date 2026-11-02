@@ -26,7 +26,7 @@ dependencies = [
 
 [project.optional-dependencies]
 codex = [
-    "openai-codex==0.162.1",
+    "openai-codex==0.163.0",
 ]
 engineering-models = [
     "numpy>=1.26,<3",
