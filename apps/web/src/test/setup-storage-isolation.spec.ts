@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-describe.sequential("browser storage test isolation", () => {
+describe("browser storage test isolation", { concurrent: false }, () => {
   it("allows a test to persist browser state", () => {
     window.localStorage.setItem("wright-test-isolation", "previous-test");
     window.sessionStorage.setItem("wright-test-isolation", "previous-test");

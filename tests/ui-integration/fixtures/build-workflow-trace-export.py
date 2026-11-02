@@ -80,15 +80,32 @@ elif input_case == "many":
     ]
 elif input_case == "empty":
     inspection["run_inputs"] = []
+elif input_case == "pdf":
+    import io
+
+    from PIL import Image
+
+    stream = io.BytesIO()
+    Image.new("RGB", (300, 180), (220, 60, 20)).save(stream, format="PDF")
+    inspection["final_outputs"][0]["name"] = "housing-drawing.pdf"
+    inspection["final_outputs"][0]["preview"] = "Synthetic PDF decoder fixture"
+    resources = (
+        TraceExportResource(
+            "design", "housing-drawing.pdf", "application/pdf", stream.getvalue(), None
+        ),
+    )
 elif input_case == "svg":
     resources += (
         TraceExportResource(
-            "projection", "support-preview.svg", "image/svg+xml",
+            "projection",
+            "support-preview.svg",
+            "image/svg+xml",
             b'<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" onload="parent.svgExecuted=true">'
             b'<script>parent.svgExecuted=true;fetch("https://invalid.example/script")</script>'
             b'<image href="https://invalid.example/image.png" width="200" height="200"/>'
             b'<rect width="100" height="100" fill="red"/></svg>',
-            None, report_asset=True,
+            None,
+            report_asset=True,
         ),
     )
 elif input_case == "iterations":
@@ -121,14 +138,29 @@ elif input_case == "thirty-activities":
     lanes = ["Requirements", "Design", "Analysis", "Manufacturing", "Approval"]
     inspection["run"]["workflow_id"] = "Synthetic 30-activity layout test"
     inspection["steps"] = [
-        {"node_id": f"activity-{index}", "label": f"Engineering activity {index + 1}",
-         "attempt": 1, "state": "succeeded", "qualified_tool_name": "Layout fixture tool",
-         "outputs": [{"artifact": {"artifact_id": "design"}}] if index == 29 else []}
+        {
+            "node_id": f"activity-{index}",
+            "label": f"Engineering activity {index + 1}",
+            "attempt": 1,
+            "state": "succeeded",
+            "qualified_tool_name": "Layout fixture tool",
+            "outputs": [{"artifact": {"artifact_id": "design"}}] if index == 29 else [],
+        }
         for index in range(30)
     ]
     inspection["graph"] = {
-        "nodes": [{"node_id": f"activity-{index}", "lane": lanes[index // 6]} for index in range(30)],
-        "connections": [{"source_node_id": f"activity-{index}", "target_node_id": f"activity-{index + 1}", "label": f"Handoff {index + 1}"} for index in range(29)],
+        "nodes": [
+            {"node_id": f"activity-{index}", "lane": lanes[index // 6]}
+            for index in range(30)
+        ],
+        "connections": [
+            {
+                "source_node_id": f"activity-{index}",
+                "target_node_id": f"activity-{index + 1}",
+                "label": f"Handoff {index + 1}",
+            }
+            for index in range(29)
+        ],
     }
 urls = {}
 for mode in ("report_only", "full_data"):

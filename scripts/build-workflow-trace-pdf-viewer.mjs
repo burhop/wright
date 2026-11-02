@@ -11,6 +11,9 @@ const portable = resolve(
 const pdfRoot = dirname(
   fileURLToPath(import.meta.resolve("pdfjs-dist/package.json")),
 );
+const { version: pdfVersion } = JSON.parse(
+  await readFile(resolve(pdfRoot, "package.json"), "utf8"),
+);
 const assets = {};
 for (const [kind, directory, suffix] of [
   ["cMapUrl", "cmaps", ".bcmap"],
@@ -77,7 +80,7 @@ async function compile(name) {
 const literal = (value) => JSON.stringify(value).replaceAll("<", "\\u003c");
 // Classic workers also start from a file-origin report; module workers do not.
 const worker = await compile(resolve(pdfRoot, "build/pdf.worker.min.mjs"));
-const code = `/* PDF.js 6.3.289, Apache-2.0. See PDFJS-LICENSE.txt. */\nwindow.WrightPDFAssets=${literal(assets)};\nwindow.WrightPDFWorkerSource=${literal(worker)};\n${await compile("pdf-viewer-entry.js")}`;
+const code = `/* PDF.js ${pdfVersion}, Apache-2.0. See PDFJS-LICENSE.txt. */\nwindow.WrightPDFAssets=${literal(assets)};\nwindow.WrightPDFWorkerSource=${literal(worker)};\n${await compile("pdf-viewer-entry.js")}`;
 await writeFile(resolve(portable, "pdf-viewer.js"), code);
 await writeFile(
   resolve(portable, "PDFJS-LICENSE.txt"),

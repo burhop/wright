@@ -101,7 +101,7 @@ SOFTWARE.
 ---
 
 Name: @opentelemetry/api
-Version: 1.9.1
+Version: 1.10.0
 License: Apache-2.0
 Private: false
 Description: Public API for OpenTelemetry
@@ -2528,10 +2528,47 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ---
 
 Name: micromark
-Version: 4.0.2
+Version: 4.0.3
 License: MIT
 Private: false
 Description: small commonmark compliant markdown parser with positional info and concrete tokens
+Repository: undefined
+Author: Titus Wormer <tituswormer@gmail.com> (https://wooorm.com)
+Contributors:
+  Titus Wormer <tituswormer@gmail.com> (https://wooorm.com)
+License Text:
+===
+
+(The MIT License)
+
+Copyright (c) Titus Wormer <tituswormer@gmail.com>
+
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files (the
+'Software'), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to
+the following conditions:
+
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+---
+
+Name: micromark-util-edit-map
+Version: 1.0.0
+License: MIT
+Private: false
+Description: micromark utility to batch changes to lists of events
 Repository: undefined
 Author: Titus Wormer <tituswormer@gmail.com> (https://wooorm.com)
 Contributors:
@@ -2865,43 +2902,6 @@ Version: 2.0.1
 License: MIT
 Private: false
 Description: micromark utility with list of html tag names
-Repository: undefined
-Author: Titus Wormer <tituswormer@gmail.com> (https://wooorm.com)
-Contributors:
-  Titus Wormer <tituswormer@gmail.com> (https://wooorm.com)
-License Text:
-===
-
-(The MIT License)
-
-Copyright (c) Titus Wormer <tituswormer@gmail.com>
-
-Permission is hereby granted, free of charge, to any person obtaining
-a copy of this software and associated documentation files (the
-'Software'), to deal in the Software without restriction, including
-without limitation the rights to use, copy, modify, merge, publish,
-distribute, sublicense, and/or sell copies of the Software, and to
-permit persons to whom the Software is furnished to do so, subject to
-the following conditions:
-
-The above copyright notice and this permission notice shall be
-included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND,
-EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
-CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
-TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
-SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
----
-
-Name: micromark-util-edit-map
-Version: 1.0.0
-License: MIT
-Private: false
-Description: micromark utility to batch changes to lists of events
 Repository: undefined
 Author: Titus Wormer <tituswormer@gmail.com> (https://wooorm.com)
 Contributors:
@@ -4605,7 +4605,7 @@ THIS SOFTWARE.
 ---
 
 Name: @xyflow/system
-Version: 0.0.82
+Version: 0.0.83
 License: MIT
 Private: false
 Description: xyflow core system that powers React Flow and Svelte Flow.
@@ -4709,7 +4709,7 @@ SOFTWARE.
 ---
 
 Name: @xyflow/react
-Version: 12.11.6
+Version: 12.12.0
 License: MIT
 Private: false
 Description: React Flow - A highly customizable React library for building node-based editors and interactive flow charts.
@@ -4959,7 +4959,7 @@ License Text:
 ---
 
 Name: @modelcontextprotocol/sdk
-Version: 1.32.1
+Version: 1.32.2
 License: MIT
 Private: false
 Description: Model Context Protocol implementation for TypeScript
