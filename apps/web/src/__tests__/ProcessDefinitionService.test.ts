@@ -83,7 +83,7 @@ async function responseFor(
   });
 }
 
-describe.sequential("wright-process-json-v1 browser parity", () => {
+describe("wright-process-json-v1 browser parity", { concurrent: false }, () => {
   it("uses the exact frozen profile", () => {
     expect(vectors.profile).toBe("wright-process-json-v1");
   });

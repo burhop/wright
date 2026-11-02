@@ -119,7 +119,7 @@ function reducedMotionMedia(query: string): MediaQueryList {
   };
 }
 
-describe.sequential("ProcessDefinitionPage", () => {
+describe("ProcessDefinitionPage", { concurrent: false }, () => {
   beforeEach(() => {
     fetchDefinition.mockReset();
   });

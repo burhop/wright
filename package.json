@@ -11,12 +11,12 @@
     "cleanup:workspaces": "python3 scripts/cleanup-workspaces.py"
   },
   "devDependencies": {
-    "@playwright/test": "^1.62.1",
-    "@types/node": "^26.1.2",
+    "@playwright/test": "^1.64.1",
+    "@types/node": "^26.6.5",
     "micromark": "4.0.2",
     "micromark-extension-gfm": "3.0.0",
     "pdfjs-dist": "6.3.289",
-    "prettier": "^3.9.6",
+    "prettier": "^3.9.10",
     "rolldown": "1.2.2",
     "typescript": "^5.7.0"
   }

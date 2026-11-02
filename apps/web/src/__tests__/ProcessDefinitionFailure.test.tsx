@@ -91,7 +91,7 @@ function expectNoPartialOrMutationUi(): void {
   ).toBeNull();
 }
 
-describe.sequential("ProcessDefinitionPage closed recovery", () => {
+describe("ProcessDefinitionPage closed recovery", { concurrent: false }, () => {
   beforeEach(() => mockedFetch.mockReset());
 
   it("binds the three frozen recovery fixtures to exact UTF-8 digests", async () => {

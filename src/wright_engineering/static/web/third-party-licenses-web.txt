@@ -101,7 +101,7 @@ SOFTWARE.
 ---
 
 Name: @opentelemetry/api
-Version: 1.9.1
+Version: 1.10.0
 License: Apache-2.0
 Private: false
 Description: Public API for OpenTelemetry
@@ -4605,7 +4605,7 @@ THIS SOFTWARE.
 ---
 
 Name: @xyflow/system
-Version: 0.0.82
+Version: 0.0.83
 License: MIT
 Private: false
 Description: xyflow core system that powers React Flow and Svelte Flow.
@@ -4709,7 +4709,7 @@ SOFTWARE.
 ---
 
 Name: @xyflow/react
-Version: 12.11.6
+Version: 12.12.0
 License: MIT
 Private: false
 Description: React Flow - A highly customizable React library for building node-based editors and interactive flow charts.
@@ -4959,7 +4959,7 @@ License Text:
 ---
 
 Name: @modelcontextprotocol/sdk
-Version: 1.32.1
+Version: 1.32.2
 License: MIT
 Private: false
 Description: Model Context Protocol implementation for TypeScript
@@ -5224,7 +5224,7 @@ the full license text.
 ---
 
 Name: plotly.js-dist-min
-Version: 3.7.0
+Version: 4.1.2
 License: MIT
 Private: false
 Description: Ready-to-use minified plotly.js distributed bundle.
