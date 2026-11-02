@@ -693,3 +693,13 @@ only its exact relative path, scanner rule and SHA-256 of the entire source line
 Changing the line, adding a secret beside it or moving it to another file remains
 blocking. Malformed policy fails closed. These exceptions do not change Gitleaks,
 TruffleHog, scanner patterns or the redaction tests that consume the canaries.
+
+### Python fixture helpers in push selection
+
+Changed Python test files matching pytest's `test_*.py` or `*_test.py` names
+remain direct targets. Other Python helpers under `tests/` select the owning
+broad suite rather than being invoked as standalone tests. In particular, the
+browser export-fixture generator must not fail the gate with pytest exit 5.
+Conftest changes still select their directory, and all existing broad/focused
+collection and duplicate-import protections remain in place. The gate regression
+executes the real shell selection for helpers, tests and conftest paths.

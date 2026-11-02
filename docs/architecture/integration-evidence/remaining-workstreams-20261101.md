@@ -115,3 +115,39 @@ required current-head CI result. Actual Windows/native acceptance remains
 separate from all local and simulated-host results. No engineering run,
 Roadster/protected campaign, physical operation, personal sign-in or production
 release is authorized by these qualification records.
+
+## Final consolidation audit
+
+Current dev through PR #179 is reconciled, preserving real Windows junction and
+record-read retry assertions. The subsequent changes are gate/test/docs only.
+The full merge gate passed on product source `50d35b49`; the normal pre-push
+run on `5f1336b1` exited 5 because the selector passed the browser fixture
+generator to pytest. That failed run is retained and is not a passing receipt.
+The selector now distinguishes pytest test names from helper source, with eight
+executed shell-routing regressions; helper changes still select the broad suite.
+
+The old desktop worktrees were compared before integration:
+
+- Reasoning-status readers, cancellation/stale-response tests, private-LAN
+  configuration and missing-Web-Crypto handling already have newer maintained
+  equivalents in the candidate's same source locations. The original experiments
+  remain preserved, rather than replacing newer implementation.
+- The native viewer-selection probe and real-registration comparison are already
+  present in `prototypes/desktop-harness`; actual native viewer selection remains
+  distinct from registration and file-open acknowledgements.
+- The old browser correction's common-view/declared-input/recovery targets and
+  visible terminal-summary assertions are already in the current gate and tests.
+- Hermes SDK usage counters are represented by commit `382acd03` and the current
+  `public_usage` owner; Rivet integration was carried forward by `2ce04779` and
+  subsequent editor changes. Old branch IDs alone are not evidence of missing code.
+- Original Codex adapter planning notes and the untracked
+  `desktop-harness-prototype.md` are retained as historical discussion; current
+  adapter scope and accepted native-tools exception are recorded above.
+- Old trace-worktree apparent deletions, old gate-generated frontend assets,
+  screenshots, private campaign/website ZIPs and capture outputs remain local
+  evidence or build products. They are not intentional source deletions or new
+  feature changes. The detailed path/hash inventory is retained locally as
+  `LOCAL-SOURCE-AUDIT.json` in the integration evidence directory.
+
+No local experiment is represented as Windows acceptance. Fresh current-head
+pre-push and GitHub CI results still govern publication and merge.

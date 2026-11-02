@@ -412,7 +412,7 @@ while IFS= read -r changed_file; do
       CHECK_PYTHON=1
       PYTHON_TEST_TARGETS+=(tests/release)
       ;;
-    tests/release/*.py)
+    tests/release/test_*.py|tests/release/*_test.py)
       CHECK_PYTHON=1
       PYTHON_TEST_TARGETS+=("$changed_file")
       ;;
@@ -428,7 +428,7 @@ while IFS= read -r changed_file; do
       CHECK_PYTHON=1
       PYTHON_TEST_TARGETS+=(tests/test_printed_dataset_bindings.py)
       ;;
-    tests/*.py|tests/*/*.py)
+    tests/test_*.py|tests/*/test_*.py|tests/*_test.py|tests/*/*_test.py)
       CHECK_PYTHON=1
       PYTHON_TEST_TARGETS+=("$changed_file")
       ;;

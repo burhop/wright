@@ -3,6 +3,7 @@ from __future__ import annotations
 from fnmatch import fnmatchcase
 from pathlib import Path
 import shlex
+import subprocess
 
 import pytest
 import yaml
@@ -634,3 +635,47 @@ def test_fast_gate_retains_common_working_view_journeys() -> None:
     ):
         assert f"tests/ui-integration/{journey}" in baseline
     assert "PR #166" in _read(RUNBOOK)
+
+
+@pytest.mark.parametrize(
+    ("path", "expected"),
+    [
+        ("tests/ui-integration/fixtures/build-workflow-trace-export.py", "tests"),
+        ("tests/release/fixture_builder.py", "tests"),
+        (
+            "tests/test_security_scanner_setup.py",
+            "tests/test_security_scanner_setup.py",
+        ),
+        (
+            "tests/release/test_dev_push_process.py",
+            "tests/release/test_dev_push_process.py",
+        ),
+        ("tests/example_test.py", "tests/example_test.py"),
+        ("tests/nested/example_test.py", "tests/nested/example_test.py"),
+        ("tests/conftest.py", "tests"),
+        ("tests/nested/conftest.py", "tests/nested"),
+    ],
+)
+def test_python_selection_routes_helpers_to_owner_suites(
+    path: str, expected: str
+) -> None:
+    gate = _read("scripts/check-dev-push.sh")
+    start = gate.index("    tests/release/test_*.py|")
+    end = gate.index('\ndone <<<"$CHANGED_FILES"', start)
+    routes = gate[start:end]
+    result = subprocess.run(
+        [
+            "bash",
+            "-c",
+            'CHECK_PYTHON=0; PYTHON_TEST_TARGETS=(); changed_file="$1"; '
+            'case "$changed_file" in\n'
+            + routes
+            + '\nprintf "%s\\n" "${PYTHON_TEST_TARGETS[@]}"',
+            "selection-test",
+            path,
+        ],
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    assert result.stdout.splitlines() == [expected]
