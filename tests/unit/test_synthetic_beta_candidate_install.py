@@ -54,7 +54,7 @@ def test_fixed_candidate_prefix_extracts_without_installing(tmp_path):
 
 
 def test_install_guard_precedes_all_host_mutation(tmp_path, monkeypatch):
-    monkeypatch.setattr(installer.os, "getuid", lambda: 1001)
+    monkeypatch.setattr(installer.os, "getuid", lambda: 1001, raising=False)
     monkeypatch.setattr(
         installer.subprocess,
         "run",
@@ -101,6 +101,8 @@ def test_installer_exact_fresh_scope_and_root_verifier(
         if path == guard:
             fields = list(value)
             fields[4] = 1000 if wrong == "guard_owner" else 0
+            # Observe the Linux guest verifier, not the host's permission model.
+            fields[0] = (fields[0] & ~0o777) | 0o644
             if wrong == "guard_writable":
                 fields[0] |= 0o022
             return os.stat_result(fields)

@@ -221,7 +221,13 @@ def storage(tmp_path, monkeypatch):
 
     monkeypatch.setattr(guest.subprocess, "check_output", observe)
     monkeypatch.setattr(guest.subprocess, "run", lambda argv, **kw: calls.append(argv))
-    monkeypatch.setattr(os, "chown", lambda *args: None)
+    monkeypatch.setattr(os, "chown", lambda *args: None, raising=False)
+    monkeypatch.setattr(
+        os,
+        "statvfs",
+        lambda _path: SimpleNamespace(f_bavail=1024, f_frsize=4096),
+        raising=False,
+    )
 
     def prepare_dirs():
         for path in (target, disk, private):
@@ -235,7 +241,7 @@ def storage(tmp_path, monkeypatch):
 
 def test_fresh_split_storage_and_no_parent_mount(storage, monkeypatch):
     profile, disk, private, target, rows, calls, _ = storage
-    monkeypatch.setattr(os, "getuid", lambda: 0)
+    monkeypatch.setattr(os, "getuid", lambda: 0, raising=False)
     result = guest.prepare_runtime_mount(profile)
     assert result["software_source"] == str(disk)
     assert result["private_mount"]["fstype"] == "tmpfs"
@@ -271,9 +277,12 @@ def test_existing_state_not_adopted_or_modified(storage, monkeypatch):
     prepare()
     retained = target / "installation.json"
     retained.write_text("preserved")
-    monkeypatch.setattr(os, "getuid", lambda: 0)
+    monkeypatch.setattr(os, "getuid", lambda: 0, raising=False)
     monkeypatch.setattr(
-        os, "chown", lambda *_args: pytest.fail("existing state must not be chowned")
+        os,
+        "chown",
+        lambda *_args: pytest.fail("existing state must not be chowned"),
+        raising=False,
     )
     with pytest.raises(RuntimeError, match="Existing Wright state"):
         guest.prepare_runtime_mount(profile)

@@ -18,6 +18,13 @@ vm = importlib.import_module("synthetic_beta_testing.vm")
 
 @pytest.fixture
 def lab(tmp_path, monkeypatch):
+    # Mock the Linux lab identity even on hosts without POSIX identity APIs.
+    monkeypatch.setattr(
+        provision.os, "getuid", lambda: tmp_path.stat().st_uid, raising=False
+    )
+    monkeypatch.setattr(
+        provision.os, "getgid", lambda: tmp_path.stat().st_gid, raising=False
+    )
     root = tmp_path / "lab"
     backend = vm.VMBackend(root / "machine")
     config = {
