@@ -2,6 +2,7 @@ import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { test, expect } from "@playwright/test";
 import {
+  WORKFLOW_PATH,
   mockRecoveryWorkspace,
   openRecoveryEditor,
 } from "./fixtures/workflow-recovery";
@@ -23,7 +24,7 @@ test("a template qualification rejection explains responsibility and recovery wi
     route.fulfill({
       json: {
         workspace_id: "ws-recovery",
-        workflow_path: "workflows/untitled.workflow.wflow",
+        workflow_path: WORKFLOW_PATH,
         runs: [],
       },
     }),
@@ -124,7 +125,7 @@ test("workspace reference tasks expose an MCP choice, retain it across save/reop
     route.fulfill({
       json: {
         workspace_id: "ws-recovery",
-        workflow_path: "workflows/untitled.workflow.wflow",
+        workflow_path: WORKFLOW_PATH,
         runs: [],
       },
     }),
