@@ -11,6 +11,7 @@ import re
 from uuid import uuid4
 
 from core.process_interactions import ArtifactRef, FileBinding
+from core.process_validation import canonical_digest
 from core.tracing import traced
 
 from ..errors import WorkspaceTimeoutError
@@ -54,6 +55,28 @@ class ProcessArtifactBytes:
     reference: ArtifactRef
     content: bytes
     media_type: str
+
+
+def assessment_content_matches(content, assessment):
+    """Compare complete immutable JSON content, independently of its formatting."""
+
+    def unique_object(pairs):
+        result = {}
+        for key, value in pairs:
+            if key in result:
+                raise ValueError("Duplicate assessment field")
+            result[key] = value
+        return result
+
+    try:
+        if len(content) > 16 * 1024 * 1024:
+            return False
+        payload = json.loads(content, object_pairs_hook=unique_object)
+        # Comparing the complete parsed payload retains every explicit field:
+        # model coercion or filling missing defaults must not create a match.
+        return canonical_digest(payload) == canonical_digest(assessment)
+    except (ValueError, TypeError, UnicodeError, RecursionError):
+        return False
 
 
 class ProcessArtifactAccess:
@@ -106,15 +129,15 @@ class ProcessArtifactAccess:
                         "Choose an assessment recorded by this run."
                     )
                 root = self.application.runs._root(scope, process, "process.results")
-                # A JSON shape or assessment ID is not authority. Both the original
-                # result membership above and the owning report's exact bytes must match.
+                # Membership and raw SHA above pin the original file. Its complete
+                # immutable content must match the owning assessment; ledger reloads
+                # may legitimately change dictionary ordering or JSON whitespace.
                 reports = [
                     report
                     for report in reports_for_run(
                         self.application, process, root, run_id
                     )
-                    if report.assessment.model_dump_json(indent=2).encode("utf-8")
-                    == artifact.content
+                    if assessment_content_matches(artifact.content, report.assessment)
                 ]
                 if len(reports) != 1:
                     raise RepresentationUnavailable(
@@ -260,7 +283,14 @@ class ProcessArtifactAccess:
 
     @traced("process.interface.representation.read")
     async def read(
-        self, scope, process, reference, *, run_id=None, input_snapshot_id=None
+        self,
+        scope,
+        process,
+        reference,
+        *,
+        run_id=None,
+        input_snapshot_id=None,
+        _maximum_bytes=None,
     ):
         app = self.application
         scope.require_run(run_id)
@@ -286,6 +316,10 @@ class ProcessArtifactAccess:
             ):
                 raise _denied()
             maximum = app.limits.maximum_upload_bytes
+        if _maximum_bytes is not None:
+            if type(_maximum_bytes) is not int or _maximum_bytes <= 0:
+                raise ValueError("Internal representation read bound must be positive")
+            maximum = min(maximum, _maximum_bytes)
         try:
             content = await app.workspace.files.read_bytes(
                 root, reference.artifact_ref, maximum_bytes=maximum

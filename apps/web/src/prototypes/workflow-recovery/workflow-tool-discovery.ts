@@ -6,7 +6,7 @@ export const WorkflowToolDiscovery = createContext<{
   read: typeof listWorkflowMcpTools;
   sessionId?: string;
   openConnections?: () => void;
-}>({ read: listWorkflowMcpTools });
+}>({ read: (sessionId) => listWorkflowMcpTools(sessionId) });
 export const useWorkflowToolDiscovery = () =>
   useContext(WorkflowToolDiscovery).read;
 export const useWorkflowToolSession = (sessionId?: string) =>

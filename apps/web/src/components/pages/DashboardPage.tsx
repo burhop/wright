@@ -39,7 +39,13 @@ export function DashboardPage() {
     useState(false);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [recentErrors, setRecentErrors] = useState<any[]>([]);
-  const [activeSessionsCount, setActiveSessionsCount] = useState<number>(0);
+  const [errorLogState, setErrorLogState] = useState<
+    "loading" | "available" | "unavailable"
+  >("loading");
+  const [activeSessionsCount, setActiveSessionsCount] = useState<number | null>(
+    null,
+  );
+  const [sessionsLoading, setSessionsLoading] = useState(true);
 
   const fetchWorkspaces = useCallback(async () => {
     setWorkspacesLoading(true);
@@ -79,30 +85,52 @@ export function DashboardPage() {
     const fetchErrors = async () => {
       try {
         const res = await fetch(getApiUrl("/api/logs?level=error&limit=3"));
-        if (res.ok) {
-          const data = await res.json();
-          setRecentErrors(data.logs || []);
+        if (!res.ok) throw new Error("Recent errors are unavailable");
+        const data = await res.json();
+        if (!Array.isArray(data.logs)) {
+          throw new Error("Invalid error log response");
         }
+        setRecentErrors(data.logs);
+        setErrorLogState("available");
       } catch (err) {
+        setErrorLogState("unavailable");
         console.error("Failed to fetch recent errors", err);
       }
     };
 
+    fetchErrors();
+  }, [fetchWorkspaces, logger]);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    setSessionsLoading(true);
+    setActiveSessionsCount(null);
     const fetchSessions = async () => {
       try {
-        const res = await fetch(getApiUrl("/api/agent/sessions"));
-        if (res.ok) {
-          const data = await res.json();
-          setActiveSessionsCount(data.sessions?.length || 0);
+        const res = await fetch(getApiUrl("/api/agent/sessions"), {
+          signal: controller.signal,
+        });
+        if (!res.ok) throw new Error("Conversation list is unavailable");
+        const data = await res.json();
+        if (!Array.isArray(data.sessions)) {
+          throw new Error("Invalid conversation list");
+        }
+        if (!controller.signal.aborted) {
+          setActiveSessionsCount(data.sessions.length);
         }
       } catch (err) {
-        console.error("Failed to fetch sessions count", err);
+        if (!controller.signal.aborted) {
+          setActiveSessionsCount(null);
+          console.error("Failed to fetch sessions count", err);
+        }
+      } finally {
+        if (!controller.signal.aborted) setSessionsLoading(false);
       }
     };
 
-    fetchErrors();
-    fetchSessions();
-  }, [fetchWorkspaces, logger]);
+    void fetchSessions();
+    return () => controller.abort();
+  }, [hermesState]);
 
   const getWorkspaceName = (w: WorkspaceInfo) => {
     if (w.workspace_name) return w.workspace_name;
@@ -195,7 +223,7 @@ export function DashboardPage() {
               letterSpacing: "-0.5px",
             }}
           >
-            Wright Design Hub
+            Wright
           </h1>
           <p
             style={{
@@ -204,7 +232,7 @@ export function DashboardPage() {
               color: "var(--color-secondary)",
             }}
           >
-            Local-first multi-agent engineering workspace orchestrator.
+            Connect your tools and build repeatable engineering processes.
           </p>
         </div>
 
@@ -587,7 +615,7 @@ export function DashboardPage() {
               color: "var(--color-primary)",
             }}
           >
-            Agent Status (Hermes)
+            Connections
           </h2>
 
           {/* Connection Indicators */}
@@ -649,39 +677,6 @@ export function DashboardPage() {
             </div>
           </div>
 
-          {/* Running Tasks status */}
-          <div
-            style={{
-              padding: "var(--space-xs) var(--space-sm)",
-              backgroundColor: "var(--color-surface-subtle)",
-              borderRadius: "var(--radius-md)",
-              border: "1px solid var(--color-border)",
-              fontSize: "0.8rem",
-              textAlign: "left",
-            }}
-          >
-            <div
-              style={{
-                color: "var(--color-secondary)",
-                fontSize: "0.75rem",
-                fontWeight: "bold",
-              }}
-            >
-              CURRENT AGENT RUNNING STATE
-            </div>
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "6px",
-                marginTop: "2px",
-              }}
-            >
-              <span className="thinking-dot" />
-              <span>Idle (Awaiting task request)</span>
-            </div>
-          </div>
-
           {/* Recent System Errors list */}
           <div
             style={{
@@ -700,15 +695,19 @@ export function DashboardPage() {
             >
               RECENT SYSTEM HEALTH LOGS
             </div>
-            {recentErrors.length === 0 ? (
+            {errorLogState !== "available" || recentErrors.length === 0 ? (
               <div
                 style={{
                   fontSize: "0.75rem",
-                  color: "var(--color-success, #22c55e)",
+                  color: "var(--color-secondary)",
                   fontStyle: "italic",
                 }}
               >
-                No system errors detected. Health check passed.
+                {errorLogState === "loading"
+                  ? "Loading recent errors…"
+                  : errorLogState === "unavailable"
+                    ? "Recent errors unavailable."
+                    : "No recent errors returned."}
               </div>
             ) : (
               <div
@@ -745,7 +744,7 @@ export function DashboardPage() {
           </div>
         </div>
 
-        {/* Box 3: Wright News & MCP Directory (1/2 Width) */}
+        {/* Start with the engineering job, using the existing workspace entry. */}
         <div
           data-testid="card-news"
           className="glow-card"
@@ -767,97 +766,53 @@ export function DashboardPage() {
               color: "var(--color-primary)",
             }}
           >
-            Updates & MCP Releases
+            Start with your job
           </h2>
-
-          <div
+          <ol
             style={{
-              display: "flex",
-              flexDirection: "column",
-              gap: "6px",
-              textAlign: "left",
+              paddingLeft: "1.2rem",
+              margin: 0,
+              fontSize: "0.8rem",
+              lineHeight: 1.7,
+              listStyle: "decimal",
+            }}
+          >
+            <li>Open or create a workspace.</li>
+            <li>Describe what you want to accomplish and share your inputs.</li>
+            <li>Review the tools and process before running.</li>
+          </ol>
+          <blockquote
+            style={{
+              margin: 0,
+              padding: "var(--space-sm)",
+              borderLeft: "2px solid var(--color-border)",
+              color: "var(--color-secondary)",
               fontSize: "0.8rem",
             }}
           >
-            <div
-              style={{
-                borderBottom: "1px solid var(--color-border)",
-                paddingBottom: "4px",
-              }}
-            >
-              <div
-                style={{ fontWeight: "bold", color: "var(--color-primary)" }}
-              >
-                v0.22.0 Release Modernized Navigation
-              </div>
-              <div
-                style={{ fontSize: "0.75rem", color: "var(--color-secondary)" }}
-              >
-                Custom workspace prompts context, floating debugger drawer, and
-                file-size detection are live.
-              </div>
-            </div>
-
-            <div>
-              <div
-                style={{ fontWeight: "bold", color: "var(--color-primary)" }}
-              >
-                New MCP Servers Integrated
-              </div>
-              <div
-                style={{ fontSize: "0.75rem", color: "var(--color-secondary)" }}
-              >
-                OpenSCAD rendering, CalculiX simulation, FreeCAD Copilot, and
-                Autodesk APS community links added to catalog.
-              </div>
-            </div>
-          </div>
-
-          {/* Navigation Links */}
+            “My drawer handle broke. Can Wright help me make a replacement I can
+            3D print?”
+          </blockquote>
           <div
             style={{
               display: "flex",
-              flexWrap: "wrap",
-              gap: "var(--space-sm)",
-              borderTop: "1px solid var(--color-border)",
-              paddingTop: "var(--space-xs)",
+              gap: "var(--space-md)",
+              fontSize: "0.8rem",
             }}
           >
             <a
-              href="https://burhop.substack.com"
+              href="https://makerengineer.com/"
               target="_blank"
               rel="noreferrer"
-              style={{
-                fontSize: "0.75rem",
-                color: "var(--color-secondary)",
-                textDecoration: "underline",
-              }}
             >
-              substack.com
+              MakerEngineer.com
             </a>
             <a
               href="https://github.com/burhop/wright"
               target="_blank"
               rel="noreferrer"
-              style={{
-                fontSize: "0.75rem",
-                color: "var(--color-secondary)",
-                textDecoration: "underline",
-              }}
             >
-              github.com/burhop/wright
-            </a>
-            <a
-              href="https://element.siemens.io/get-started/element-mcp/"
-              target="_blank"
-              rel="noreferrer"
-              style={{
-                fontSize: "0.75rem",
-                color: "var(--color-secondary)",
-                textDecoration: "underline",
-              }}
-            >
-              Siemens Blog
+              Source and issues
             </a>
           </div>
         </div>
@@ -884,7 +839,7 @@ export function DashboardPage() {
               color: "var(--color-primary)",
             }}
           >
-            System Telemetry
+            Your work
           </h2>
 
           <div
@@ -898,17 +853,7 @@ export function DashboardPage() {
           >
             <div style={{ display: "flex", justifyContent: "space-between" }}>
               <span style={{ color: "var(--color-secondary)" }}>
-                SQLite DB Location:
-              </span>
-              <span
-                style={{ fontFamily: "var(--font-mono)", fontSize: "0.75rem" }}
-              >
-                state.db
-              </span>
-            </div>
-            <div style={{ display: "flex", justifyContent: "space-between" }}>
-              <span style={{ color: "var(--color-secondary)" }}>
-                Total Workspaces Indexed:
+                Workspaces:
               </span>
               <span>
                 <strong>
@@ -922,18 +867,14 @@ export function DashboardPage() {
             </div>
             <div style={{ display: "flex", justifyContent: "space-between" }}>
               <span style={{ color: "var(--color-secondary)" }}>
-                Active Agent Chat Sessions:
+                Conversations listed:
               </span>
               <span>
-                <strong>{activeSessionsCount}</strong>
-              </span>
-            </div>
-            <div style={{ display: "flex", justifyContent: "space-between" }}>
-              <span style={{ color: "var(--color-secondary)" }}>
-                Offline-First Mode:
-              </span>
-              <span style={{ color: "var(--color-success, #22c55e)" }}>
-                Enabled (100% Local)
+                <strong>
+                  {sessionsLoading
+                    ? "Loading…"
+                    : (activeSessionsCount ?? "Unavailable")}
+                </strong>
               </span>
             </div>
           </div>

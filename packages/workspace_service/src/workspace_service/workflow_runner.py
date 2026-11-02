@@ -45,6 +45,7 @@ from .rivet_authority import AuthorityClaims, RivetRunAuthorityService
 from .rivet_settings import RivetMcpGatewaySettings
 from .rivet_validation import (
     project_graph_inventory,
+    project_graph_trace,
     validate_requested_deliverable_effect,
     validate_rivet_project,
 )
@@ -309,6 +310,8 @@ class WorkspaceWorkflowRunner:
         artifact_catalog: RunnerAssetCatalog | None = None,
         runtime_host: RivetRuntimeHost | None = None,
         run_repository: WorkflowRunRepository | None = None,
+        trace_run_callback: Callable[[WorkflowRunRecord], None] | None = None,
+        trace_event_callback: Callable[[WorkflowRunEventRecord], None] | None = None,
         id_factory: Callable[[], str] | None = None,
     ) -> None:
         self._supervisor = supervisor
@@ -324,6 +327,8 @@ class WorkspaceWorkflowRunner:
         self._artifact_catalog = artifact_catalog or RunnerAssetCatalog()
         self._runtime_host = runtime_host
         self._run_repository = run_repository
+        self._trace_run_callback = trace_run_callback
+        self._trace_event_callback = trace_event_callback
         self._id_factory = id_factory or (lambda: str(uuid.uuid4()))
         self._generation = 1
         self._runs: dict[str, WorkflowRun] = {}
@@ -394,17 +399,19 @@ class WorkspaceWorkflowRunner:
             events.pop(0)
         sequence = self._next_sequence.get(run_id, 0) + 1
         self._next_sequence[run_id] = sequence
-        events.append(WorkflowRunEvent(run_id, sequence, kind, payload))
+        occurred_at = int(time.time())
+        events.append(WorkflowRunEvent(run_id, sequence, kind, payload, occurred_at))
         if self._run_repository is not None:
-            self._run_repository.append_event(
-                WorkflowRunEventRecord(
-                    run_id=run_id,
-                    sequence=sequence,
-                    occurred_at=int(time.time()),
-                    kind=kind,
-                    payload=dict(payload),
-                )
+            record = WorkflowRunEventRecord(
+                run_id=run_id,
+                sequence=sequence,
+                occurred_at=occurred_at,
+                kind=kind,
+                payload=dict(payload),
             )
+            self._run_repository.append_event(record)
+            if self._trace_event_callback is not None:
+                self._trace_event_callback(record)
 
     async def _prepare_mcp_run(
         self,
@@ -784,25 +791,26 @@ class WorkspaceWorkflowRunner:
                     deliverable_issues[0].message,
                 )
             if self._run_repository is not None:
-                self._run_repository.create(
-                    WorkflowRunRecord(
-                        run_id=run_id,
-                        workspace_id=workspace_id,
-                        session_id=session_id,
-                        workflow_id=document.workflow_id,
-                        revision=document.revision,
-                        digest=document.digest,
-                        graph=selected_graph,
-                        state="queued",
-                        generation=self._generation,
-                        started_at=None,
-                        completed_at=None,
-                        reason_code=None,
-                        output_summary=None,
-                        output_truncated=False,
-                        trace_id=uuid.uuid4().hex,
-                    )
+                durable_run = WorkflowRunRecord(
+                    run_id=run_id,
+                    workspace_id=workspace_id,
+                    session_id=session_id,
+                    workflow_id=document.workflow_id,
+                    revision=document.revision,
+                    digest=document.digest,
+                    graph=selected_graph,
+                    state="queued",
+                    generation=self._generation,
+                    started_at=None,
+                    completed_at=None,
+                    reason_code=None,
+                    output_summary=None,
+                    output_truncated=False,
+                    trace_id=uuid.uuid4().hex,
                 )
+                self._run_repository.create(durable_run)
+                if self._trace_run_callback is not None:
+                    self._trace_run_callback(durable_run)
                 try:
                     run_inputs, inputs_complete = project_named_values(
                         inputs or {},
@@ -817,6 +825,12 @@ class WorkspaceWorkflowRunner:
                     )
                 except Exception:
                     graph_nodes, inventory_complete = [], False
+                try:
+                    graph_trace, graph_trace_complete = project_graph_trace(
+                        document.project, selected_graph=selected_graph_id
+                    )
+                except Exception:
+                    graph_trace, graph_trace_complete = {}, False
                 self._append_event(
                     run_id,
                     "inspection-context",
@@ -834,6 +848,8 @@ class WorkspaceWorkflowRunner:
                         else "truncated"
                     ),
                     graphNodes=graph_nodes,
+                    graphTrace=graph_trace,
+                    graphTraceComplete=graph_trace_complete,
                     inventoryComplete=inventory_complete,
                     inventoryState=(
                         "available"

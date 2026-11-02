@@ -98,7 +98,8 @@ def workspace_setup():
 
 
 @pytest.fixture
-def client(workspace_setup) -> TestClient:
+def client(workspace_setup, request) -> TestClient:
+    fixture_platform = getattr(request, "param", "hermes")
     # Clean up test-session workspace from DB to avoid stale temp directories
     from api.config import DATABASE_PATH
     import sqlite3
@@ -131,6 +132,7 @@ def client(workspace_setup) -> TestClient:
         "test-session",
         workspace_setup,
         "Test Workspace",
+        agent_id=fixture_platform,
     )
 
     mock_engine = MockAgentEngine(workspace_setup)
@@ -138,7 +140,16 @@ def client(workspace_setup) -> TestClient:
     if hasattr(app.state, "chat_stream_registry"):
         delattr(app.state, "chat_stream_registry")
     with TestClient(app) as c:
-        yield c
+        # Legacy MCP preflight tests require an explicitly non-Hermes session.
+        # Changing the default alone must never redirect an existing session.
+        prior_platform = app.state.agent_sync_manager.active_agent
+        if fixture_platform != "hermes":
+            app.state.agent_sync_manager.active_agent = fixture_platform
+        try:
+            yield c
+        finally:
+            if fixture_platform != "hermes":
+                app.state.agent_sync_manager.active_agent = prior_platform
 
 
 def test_list_workspace_files(client):
@@ -1705,6 +1716,7 @@ def test_workspace_mcp_status_endpoint(client):
     assert "running_mcps" in data
 
 
+@pytest.mark.parametrize("client", ["openclaw"], indirect=True)
 def test_workspace_mcp_status_reports_gateway_mismatch_after_server_start(
     client, monkeypatch, tmp_path
 ):
@@ -1950,6 +1962,7 @@ def test_workspace_files_uses_local_dir_when_agent_lookup_fails(
     assert expected_path not in {workspace["local_path"] for workspace in listed}
 
 
+@pytest.mark.parametrize("client", ["openclaw"], indirect=True)
 def test_agent_chat_starts_enabled_workspace_mcp_servers(client, monkeypatch):
     from api.config import DATABASE_PATH
     from tool_registry import McpServer
@@ -2054,6 +2067,7 @@ def test_agent_chat_stream_can_be_reattached_after_completion(client):
     }
 
 
+@pytest.mark.parametrize("client", ["openclaw"], indirect=True)
 def test_agent_chat_reports_mcp_start_failure(client, monkeypatch):
     from api.config import DATABASE_PATH
     from tool_registry import McpServer

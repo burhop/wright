@@ -10,6 +10,7 @@ from .base import (
     AgentChatRequest,
     AgentSessionInfo,
     AgentChatMessage,
+    AgentToolCallEvidence,
 )
 from .hermes import HermesAdapter
 from .openclaw import OpenClawStubEngine
@@ -48,6 +49,7 @@ __all__ = [
     "AgentChatRequest",
     "AgentSessionInfo",
     "AgentChatMessage",
+    "AgentToolCallEvidence",
     "HermesAdapter",
     "OpenClawStubEngine",
     "HermesApiSettings",

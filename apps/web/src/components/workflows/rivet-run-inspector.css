@@ -23,7 +23,7 @@
   margin-left: auto;
 }
 .rivet-run-inspector__body {
-  height: min(300px, 38vh);
+  height: min(720px, 72vh);
   overflow: hidden;
 }
 .rivet-run-inspector__body > nav {
@@ -109,6 +109,14 @@
 .rivet-run-result pre.is-expanded {
   max-height: none;
   overflow: auto;
+}
+.rivet-run-result__image {
+  display: block;
+  width: min(100%, 520px);
+  max-height: 320px;
+  margin: 8px 0;
+  object-fit: contain;
+  background: var(--color-surface);
 }
 .rivet-run-actions {
   display: flex;
@@ -220,7 +228,7 @@
     font-size: 0.72rem;
   }
   .rivet-run-inspector__body {
-    height: min(260px, 44vh);
+    height: min(660px, 76vh);
   }
   .rivet-run-steps button,
   .rivet-run-history button {

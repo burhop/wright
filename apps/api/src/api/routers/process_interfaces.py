@@ -387,6 +387,9 @@ async def start_process_run(
     response: Response,
     service: WorkspaceService = Depends(get_workspace_service),
 ):
+    from api.agent_platform_engines import require_workflow_platform
+
+    await require_workflow_platform(request)
     response.headers["Cache-Control"] = "no-store"
     application, scope, process = _native_context(
         request, service, body.session_id, body.path, body.expected_storage_digest

@@ -6,7 +6,7 @@ import { expect, type Page } from "@playwright/test";
 
 const WORKSPACE_ID = "ws-recovery";
 const SESSION_ID = "session-recovery";
-const WORKFLOW_PATH = "workflows/mounting-bracket.workflow.wflow";
+export const WORKFLOW_PATH = "workflows/mounting-bracket.workflow.wflow";
 
 export const publicWorkflowSource = readFileSync(
   resolve(
@@ -595,7 +595,7 @@ export async function openRecoveryEditor(page: Page): Promise<void> {
   if ((await files.getAttribute("aria-expanded")) !== "true")
     await files.click();
   const navigation = page.getByRole("region", { name: "Workspace navigation" });
-  const savedFile = navigation.getByText("mounting-bracket.workflow.wflow", {
+  const savedFile = navigation.getByText(WORKFLOW_PATH.split("/").at(-1)!, {
     exact: true,
   });
   if (!(await savedFile.isVisible())) {
@@ -610,7 +610,7 @@ export async function openRecoveryEditor(page: Page): Promise<void> {
   );
   await expect(
     page.getByRole("region", {
-      name: /Bracket development workflow workflows\/mounting-bracket\.workflow\.wflow/,
+      name: `Bracket development workflow ${WORKFLOW_PATH}`,
     }),
   ).toBeVisible();
   await collapseAgentConsole(page);
@@ -621,6 +621,14 @@ export async function openNewRecoveryEditor(page: Page): Promise<void> {
   const workflows = page.getByTestId("activity-bar-workflows-btn");
   await expect(workflows).toBeVisible();
   await workflows.click();
+  const picker = page.getByRole("dialog");
+  await expect(
+    picker.getByRole("heading", { name: "Workflows", exact: true }),
+  ).toBeVisible();
+  await picker
+    .getByRole("button", { name: "New workflow", exact: true })
+    .click();
+  await expect(picker).toBeHidden();
   await expect(page).toHaveURL(
     (url) =>
       url.pathname === `/workspace/${WORKSPACE_ID}` &&

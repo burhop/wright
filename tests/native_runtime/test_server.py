@@ -33,6 +33,7 @@ def test_packaged_server_bootstrap_uses_stable_data_and_prebuilt_ui(
         layout, static_path=static, environment=environment
     )
 
+    assert values["WRIGHT_HOME"] == str(layout.wright_home)
     assert values["DATABASE_PATH"] == str(layout.data / "wright.db")
     assert values["FRONTEND_DIST_DIR"] == str(static.resolve())
     assert values["WRIGHT_RIVET_WORKFLOWS_ENABLED"] == "1"

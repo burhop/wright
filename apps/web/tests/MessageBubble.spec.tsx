@@ -172,7 +172,7 @@ describe("MessageBubble", () => {
 
     // Click absolute path button
     fireEvent.click(absPathBtn);
-    expect(handleOpenFile).toHaveBeenCalledWith("/designs/bracket.stl");
+    expect(handleOpenFile).toHaveBeenCalledWith("/designs/bracket.stl", false);
 
     // Assert that relative path is rendered as a button and is clickable
     const relPathBtn = screen.getByRole("button", {
@@ -182,7 +182,7 @@ describe("MessageBubble", () => {
 
     // Click relative path button
     fireEvent.click(relPathBtn);
-    expect(handleOpenFile).toHaveBeenCalledWith("/designs/gearbox.stl");
+    expect(handleOpenFile).toHaveBeenCalledWith("/designs/gearbox.stl", false);
 
     // Assert that path inside inline code block is NOT rendered as a button or link
     const codeBtn = screen.queryByRole("button", {

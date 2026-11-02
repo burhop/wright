@@ -193,3 +193,23 @@ def test_indexed_concurrent_publications_preserve_every_complete_payload(tmp_pat
         for path, data in zip(paths, payloads, strict=True)
     )
     assert not list(tmp_path.glob(".wright-output-*"))
+
+
+def test_exclusive_publication_has_one_complete_winner_and_no_indexed_sibling(tmp_path):
+    files = LocalWorkspaceFiles(str(tmp_path))
+    barrier = threading.Barrier(2)
+    payloads = (b"first" * 10000, b"second" * 10000)
+
+    def publish(payload):
+        barrier.wait(timeout=2)
+        try:
+            return files.write_generated("receipt.json", payload, "exclusive")
+        except FileExistsError:
+            return "collision"
+
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        outcomes = list(pool.map(publish, payloads))
+    assert sorted(outcomes) == ["collision", "receipt.json"]
+    assert (tmp_path / "receipt.json").read_bytes() in payloads
+    assert [path.name for path in tmp_path.glob("receipt*")] == ["receipt.json"]
+    assert not list(tmp_path.glob(".wright-output-*"))

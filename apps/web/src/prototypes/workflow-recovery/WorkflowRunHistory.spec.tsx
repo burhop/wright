@@ -1,6 +1,7 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, expect, it, vi } from "vitest";
 import { workspaceService } from "../../services/workspace-service";
+import { failedInspection } from "../../components/workflows/rivet-run-inspector.fixtures";
 import { WorkflowRunHistory } from "./WorkflowRunHistory";
 
 afterEach(() => vi.restoreAllMocks());
@@ -99,6 +100,9 @@ it("reports an interrupted operation without restarting and opens its existing l
         },
       },
     ]);
+  const trace = vi
+    .spyOn(workspaceService, "getWorkspaceWorkflowRunTrace")
+    .mockResolvedValue(failedInspection);
   const open = vi.fn();
   render(
     <WorkflowRunHistory
@@ -116,5 +120,42 @@ it("reports an interrupted operation without restarting and opens its existing l
   fireEvent.click(screen.getByRole("button", { name: "Open saved run log" }));
   expect(open).toHaveBeenCalledWith("runs/task/run.json");
   expect(fetch).toHaveBeenCalledWith("session", "workflows/task.wflow");
+  expect(trace).toHaveBeenCalledWith("session", "runs/task/run.json");
   fetch.mockRestore();
+  trace.mockRestore();
+});
+
+it("opens a results-first Trace review from normal workflow history", async () => {
+  vi.spyOn(workspaceService, "getWorkspaceWorkflowRuns").mockResolvedValue([
+    {
+      path: "runs/task/completed.json",
+      status: "completed",
+      started_at: "2026-09-07T10:00:00Z",
+      completed_at: "2026-09-07T10:01:00Z",
+      source_digest: "a".repeat(64),
+      results: [],
+    },
+  ]);
+  const trace = vi
+    .spyOn(workspaceService, "getWorkspaceWorkflowRunTrace")
+    .mockResolvedValue({
+      ...failedInspection,
+      run: { ...failedInspection.run, state: "succeeded" },
+      diagnostic: null,
+    });
+  render(
+    <WorkflowRunHistory
+      sessionId="session"
+      path="workflows/task.wflow"
+      refreshKey=""
+    />,
+  );
+  fireEvent.click(screen.getByText("Previous runs"));
+  const run = await screen.findByText(/Completed ·/);
+  fireEvent.click(run);
+  expect(
+    await screen.findByRole("region", { name: "Run results" }),
+  ).toBeVisible();
+  expect(screen.getByText("Created artifacts")).toBeVisible();
+  expect(trace).toHaveBeenCalledWith("session", "runs/task/completed.json");
 });

@@ -14,6 +14,7 @@ from core.workflow_step_outcomes import (
     UnattendedStepOutcome,
 )
 from .hermes_config import resolve_hermes_api_settings
+from .hermes_sdk_evidence import sdk_model_observation
 from .workflow_model_routing import ModelRouteChangedError
 from .workflow_instructions import (
     embedded_instruction_set,
@@ -393,7 +394,10 @@ async def generate_workflow_response(
         raise ValueError(
             "The model did not return a response. Check Model Setup and run again."
         ) from error
-    invocation["upstream_reported_model"] = result.get("model")
+    if (expected_resolution or {}).get("adapter") == "hermes-model-sdk":
+        invocation.update(sdk_model_observation(result.get("model")))
+    else:
+        invocation["upstream_reported_model"] = result.get("model")
     invocation["capture_phase"] = "response"
     if invocation_observer is not None and expected_resolution is not None:
         await invocation_observer(deepcopy(invocation))

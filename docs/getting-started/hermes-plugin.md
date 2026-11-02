@@ -84,3 +84,9 @@ checkout or mutable `latest` runtime.
 The canonical catalog and provider-neutral gateway are included. CAD/CAE/CAM
 host applications, licenses, drivers, and credentials remain prerequisites of
 the selected MCP server, not the Wright or Hermes base installation.
+
+The native runtime includes `uv` for catalog servers that use isolated Python
+package launch commands. It is available to Wright's own processes without a
+separate host installation. This does not install the engineering applications
+or establish that a provider works on this computer; review its setup requirements
+in the catalog before connecting it.

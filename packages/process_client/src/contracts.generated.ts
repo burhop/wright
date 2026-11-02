@@ -1,5 +1,5 @@
 // Generated from core.process_interfaces.contract_schemas(). Do not hand edit.
-// Schema SHA-256: 7df3efb8e3dec1ef83b02a4457542dee0d5ceab51d0dffa988107f93251076ba
+// Schema SHA-256: 35807455fe18b629267dfb970492e4ef57f3820f563383f8c39a25a1dbec6346
 export type JsonValue = null | boolean | number | string | ReadonlyArray<JsonValue> | { readonly [key: string]: JsonValue };
 
 export type Action = {

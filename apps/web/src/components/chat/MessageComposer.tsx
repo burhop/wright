@@ -27,6 +27,12 @@ interface MessageComposerProps {
 }
 
 function getMcpStatusTone(status: string): { label: string; color: string } {
+  if (status === "configured") {
+    return { label: "Configured", color: "#58a1bd" };
+  }
+  if (status === "refresh_required") {
+    return { label: "Restart required", color: "#f59e0b" };
+  }
   if (status === "ok") {
     return { label: "Active", color: "#22c55e" };
   }
@@ -63,12 +69,15 @@ export function MessageComposer({
   const [mcpStatus, setMcpStatus] = useState<{
     status: string;
     message: string;
+    restart_command?: string | null;
+    restart_command_shell?: "posix" | "powershell" | null;
     running_mcps?: {
       name: string;
       status: string;
       error_message?: string | null;
     }[];
   } | null>(null);
+  const [restartCopyNotice, setRestartCopyNotice] = useState("");
   const [showStatusPopup, setShowStatusPopup] = useState(false);
   const [workspaceFiles, setWorkspaceFiles] = useState<
     { name: string; path: string }[]
@@ -146,8 +155,10 @@ export function MessageComposer({
 
   useEffect(() => {
     const statusKey = workspaceId || sessionId;
+    setMcpStatus(null);
+    setRestartCopyNotice("");
+    setShowStatusPopup(false);
     if (!statusKey) {
-      setMcpStatus(null);
       return;
     }
 
@@ -161,6 +172,7 @@ export function MessageComposer({
           setMcpStatus(status);
         }
       } catch (err) {
+        if (isMounted) setMcpStatus(null);
         console.error("Failed to fetch MCP status in composer", err);
       }
     };
@@ -383,6 +395,78 @@ export function MessageComposer({
         overflow: "visible",
       }}
     >
+      {mcpStatus?.status === "refresh_required" && (
+        <div
+          data-testid="workspace-connection-guidance"
+          role="status"
+          aria-live="polite"
+          style={{
+            padding: "8px",
+            borderBottom: "1px solid var(--color-warning)",
+            color: "var(--color-primary)",
+            fontSize: "0.75rem",
+            lineHeight: 1.4,
+          }}
+        >
+          <strong>Reconnect the selected tools</strong>
+          {mcpStatus.restart_command ? (
+            <>
+              <p style={{ margin: "4px 0" }}>
+                Your tool selection is saved. Finish any current request, then:
+              </p>
+              <ol style={{ margin: "4px 0", paddingLeft: 20 }}>
+                <li>
+                  Wait for active Hermes requests to finish. This command
+                  replaces the existing gateway.
+                </li>
+                <li>
+                  Open a terminal on the computer running Hermes, run this
+                  command, and leave that terminal open.
+                </li>
+              </ol>
+              <div>
+                {mcpStatus.restart_command_shell === "powershell"
+                  ? "PowerShell"
+                  : "Terminal"}
+              </div>
+              <pre
+                style={{
+                  whiteSpace: "pre-wrap",
+                  overflowWrap: "anywhere",
+                  margin: "6px 0",
+                  userSelect: "text",
+                }}
+              >
+                <code>{mcpStatus.restart_command}</code>
+              </pre>
+              <button
+                type="button"
+                onClick={async () => {
+                  try {
+                    await navigator.clipboard.writeText(
+                      mcpStatus.restart_command!,
+                    );
+                    setRestartCopyNotice("Command copied.");
+                  } catch {
+                    setRestartCopyNotice("Select and copy the command above.");
+                  }
+                }}
+              >
+                Copy reconnect command
+              </button>
+              <span role="status" style={{ marginLeft: 8 }}>
+                {restartCopyNotice}
+              </span>
+              <p style={{ margin: "6px 0 0" }}>
+                Return here and send your request. Wright checks the connection
+                before sending it.
+              </p>
+            </>
+          ) : (
+            <p style={{ margin: "4px 0 0" }}>{mcpStatus.message}</p>
+          )}
+        </div>
+      )}
       {showMenu && (
         <CommandMenu
           commands={
@@ -706,7 +790,9 @@ export function MessageComposer({
                 }}
                 title={mcpStatus.message}
               >
-                MCP
+                {mcpStatus.status === "refresh_required"
+                  ? "MCP · Restart"
+                  : "MCP"}
               </button>
 
               {showStatusPopup && (
@@ -742,19 +828,26 @@ export function MessageComposer({
                         color: mcpTone?.color || "#ef4444",
                       }}
                     >
-                      MCP Status: {mcpTone?.label || "Unknown"}
+                      Tool connection: {mcpTone?.label || "Unknown"}
                     </strong>
                     <button
+                      type="button"
+                      aria-label="Close tool status"
+                      title="Close tool status"
                       onClick={() => setShowStatusPopup(false)}
                       style={{
                         background: "none",
                         border: "none",
                         color: "var(--color-text-dim)",
                         cursor: "pointer",
-                        fontSize: "0.8rem",
+                        fontSize: "1rem",
+                        width: "24px",
+                        height: "24px",
                         padding: 0,
                       }}
-                    ></button>
+                    >
+                      ×
+                    </button>
                   </div>
                   <div
                     style={{
@@ -783,7 +876,7 @@ export function MessageComposer({
                             color: "var(--color-text-dim)",
                           }}
                         >
-                          Running MCP Servers ({mcpStatus.running_mcps.length})
+                          Selected providers ({mcpStatus.running_mcps.length})
                         </div>
                         <div
                           style={{
@@ -824,15 +917,19 @@ export function MessageComposer({
                                   backgroundColor:
                                     mcp.status === "active"
                                       ? "rgba(34, 197, 94, 0.1)"
-                                      : mcp.status === "error"
-                                        ? "rgba(239, 68, 68, 0.1)"
-                                        : "rgba(245, 158, 11, 0.12)",
+                                      : mcp.status === "selected"
+                                        ? "rgba(88, 161, 189, 0.12)"
+                                        : mcp.status === "error"
+                                          ? "rgba(239, 68, 68, 0.1)"
+                                          : "rgba(245, 158, 11, 0.12)",
                                   color:
                                     mcp.status === "active"
                                       ? "#22c55e"
-                                      : mcp.status === "error"
-                                        ? "#ef4444"
-                                        : "#f59e0b",
+                                      : mcp.status === "selected"
+                                        ? "#58a1bd"
+                                        : mcp.status === "error"
+                                          ? "#ef4444"
+                                          : "#f59e0b",
                                 }}
                               >
                                 {mcp.status}

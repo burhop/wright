@@ -1,9 +1,13 @@
 from __future__ import annotations
 
 from datetime import UTC, datetime
+import hashlib
+import json
 
 import pytest
 from data_vault import upgrade_database
+from core.process_interactions import InputSnapshot, ProcessRef, StartReceipt
+from data_vault.process_input_repository import ProcessInputRepository
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 from workspace_service.adapters.runtime import create_workspace
@@ -116,3 +120,94 @@ def test_cross_workspace_scope_returns_safe_stable_error(client) -> None:
         "code": "DIAGNOSTIC_SCOPE_FORBIDDEN",
         "message": "Support diagnostic request was denied.",
     }
+
+
+@pytest.mark.parametrize(
+    "mixed_scope", [{"session_id": "session-1"}, {"scenario_run_id": "scenario-1"}]
+)
+def test_source_scope_rejects_unproven_session_or_scenario_narrowing(
+    client, mixed_scope
+):
+    test_client, _ = client
+    response = test_client.post(
+        "/api/workspace/support-diagnostics/preview",
+        json={
+            "workspace_id": "ws-1",
+            "scope": {"source_run_id": "source-run-1", **mixed_scope},
+        },
+    )
+    assert response.status_code == 400
+    assert response.json()["detail"]["code"] == "INVALID_DIAGNOSTIC_SCOPE"
+
+
+def test_unknown_source_run_scope_is_denied_without_treating_it_as_a_scenario(client):
+    test_client, _ = client
+    response = test_client.post(
+        "/api/workspace/support-diagnostics/preview",
+        json={"workspace_id": "ws-1", "scope": {"source_run_id": "source-run-1"}},
+    )
+    assert response.status_code == 403
+    assert response.json()["detail"]["code"] == "DIAGNOSTIC_SCOPE_FORBIDDEN"
+
+
+def test_source_run_projection_survives_api_response_and_exact_local_export(
+    client, tmp_path
+):
+    test_client, _ = client
+    source = tmp_path / "workspace" / "workflows" / "fixture.workflow.wflow"
+    source.parent.mkdir()
+    source.write_text("# private instructions")
+    process = ProcessRef(
+        workspace_id="ws-1",
+        source_path="workflows/fixture.workflow.wflow",
+        source_digest=hashlib.sha256(source.read_bytes()).hexdigest(),
+    )
+    inputs = InputSnapshot.create(
+        snapshot_id="input-1", process=process, created_at="2026-08-13T12:00:00Z"
+    )
+    receipt = StartReceipt(
+        process=process,
+        principal_id="local-user",
+        request_id="request-1",
+        payload_digest="a" * 64,
+        input_snapshot_id=inputs.snapshot_id,
+        input_digest=inputs.digest,
+        run_id="source-run-1",
+        run_log_path="runs/fixture/retained.json",
+        created_at=inputs.created_at,
+    )
+    ProcessInputRepository(tmp_path / "state.db").reserve_start(inputs, receipt)
+    record_path = tmp_path / "workspace" / receipt.run_log_path
+    record_path.parent.mkdir(parents=True)
+    record_path.write_text(
+        json.dumps(
+            {
+                "workflow_path": process.source_path,
+                "source_digest": process.source_digest,
+                "run_id": receipt.run_id,
+                "status": "completed",
+                "events": [],
+                "started_at": inputs.created_at,
+            }
+        )
+    )
+    response = test_client.post(
+        "/api/workspace/support-diagnostics/preview",
+        json={"workspace_id": "ws-1", "scope": {"source_run_id": receipt.run_id}},
+    )
+    assert response.status_code == 200
+    body = response.json()
+    assert body["snapshot"]["source_run"]["recorded_status"] == "completed"
+    assert body["snapshot"]["source_run"]["run_id"] == receipt.run_id
+    assert "private instructions" not in response.text
+    assert "workflows/" not in response.text
+    exported = test_client.post(
+        "/api/workspace/support-diagnostics/export",
+        json={
+            "workspace_id": "ws-1",
+            "snapshot_digest": body["snapshot_digest"],
+            "confirmation_token": body["confirmation_token"],
+        },
+    )
+    assert exported.status_code == 200
+    assert exported.json() == body["snapshot"]

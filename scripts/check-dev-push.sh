@@ -270,9 +270,21 @@ while IFS= read -r changed_file; do
   # Match the OCI PR build boundary; contract tests alone do not inspect installed
   # Hermes, OS or nested Node dependencies against a current vulnerability DB.
   case "$changed_file" in
-    .github/workflows/docker-pr.yml|.github/workflows/docker-build.yml|.dockerignore|docker/*|apps/*|packages/*|src/*|hermes-plugin-wright/*|integrations/rivet/editor/*|integrations/rivet/runner/*|pyproject.toml|uv.lock|package.json|package-lock.json|README.md|scripts/release/scan_image.py|scripts/release/vulnerability_policy.py|scripts/check-dev-*)
+    .github/workflows/docker-pr.yml|.github/workflows/docker-build.yml|.dockerignore|docker/*|docs/mcp-catalog/usage-guides/*|prototypes/desktop-harness/engineering-experience/handle/replacement-handle-draft.workflow.wflow|apps/*|packages/*|src/*|hermes-plugin-wright/*|examples/process-interfaces/definition.py|examples/process-interfaces/printed-replacement-part/*|integrations/rivet/editor/*|integrations/rivet/runner/*|specs/080-canonical-workflow-recovery/fixtures/mounting-bracket.workflow.json|pyproject.toml|uv.lock|package.json|package-lock.json|README.md|scripts/release/scan_image.py|scripts/release/vulnerability_policy.py|scripts/check-dev-*)
       CHECK_DOCKER_SCAN=1
       CHECK_PYTHON=1
+      ;;
+  esac
+  # Packaged recipe JSON/instruction assets are build inputs too. Retain the
+  # ordinary Python selection below while covering non-Python resource changes.
+  case "$changed_file" in
+    examples/process-interfaces/definition.py|examples/process-interfaces/printed-replacement-part/*)
+      PYTHON_TEST_TARGETS+=(
+        tests/packaging/test_handle_setup_resources.py
+        tests/test_docker_smoke_contract.py
+        tests/release/test_dev_push_process.py
+        tests/release/test_image_vulnerability_scan.py
+      )
       ;;
   esac
   case "$changed_file" in
@@ -389,6 +401,15 @@ while IFS= read -r changed_file; do
       CHECK_PYTHON=1
       PYTHON_TEST_TARGETS+=(apps/api/tests tests/test_docker_smoke_contract.py)
       ;;
+    packages/workspace_service/src/workspace_service/workflow_trace/portable/*|scripts/build-workflow-trace-model-viewer.mjs)
+      CHECK_PYTHON=1
+      CHECK_FRONTEND=1
+      PYTHON_TEST_TARGETS+=(packages/workspace_service/tests)
+      PLAYWRIGHT_TARGETS+=(
+        tests/ui-integration/workflow-trace-export.spec.ts
+        tests/ui-integration/workflow-trace-viewer-security.spec.ts
+      )
+      ;;
     packages/*/*)
       CHECK_PYTHON=1
       IFS=/ read -r package_parent package_name _ <<<"$changed_file"
@@ -400,7 +421,7 @@ while IFS= read -r changed_file; do
       CHECK_PYTHON=1
       PYTHON_TEST_TARGETS+=(tests/release)
       ;;
-    tests/release/*.py)
+    tests/release/test_*.py|tests/release/*_test.py)
       CHECK_PYTHON=1
       PYTHON_TEST_TARGETS+=("$changed_file")
       ;;
@@ -416,7 +437,7 @@ while IFS= read -r changed_file; do
       CHECK_PYTHON=1
       PYTHON_TEST_TARGETS+=(tests/test_printed_dataset_bindings.py)
       ;;
-    tests/*.py|tests/*/*.py)
+    tests/test_*.py|tests/*/test_*.py|tests/*_test.py|tests/*/*_test.py)
       CHECK_PYTHON=1
       PYTHON_TEST_TARGETS+=("$changed_file")
       ;;
@@ -576,6 +597,10 @@ if [[ "$CHECK_FRONTEND" == "1" ]]; then
   done
 
   PLAYWRIGHT_TARGETS+=(
+    tests/ui-integration/dashboard.spec.ts
+    tests/ui-integration/navigation-redesign.spec.ts
+    tests/ui-integration/viewer-panel-lifecycle.spec.ts
+    tests/ui-integration/workflow-recovery-accessibility.spec.ts
     tests/ui-integration/navigation.spec.ts
     tests/ui-integration/agent-chat.spec.ts
     tests/ui-integration/workspace-surfaces/focus-layout.spec.ts
@@ -601,7 +626,7 @@ if [[ "$CHECK_FRONTEND" == "1" ]]; then
     CI=1 PLAYWRIGHT_INCLUDE_LIVE=1 \
     WRIGHT_PLAYWRIGHT_PORT="$GATE_UI_PORT" \
     WRIGHT_WEB_API_PROXY_TARGET="http://127.0.0.1:${GATE_API_PORT}" \
-    npx playwright test tests/ui-integration/mcp-onboarding.spec.ts --project=chromium
+    npx playwright test tests/ui-integration/mcp-onboarding.spec.ts tests/ui-integration/mcp-directory.spec.ts --project=chromium
 fi
 
 if [[ "$CHECK_DOCS" == "1" ]]; then

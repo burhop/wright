@@ -1,0 +1,56 @@
+{
+  "schema": "wright.codex-native-gate-staging/1",
+  "scope": "Owned clean feature-worktree packaging outputs only; original generated files retained before restoration",
+  "source_revision": "0d45fbbdec914040cc368b426ede898b0c3791c1",
+  "files": [
+    {
+      "path": "src/wright_engineering/runtime-extra-lock.json",
+      "generated_sha256": "522729cd7ebad3b42d1ece960bc1b5c992b60be1d1b2eca5fe51614a2a79fa58",
+      "baseline_sha256": "eda60e3ec40adab9662ea04025e241d33686e8c98d78994c0b2682efc49f84ec",
+      "action": "keep required uv lock metadata"
+    },
+    {
+      "path": "src/wright_engineering/static/web/asset-manifest.json",
+      "generated_sha256": "10fce0c742ab0baed31ef9caa7e7acc4c797cda4587c4774af9c56240d945498",
+      "baseline_sha256": "9d6cf79fd990ec47c0a68e50187b1a7c6121a7a251a7c96d4c7c439c0b91c052",
+      "action": "preserve generated output and restore clean source baseline"
+    },
+    {
+      "path": "src/wright_engineering/static/web/assets/NativeProcessPage-DlbIzMAR.js",
+      "generated_sha256": null,
+      "baseline_sha256": "eed2622906ccc7a91fb7e27836efa1ce6af18e80e7710a152c9d99c9a1d7d82c",
+      "action": "preserve generated output and restore clean source baseline"
+    },
+    {
+      "path": "src/wright_engineering/static/web/assets/index-BHYKQogG.js",
+      "generated_sha256": null,
+      "baseline_sha256": "f82f9d3de65b7c0284ddd737a49e6ccdc1ced56d05ea7a1f2d06c62df6dd92e1",
+      "action": "preserve generated output and restore clean source baseline"
+    },
+    {
+      "path": "src/wright_engineering/static/web/index.html",
+      "generated_sha256": "c2dd48cca92360a29718a5a72bab7d7fcff732b805ecca597e7eb9484a36f78b",
+      "baseline_sha256": "a369ba346b7adf35651deb4f7dd1f30390110218407d40bdf759fd7d91ad3abd",
+      "action": "preserve generated output and restore clean source baseline"
+    },
+    {
+      "path": "src/wright_engineering/static/web/recovery-concept/mounting-bracket.step",
+      "generated_sha256": "bf316fa511f5e6a3312f03cb5b36184d91109185730defc41542b8805884be83",
+      "baseline_sha256": "b253b9e9dcf26ef8c44f932d9198c92dc0831abf80660f0727a7a701bc5afe74",
+      "action": "preserve generated output and restore clean source baseline"
+    },
+    {
+      "path": "src/wright_engineering/static/web/assets/NativeProcessPage-CUjUHA1s.js",
+      "generated_sha256": "22e5065c3f39d3ad9137f000433f58440f8fe81aabc0788b8da3c615bd2397a9",
+      "baseline_sha256": null,
+      "action": "preserve generated output and restore clean source baseline"
+    },
+    {
+      "path": "src/wright_engineering/static/web/assets/index-BYn9Xh_R.js",
+      "generated_sha256": "3b28438a1cf085d2155cf5b04f6bc5e83e95981569ac86348d40325b9373ea53",
+      "baseline_sha256": null,
+      "action": "preserve generated output and restore clean source baseline"
+    }
+  ],
+  "runtime_extra_lock_matches_uv_lock": true
+}

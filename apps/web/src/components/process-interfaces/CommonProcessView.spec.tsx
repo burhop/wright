@@ -1,5 +1,5 @@
 import { StrictMode } from "react";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, afterEach, describe, expect, it, vi } from "vitest";
 import {
   act,
   cleanup,
@@ -19,6 +19,7 @@ import {
   type InteractionResponse,
 } from "@wright/process-client";
 import { CommonProcessView } from "./CommonProcessView";
+import { workspaceService } from "../../services/workspace-service";
 import {
   createProcessViewRecoveryStore,
   compactInput,
@@ -27,6 +28,17 @@ import {
   type ProcessViewRecoveryStore,
   type ProcessViewMutation,
 } from "../../services/process-view-recovery";
+
+// JSDOM object URLs do not accept the Blob shim used by these unit fixtures.
+// Exercise the exact supplied Blob and link lifecycle; browser suites cover delivery.
+beforeEach(() => {
+  vi.spyOn(URL, "createObjectURL").mockImplementation((blob) => {
+    if (!(blob instanceof Blob))
+      throw new TypeError("Expected exact representation Blob");
+    return "blob:representation-fixture";
+  });
+  vi.spyOn(URL, "revokeObjectURL").mockImplementation(() => undefined);
+});
 
 const hash = "a".repeat(64);
 const process = {
@@ -694,6 +706,39 @@ describe("desktop reasoning observation in the common view", () => {
 });
 
 describe("common process preparation and authority", () => {
+  it("offers diagnostics for the attached source run without starting or exporting work", async () => {
+    const { client, store } = fixture();
+    const preview = vi
+      .spyOn(workspaceService, "previewSupportDiagnostics")
+      .mockRejectedValue(
+        new Error("The saved run evidence could not be verified."),
+      );
+    const exportFile = vi
+      .spyOn(workspaceService, "exportSupportDiagnostics")
+      .mockResolvedValue();
+    render(
+      <CommonProcessView
+        client={client}
+        sessionId="session"
+        runId="run-one"
+        recoveryStore={store}
+      />,
+    );
+    await screen.findByText("Diagnose this run");
+    expect(preview).not.toHaveBeenCalled();
+    fireEvent.click(screen.getByText("Diagnose this run"));
+    fireEvent.click(screen.getByTestId("support-diagnostics-preview"));
+    await waitFor(() =>
+      expect(preview).toHaveBeenCalledWith("workspace", {
+        source_run_id: "run-one",
+      }),
+    );
+    expect(
+      await screen.findByText("The saved run evidence could not be verified."),
+    ).toBeVisible();
+    expect(exportFile).not.toHaveBeenCalled();
+    expect(client.start).not.toHaveBeenCalled();
+  });
   it("shows an undeclared-input diagnostic and exact correction without inventing a response form", async () => {
     const { client, store } = fixture();
     vi.mocked(client.follow).mockImplementation(async function* () {
@@ -2002,7 +2047,7 @@ describe("common process request recovery and observer lifetime", () => {
         canReadRepresentations
       />,
     );
-    await screen.findByText("Measured geometry");
+    await screen.findByRole("heading", { name: "Measured geometry" });
     expect(scroll).not.toHaveBeenCalled();
     fireEvent.click(screen.getByRole("button", { name: "Open assessment" }));
     expect(client.navigate).toHaveBeenCalledWith({
@@ -2113,7 +2158,7 @@ describe("common process request recovery and observer lifetime", () => {
         canReadRepresentations
       />,
     );
-    await screen.findByText("Exact part");
+    await screen.findByRole("heading", { name: "Exact part" });
     const opener = screen.getByRole("button", { name: "Open file" });
     opener.focus();
     fireEvent.click(opener);
@@ -2169,7 +2214,7 @@ describe("common process request recovery and observer lifetime", () => {
         canReadRepresentations
       />,
     );
-    await screen.findByText("Original recorded part");
+    await screen.findByRole("heading", { name: "Original recorded part" });
     fireEvent.click(screen.getByRole("button", { name: "Open file" }));
     await screen.findByText("The recorded part file is no longer available.");
     expect(client.getRepresentation).toHaveBeenCalledExactlyOnceWith(artifact, {

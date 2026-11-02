@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import os
+import sys
 from importlib.resources import files
 from pathlib import Path
 from typing import Any, MutableMapping
@@ -57,6 +58,7 @@ def prepare_runtime_environment(
     )
     values = {
         "WRIGHT_NATIVE_RUNTIME": "1",
+        "WRIGHT_HOME": str(layout.wright_home),
         "WRIGHT_DATA_ROOT": str(layout.data),
         "DATABASE_PATH": str(layout.data / "wright.db"),
         "FRONTEND_DIST_DIR": str(static),
@@ -84,6 +86,14 @@ def prepare_runtime_environment(
             )
         ),
     }
+    # The manager invokes the private interpreter directly rather than activating
+    # its environment. Its bundled package launchers must also be visible to
+    # compatibility observation and MCP children, without changing the host PATH.
+    runtime_scripts = str(Path(sys.executable).parent)
+    inherited_paths = target_environment.get("PATH", "").split(os.pathsep)
+    values["PATH"] = os.pathsep.join(
+        [runtime_scripts, *(p for p in inherited_paths if p and p != runtime_scripts)]
+    )
     target_environment.update(values)
     return values
 

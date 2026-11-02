@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from fnmatch import fnmatchcase
 from pathlib import Path
+import shlex
+import subprocess
 
 import pytest
 import yaml
@@ -80,7 +82,7 @@ def test_fast_gate_includes_isolated_live_mcp_onboarding() -> None:
     assert "CI=1 PLAYWRIGHT_INCLUDE_LIVE=1" in command
     assert 'WRIGHT_WEB_API_PROXY_TARGET="http://127.0.0.1:${GATE_API_PORT}"' in command
     assert (
-        "npx playwright test tests/ui-integration/mcp-onboarding.spec.ts --project=chromium"
+        "npx playwright test tests/ui-integration/mcp-onboarding.spec.ts tests/ui-integration/mcp-directory.spec.ts --project=chromium"
         in command
     )
 
@@ -209,6 +211,41 @@ def test_dashboard_server_changes_select_exact_http_security_regressions() -> No
     runbook = _read(RUNBOOK)
     assert "exact static routes, trusted MIME values" in runbook
     assert "CodeQL" in runbook
+
+
+def test_packaged_recipe_resources_select_closure_and_image_contracts() -> None:
+    gate = _read("scripts/check-dev-push.sh")
+    pattern = "    examples/process-interfaces/definition.py|examples/process-interfaces/printed-replacement-part/*)"
+    start = gate.index(pattern)
+    route = gate[start : gate.index(";;", start)]
+    for target in (
+        "tests/packaging/test_handle_setup_resources.py",
+        "tests/test_docker_smoke_contract.py",
+        "tests/release/test_dev_push_process.py",
+        "tests/release/test_image_vulnerability_scan.py",
+    ):
+        assert target in route
+    # This additive selection must not replace the existing Python-source route.
+    assert "*.py|pyproject.toml|uv.lock|src/*|scripts/*)" in gate
+    assert "closed setup-resource inventory" in _read(RUNBOOK)
+
+
+def test_every_docker_context_copy_is_bound_to_the_scanned_source() -> None:
+    dockerfile = _read("docker/Dockerfile").replace("\\\n", " ")
+    for line in dockerfile.splitlines():
+        words = shlex.split(line, comments=True)
+        if not words or words[0] != "COPY":
+            continue
+        if any(word.startswith("--from=") for word in words):
+            continue
+        paths = [word for word in words[1:] if not word.startswith("--")]
+        for source in paths[:-1]:
+            source = source.rstrip("/")
+            assert (ROOT / source).exists()
+            assert any(
+                source == bound or source.startswith(bound + "/")
+                for bound in BUILD_INPUTS
+            ), f"Docker COPY input is absent from image/source binding: {source}"
 
 
 def test_program_control_changes_route_through_focused_quality_gates() -> None:
@@ -354,6 +391,52 @@ def test_full_gate_excludes_focused_roots_from_broad_tests_collection() -> None:
         "--ignore=tests/program_control_plane"
     )
     assert "--import-mode=importlib" not in gate
+
+
+@pytest.mark.parametrize(
+    "path, extra_target",
+    [
+        ("scripts/check-dev-merge.sh", "tests/test_public_python_distribution.py"),
+        (".github/workflows/python-quality.yml", None),
+    ],
+)
+def test_default_release_native_context_retains_union_and_coverage_once(
+    path: str,
+    extra_target: str | None,
+) -> None:
+    source = _read(path).replace("\\\n", " ")
+    commands = [
+        shlex.split(line.strip().removeprefix("run: "))
+        for line in source.splitlines()
+        if "python -m pytest" in line
+        and "--extra" not in line
+        and any(root in line for root in ("tests/release", "tests/native_runtime"))
+    ]
+    # A root dropped here removes contracts; a second command silently adds
+    # duplicate work. Runtime/extras and installed/platform jobs stay separate.
+    assert len(commands) == 1
+    command = commands[0]
+    for argument in (
+        "tests/release",
+        "tests/native_runtime",
+        "--cov=scripts.release",
+        "--cov=wright_engineering",
+        "--cov-report=term",
+        "--cov-fail-under=85",
+    ):
+        assert argument in command
+    assert not any(
+        argument.startswith(("--ignore", "-k", "--no-cov")) for argument in command
+    )
+    if extra_target:
+        assert extra_target in command
+        assert source.index("--cov-fail-under=85") < source.index(
+            "VITE_WRIGHT_PROCESS_DEFINITION_VIEW=1"
+        )
+    else:
+        assert source.index("--cov-fail-under=85") < source.index("for python_suite in")
+    assert "--extra runtime --extra engineering-models" in source
+    assert "--ignore=tests/release" not in source
 
 
 def test_scheduler_sensitive_performance_evidence_is_non_blocking_and_scheduled() -> (
@@ -552,3 +635,99 @@ def test_fast_gate_retains_common_working_view_journeys() -> None:
     ):
         assert f"tests/ui-integration/{journey}" in baseline
     assert "PR #166" in _read(RUNBOOK)
+
+
+@pytest.mark.parametrize(
+    ("path", "expected"),
+    [
+        ("tests/ui-integration/fixtures/build-workflow-trace-export.py", "tests"),
+        ("tests/release/fixture_builder.py", "tests"),
+        (
+            "tests/test_security_scanner_setup.py",
+            "tests/test_security_scanner_setup.py",
+        ),
+        (
+            "tests/release/test_dev_push_process.py",
+            "tests/release/test_dev_push_process.py",
+        ),
+        ("tests/example_test.py", "tests/example_test.py"),
+        ("tests/nested/example_test.py", "tests/nested/example_test.py"),
+        ("tests/conftest.py", "tests"),
+        ("tests/nested/conftest.py", "tests/nested"),
+    ],
+)
+def test_python_selection_routes_helpers_to_owner_suites(
+    path: str, expected: str
+) -> None:
+    gate = _read("scripts/check-dev-push.sh")
+    start = gate.index("    tests/release/test_*.py|")
+    end = gate.index('\ndone <<<"$CHANGED_FILES"', start)
+    routes = gate[start:end]
+    result = subprocess.run(
+        [
+            "bash",
+            "-c",
+            'CHECK_PYTHON=0; PYTHON_TEST_TARGETS=(); changed_file="$1"; '
+            'case "$changed_file" in\n'
+            + routes
+            + '\nprintf "%s\\n" "${PYTHON_TEST_TARGETS[@]}"',
+            "selection-test",
+            path,
+        ],
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    assert result.stdout.splitlines() == [expected]
+
+
+def test_browser_baseline_covers_first_contact_and_real_viewer_visibility():
+    gate = _read("scripts/check-dev-push.sh")
+    baseline = gate[gate.index("  PLAYWRIGHT_TARGETS+=(\n") :]
+    baseline = baseline[: baseline.index("\n  )")]
+    for name in (
+        "dashboard",
+        "navigation-redesign",
+        "viewer-panel-lifecycle",
+        "workflow-recovery-accessibility",
+    ):
+        assert f"tests/ui-integration/{name}.spec.ts" in baseline
+    live = gate[gate.index("# Source-review controls must also retain") :]
+    assert "tests/ui-integration/mcp-directory.spec.ts" in live
+
+
+@pytest.mark.parametrize(
+    "path",
+    [
+        "packages/workspace_service/src/workspace_service/workflow_trace/portable/stl-viewer.js",
+        "packages/workspace_service/src/workspace_service/workflow_trace/portable/secure-random.js",
+        "scripts/build-workflow-trace-model-viewer.mjs",
+    ],
+)
+def test_portable_viewer_inputs_select_actual_offline_browser_owners(path):
+    gate = _read("scripts/check-dev-push.sh")
+    start = gate.index(
+        "    packages/workspace_service/src/workspace_service/workflow_trace/portable/*|"
+    )
+    route = gate[start : gate.index(";;", start) + 2]
+    result = subprocess.run(
+        [
+            "bash",
+            "-c",
+            'CHECK_PYTHON=0; CHECK_FRONTEND=0; PYTHON_TEST_TARGETS=(); PLAYWRIGHT_TARGETS=(); changed_file="$1"; '
+            'case "$changed_file" in\n'
+            + route
+            + '\nesac\nprintf "%s %s\\n" "$CHECK_PYTHON" "$CHECK_FRONTEND"; printf "%s\\n" "${PYTHON_TEST_TARGETS[@]}" "${PLAYWRIGHT_TARGETS[@]}"',
+            "viewer-selection",
+            path,
+        ],
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    assert result.stdout.splitlines() == [
+        "1 1",
+        "packages/workspace_service/tests",
+        "tests/ui-integration/workflow-trace-export.spec.ts",
+        "tests/ui-integration/workflow-trace-viewer-security.spec.ts",
+    ]

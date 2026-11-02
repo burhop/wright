@@ -39,13 +39,26 @@ original equipment mount's mesh/load/support or numerical compliance.
 
 - Source: [official MCP documentation](https://stevecad.studio/docs/agents/).
 - Connection: `https://stevecad.studio/mcp`, **streamable HTTP**, **OAuth 2.1**.
-- Installation: register/select the remote server in Wright's MCP manager, install
+- Setup: register/select the remote server in Wright's MCP manager, connect
   it and enable it for the intended workspace. No local package, CAD host or AI
   API key is needed. OAuth credentials are managed by Wright's existing secret
   provider; they do not belong in catalog metadata or workflow exports.
+- Remote-operated Wright: use its existing **device-code** mode when available.
+  Approve the displayed provider code in your normal browser; no Google password
+  belongs in chat and no account recovery is needed. The desktop integration
+  already implements this route. Local native candidate111 reuses it with explicit
+  `WRIGHT_MCP_OAUTH_FLOW=device_code` at startup and displays link/code in setup
+  and Check connection. Native installed challenge, human
+  approval and actual read-only tool use in VM106 are verified. This is not a release.
+  See the native device observation (retained local evidence: `artifacts/first-contact/synthetic-beta-003/operator-retries/hosted-signin-107/DEVICE-CONNECTION-111.md`).
 - Browser: sign in with the intended SteveCAD account and authorize Wright. A
   browser session alone does not authorize the MCP client. Wright handles OAuth
   discovery, dynamic registration, PKCE and refresh using its existing transport.
+- Linux VM/headless preparation: see the [28 October sign-in recovery notes](usage-guides/stevecad-mcp-first-contact.md#current-recovery-checklist--28-october-2026).
+  Check the runtime's desktop environment and browser application lookup before
+  retrying OAuth. An existing account on a Windows PC does not sign in a fresh
+  VM; its loopback OAuth callback belongs to the machine running Wright.
+  Reopening an installed connection must not require reinstalling SteveCAD.
 - Fallback registration: name `SteveCAD (STEVE CAD)`, remote HTTP URL above,
   transport `streamable_http` (stored internally as `type=sse` with the explicit
   transport variant). Do not substitute the Fusion STEVE add-in or VibeCAD.
@@ -2912,3 +2925,5 @@ to Wright's base image or claim catalog-wide validation.
 ## Bambu P1S MCP offline slicing
 
 Use the [offline slicing guide](usage-guides/bambu-p1s-mcp.md) and exact catalog provider revision. Keep selected native slicer software in its own environment/container. For the GB10 qualification, verify the official OrcaSlicer ARM64 release digest before installation and test the pinned MCP's CLI compatibility. Pin the actual P1S machine, PETG filament and process profiles; the provider's PLA defaults do not satisfy the handle requirements. Runtime containers have no network or printer credentials. Only bounded offline slicing is in scope. Existing Windows coupon evidence does not qualify this ARM64 setup; full catalog clean-container status remains incomplete.
+
+Local evidence references identify preserved operator records; they are not included in the public documentation build.

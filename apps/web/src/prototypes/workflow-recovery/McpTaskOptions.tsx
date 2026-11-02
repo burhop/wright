@@ -3,7 +3,8 @@ import {
   useWorkflowToolSession,
 } from "./workflow-tool-discovery";
 import { cadModelTypes, mcpServerChoices } from "./mcp-server-blocks";
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
+import { configureMcpTaskServer, isUnboundToolTask } from "./mcp-task-binding";
 import type { RecoveryBlock, RecoveryWorkflow } from "./model";
 import { TaskOutputFiles } from "./TaskOutputFiles";
 import { CadTaskOptions } from "./CadTaskOptions";
@@ -17,12 +18,14 @@ export function McpTaskOptions({
   sessionId: hostSessionId,
   readOnly,
   onApply,
+  children,
 }: {
   block: RecoveryBlock;
   workflow: RecoveryWorkflow;
   sessionId?: string;
   readOnly: boolean;
   onApply: (commands: RecoveryCommand[]) => boolean;
+  children?: ReactNode;
 }) {
   const sessionId = useWorkflowToolSession(hostSessionId);
   const discoverTools = useWorkflowToolDiscovery();
@@ -91,23 +94,15 @@ export function McpTaskOptions({
           value={current}
           disabled={readOnly || loading}
           data-testid="workflow-recovery-task-server"
-          onChange={(e) => {
-            const server = servers.find((item) => item.id === e.target.value);
-            onApply([
-              {
-                kind: "set_block_configuration",
-                blockId: block.id,
-                key: "mcp_server",
-                value: server?.id ?? "",
-              },
-              {
-                kind: "set_block_configuration",
-                blockId: block.id,
-                key: "mcp_server_name",
-                value: server?.name ?? "",
-              },
-            ]);
-          }}
+          onChange={(e) =>
+            onApply(
+              configureMcpTaskServer(
+                block,
+                e.target.value,
+                names[e.target.value] ?? e.target.value,
+              ),
+            )
+          }
         >
           <option value="">Choose server later</option>
           {current && !servers.some((server) => server.id === current) && (
@@ -131,7 +126,24 @@ export function McpTaskOptions({
           before running.
         </small>
       </label>
+      {isUnboundToolTask(block) && block.configuration.candidate && (
+        <p className="recovery-field-help">
+          Template candidate: {String(block.configuration.candidate)}. No server
+          is bound.
+        </p>
+      )}
+      {children}
       {error && <p role="alert">{error}</p>}
+      {current &&
+        !loading &&
+        !error &&
+        !servers.some((server) => server.id === current) && (
+          <p role="alert">
+            The selected server is unavailable in this workspace. Its saved
+            binding is retained; select an available server or restore the
+            connection before running.
+          </p>
+        )}
       <button
         type="button"
         className="recovery-button recovery-button--secondary"

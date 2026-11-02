@@ -890,7 +890,6 @@ test("keeps production readiness accessible, reduced-motion legible, and mobile-
 
   await page.setViewportSize({ width: 390, height: 844 });
   await page.reload();
-  await page.getByTestId("workspace-pane-surface").click();
   await expect(page.getByTestId("workflow-recovery-concept")).toBeVisible();
   const overflow = await page.evaluate(() => ({
     width: document.documentElement.scrollWidth,

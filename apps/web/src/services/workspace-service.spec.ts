@@ -17,6 +17,111 @@ import {
 
 const digest = "d".repeat(64);
 
+describe("structured workflow run errors", () => {
+  beforeEach(() => mocks.fetch.mockReset());
+  it.each([
+    {
+      error_code: "workflow_template_setup_required",
+      message: "Template blocked",
+      details: { correction: "Qualify the integration" },
+      trace_id: "trace-test",
+    },
+    {
+      detail: {
+        code: "WORKFLOW_TEMPLATE_SETUP_REQUIRED",
+        message: "Template blocked",
+        correction: "Qualify the integration",
+      },
+      trace_id: "trace-test",
+    },
+  ])(
+    "retains the cause, correction, and trace from either HTTP envelope",
+    async (payload) => {
+      mocks.fetch.mockResolvedValue(response(payload, 409));
+      await expect(
+        workspaceService.runWorkspaceWorkflowSource(
+          "session",
+          "test.wflow",
+          digest,
+          vi.fn(),
+        ),
+      ).rejects.toMatchObject({
+        name: "WorkspaceWorkflowRunError",
+        code: "workflow_template_setup_required",
+        description: "Template blocked",
+        correction: "Qualify the integration",
+        traceId: "trace-test",
+        phase: "request",
+      });
+    },
+  );
+  it("keeps streamed tool errors distinct from pre-run rejections", async () => {
+    mocks.fetch.mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          kind: "failed",
+          code: "MCP_CALL_FAILED",
+          message: "Connection lost",
+          correction: "Check the tool",
+        }) + "\n",
+        { headers: { "Content-Type": "application/x-ndjson" } },
+      ),
+    );
+    await expect(
+      workspaceService.runWorkspaceWorkflowSource(
+        "session",
+        "test.wflow",
+        digest,
+        vi.fn(),
+      ),
+    ).rejects.toMatchObject({
+      code: "mcp_call_failed",
+      phase: "execution",
+      description: "Connection lost",
+      correction: "Check the tool",
+    });
+  });
+  it("does not invent a cause when the server returns a non-JSON error", async () => {
+    mocks.fetch.mockResolvedValue(new Response("Bad gateway", { status: 502 }));
+    await expect(
+      workspaceService.runWorkspaceWorkflowSource(
+        "session",
+        "test.wflow",
+        digest,
+        vi.fn(),
+      ),
+    ).rejects.toMatchObject({
+      code: "",
+      phase: "request",
+      description: "The workflow could not run.",
+    });
+  });
+});
+
+describe("BREP panel startup", () => {
+  beforeEach(() => mocks.fetch.mockReset());
+
+  it.each([
+    {
+      message: "The visible-application BREP MCP is not installed.",
+      error_code: "INTERNAL_ERROR",
+    },
+    { detail: "The visible-application BREP MCP is not installed." },
+  ])("preserves the actionable startup error: %j", async (body) => {
+    mocks.fetch.mockResolvedValue(response(body, 503));
+    await expect(workspaceService.openBrepPanel("session")).rejects.toThrow(
+      "The visible-application BREP MCP is not installed.",
+    );
+  });
+
+  it("uses a stable fallback for non-JSON failures", async () => {
+    mocks.fetch.mockResolvedValue(new Response("Unavailable", { status: 503 }));
+    await expect(workspaceService.openBrepPanel("session")).rejects.toThrow(
+      "BREP is unavailable",
+    );
+  });
+});
+
 describe("engineering workflow templates", () => {
   beforeEach(() => mocks.fetch.mockReset());
 
@@ -44,18 +149,35 @@ describe("engineering workflow templates", () => {
     },
   };
 
-  it("loads exactly ten ordered catalog entries without workspace mutation", async () => {
-    const templates = Array.from({ length: 10 }, (_, index) => ({
-      ...template,
-      template_id: `template-${index}`,
-    }));
+  it.each([10, 11])(
+    "loads %i ordered catalog entries without workspace mutation",
+    async (count) => {
+      const templates = Array.from({ length: count }, (_, index) => ({
+        ...template,
+        template_id: `template-${index}`,
+      }));
+      mocks.fetch.mockResolvedValue(
+        response({ catalog_version: "1.0.0", templates }),
+      );
+      await expect(
+        workspaceService.getEngineeringWorkflowTemplates(),
+      ).resolves.toEqual(templates);
+      expect(mocks.fetch.mock.calls[0][1]).toEqual({ cache: "no-store" });
+    },
+  );
+
+  it.each([
+    [],
+    [template, template],
+    [{ ...template, template_id: "" }],
+    [null],
+  ])("rejects empty or ambiguous catalog identities", async (...entries) => {
     mocks.fetch.mockResolvedValue(
-      response({ catalog_version: "1.0.0", templates }),
+      response({ catalog_version: "1.0.0", templates: entries }),
     );
     await expect(
       workspaceService.getEngineeringWorkflowTemplates(),
-    ).resolves.toEqual(templates);
-    expect(mocks.fetch.mock.calls[0][1]).toEqual({ cache: "no-store" });
+    ).rejects.toThrow("invalid engineering template catalog");
   });
 
   it("binds instance creation to version, preview digest, path, and request id", async () => {
@@ -1014,6 +1136,29 @@ describe("support diagnostic workspace client", () => {
     await expect(
       workspaceService.previewSupportDiagnostics("workspace-1"),
     ).rejects.toThrow("Local state changed. Create a fresh preview.");
+  });
+
+  it("sends distinct source scope and keeps unavailable evidence errors private", async () => {
+    mocks.fetch.mockResolvedValueOnce(
+      response(
+        {
+          detail: {
+            code: "DIAGNOSTIC_SOURCE_EVIDENCE_UNAVAILABLE",
+            message: "private source path and raw failure",
+          },
+        },
+        400,
+      ),
+    );
+    await expect(
+      workspaceService.previewSupportDiagnostics("workspace-1", {
+        source_run_id: "source-run",
+      }),
+    ).rejects.toThrow("The saved run evidence could not be verified");
+    expect(JSON.parse(String(mocks.fetch.mock.calls[0]?.[1]?.body))).toEqual({
+      workspace_id: "workspace-1",
+      scope: { source_run_id: "source-run" },
+    });
   });
 });
 

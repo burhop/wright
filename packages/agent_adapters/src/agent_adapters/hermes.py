@@ -9,6 +9,7 @@ from typing import Any, AsyncIterator
 import httpx
 from httpx_sse import aconnect_sse
 import structlog
+from core.redaction import redact_evidence
 
 from .base import (
     BaseAgentEngine,
@@ -16,6 +17,7 @@ from .base import (
     AgentChatRequest,
     AgentSessionInfo,
     AgentChatMessage,
+    AgentToolCallEvidence,
     AgentCommand,
     AgentInvocationCapabilities,
 )
@@ -131,6 +133,164 @@ def _history_message_content(msg: dict[str, Any]) -> str:
     elif not isinstance(content, str):
         content = str(content) if content is not None else ""
     return _strip_workspace_context(content).strip()
+
+
+def _display_tool_response(raw: str, tool_name: str) -> str:
+    """Unwrap known transport envelopes for display; preserve raw data separately."""
+    text = raw.strip()
+    opening = re.match(r'^<untrusted_tool_result source="([^"]+)">\r?\n', text)
+    closing = "</untrusted_tool_result>"
+    if opening and opening[1] == tool_name and text.endswith(closing):
+        _, separator, body = text[: -len(closing)].partition("\n\n")
+        if separator:
+            text = body.strip()
+    try:
+        value = json.loads(text)
+    except (ValueError, RecursionError):
+        return text
+    if isinstance(value, dict) and "structuredContent" in value and "result" in value:
+        value = value["result"]
+    if isinstance(value, dict) and isinstance(value.get("content"), list):
+        blocks = value["content"]
+        if blocks and all(
+            isinstance(x, dict) and x.get("type") == "text" for x in blocks
+        ):
+            return "\n".join(str(x.get("text", "")) for x in blocks)
+    return value if isinstance(value, str) else json.dumps(value, ensure_ascii=False)
+
+
+def _redact_retained_tool_response(raw: str, tool_name: str) -> str:
+    """Decode the native data envelope before applying the shared redactor."""
+    text = raw.strip()
+    opening = re.match(r'^<untrusted_tool_result source="([^"]+)">\r?\n', text)
+    closing = "</untrusted_tool_result>"
+    if opening and opening[1] == tool_name and text.endswith(closing):
+        prefix, separator, body = text[: -len(closing)].partition("\n\n")
+        if separator:
+            clean = (
+                redact_evidence(prefix) + separator + redact_evidence(body) + closing
+            )
+            offset = raw.index(text)
+            return raw[:offset] + clean + raw[offset + len(text) :]
+    return redact_evidence(raw)
+
+
+def _attach_retained_tool_evidence(
+    native_messages: list[dict[str, Any]],
+    history: list[AgentChatMessage],
+    session_id: str,
+) -> None:
+    """Pair exact IDs within each user turn and attach records to its visible reply."""
+    visible = {message.id: message for message in history}
+    pending: dict[str, AgentToolCallEvidence] = {}
+    anchor: AgentChatMessage | None = None
+
+    def flush() -> None:
+        if anchor is not None and pending:
+            anchor.tool_evidence += tuple(pending.values())
+        pending.clear()
+
+    for index, message in enumerate(native_messages):
+        if not isinstance(message, dict):
+            continue
+        value = message.get("id", message.get("message_id"))
+        native_id = str(value) if value is not None else ""
+        visible_id = native_id or f"msg-{session_id}-{index}"
+        role = message.get("role")
+        if role == "user":
+            flush()
+            anchor = visible.get(visible_id)
+            continue
+        if role == "assistant":
+            calls = message.get("tool_calls") or []
+            if isinstance(calls, str):
+                try:
+                    calls = json.loads(calls)
+                except (ValueError, RecursionError):
+                    calls = []
+            if not isinstance(calls, list):
+                calls = []
+            for call in calls:
+                if not isinstance(call, dict):
+                    continue
+                call_id = call.get("id") or call.get("call_id")
+                function = call.get("function", call)
+                if not isinstance(function, dict):
+                    continue
+                name = function.get("name")
+                if (
+                    not isinstance(call_id, str)
+                    or not call_id
+                    or not isinstance(name, str)
+                    or not name
+                ):
+                    continue
+                if call_id in pending:
+                    entry = pending[call_id]
+                    entry.record_note = "Multiple retained requests use this call ID; no response selected."
+                    entry.response = entry.display_response = (
+                        entry.response_message_id
+                    ) = None
+                    continue
+                arguments = function.get("arguments")
+                if isinstance(arguments, str):
+                    try:
+                        decoded = json.loads(arguments)
+                        if isinstance(decoded, dict):
+                            arguments = decoded
+                    except (ValueError, RecursionError):
+                        pass
+                if not isinstance(arguments, (dict, str, type(None))):
+                    arguments = json.dumps(arguments, ensure_ascii=False)
+                pending[call_id] = AgentToolCallEvidence(
+                    session_id=session_id,
+                    call_id=call_id,
+                    tool_name=name,
+                    arguments=redact_evidence(arguments),
+                    request_message_id=native_id or None,
+                    timestamp=_message_timestamp_ms(message),
+                    source="hermes.session-messages",
+                )
+            if visible_id in visible:
+                anchor = visible[visible_id]
+                if not calls:
+                    flush()
+            continue
+        if role != "tool":
+            continue
+        response_call_id = message.get("tool_call_id")
+        if not isinstance(response_call_id, str):
+            continue
+        entry = pending.get(response_call_id)
+        if entry is None or entry.record_note:
+            continue
+        returned_name = message.get("tool_name")
+        if (
+            returned_name is not None
+            and returned_name != ""
+            and returned_name != entry.tool_name
+        ):
+            entry.record_note = "Retained response tool name differs from the request."
+            continue
+        if entry.response is not None:
+            entry.record_note = (
+                "Multiple retained responses use this call ID; no response selected."
+            )
+            entry.response = entry.display_response = entry.response_message_id = None
+            continue
+        content = message.get("content")
+        raw = (
+            content
+            if isinstance(content, str)
+            else json.dumps(content, ensure_ascii=False)
+        )
+        entry.response = _redact_retained_tool_response(raw, entry.tool_name)
+        entry.display_response = redact_evidence(
+            _display_tool_response(raw, entry.tool_name)
+        )
+        entry.response_message_id = native_id or None
+        entry.timestamp = _message_timestamp_ms(message)
+    flush()
 
 
 def _message_timestamp_ms(msg: dict[str, Any]) -> int:
@@ -531,6 +691,49 @@ class HermesAdapter(BaseAgentEngine):
         if last_error:
             raise RuntimeError(_gateway_unavailable_message(last_error)) from last_error
         raise RuntimeError("No Hermes API candidates configured")
+
+    async def gateway_runtime_identity(self) -> str:
+        """Observe the serving gateway, independently of CLI exit status.
+
+        This is process-replacement evidence, not a tool-readiness assertion.
+        No model request or provider invocation is made.
+        """
+        response = await self._request_with_fallback(
+            "GET", "/health/detailed", timeout=5.0
+        )
+        data = response.json()
+        pid = data.get("pid") if isinstance(data, dict) else None
+        if type(pid) is not int or pid <= 0:
+            raise RuntimeError(
+                "Hermes cannot report its gateway process identity. "
+                "Check the configured Hermes API compatibility before reconnecting tools."
+            )
+        # URL aliases for the same serving process are not replacement evidence.
+        return str(pid)
+
+    async def gateway_replacement_is_idle(self) -> bool:
+        """Use Hermes's own work counts before replacing a local gateway."""
+        response = await self._request_with_fallback(
+            "GET", "/health/detailed", timeout=5.0
+        )
+        data = response.json()
+        queues = (
+            data.get("readiness", {}).get("checks", {}).get("background_queues", {})
+        )
+        counts = [
+            data.get("active_agents"),
+            *(
+                queues.get(key)
+                for key in (
+                    "active_api_runs",
+                    "process_completions",
+                    "active_delegations",
+                )
+            ),
+        ]
+        return data.get("gateway_busy") is False and all(
+            type(value) is int and value == 0 for value in counts
+        )
 
     async def check_health(self) -> dict:
         """Return {"state": "connected"|"disconnected", "latencyMs": float}."""
@@ -1206,6 +1409,7 @@ class HermesAdapter(BaseAgentEngine):
                         trace_id=msg.get("trace_id"),
                     )
                 )
+            _attach_retained_tool_evidence(messages, result, session_id)
             return result
         except Exception as e:
             logger.error(

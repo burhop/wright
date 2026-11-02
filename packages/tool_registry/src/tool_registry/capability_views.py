@@ -5,7 +5,7 @@ import hashlib
 import json
 import sqlite3
 from collections.abc import Iterable, Mapping, Sequence
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from datetime import UTC, datetime
 from pathlib import Path
 from .capability_models import (
@@ -381,6 +381,8 @@ def _search_text(view: CapabilityView) -> str:
     requirements = json.dumps(view.requirements, sort_keys=True)
     return " ".join(
         [
+            view.capability_id,
+            view.canonical_id,
             view.name,
             view.vendor,
             view.description,
@@ -484,9 +486,10 @@ def paginate_capabilities(
     cursor: str | None = None,
     snapshot: CapabilitySnapshotSummary | None = None,
 ) -> CapabilityList:
-    selected = [
-        view for view in views if _matches(view, filters or CapabilityFilters())
-    ]
+    filters = filters or CapabilityFilters()
+    selected = [view for view in views if _matches(view, filters)]
+    summary_filters = replace(filters, curation=frozenset({"all"}))
+    summary_views = [view for view in views if _matches(view, summary_filters)]
     offset = _decode_cursor(cursor)
     page = selected[offset : offset + limit]
     next_offset = offset + len(page)
@@ -499,7 +502,8 @@ def paginate_capabilities(
         total=len(selected),
         curation_counts={
             disposition: sum(
-                view.curation.effective_disposition == disposition for view in views
+                view.curation.effective_disposition == disposition
+                for view in summary_views
             )
             for disposition in ("curated", "follow_up", "removed")
         },
@@ -510,12 +514,12 @@ def paginate_capabilities(
                 "curated": sum(
                     stage in view.engineering_stages
                     and view.curation.effective_disposition == "curated"
-                    for view in views
+                    for view in summary_views
                 ),
                 "follow_up": sum(
                     stage in view.engineering_stages
                     and view.curation.effective_disposition == "follow_up"
-                    for view in views
+                    for view in summary_views
                 ),
             }
             for stage, label in ENGINEERING_STAGES.items()

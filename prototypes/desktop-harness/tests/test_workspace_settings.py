@@ -25,7 +25,13 @@ async def settings_api(tmp_path, monkeypatch):
     repository = WorkspaceRepository(database, secrets=secrets)
     root = tmp_path / "workspaces" / "alpha"
     root.mkdir(parents=True)
-    repository.create("alpha", "desktop-alpha", str(root), workspace_name="Alpha")
+    repository.create(
+        "alpha",
+        "desktop-alpha",
+        str(root),
+        workspace_name="Alpha",
+        agent_id="openai-desktop-harness",
+    )
     repository.associate_session(
         "alpha", "desktop-alpha", agent_id="openai-desktop-harness"
     )

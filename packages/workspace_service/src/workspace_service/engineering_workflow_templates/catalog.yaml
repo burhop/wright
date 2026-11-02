@@ -125,7 +125,7 @@ templates:
     provided_inputs: []
     requested_inputs: [{name: "Redistributable ROS 2 bag and annotated event", kind: recorded_data}]
     expected_outputs: [{name: "Trajectory overlay", format: SVG}, {name: "Tracking metrics and timeline", format: JSON}]
-    capabilities: [{operation: rosbag_retrieval, qualification: partial}, {operation: time_alignment_and_metrics, qualification: required}]
+    capabilities: [{operation: rosbag_retrieval, qualification: partial, catalog_ids: [rosbag-mcp-pypi]}, {operation: time_alignment_and_metrics, qualification: required}]
     external_effects: []
     acceptance_profile: robot-tracking-diagnosis/v1
     definition_status: reviewed
@@ -190,3 +190,121 @@ templates:
     readiness: reference
     readiness_facts: [{code: source-backed, label: "Modelica D035 source reviewed", satisfied: true}, {code: runtime-qualified, label: "Approved-kit runtime qualified", satisfied: false}]
     blocking_reasons: ["Modelica D035 is unqualified; only its approved bounded kit interface may be used after qualification."]
+  - id: replacement-drawer-handle
+    version: 1.0.3
+    title: Replace a broken drawer handle
+    summary: Inspect a familiar repair, confirm its dimensions, then compare real print preparations before
+      choosing a digital package.
+    discipline: Additive manufacturing
+    source: templates/replacement-drawer-handle.workflow.wflow
+    layout: layouts/replacement-drawer-handle.json
+    preview:
+      asset: previews/replacement-drawer-handle.svg
+      alt: 'Original supplied sketch beside the actual recorded repaired handle: 96 mm bolt spacing,
+        at least 25 mm central clearance and 114 by 24.322 by 34 mm measured bounds. Digital example, not live state.'
+    provided_inputs:
+    - name: Original handle sketch and complete Printed02 assignment
+      kind: image_and_text
+      attribution: Wright original fictional sample, CC0-1.0
+    - name: 96 mm bolt spacing; M4 clearance; original envelope and grip dimensions
+      kind: engineering_requirements
+    - name: Full Printed02 validation profile and source provenance
+      kind: validation_requirements
+    requested_inputs:
+    - name: Confirm or visibly revise the supplied design intent
+      kind: engineering_requirements
+    - name: Qualified P1S 0.4 mm PETG profiles and geometry/slicing tools
+      kind: configured_capability
+    - name: Review geometry, compare both orientations, and select the preparation
+      kind: declared_review
+    expected_outputs:
+    - name: Source and independently checked repaired geometry
+      format: STL
+    - name: Pads-down and side orientation/support comparison
+      format: JSON and preview
+    - name: Profile-bound final digital print package
+      format: 3MF
+    - name: Clearly simulated local receipt and requirement assessment
+      format: JSON
+    capabilities:
+    - operation: dimensioned_geometry
+      qualification: required
+      catalog_ids: [freecad-core-nekanat]
+    - operation: mesh_repair_and_measurement
+      qualification: required
+      catalog_ids: [blender-mcp]
+    - operation: slice_with_supports
+      qualification: required
+    - operation: package_inspection
+      qualification: required
+      catalog_ids: [oasis-open-fem-agent]
+    external_effects: []
+    acceptance_profile: printed-replacement-part-02-full
+    definition_status: reviewed
+    rights:
+      fixture: original_fictional_sample
+      license: CC0-1.0
+      redistribution: allowed
+      social_capture: allowed
+    readiness: setup_required
+    readiness_facts:
+    - code: supplied-intent
+      label: Original dimensional sketch and assignment supplied
+      satisfied: true
+    - code: current-host-qualified
+      label: Your selected tools and profiles qualified on this host
+      satisfied: false
+    blocking_reasons:
+    - Qualify the selected geometry, inspection and independent slicer providers on this host; retain the
+      original P1S 0.4 mm PETG, 0.20 mm layer, five-wall and 40% infill requirements.
+    - Review the design basis before geometry and the actual geometry before slicing. Tool discovery alone
+      does not establish readiness.
+    exploration:
+      preview_kind: recorded_result
+      preview_caption: Left is the original supplied sketch, not to scale. Right is the unaltered recorded
+        repaired-mesh image in its original model frame. These are reference evidence, not your live run.
+      outcome_status: recorded
+      outcome_summary: An actual handle process and its side-orientation correction produced both print
+        packages and passed all 43 digital checks after final user review. The measured model has 96 mm
+        bolt spacing, at least 25 mm central clearance and 114 by 24.322 by 34 mm bounds. This was a full
+        fresh rerun; physical fit, strength, printing and support removability remain unverified.
+      recorded_result:
+        run_id: de60e23084294148a3a8129bf2bcb1b8
+        source_digest: a215916fa57e9cc7813bf0b1ea3f2fff6066b8e362764dc2bab0f461a6feb617
+        artifact_digest: 303382840d71c7026b5db083838757a68c6e8119b9d21159185a4f72985ff54c
+        evidence_reference: artifacts/first-contact/084/native-handle-correction-020/final-validation/README.md
+        scope: "Recorded Linux aarch64 digital preparation: both actual orientations, side selected, 43 checks passed after the user reviewed six digital criteria. Earlier three decisions were labelled test decisions; transfer was simulated with no network dispatch. Physical fit, strength, printing, support removability and customer acceptance remain unverified."
+      stages:
+      - title: Confirm the repair
+        tool: Wright visual review
+        contribution: Keep the original measurements and proposed design choices visible before work begins.
+        input: Original request, sketch and dimensional context
+        output: Versioned design basis and persisted review
+      - title: Construct the solid
+        tool: FreeCAD MCP
+        contribution: Build the dimensioned solid with native blends and rounds, then export its checked mesh.
+        input: Reviewed basis and complete handle requirements
+        output: Native solid, source STL and construction observations
+      - title: Inspect and preview the mesh
+        tool: Blender MCP
+        contribution: Independently inspect and preserve the repaired mesh, measure features and render the actual geometry.
+        input: FreeCAD source mesh
+        output: Repaired STL, geometry preview and dimensional observations before slicing
+      - title: Compare print preparations
+        tool: Orca 2.4.2 through independent MCP shell
+        contribution: Slice pads-down and side from the same measured mesh using the exact P1S/PETG profiles.
+        input: Reviewed mesh, build transforms and five-wall/40% infill profiles
+        output: Both actual 3MF packages, G-code, native settings and usage estimates
+      - title: Inspect and review the package
+        tool: OASiS passive inspection and Wright validation/review
+        contribution: Check source-to-package correspondence, expose nominal support paths, and bind checks and decisions to the selected package.
+        input: Exact meshes, both packages, profile evidence and declared review criteria
+        output: Support views, orientation comparison, 43-check assessment and explicitly simulated receipt
+      limitations:
+      - Exploring this recorded example makes no model or engineering-provider calls. Your live work
+        requires task-specific setup and readiness; the recorded run grants no authority on your host.
+      - The correction accepted a new source revision and reran the full process. This is not a promise
+        of inexpensive arbitrary design edits or minimal recomputation.
+      - Nominal support paths and a geometry image do not establish physical contact, removability,
+        fit, strength or print quality. No printer transfer or physical print was performed.
+      - OASiS provided supporting passive inspection, not a handle finite-element strength analysis.

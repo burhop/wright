@@ -189,8 +189,46 @@ function normalizeMessages(messages: ChatMessage[] = []): ChatMessage[] {
       content: stripWorkspaceContext(message.content),
     }))
     .filter(
-      (message) => message.content && !looksLikeToolPayload(message.content),
+      (message) =>
+        message.content &&
+        (!looksLikeToolPayload(message.content) ||
+          !!message.toolEvidence?.length),
     );
+}
+
+async function reconcileRetainedAnswer(
+  session: ChatSession,
+  prompt: string,
+  answer: ChatMessage,
+): Promise<void> {
+  try {
+    const history = await agentService.getSessionHistory(session.sessionId);
+    let lastUserIndex = history.length - 1;
+    while (lastUserIndex >= 0 && history[lastUserIndex].role !== "user")
+      lastUserIndex -= 1;
+    if (
+      lastUserIndex < 0 ||
+      stripWorkspaceContext(history[lastUserIndex].content) !==
+        stripWorkspaceContext(prompt)
+    )
+      return;
+    const messages = [...history];
+    if (
+      !history
+        .slice(lastUserIndex + 1)
+        .some(
+          (message) =>
+            message.role === "assistant" &&
+            message.content.trim() === answer.content.trim(),
+        )
+    ) {
+      messages.push(answer);
+    }
+    session.messages = messages;
+  } catch (error) {
+    // The answer remains usable if retained history is temporarily unavailable.
+    console.error("Could not reconcile retained answer evidence", error);
+  }
 }
 
 function cleanSessionTitle(title: string | undefined | null): string {
@@ -688,6 +726,7 @@ export function ChatProvider({
   const providerMountedRef = useRef(true);
 
   useEffect(() => {
+    providerMountedRef.current = true;
     return () => {
       providerMountedRef.current = false;
     };
@@ -1133,7 +1172,7 @@ export function ChatProvider({
         sessionId,
         entry: {
           kind: "status",
-          title: "Hermes is preparing a response",
+          title: "Agent is preparing a response",
           detail: "Waiting for the first response event.",
         },
       });
@@ -1226,7 +1265,7 @@ export function ChatProvider({
               role: "assistant",
               content:
                 accumulatedText.trim() ||
-                "Hermes ended the chat turn without returning a response.",
+                "The agent ended the chat turn without returning a response.",
               timestamp: Date.now(),
               traceId: accumulatedText.trim()
                 ? "tr-" + Math.random().toString(36).substring(7)
@@ -1255,6 +1294,7 @@ export function ChatProvider({
                       : content,
                 };
 
+            await reconcileRetainedAnswer(finalSession, content, assistantMsg);
             dispatch({ type: "END_STREAMING", sessionId, finalSession });
             if (requestedTitle) {
               dispatch({
@@ -1321,6 +1361,7 @@ export function ChatProvider({
                   updatedAt: Date.now(),
                   isActive: true,
                 };
+            await reconcileRetainedAnswer(finalSession, content, errorMsg);
             dispatch({ type: "END_STREAMING", sessionId, finalSession });
           }
         }

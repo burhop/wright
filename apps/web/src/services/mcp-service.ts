@@ -298,6 +298,7 @@ export interface CatalogSnapshotSummary {
 }
 
 export interface CapabilityListResponse {
+  current_platform?: string | null;
   curation_counts?: Record<string, number>;
   lifecycle_coverage?: Array<{
     stage: string;
@@ -786,6 +787,20 @@ export class McpService {
     return this.catalogRequest(
       `/api/mcp/onboarding-runs/${encodeURIComponent(runId)}/cancel`,
       { method: "POST" },
+    );
+  }
+
+  async readDeviceSignIn(serverId: string): Promise<{
+    presentation: string;
+    device: {
+      verification_uri: string;
+      verification_uri_complete?: string | null;
+      user_code: string;
+      expires_in: number;
+    } | null;
+  }> {
+    return this.catalogRequest(
+      `/api/mcp/servers/${encodeURIComponent(serverId)}/signin`,
     );
   }
 

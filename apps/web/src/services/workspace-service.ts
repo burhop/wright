@@ -1,4 +1,6 @@
 import { logger } from "./logger";
+import { workflowRunErrorFromPayload } from "./workflow-run-error";
+export { WorkspaceWorkflowRunError } from "./workflow-run-error";
 import { hostAdapter } from "./host-adapter";
 import type { SelectOptions } from "./host-adapter/wright-desktop";
 import type { RecoveryLayout } from "../prototypes/workflow-recovery/model";
@@ -77,6 +79,7 @@ export type WorkspaceWorkflowSourceReadinessState =
   | "not_template"
   | "reference"
   | "setup_required"
+  | "revised"
   | "ready"
   | "verified"
   | "unavailable";
@@ -87,6 +90,15 @@ export interface WorkspaceWorkflowSourceReadiness {
   template_version: string | null;
   source_digest: string | null;
   layout_digest: string | null;
+  accepted_source_digest?: string | null;
+  definition_revision?: number | null;
+  execution_diagnostic?: {
+    code: string;
+    message: string;
+    correction: string;
+    block_id?: string | null;
+  } | null;
+  starter_unchanged?: boolean | null;
   definition_valid: boolean | null;
   configured: boolean | null;
   qualified: boolean | null;
@@ -134,6 +146,28 @@ export interface EngineeringWorkflowTemplate {
   external_effects: string[];
   source_digest: string;
   readiness: EngineeringTemplateReadiness;
+  exploration?: {
+    preview_kind:
+      "supplied_sketch" | "workflow_illustration" | "recorded_result";
+    preview_caption: string;
+    outcome_status: "pending" | "recorded";
+    outcome_summary: string;
+    stages: Array<{
+      title: string;
+      tool: string;
+      contribution: string;
+      input: string;
+      output: string;
+    }>;
+    limitations: string[];
+    recorded_result?: {
+      run_id: string;
+      source_digest: string;
+      artifact_digest: string;
+      evidence_reference: string;
+      scope: string;
+    };
+  };
 }
 
 export interface EngineeringWorkflowTemplateDetail extends EngineeringWorkflowTemplate {
@@ -269,6 +303,7 @@ export interface WorkspaceWorkflowRunSummary {
     | "failed"
     | "cancelled"
     | "interrupted"
+    | "reconciliation_required"
     | "unknown";
   started_at: string;
   completed_at?: string;
@@ -472,18 +507,6 @@ export class WorkspaceWorkflowSourceConflictError extends Error {
     this.name = "WorkspaceWorkflowSourceConflictError";
     this.currentStorageRevision = currentStorageRevision;
     this.currentStorageDigest = currentStorageDigest;
-  }
-}
-
-export class WorkspaceWorkflowRunError extends Error {
-  readonly code: string;
-  readonly correction: string | null;
-
-  constructor(code: string, message: string, correction?: string | null) {
-    super(message);
-    this.name = "WorkspaceWorkflowRunError";
-    this.code = code;
-    this.correction = correction ?? null;
   }
 }
 
@@ -710,6 +733,7 @@ export interface RivetRunResultItem {
 export interface RivetRunStep {
   step_id: string;
   sequence: number;
+  attempt?: number;
   node_id: string | null;
   node_type: string | null;
   label: string;
@@ -751,6 +775,53 @@ export interface RivetRunInspection {
   }>;
   run_inputs: RivetRunResultItem[];
   inputs_state: string;
+  graph?: {
+    graph_id: string;
+    name: string;
+    nodes: Array<{
+      node_id: string;
+      node_type: string;
+      label: string | null;
+      order: number;
+      x: number;
+      y: number;
+      width: number;
+      prompt: string | null;
+      configuration: Record<string, unknown>;
+    }>;
+    connections: Array<{
+      connection_id: string;
+      source_node_id: string;
+      target_node_id: string;
+      source_port: string;
+      target_port: string;
+      label: string;
+      traversals?: Array<{
+        traversal_id: string;
+        sequence: number;
+        source_step_id: string;
+        target_step_id: string;
+        source_attempt: number;
+        target_attempt: number;
+      }>;
+    }>;
+  } | null;
+  evidence_records?: Array<{
+    evidence_id: string;
+    producer: string;
+    producer_version: string;
+    kind: string;
+    statement: string;
+    recorded_outcome: string | null;
+    subjects: Array<{
+      subject_kind: string;
+      subject_id: string;
+      revision: string | null;
+      digest: string | null;
+    }>;
+    supporting_refs: string[];
+    supersedes_id: string | null;
+  }>;
   steps: RivetRunStep[];
   final_outputs: RivetRunResultItem[];
   diagnostic: {
@@ -932,6 +1003,37 @@ export interface EngineeringScenarioComparison {
 export interface SupportDiagnosticScope {
   session_id?: string;
   scenario_run_id?: string;
+  source_run_id?: string;
+}
+
+export interface SourceRunDiagnostic {
+  run_id: string;
+  source_digest: string;
+  record_digest: string;
+  recorded_status: string;
+  started_at?: string;
+  ended_at?: string;
+  event_count: number;
+  events: Array<{
+    sequence: number;
+    kind:
+      | "run_started"
+      | "run_resumed"
+      | "run_completed"
+      | "step_started"
+      | "step_completed"
+      | "step_diagnostic"
+      | "design_revision"
+      | "validation_exhausted"
+      | "cancellation_requested";
+    step_id?: string;
+    at?: string;
+    start_sequence?: number;
+    elapsed_ms?: number;
+    reason?: string;
+  }>;
+  events_truncated: boolean;
+  metadata_omitted: boolean;
 }
 
 export interface SupportDiagnosticSnapshot {
@@ -942,6 +1044,7 @@ export interface SupportDiagnosticSnapshot {
   workspace_id: string;
   principal_digest: string;
   scope: SupportDiagnosticScope;
+  source_run?: SourceRunDiagnostic;
   summary: {
     status: "healthy" | "degraded" | "blocked" | "failed";
     reason: string;
@@ -1258,7 +1361,15 @@ export class WorkspaceService {
     if (
       result.catalog_version !== "1.0.0" ||
       !Array.isArray(result.templates) ||
-      result.templates.length !== 10
+      result.templates.length === 0 ||
+      result.templates.some(
+        (template) =>
+          !template ||
+          typeof template.template_id !== "string" ||
+          !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(template.template_id),
+      ) ||
+      new Set(result.templates.map((template) => template.template_id)).size !==
+        result.templates.length
     )
       throw new Error(
         "Wright returned an invalid engineering template catalog.",
@@ -1674,6 +1785,81 @@ export class WorkspaceService {
     return payload.runs;
   }
 
+  async getWorkspaceWorkflowRunTrace(
+    sessionId: string,
+    runPath: string,
+  ): Promise<RivetRunInspection> {
+    const query = new URLSearchParams({
+      session_id: sessionId,
+      run_path: runPath,
+    });
+    const response = await hostAdapter.fetch(
+      `${API_BASE}/api/workspace/workflow-sources/run-trace?${query}`,
+      { cache: "no-store" },
+    );
+    if (!response.ok)
+      throw new Error("This saved run review could not be loaded.");
+    const inspection = (await response.json()) as RivetRunInspection;
+    const previewable = new Set([
+      "image/png",
+      "image/jpeg",
+      "image/gif",
+      "image/webp",
+    ]);
+    const attachPreview = (result: RivetRunResultItem) => {
+      const artifact = result.artifact;
+      const mediaType = artifact?.media_type;
+      const artifactId = artifact?.artifact_id;
+      if (
+        artifact &&
+        typeof mediaType === "string" &&
+        previewable.has(mediaType) &&
+        typeof artifactId === "string"
+      ) {
+        const previewQuery = new URLSearchParams({
+          session_id: sessionId,
+          run_path: runPath,
+          artifact_id: artifactId,
+        });
+        artifact.preview_url = `${API_BASE}/api/workspace/workflow-sources/run-trace/artifact?${previewQuery}`;
+      }
+    };
+    inspection.final_outputs.forEach(attachPreview);
+    inspection.run_inputs.forEach(attachPreview);
+    inspection.steps.forEach((step) => {
+      step.inputs.forEach(attachPreview);
+      step.outputs.forEach(attachPreview);
+    });
+    return inspection;
+  }
+
+  async exportWorkspaceWorkflowRunTrace(
+    sessionId: string,
+    runPath: string,
+    mode: "report_only" | "full_data",
+  ): Promise<void> {
+    const query = new URLSearchParams({
+      session_id: sessionId,
+      run_path: runPath,
+      mode,
+    });
+    const response = await hostAdapter.fetch(
+      `${API_BASE}/api/workspace/workflow-sources/run-trace/export?${query}`,
+      { cache: "no-store" },
+    );
+    if (!response.ok) throw new Error("Workflow review export is unavailable");
+    const blob = await response.blob();
+    const url = URL.createObjectURL(blob);
+    try {
+      const anchor = document.createElement("a");
+      anchor.href = url;
+      anchor.download = `wright-workflow-review-${mode}.zip`;
+      anchor.click();
+    } finally {
+      URL.revokeObjectURL(url);
+    }
+  }
+
   async getWorkspaceWorkflowReviews(
     sessionId: string,
     path: string,
@@ -1768,39 +1954,15 @@ export class WorkspaceService {
       },
     );
     if (!response.ok) {
-      let message = "The workflow could not run.";
-      let code = "workflow_run_failed";
-      let correction: string | null = null;
+      let payload: unknown;
       try {
-        const payload = (await response.json()) as {
-          error_code?: unknown;
-          message?: unknown;
-          details?: { code?: unknown; correction?: unknown };
-          detail?: { code?: unknown; message?: unknown; correction?: unknown };
-        };
-        // API middleware normalizes HTTPException bodies; also accept the
-        // original envelope for older hosts and test adapters.
-        const detail = payload.detail ?? {
-          code: payload.error_code ?? payload.details?.code,
-          message: payload.message,
-          correction: payload.details?.correction,
-        };
-        if (typeof detail?.code === "string") code = detail.code;
-        if (typeof detail?.message === "string") {
-          message = detail.message;
-          if (typeof detail.correction === "string") {
-            correction = detail.correction;
-            message += ` ${detail.correction}`;
-          }
-        }
+        payload = await response.json();
       } catch {
-        // Keep the safe fallback; backend error bodies may be non-JSON.
+        /* Keep the bounded fallback. */
       }
-      throw new WorkspaceWorkflowRunError(
-        code,
-        `${workflowRunFailurePrefix(code)} ${message}`,
-        correction,
-      );
+      const failure = workflowRunErrorFromPayload(payload, "request");
+      failure.message = `${workflowRunFailurePrefix(failure.code)} ${failure.message}`;
+      throw failure;
     }
     let run: WorkspaceWorkflowSourceRun | undefined;
     if (
@@ -1822,13 +1984,11 @@ export class WorkspaceService {
           event.kind === "waiting_human"
         )
           run = event.result;
-        else if (event.kind === "failed")
-          throw new WorkspaceWorkflowRunError(
-            typeof event.code === "string" ? event.code : "workflow_run_failed",
-            `${workflowRunFailurePrefix(typeof event.code === "string" ? event.code : "workflow_run_failed")} ${event.message}${typeof event.correction === "string" ? ` ${event.correction}` : ""}`,
-            typeof event.correction === "string" ? event.correction : null,
-          );
-        else onEvent(event as WorkspaceWorkflowRunEvent);
+        else if (event.kind === "failed") {
+          const failure = workflowRunErrorFromPayload(event, "execution");
+          failure.message = `${workflowRunFailurePrefix(failure.code)} ${failure.message}`;
+          throw failure;
+        } else onEvent(event as WorkspaceWorkflowRunEvent);
       };
       try {
         while (true) {
@@ -1909,9 +2069,14 @@ export class WorkspaceService {
     if (!response.ok) {
       let message = "BREP is unavailable";
       try {
-        const body = (await response.json()) as { detail?: unknown };
+        const body = (await response.json()) as {
+          detail?: unknown;
+          message?: unknown;
+        };
         if (typeof body.detail === "string" && body.detail.trim()) {
           message = body.detail;
+        } else if (typeof body.message === "string" && body.message.trim()) {
+          message = body.message;
         }
       } catch {
         // Preserve the stable fallback when an intermediary returned no JSON.
@@ -2292,6 +2457,27 @@ export class WorkspaceService {
     }
   }
 
+  async exportRivetRunTrace(
+    sessionId: string,
+    runId: string,
+    mode: "report_only" | "full_data",
+  ): Promise<void> {
+    const response = await hostAdapter.fetch(
+      `${API_BASE}/api/workspace/workflows/runs/${encodeURIComponent(runId)}/trace/export?session_id=${encodeURIComponent(sessionId)}&mode=${mode}`,
+    );
+    if (!response.ok) throw new Error("Workflow review export is unavailable");
+    const blob = await response.blob();
+    const url = URL.createObjectURL(blob);
+    try {
+      const anchor = document.createElement("a");
+      anchor.href = url;
+      anchor.download = `wright-workflow-review-${runId}-${mode}.zip`;
+      anchor.click();
+    } finally {
+      URL.revokeObjectURL(url);
+    }
+  }
+
   async getRivetCallApprovals(
     sessionId: string,
     runId: string,
@@ -2518,6 +2704,9 @@ export class WorkspaceService {
           message = "Local state changed. Create a fresh preview.";
         } else if (code === "DIAGNOSTIC_SCOPE_FORBIDDEN") {
           message = "This diagnostic scope is unavailable.";
+        } else if (code === "DIAGNOSTIC_SOURCE_EVIDENCE_UNAVAILABLE") {
+          message =
+            "The saved run evidence could not be verified. Inspect the run details before creating another preview.";
         }
       } catch {
         // Preserve the stable, non-sensitive fallback.
@@ -2714,6 +2903,15 @@ export class WorkspaceService {
     if (contentType && contentType.includes("application/json")) {
       const data = await response.json();
       return data.content;
+    }
+    if (
+      contentType &&
+      !contentType.startsWith("text/") &&
+      !contentType.includes("xml")
+    ) {
+      throw new Error(
+        "This file needs its compatible application. Download the native file instead of opening it as text.",
+      );
     }
     return response.text();
   }
@@ -3577,6 +3775,8 @@ export class WorkspaceService {
   async getMcpStatus(sessionId: string): Promise<{
     status: string;
     message: string;
+    restart_command?: string | null;
+    restart_command_shell?: "posix" | "powershell" | null;
     running_mcps?: {
       name: string;
       status: string;
@@ -3595,6 +3795,8 @@ export class WorkspaceService {
   async getWorkspaceMcpStatus(workspaceId: string): Promise<{
     status: string;
     message: string;
+    restart_command?: string | null;
+    restart_command_shell?: "posix" | "powershell" | null;
     running_mcps?: {
       name: string;
       status: string;

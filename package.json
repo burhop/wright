@@ -13,7 +13,11 @@
   "devDependencies": {
     "@playwright/test": "^1.62.1",
     "@types/node": "^26.1.2",
+    "micromark": "4.0.2",
+    "micromark-extension-gfm": "3.0.0",
+    "pdfjs-dist": "6.3.289",
     "prettier": "^3.9.6",
+    "rolldown": "1.2.2",
     "typescript": "^5.7.0"
   }
 }

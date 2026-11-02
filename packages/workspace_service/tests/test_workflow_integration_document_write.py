@@ -65,7 +65,10 @@ def case(tmp_path):
                 self.mutate(arguments)
             if kw.get("before_dispatch"):
                 kw["before_dispatch"](tool)
-                assert events[-1][0] == "integration_document_write_authorized"
+                if runtime._integration_document_write_authority is not None:
+                    assert events[-1][0] == "integration_document_write_authorized"
+                else:
+                    assert events == []
             self.calls.append(kw)
             value = await provider.call(
                 self.session,

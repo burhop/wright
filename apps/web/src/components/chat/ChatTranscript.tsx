@@ -13,7 +13,7 @@ interface ChatTranscriptProps {
   streamedText?: string;
   activeTool?: { name: string; preview: string; percentage?: number } | null;
   streamActivity?: StreamActivityEntry[];
-  onOpenFile?: (path: string) => void;
+  onOpenFile?: (path: string, resolveFilename?: boolean) => void;
   activeSessionId?: string;
   workspacePath?: string;
 }
@@ -355,7 +355,7 @@ export function ChatTranscript({
         >
           <p style={{ fontSize: "0.9rem" }}>No messages yet.</p>
           <p style={{ fontSize: "0.78rem", marginTop: "4px" }}>
-            Send a message to start conversing with the Hermes Agent.
+            Send a message to start conversing with the selected agent.
           </p>
         </div>
       )}

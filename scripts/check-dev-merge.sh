@@ -134,14 +134,10 @@ run uv run --with mypy mypy "${PYTHON_WORKSPACE_PATHS[@]}" --ignore-missing-impo
 run env PYTHON="$PYTHON_BIN" scripts/build-python-distributions.sh --dry-run packages/core packages/tool_registry
 run uv run python -c "from pathlib import Path; from scripts.release.workflow_policy import validate_scoped_workflows; validate_scoped_workflows(Path('.'))"
 run uv run --extra runtime python -m pytest -q tests/program_control_plane
-run uv run python -m pytest -q tests/release
-run uv run python -m pytest -q \
-  tests/native_runtime \
-  tests/release/test_native_release_evidence.py \
-  tests/release/test_native_release_rehearsal.py \
-  tests/release/test_native_workflow_policy.py \
-  tests/test_public_python_distribution.py
-run uv run --with pytest-cov python -m pytest -q tests/release tests/native_runtime --cov=scripts.release --cov=wright_engineering --cov-report=term --cov-fail-under=85
+# Run the default-context release/native union once, with the existing coverage
+# floor. Keep the unique public-distribution check and the later runtime/extras
+# contexts; their distinct claims are not covered by this consolidation.
+run uv run --with pytest-cov python -m pytest -q tests/release tests/native_runtime tests/test_public_python_distribution.py --cov=scripts.release --cov=wright_engineering --cov-report=term --cov-fail-under=85
 # Build once with the developer's installed lockfile dependencies. Native packaging
 # reuses the fresh dist without running npm ci against a live Wright node_modules.
 run env VITE_WRIGHT_PROCESS_DEFINITION_VIEW=1 \

@@ -245,9 +245,26 @@ coverage and equivalent environment evidence. Keep security, review authority,
 engineering identity, durable recovery and installed/browser compatibility checks.
 No test is obsolete merely because its feature shipped or its failure is costly.
 
+The full local gate runs the default-context release/native contracts once with
+their existing 85% coverage floor, including the unique public-distribution check.
+The PowerShell entry point delegates to that same Unix script. Ubuntu Python CI
+uses the same consolidation before its broader package suites. Later
+runtime/engineering-models and hardening contexts, separate package collection,
+installed-artifact jobs, OS matrices, browser checks and security gates remain.
+The [Feature 084 measurement](https://github.com/burhop/wright/blob/dev/specs/084-first-contact-experience/quality-cost-evidence.md)
+records the exact test union, fixtures, dependency context, skips, covered lines,
+timings and negative controls. Its Linux aarch64 warm-cache stage timings are not
+whole-gate savings or hosted/Windows compatibility evidence. Changed dependencies,
+fixtures, markers, thresholds or invocation contexts require renewed equivalence
+evidence before further consolidation. Existing full-gate obligations still apply.
+
 Changes to every bound Docker input also run `scripts.release.scan_image` in the
 fast gate and select OCI PR CI, including `.dockerignore`, root package files,
-`src/`, the Hermes plugin, both Rivet package trees and `README.md`. The full
+`src/`, the Hermes plugin, both Rivet package trees, the packaged setup recipe at
+`examples/process-interfaces/definition.py` and
+`examples/process-interfaces/printed-replacement-part/`, the canonical frontend
+fixture copied from `specs/080-canonical-workflow-recovery/fixtures/`, and
+`README.md`. The full
 merge gate always runs it. Build the candidate once from a
 clean Git archive, then set `WRIGHT_GATE_DOCKER_IMAGE` to that existing image
 before running either gate. The helper resolves the reference to an immutable
@@ -257,6 +274,12 @@ and no Docker build input changed. Committed, staged and unstaged differences
 are checked separately, so reverting a dirty file cannot mask a changed HEAD
 or index; untracked inputs are also rejected. It never builds or publishes. For a standalone scan, use
 `python -m scripts.release.scan_image --image <image>`.
+
+The Dockerfile copies the closed setup-resource inventory before workspace
+package installation, including its versioned JSON and instruction assets.
+Recipe changes also select packaging closure, Docker smoke, gate-selection and
+image-binding regressions; Python changes retain their existing test selection.
+Keep the resource inventory, Docker COPY inputs and image-source binding aligned.
 
 The local gates and OCI PR workflow use the same pinned Trivy 0.70.0 image,
 fresh vulnerability database, OS/Python/Node coverage checks and unchanged
@@ -661,3 +684,57 @@ must not include exception details, and request-derived viewer IDs must become
 bounded numbers before HTML/script interpolation. Existing UI-kit tests qualify
 all supported raster formats and hostile MIME rejection; CodeQL remains required
 for full data-flow analysis. Do not suppress rules or exclude maintained sources.
+
+Offline provider setup guides are frontend build inputs. The Docker source binding includes `docs/mcp-catalog/usage-guides` so guide changes cannot reuse an image built from older help content.
+
+The public-alpha leak checker preserves four deliberate negative-test canaries in
+`.github/public-alpha-fixture-exceptions.json`. Each reviewed exception matches
+only its exact relative path, scanner rule and SHA-256 of the entire source line.
+Changing the line, adding a secret beside it or moving it to another file remains
+blocking. Malformed policy fails closed. These exceptions do not change Gitleaks,
+TruffleHog, scanner patterns or the redaction tests that consume the canaries.
+
+### Python fixture helpers in push selection
+
+Changed Python test files matching pytest's `test_*.py` or `*_test.py` names
+remain direct targets. Other Python helpers under `tests/` select the owning
+broad suite rather than being invoked as standalone tests. In particular, the
+browser export-fixture generator must not fail the gate with pytest exit 5.
+Conftest changes still select their directory, and all existing broad/focused
+collection and duplicate-import protections remain in place. The gate regression
+executes the real shell selection for helpers, tests and conftest paths.
+
+### First-contact and portable-viewer CI coverage
+
+PR #180 exposed stale dashboard/onboarding text, a viewer fixture made of twenty
+zero bytes instead of a PNG, and an Overview map accessible name that omitted its
+visible label. The normal browser baseline now also checks dashboard navigation,
+viewer lifecycle and complete editor accessibility; the read-only live onboarding
+slice includes the advanced directory preview. Keep health/telemetry, exact file
+scope, successful decode, invalid-image recovery and zero-serious-violation
+assertions. Do not restore obsolete copy or weaken rendering checks to pass.
+
+Portable viewer assets and their pinned generator select relocated-export and
+secure-rendering browser tests as well as the Python owner. The secure-rendering
+fixture uses an actual software WebGL render, denies network and makes
+Math.random throw while observing Web Crypto calls. It does not establish GPU,
+engineering or native Windows panel acceptance. Dashboard URL guards reject
+executable schemes and retain HTTP(S) and local-file report navigation.
+CodeQL still analyzes maintained sources and generated viewer output; no query,
+alert or new asset path is excluded.
+
+
+### Qualified recipe mounts versus native Windows setup
+
+PR #180's first Windows API suite exposed a native-path fixture expecting the
+Printed02 shared-POSIX recipe to accept a Windows workspace. Keep the existing
+exact-mount guard: a Windows drive path is not a qualified provider mount.
+The HTTP and service owner tests now exercise native, Windows-shaped and
+mismatched paths, requiring an explicit rejection before staging on unsupported
+hosts. Full source proposal, explicit CAS, snapshot and tamper/confinement checks
+remain intact on POSIX; their recipe-dependent cases are explicitly unavailable
+on native Windows. Unknown sessions, forbidden fields and missing/changed tool
+capabilities remain tested on both platforms. This is a recipe limitation, not
+Windows qualification of that manufacturing process or a restriction on the
+independent Windows pilot. Both gates and Windows CI already collect these
+owners; no suite or production validation is excluded.

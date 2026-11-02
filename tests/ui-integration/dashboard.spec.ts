@@ -214,7 +214,9 @@ test.describe("Dashboard Page", () => {
     // Verify main regions render
     await expect(page.getByTestId("app-shell")).toBeVisible();
     await expect(page.getByTestId("page-dashboard")).toBeVisible();
-    await expect(page.getByText("Wright Design Hub")).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: "Wright", level: 1, exact: true }),
+    ).toBeVisible();
 
     // Verify workspace card is present
     const workspaceCard = page.getByText("Test Project", { exact: false });

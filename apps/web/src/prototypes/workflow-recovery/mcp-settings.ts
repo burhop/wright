@@ -74,12 +74,14 @@ export function fieldSchema(schema: ToolSchema): ToolSchema {
   );
 }
 export function workflowMcpServerName(
-  tool: Pick<WorkflowMcpTool, "server_name">,
+  tool: Pick<WorkflowMcpTool, "server_name"> & { server_id?: string },
 ): string {
   const name = tool.server_name?.trim();
   return name && !/^[a-f0-9]{8}-(?:[a-f0-9]{4}-){3}[a-f0-9]{12}$/i.test(name)
     ? name
-    : "MCP server";
+    : tool.server_id === "wright-workspace-files"
+      ? "Wright workspace files"
+      : "MCP server";
 }
 export async function listWorkflowMcpTools(
   sessionId: string,

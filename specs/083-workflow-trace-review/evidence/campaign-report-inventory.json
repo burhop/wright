@@ -1,0 +1,952 @@
+{
+  "schema_version": 1,
+  "kind": "wright_engineering_campaign_report_inventory",
+  "campaign_id": "081-engineering-datasets-v1",
+  "source_bundle": ".local-run/feature-083-imports/campaign-081",
+  "source_status_sha256": "36940355c09a60657f0ab0239a9b607b9f6618a3050764a250a223d829bc4d86",
+  "case_count": 30,
+  "status_counts": {
+    "completed": 24,
+    "failed": 6
+  },
+  "selection": [
+    {
+      "case_id": "heat-spreader-sizing-01",
+      "attempt_id": "attempt-008",
+      "run_path": "output/heat-spreader-sizing-01/attempt-008/run.json"
+    },
+    {
+      "case_id": "heat-spreader-sizing-02",
+      "attempt_id": "attempt-010",
+      "run_path": "output/heat-spreader-sizing-02/attempt-010/run.json"
+    },
+    {
+      "case_id": "heat-spreader-sizing-03",
+      "attempt_id": "attempt-008",
+      "run_path": "output/heat-spreader-sizing-03/attempt-008/run.json"
+    },
+    {
+      "case_id": "lightweight-equipment-bracket-01",
+      "attempt_id": "attempt-006",
+      "run_path": "output/lightweight-equipment-bracket-01/attempt-006/run.json"
+    },
+    {
+      "case_id": "lightweight-equipment-bracket-02",
+      "attempt_id": "attempt-005",
+      "run_path": "output/lightweight-equipment-bracket-02/attempt-005/run.json"
+    },
+    {
+      "case_id": "lightweight-equipment-bracket-03",
+      "attempt_id": "attempt-012",
+      "run_path": "output/lightweight-equipment-bracket-03/attempt-012/run.json"
+    },
+    {
+      "case_id": "parametric-drill-jig-01",
+      "attempt_id": "attempt-012",
+      "run_path": "output/parametric-drill-jig-01/attempt-012/run.json"
+    },
+    {
+      "case_id": "parametric-drill-jig-02",
+      "attempt_id": "attempt-012",
+      "run_path": "output/parametric-drill-jig-02/attempt-012/run.json"
+    },
+    {
+      "case_id": "parametric-drill-jig-03",
+      "attempt_id": "attempt-011",
+      "run_path": "output/parametric-drill-jig-03/attempt-011/run.json"
+    },
+    {
+      "case_id": "printed-replacement-part-01",
+      "attempt_id": "attempt-003",
+      "run_path": "output/printed-replacement-part-01/attempt-003/run.json"
+    },
+    {
+      "case_id": "printed-replacement-part-02",
+      "attempt_id": "attempt-002",
+      "run_path": "output/printed-replacement-part-02/attempt-002/run.json"
+    },
+    {
+      "case_id": "printed-replacement-part-03",
+      "attempt_id": "attempt-016",
+      "run_path": "output/printed-replacement-part-03/attempt-016/run.json"
+    },
+    {
+      "case_id": "raspberry-pi-enclosure-01",
+      "attempt_id": "attempt-032",
+      "run_path": "output/raspberry-pi-enclosure-01/attempt-032/run.json"
+    },
+    {
+      "case_id": "raspberry-pi-enclosure-02",
+      "attempt_id": "attempt-031",
+      "run_path": "output/raspberry-pi-enclosure-02/attempt-031/run.json"
+    },
+    {
+      "case_id": "raspberry-pi-enclosure-03",
+      "attempt_id": "attempt-046",
+      "run_path": "output/raspberry-pi-enclosure-03/attempt-046/run.json"
+    },
+    {
+      "case_id": "robot-tracking-diagnosis-01",
+      "attempt_id": "attempt-003",
+      "run_path": "output/robot-tracking-diagnosis-01/attempt-003/run.json"
+    },
+    {
+      "case_id": "robot-tracking-diagnosis-02",
+      "attempt_id": "attempt-004",
+      "run_path": "output/robot-tracking-diagnosis-02/attempt-004/run.json"
+    },
+    {
+      "case_id": "robot-tracking-diagnosis-03",
+      "attempt_id": "attempt-005",
+      "run_path": "output/robot-tracking-diagnosis-03/attempt-005/run.json"
+    },
+    {
+      "case_id": "sensor-fan-harness-01",
+      "attempt_id": "attempt-003",
+      "run_path": "output/sensor-fan-harness-01/attempt-003/run.json"
+    },
+    {
+      "case_id": "sensor-fan-harness-02",
+      "attempt_id": "attempt-003",
+      "run_path": "output/sensor-fan-harness-02/attempt-003/run.json"
+    },
+    {
+      "case_id": "sensor-fan-harness-03",
+      "attempt_id": "attempt-003",
+      "run_path": "output/sensor-fan-harness-03/attempt-003/run.json"
+    },
+    {
+      "case_id": "sensor-interface-pcb-01",
+      "attempt_id": "attempt-007",
+      "run_path": "output/sensor-interface-pcb-01/attempt-007/run.json"
+    },
+    {
+      "case_id": "sensor-interface-pcb-02",
+      "attempt_id": "attempt-021",
+      "run_path": "output/sensor-interface-pcb-02/attempt-021/run.json"
+    },
+    {
+      "case_id": "sensor-interface-pcb-03",
+      "attempt_id": "attempt-015",
+      "run_path": "output/sensor-interface-pcb-03/attempt-015/run.json"
+    },
+    {
+      "case_id": "sheet-metal-supplier-handoff-01",
+      "attempt_id": "attempt-006",
+      "run_path": "output/sheet-metal-supplier-handoff-01/attempt-006/run.json"
+    },
+    {
+      "case_id": "sheet-metal-supplier-handoff-02",
+      "attempt_id": "attempt-006",
+      "run_path": "output/sheet-metal-supplier-handoff-02/attempt-006/run.json"
+    },
+    {
+      "case_id": "sheet-metal-supplier-handoff-03",
+      "attempt_id": "attempt-005",
+      "run_path": "output/sheet-metal-supplier-handoff-03/attempt-005/run.json"
+    },
+    {
+      "case_id": "water-heater-sizing-01",
+      "attempt_id": "attempt-005",
+      "run_path": "output/water-heater-sizing-01/attempt-005/run.json"
+    },
+    {
+      "case_id": "water-heater-sizing-02",
+      "attempt_id": "attempt-003",
+      "run_path": "output/water-heater-sizing-02/attempt-003/run.json"
+    },
+    {
+      "case_id": "water-heater-sizing-03",
+      "attempt_id": "attempt-003",
+      "run_path": "output/water-heater-sizing-03/attempt-003/run.json"
+    }
+  ],
+  "cases": [
+    {
+      "case_id": "heat-spreader-sizing-01",
+      "family": "heat-spreader-sizing",
+      "title": "Conduction strap for a silent e-ink sign controller",
+      "summary": "A sign maker compares two aluminum conduction-plate widths using a deliberately idealized end-heated thermal model.",
+      "attempt_id": "attempt-008",
+      "run_id": "69249b1c3d484edcbc06c0158c779fc4",
+      "run_path": "output/heat-spreader-sizing-01/attempt-008/run.json",
+      "run_sha256": "3de1d5e913200fc461930394c7773e13db4ec2252f50229dabc5ccf959f28ce5",
+      "status": "completed",
+      "selection_reason": "completed acceptance selection",
+      "dataset_digest": "3c96f9e2e3505b1df38de52fb7eec75e6c953e3c53ceacb1c9cdd54bd70857ca",
+      "template_digest": "b45585c61158350feb5c10bf8d8f841ad1b5e951be8873c0208d1585c1e16f1e",
+      "dataset_path": "heat-spreader-sizing/01-eink-sign-controller-strap",
+      "produced_artifacts": 23,
+      "produced_bytes": 316258,
+      "missing_artifacts": [],
+      "completed_steps": 9,
+      "required_steps": 9,
+      "error_code": null,
+      "stopping_reason": null,
+      "known_gaps": [
+        "executed prompts were not retained",
+        "activity timing may be incomplete in this historical record"
+      ]
+    },
+    {
+      "case_id": "heat-spreader-sizing-02",
+      "family": "heat-spreader-sizing",
+      "title": "Thermal link from an inspection camera to a cooled frame",
+      "summary": "An integrator compares three conduction-link widths within a constrained mounting channel using an assumed alloy conductivity and cold-wall temperature.",
+      "attempt_id": "attempt-010",
+      "run_id": "ccff6df7f70744e2a076087dd74a48a0",
+      "run_path": "output/heat-spreader-sizing-02/attempt-010/run.json",
+      "run_sha256": "1dc12936e12ca082e11b7e6ddd0c69892dd554102902feb3094266a6412e0278",
+      "status": "completed",
+      "selection_reason": "completed acceptance selection",
+      "dataset_digest": "00acc1d23c8f1630ebf99d93d609e994a6b48b8b12449ecf019e2f3b563552c8",
+      "template_digest": "b45585c61158350feb5c10bf8d8f841ad1b5e951be8873c0208d1585c1e16f1e",
+      "dataset_path": "heat-spreader-sizing/02-camera-cold-wall-link",
+      "produced_artifacts": 28,
+      "produced_bytes": 469118,
+      "missing_artifacts": [],
+      "completed_steps": 9,
+      "required_steps": 9,
+      "error_code": null,
+      "stopping_reason": null,
+      "known_gaps": [
+        "executed prompts were not retained",
+        "activity timing may be incomplete in this historical record"
+      ]
+    },
+    {
+      "case_id": "heat-spreader-sizing-03",
+      "family": "heat-spreader-sizing",
+      "title": "Copper heat link with an explicitly modeled contact resistance",
+      "summary": "A calibration-fixture team supplies width alternatives, a bounded interface resistance, and a mass objective for a copper conduction plate.",
+      "attempt_id": "attempt-008",
+      "run_id": "35c5d4f266dd4d3996e646189d9567ea",
+      "run_path": "output/heat-spreader-sizing-03/attempt-008/run.json",
+      "run_sha256": "674bcafc984740412344193a75ae6c44aa3e0c54423ee669be4ba19e84709154",
+      "status": "completed",
+      "selection_reason": "completed acceptance selection",
+      "dataset_digest": "1aa149e7f2bcf3a391741c06297f84ec4b1f355387c0065f853811c8bdfeafa3",
+      "template_digest": "b45585c61158350feb5c10bf8d8f841ad1b5e951be8873c0208d1585c1e16f1e",
+      "dataset_path": "heat-spreader-sizing/03-calibration-lamp-copper-link",
+      "produced_artifacts": 28,
+      "produced_bytes": 474926,
+      "missing_artifacts": [],
+      "completed_steps": 9,
+      "required_steps": 9,
+      "error_code": null,
+      "stopping_reason": null,
+      "known_gaps": [
+        "executed prompts were not retained",
+        "activity timing may be incomplete in this historical record"
+      ]
+    },
+    {
+      "case_id": "lightweight-equipment-bracket-01",
+      "family": "lightweight-equipment-bracket",
+      "title": "Conveyor vision-camera cantilever",
+      "summary": "Lighten a bolted right-angle camera mount while keeping optical-head displacement within its supplied budget.",
+      "attempt_id": "attempt-006",
+      "run_id": "faaa359018954ef29f40c061ca36ee92",
+      "run_path": "output/lightweight-equipment-bracket-01/attempt-006/run.json",
+      "run_sha256": "4787d3507a0385ed69437a704a51d1e7a57d08bb5e2081c8a7b6095c23fbcbcd",
+      "status": "failed",
+      "selection_reason": "latest retained incomplete attempt",
+      "dataset_digest": "f7feb70930a9294883719588754c218ad2c8b7697ba7b3dd613ff839c818754e",
+      "template_digest": "c2aa35a02e851887a9a0ab92a0372c37d30ce90b47216caf94cb8a56ca4ed95f",
+      "dataset_path": "lightweight-equipment-bracket/01-conveyor-vision-mount",
+      "produced_artifacts": 1,
+      "produced_bytes": 22449,
+      "missing_artifacts": [],
+      "completed_steps": 3,
+      "required_steps": 12,
+      "error_code": "TASK_BLOCKED",
+      "stopping_reason": "Author baseline and lightweight revision CAD: The reviewed basis does not uniquely define operation 11, so bracket-source.py cannot implement the exact approved revision without inventing geometry. The cutter-access treatment specifies only ‘R3 minimum’ and ‘tangent planar blends’ where each R10 keepout meets y = ±22; it does not fix the exact blend radius, construction side, centers/tangent endpoints, or another deterministic profile rule. Because this operation changes the pocket boundary and retained mass, selecting those values during source authoring would constitute an unreviewed pocket-design substitution. Revise and approve the basis with an exact blend definition for all affected intersections (or explicitly delete operation 11 and approve the unblended operation-9 profile), then source authoring can proceed.",
+      "known_gaps": [
+        "run did not complete",
+        "executed prompts were not retained",
+        "activity timing may be incomplete in this historical record"
+      ]
+    },
+    {
+      "case_id": "lightweight-equipment-bracket-02",
+      "family": "lightweight-equipment-bracket",
+      "title": "Pump-test instrument outrigger",
+      "summary": "Reduce a bulky two-rib pressure-instrument bracket while retaining side access and a cable corridor.",
+      "attempt_id": "attempt-005",
+      "run_id": "652d6ca5e01e4c2f90991d198bbfdca2",
+      "run_path": "output/lightweight-equipment-bracket-02/attempt-005/run.json",
+      "run_sha256": "4f06f69aac27fcab012aba03e7a36fea41ec9154c2d80f2174416d46a79e2ea2",
+      "status": "failed",
+      "selection_reason": "latest retained incomplete attempt",
+      "dataset_digest": "84947a937da88dd80079661cb810f4eaf31f91a78b25a510d66f2d4c1cdfeb80",
+      "template_digest": "c2aa35a02e851887a9a0ab92a0372c37d30ce90b47216caf94cb8a56ca4ed95f",
+      "dataset_path": "lightweight-equipment-bracket/02-pump-instrument-outrigger",
+      "produced_artifacts": 1,
+      "produced_bytes": 23803,
+      "missing_artifacts": [],
+      "completed_steps": 3,
+      "required_steps": 12,
+      "error_code": "TASK_BLOCKED",
+      "stopping_reason": "Author baseline and lightweight revision CAD: {\"reason\":\"The exact revised lightweight geometry is not defined by the supplied inputs. The reviewed basis explicitly leaves the rib-pocket coordinates/profile, scope of plate removal, manufacturing-fillet definitions, and interpretation of the 8 mm bolt-bore material rule unresolved, and prohibits inferring them from the schematic concept image. Authoring executable source for a legitimate revised STEP, measured mass comparison, STEP hashes, and four exact FEA request objects would therefore require inventing engineering requirements or claiming artifacts that do not yet exist. Provide a fully dimensioned and approved lightweighting definition, including pocket/removal geometry, cutter-radius/fillet treatment, and bolt-bore keepout interpretation.\"}",
+      "known_gaps": [
+        "run did not complete",
+        "executed prompts were not retained",
+        "activity timing may be incomplete in this historical record"
+      ]
+    },
+    {
+      "case_id": "lightweight-equipment-bracket-03",
+      "family": "lightweight-equipment-bracket",
+      "title": "Warehouse dock sensor yoke",
+      "summary": "Compare a solid U-yoke with a pocketed revision under a lateral cable-snag load and restricted tool access.",
+      "attempt_id": "attempt-012",
+      "run_id": "6fad7e3534314d8297a4c95b4479e2bb",
+      "run_path": "output/lightweight-equipment-bracket-03/attempt-012/run.json",
+      "run_sha256": "206f59c63ab100cc2f2c8e2c81b6be15d8480423534c51d886530ad6ef722b8b",
+      "status": "failed",
+      "selection_reason": "latest retained incomplete attempt",
+      "dataset_digest": "37dc73a8f1ea5e481a11b74f703f7b3584ab22398e819e4647b37f151b37d43a",
+      "template_digest": "c2aa35a02e851887a9a0ab92a0372c37d30ce90b47216caf94cb8a56ca4ed95f",
+      "dataset_path": "lightweight-equipment-bracket/03-dock-sensor-yoke",
+      "produced_artifacts": 1,
+      "produced_bytes": 1081,
+      "missing_artifacts": [],
+      "completed_steps": 12,
+      "required_steps": 18,
+      "error_code": "MCP_CALL_FAILED",
+      "stopping_reason": "Run both revisions and mesh levels through recorded CalculiX: MCP call failed (child_unavailable).",
+      "known_gaps": [
+        "run did not complete",
+        "executed prompts were not retained",
+        "activity timing may be incomplete in this historical record"
+      ]
+    },
+    {
+      "case_id": "parametric-drill-jig-01",
+      "family": "parametric-drill-jig",
+      "title": "Repeatable pilot-hole jig for furniture assembly rails",
+      "summary": "A furniture maker supplies a workpiece envelope, two-hole table, fictional bushing data, and clamp limits for a reusable top-registering jig.",
+      "attempt_id": "attempt-012",
+      "run_id": "fe86f96a2cf4403eacfe2c5ad92f960d",
+      "run_path": "output/parametric-drill-jig-01/attempt-012/run.json",
+      "run_sha256": "481613ac9153096bfa9ecdafd2f54dc40e81f28922fcb0c1277c055d77dc8f62",
+      "status": "completed",
+      "selection_reason": "completed acceptance selection",
+      "dataset_digest": "1e21c852266ce700124590221cb0e708110fea3a43bb0f250fd7f81ad84348fa",
+      "template_digest": "9375986248b1f0ab99b9bb09b789aea63acad1d4ab92b53e814744dedb658239",
+      "dataset_path": "parametric-drill-jig/01-furniture-rail-insert-jig",
+      "produced_artifacts": 14,
+      "produced_bytes": 1065169,
+      "missing_artifacts": [],
+      "completed_steps": 8,
+      "required_steps": 8,
+      "error_code": null,
+      "stopping_reason": null,
+      "known_gaps": [
+        "executed prompts were not retained",
+        "activity timing may be incomplete in this historical record"
+      ]
+    },
+    {
+      "case_id": "parametric-drill-jig-02",
+      "family": "parametric-drill-jig",
+      "title": "Top-face drilling saddle for rectangular aluminum tube",
+      "summary": "A display-fixture shop supplies a thin-walled tube and four-hole mounting pattern with external clamping constraints.",
+      "attempt_id": "attempt-012",
+      "run_id": "f4cd5dfc9f4b4db29d30958bbf9e737a",
+      "run_path": "output/parametric-drill-jig-02/attempt-012/run.json",
+      "run_sha256": "e18205cd960aa7fb1b8bea4505e57f2c09d08c70962349c9466fed983617a189",
+      "status": "completed",
+      "selection_reason": "completed acceptance selection",
+      "dataset_digest": "5a36e51ca19d42601885659434577c324f7c908c3fd77de6d9984586edc76a33",
+      "template_digest": "9375986248b1f0ab99b9bb09b789aea63acad1d4ab92b53e814744dedb658239",
+      "dataset_path": "parametric-drill-jig/02-extrusion-panel-mount-jig",
+      "produced_artifacts": 14,
+      "produced_bytes": 434338,
+      "missing_artifacts": [],
+      "completed_steps": 8,
+      "required_steps": 8,
+      "error_code": null,
+      "stopping_reason": null,
+      "known_gaps": [
+        "executed prompts were not retained",
+        "activity timing may be incomplete in this historical record"
+      ]
+    },
+    {
+      "case_id": "parametric-drill-jig-03",
+      "family": "parametric-drill-jig",
+      "title": "Keyed six-hole jig for a circular lab fixture plate",
+      "summary": "A lab fabricator supplies a polar mounting pattern, Cartesian hole CSV, existing datum notch, and asymmetric clamp keepouts for a keyed annular jig.",
+      "attempt_id": "attempt-011",
+      "run_id": "78df6664477345ca9493745399be7fbc",
+      "run_path": "output/parametric-drill-jig-03/attempt-011/run.json",
+      "run_sha256": "922dcb0b6acf9ca95ab38a825a2ef751a9022e8b555c7da1db657ba9790f7147",
+      "status": "completed",
+      "selection_reason": "completed acceptance selection",
+      "dataset_digest": "cc373c86d6023d3e1d44bad0f40430651717507caa91380fff98d9b761b55dfc",
+      "template_digest": "9375986248b1f0ab99b9bb09b789aea63acad1d4ab92b53e814744dedb658239",
+      "dataset_path": "parametric-drill-jig/03-indexable-circular-fixture-jig",
+      "produced_artifacts": 14,
+      "produced_bytes": 1540034,
+      "missing_artifacts": [],
+      "completed_steps": 8,
+      "required_steps": 8,
+      "error_code": null,
+      "stopping_reason": null,
+      "known_gaps": [
+        "executed prompts were not retained",
+        "activity timing may be incomplete in this historical record"
+      ]
+    },
+    {
+      "case_id": "printed-replacement-part-01",
+      "family": "printed-replacement-part",
+      "title": "Replace a telescope focus wheel with an accessible scalloped grip",
+      "summary": "A volunteer observatory needs a cold-weather focus grip based on a dimensioned sketch, with explicit D-shaft geometry and no change to the telescope drive.",
+      "attempt_id": "attempt-003",
+      "run_id": "1114664a543e4d8ea60c8b063c75f002",
+      "run_path": "output/printed-replacement-part-01/attempt-003/run.json",
+      "run_sha256": "3371f2ef8fd36dd1c3c01616a04741c7e892173f9577fff6c6e275e4a21d0d1e",
+      "status": "completed",
+      "selection_reason": "completed acceptance selection",
+      "dataset_digest": "d3ed666db5972717fc24714c436a0f175a41f78f41518140bee677fefb386529",
+      "template_digest": "4d7fc589183f84b34a66c9495798507b2ef4326e467f2e927effe9733bf1e545",
+      "dataset_path": "printed-replacement-part/01-observatory-focus-wheel",
+      "produced_artifacts": 15,
+      "produced_bytes": 1805505,
+      "missing_artifacts": [],
+      "completed_steps": 4,
+      "required_steps": 4,
+      "error_code": null,
+      "stopping_reason": null,
+      "known_gaps": [
+        "executed prompts were not retained",
+        "activity timing may be incomplete in this historical record"
+      ]
+    },
+    {
+      "case_id": "printed-replacement-part-02",
+      "family": "printed-replacement-part",
+      "title": "Replace a repair-cart drawer handle that clears gloved fingers",
+      "summary": "A repair shop supplies a two-hole mounting sketch and glove clearance requirement for a bowed replacement drawer pull.",
+      "attempt_id": "attempt-002",
+      "run_id": "591640da6e7a4a9bb9c564cdae93eea9",
+      "run_path": "output/printed-replacement-part-02/attempt-002/run.json",
+      "run_sha256": "9d45de99254e3544ae3bca733d87fbe8cb347bf63044c8577d41c7e100607132",
+      "status": "completed",
+      "selection_reason": "completed acceptance selection",
+      "dataset_digest": "ffa034e98f75fe64b48c9829be75577c7e1a298388a4d877cd9937f031758886",
+      "template_digest": "4d7fc589183f84b34a66c9495798507b2ef4326e467f2e927effe9733bf1e545",
+      "dataset_path": "printed-replacement-part/02-repair-cart-bow-handle",
+      "produced_artifacts": 15,
+      "produced_bytes": 3963486,
+      "missing_artifacts": [],
+      "completed_steps": 4,
+      "required_steps": 4,
+      "error_code": null,
+      "stopping_reason": null,
+      "known_gaps": [
+        "executed prompts were not retained",
+        "activity timing may be incomplete in this historical record"
+      ]
+    },
+    {
+      "case_id": "printed-replacement-part-03",
+      "family": "printed-replacement-part",
+      "title": "Recreate a styled removable synthesizer tilt foot",
+      "summary": "A touring musician supplies a measured wedge-foot sketch, screw pattern, and cable keepout for a desk-only instrument prototype.",
+      "attempt_id": "attempt-016",
+      "run_id": "61478eaa61504daea2d40d5bfffeaf20",
+      "run_path": "output/printed-replacement-part-03/attempt-016/run.json",
+      "run_sha256": "75d02ed6387c4d8159418abe40685f167807de7528511821f20aad44093f627d",
+      "status": "completed",
+      "selection_reason": "completed acceptance selection",
+      "dataset_digest": "bbd188ae3e34dc19132676b1e0eb3190305a0716bc0426aeda143f5a52b6e1a7",
+      "template_digest": "4d7fc589183f84b34a66c9495798507b2ef4326e467f2e927effe9733bf1e545",
+      "dataset_path": "printed-replacement-part/03-synthesizer-tilt-foot",
+      "produced_artifacts": 15,
+      "produced_bytes": 2490789,
+      "missing_artifacts": [],
+      "completed_steps": 4,
+      "required_steps": 4,
+      "error_code": null,
+      "stopping_reason": null,
+      "known_gaps": [
+        "executed prompts were not retained",
+        "activity timing may be incomplete in this historical record"
+      ]
+    },
+    {
+      "case_id": "raspberry-pi-enclosure-01",
+      "family": "raspberry-pi-enclosure",
+      "title": "Riverstone desktop Pi case for a quiet creative studio",
+      "summary": "Design a refined pebble-like desktop enclosure from styling goals, manufacturer dimensional research, and a passive vent comparison.",
+      "attempt_id": "attempt-032",
+      "run_id": "ef9ed5964df742d69029db3e6cc7e581",
+      "run_path": "output/raspberry-pi-enclosure-01/attempt-032/run.json",
+      "run_sha256": "6fe8cf2271f23988987e688ebae8e21a15b42ae29053f30385da1678ab0b8031",
+      "status": "completed",
+      "selection_reason": "completed acceptance selection",
+      "dataset_digest": "b336a6c84258e4a13e091d6b49838181a8c637ece01d3e4815eb9f980f115485",
+      "template_digest": "9d7eda4f94145f02b0e1fbcdbffbeff2dccda524c76baac0b9eb4503ffb311b8",
+      "dataset_path": "raspberry-pi-enclosure/01-riverstone-desktop-computer",
+      "produced_artifacts": 40,
+      "produced_bytes": 29635448,
+      "missing_artifacts": [],
+      "completed_steps": 11,
+      "required_steps": 11,
+      "error_code": null,
+      "stopping_reason": null,
+      "known_gaps": [
+        "executed prompts were not retained",
+        "activity timing may be incomplete in this historical record"
+      ]
+    },
+    {
+      "case_id": "raspberry-pi-enclosure-02",
+      "family": "raspberry-pi-enclosure",
+      "title": "Vented greenhouse data-gateway case with service access",
+      "summary": "A horticulture team supplies installation geometry and load cycles for a splash-sheltered, ventilated Pi gateway with a protected cable entry.",
+      "attempt_id": "attempt-031",
+      "run_id": "8b15f2a87321460c8bdeddf6f462c3ac",
+      "run_path": "output/raspberry-pi-enclosure-02/attempt-031/run.json",
+      "run_sha256": "6cbda2993f14cfeec279f5235a9de10d6576120945a9af7ea1864935398acb21",
+      "status": "completed",
+      "selection_reason": "completed acceptance selection",
+      "dataset_digest": "9214cf8f038be4ac38edd63f027f31127355d4fd8d53552814ee3533d80c8cb2",
+      "template_digest": "9d7eda4f94145f02b0e1fbcdbffbeff2dccda524c76baac0b9eb4503ffb311b8",
+      "dataset_path": "raspberry-pi-enclosure/02-greenhouse-sensor-gateway",
+      "produced_artifacts": 42,
+      "produced_bytes": 32624354,
+      "missing_artifacts": [],
+      "completed_steps": 11,
+      "required_steps": 11,
+      "error_code": null,
+      "stopping_reason": null,
+      "known_gaps": [
+        "executed prompts were not retained",
+        "activity timing may be incomplete in this historical record"
+      ]
+    },
+    {
+      "case_id": "raspberry-pi-enclosure-03",
+      "family": "raspberry-pi-enclosure",
+      "title": "Serviceable edge-vision computer with a constrained fan path",
+      "summary": "An automation integrator needs a low-profile Pi enclosure with separated cable service zones and two controlled airflow layouts for an assumed blower.",
+      "attempt_id": "attempt-046",
+      "run_id": "d3e6f8ead48d4626a40af9fdf2a58ce5",
+      "run_path": "output/raspberry-pi-enclosure-03/attempt-046/run.json",
+      "run_sha256": "51fb16610af1e4a6fe2014937d12bbc0418df27cafdbc01ce43f9e21d8346f62",
+      "status": "completed",
+      "selection_reason": "completed acceptance selection",
+      "dataset_digest": "2b870e2c67ad8c97f77280cbbbe442b40b4b7278d09b01c7bcfbbbc1c40e478b",
+      "template_digest": "9d7eda4f94145f02b0e1fbcdbffbeff2dccda524c76baac0b9eb4503ffb311b8",
+      "dataset_path": "raspberry-pi-enclosure/03-edge-vision-instrument",
+      "produced_artifacts": 42,
+      "produced_bytes": 19022612,
+      "missing_artifacts": [],
+      "completed_steps": 11,
+      "required_steps": 11,
+      "error_code": null,
+      "stopping_reason": null,
+      "known_gaps": [
+        "executed prompts were not retained",
+        "activity timing may be incomplete in this historical record"
+      ]
+    },
+    {
+      "case_id": "robot-tracking-diagnosis-01",
+      "family": "robot-tracking-diagnosis",
+      "title": "Aisle tracking disturbance at a floor seam",
+      "summary": "Compare commanded, odometric and externally observed straight-line motion around a marked floor seam.",
+      "attempt_id": "attempt-003",
+      "run_id": "c743dbaa80484be89a4cd2a1bbb3f2f4",
+      "run_path": "output/robot-tracking-diagnosis-01/attempt-003/run.json",
+      "run_sha256": "0c633719f26bbf4023e09fe3b7517005c6d1e7cae9468c676ae674f6983babd9",
+      "status": "completed",
+      "selection_reason": "completed acceptance selection",
+      "dataset_digest": "f78312b055611aae685f3df0b2f9d15faf0d68131daf6f3068e09276a3b71f0c",
+      "template_digest": "8383ffbf8533294793d2cb77b10eda5b204ed70534f2c5722647332255fb1bdd",
+      "dataset_path": "robot-tracking-diagnosis/01-aisle-floor-seam",
+      "produced_artifacts": 11,
+      "produced_bytes": 180026,
+      "missing_artifacts": [],
+      "completed_steps": 6,
+      "required_steps": 6,
+      "error_code": null,
+      "stopping_reason": null,
+      "known_gaps": [
+        "executed prompts were not retained",
+        "activity timing may be incomplete in this historical record"
+      ]
+    },
+    {
+      "case_id": "robot-tracking-diagnosis-02",
+      "family": "robot-tracking-diagnosis",
+      "title": "Corner tracking with a separate camera clock",
+      "summary": "Diagnose apparent turn lag while explicitly accounting for tracker translation and timestamp offset.",
+      "attempt_id": "attempt-004",
+      "run_id": "36fef702fa0c451386546676f7f69f3d",
+      "run_path": "output/robot-tracking-diagnosis-02/attempt-004/run.json",
+      "run_sha256": "dd9a73f6f7d8e361eebdd441104f6f146f7b18da6a244d4ed0e2bc06d5831bfb",
+      "status": "completed",
+      "selection_reason": "completed acceptance selection",
+      "dataset_digest": "e3ff90c973bf160889412a254472724f0196c1d75a2eef8005bf726dd0f8ab8a",
+      "template_digest": "8383ffbf8533294793d2cb77b10eda5b204ed70534f2c5722647332255fb1bdd",
+      "dataset_path": "robot-tracking-diagnosis/02-corner-time-alignment",
+      "produced_artifacts": 11,
+      "produced_bytes": 188653,
+      "missing_artifacts": [],
+      "completed_steps": 6,
+      "required_steps": 6,
+      "error_code": null,
+      "stopping_reason": null,
+      "known_gaps": [
+        "executed prompts were not retained",
+        "activity timing may be incomplete in this historical record"
+      ]
+    },
+    {
+      "case_id": "robot-tracking-diagnosis-03",
+      "family": "robot-tracking-diagnosis",
+      "title": "Figure-eight run with external-pose dropout",
+      "summary": "Separate missing visual-tracker evidence from accumulating wheel-odometry disagreement on a curved route.",
+      "attempt_id": "attempt-005",
+      "run_id": "aa2574e23d6e4735991f84231ec89e4a",
+      "run_path": "output/robot-tracking-diagnosis-03/attempt-005/run.json",
+      "run_sha256": "2e8202b5e70fdc2024e9f53a74d61b6d034dbc41dca29b52561224e5354424e8",
+      "status": "completed",
+      "selection_reason": "completed acceptance selection",
+      "dataset_digest": "ada19660f516bcd5993af5d7be2e7bf4610f5e92a2580fb2662ff2d9c3b36c29",
+      "template_digest": "8383ffbf8533294793d2cb77b10eda5b204ed70534f2c5722647332255fb1bdd",
+      "dataset_path": "robot-tracking-diagnosis/03-figure-eight-occlusion",
+      "produced_artifacts": 11,
+      "produced_bytes": 198488,
+      "missing_artifacts": [],
+      "completed_steps": 6,
+      "required_steps": 6,
+      "error_code": null,
+      "stopping_reason": null,
+      "known_gaps": [
+        "executed prompts were not retained",
+        "activity timing may be incomplete in this historical record"
+      ]
+    },
+    {
+      "case_id": "sensor-fan-harness-01",
+      "family": "sensor-fan-harness",
+      "title": "Desktop incubator fan and sensor harness",
+      "summary": "Design a serviceable 24 V fan/PWM/tach and temperature-transmitter harness for a small benchtop chamber.",
+      "attempt_id": "attempt-003",
+      "run_id": "614ce0b3a46e4b81bfdf4324b5322ec5",
+      "run_path": "output/sensor-fan-harness-01/attempt-003/run.json",
+      "run_sha256": "7fba4ab3f4c011275f554a58d1190b5ee0ca476897eb69edf5e0247478b637d6",
+      "status": "completed",
+      "selection_reason": "completed acceptance selection",
+      "dataset_digest": "c0d89000b314ac0d9c81db0c39fb7e5ed74ed59bb9234fc0efcc7cb27e285ebd",
+      "template_digest": "beacf96e2b759b217084310e8fcc9ccea8b16f3e39006ddd5978ce044731edec",
+      "dataset_path": "sensor-fan-harness/01-desktop-incubator",
+      "produced_artifacts": 38,
+      "produced_bytes": 14751096,
+      "missing_artifacts": [],
+      "completed_steps": 5,
+      "required_steps": 5,
+      "error_code": null,
+      "stopping_reason": null,
+      "known_gaps": [
+        "executed prompts were not retained",
+        "activity timing may be incomplete in this historical record"
+      ]
+    },
+    {
+      "case_id": "sensor-fan-harness-02",
+      "family": "sensor-fan-harness",
+      "title": "Growth-rack long-branch ventilation harness",
+      "summary": "Select conductor sizes for two remote 24 V fans and a humidity transmitter with shared-trunk startup drop.",
+      "attempt_id": "attempt-003",
+      "run_id": "0d30e2a981be4e53b98205450c793839",
+      "run_path": "output/sensor-fan-harness-02/attempt-003/run.json",
+      "run_sha256": "71c07a5a9e7bc33fa29e8b30f3f9d4c2fe39da06bc703a9079544f87595a4b9a",
+      "status": "completed",
+      "selection_reason": "completed acceptance selection",
+      "dataset_digest": "4060c74efb7f2577b8c7b12e02b876e37e5c11a1b28c9ec6cdfc4cf5cda0923c",
+      "template_digest": "beacf96e2b759b217084310e8fcc9ccea8b16f3e39006ddd5978ce044731edec",
+      "dataset_path": "sensor-fan-harness/02-growth-rack-long-run",
+      "produced_artifacts": 36,
+      "produced_bytes": 14436197,
+      "missing_artifacts": [],
+      "completed_steps": 5,
+      "required_steps": 5,
+      "error_code": null,
+      "stopping_reason": null,
+      "known_gaps": [
+        "executed prompts were not retained",
+        "activity timing may be incomplete in this historical record"
+      ]
+    },
+    {
+      "case_id": "sensor-fan-harness-03",
+      "family": "sensor-fan-harness",
+      "title": "Dual-zone air-sampler service harness",
+      "summary": "Design a detachable dual-zone harness with two fan loads, two analog sensors and segregated sensor returns.",
+      "attempt_id": "attempt-003",
+      "run_id": "115b5a9c20ec4ac0b963464ac861ee13",
+      "run_path": "output/sensor-fan-harness-03/attempt-003/run.json",
+      "run_sha256": "9fbfe3d1f51d184de7a0330f3f5e7f074a98bce8456a983d9fa384f8c560e7e8",
+      "status": "completed",
+      "selection_reason": "completed acceptance selection",
+      "dataset_digest": "b26520de2bf0bf76334bae850a224e154f52c35e279e7e1f014cc078b6b0fafe",
+      "template_digest": "beacf96e2b759b217084310e8fcc9ccea8b16f3e39006ddd5978ce044731edec",
+      "dataset_path": "sensor-fan-harness/03-dual-zone-air-sampler",
+      "produced_artifacts": 38,
+      "produced_bytes": 16547672,
+      "missing_artifacts": [],
+      "completed_steps": 5,
+      "required_steps": 5,
+      "error_code": null,
+      "stopping_reason": null,
+      "known_gaps": [
+        "executed prompts were not retained",
+        "activity timing may be incomplete in this historical record"
+      ]
+    },
+    {
+      "case_id": "sensor-interface-pcb-01",
+      "family": "sensor-interface-pcb",
+      "title": "Coffee-roaster thermistor interface",
+      "summary": "Create a compact passive thermistor divider and filter board with explicit sensor/controller pin mapping.",
+      "attempt_id": "attempt-007",
+      "run_id": "e1c50913b3434948a4f21072249eaddb",
+      "run_path": "output/sensor-interface-pcb-01/attempt-007/run.json",
+      "run_sha256": "04debe0b07f1f5b820abbf3dd9ffea077c6bf4a5135f7f978163d4258b36c5a1",
+      "status": "completed",
+      "selection_reason": "completed acceptance selection",
+      "dataset_digest": "d58d4a312186b7cc383e0bd2feae3619436c8af14582654c9facd8980532c3f3",
+      "template_digest": "8ee1049d321b2a3a4ae853b932d8d0b8b728176020a0253af06939324a005834",
+      "dataset_path": "sensor-interface-pcb/01-thermistor-interface",
+      "produced_artifacts": 29,
+      "produced_bytes": 261862,
+      "missing_artifacts": [],
+      "completed_steps": 14,
+      "required_steps": 14,
+      "error_code": null,
+      "stopping_reason": null,
+      "known_gaps": [
+        "executed prompts were not retained",
+        "activity timing may be incomplete in this historical record"
+      ]
+    },
+    {
+      "case_id": "sensor-interface-pcb-02",
+      "family": "sensor-interface-pcb",
+      "title": "Dual pressure-sensor filter board",
+      "summary": "Route two 0–5 V sensor channels with independent RC filters, test points and keyed pin assignments.",
+      "attempt_id": "attempt-021",
+      "run_id": "5b091b55afd943e0ae9ff98ddbfe97d2",
+      "run_path": "output/sensor-interface-pcb-02/attempt-021/run.json",
+      "run_sha256": "60ce8ffb3a9a7db1a9b0c104bb1fd23244b54a50014be84c02206aac4b38cf0a",
+      "status": "completed",
+      "selection_reason": "completed acceptance selection",
+      "dataset_digest": "8190f0fe207fcd3d83351ab0a33a704409b49be08a057639e88b5247025d2d00",
+      "template_digest": "8ee1049d321b2a3a4ae853b932d8d0b8b728176020a0253af06939324a005834",
+      "dataset_path": "sensor-interface-pcb/02-dual-pressure-filter",
+      "produced_artifacts": 32,
+      "produced_bytes": 405611,
+      "missing_artifacts": [],
+      "completed_steps": 17,
+      "required_steps": 17,
+      "error_code": null,
+      "stopping_reason": null,
+      "known_gaps": [
+        "executed prompts were not retained",
+        "activity timing may be incomplete in this historical record"
+      ]
+    },
+    {
+      "case_id": "sensor-interface-pcb-03",
+      "family": "sensor-interface-pcb",
+      "title": "Fan tachometer service board",
+      "summary": "Create a service interface separating 24 V fan power from 3.3 V open-collector tach signals on a compact board.",
+      "attempt_id": "attempt-015",
+      "run_id": "012f53935fd542438e69ef725dc9ca5d",
+      "run_path": "output/sensor-interface-pcb-03/attempt-015/run.json",
+      "run_sha256": "633ae4c063fe5d43375967a150e510d8df5520525fd2e8526169797fcbe34704",
+      "status": "completed",
+      "selection_reason": "completed acceptance selection",
+      "dataset_digest": "66b7119118c770caa0e9608950b3b1849a0dac023a83944c06838e5c19d9d49b",
+      "template_digest": "8ee1049d321b2a3a4ae853b932d8d0b8b728176020a0253af06939324a005834",
+      "dataset_path": "sensor-interface-pcb/03-fan-tach-service-board",
+      "produced_artifacts": 32,
+      "produced_bytes": 458871,
+      "missing_artifacts": [],
+      "completed_steps": 17,
+      "required_steps": 17,
+      "error_code": null,
+      "stopping_reason": null,
+      "known_gaps": [
+        "executed prompts were not retained",
+        "activity timing may be incomplete in this historical record"
+      ]
+    },
+    {
+      "case_id": "sheet-metal-supplier-handoff-01",
+      "family": "sheet-metal-supplier-handoff",
+      "title": "Bent-aluminum wall dock for a warehouse barcode reader",
+      "summary": "A small warehouse needs a folded cradle with cable clearance and slotted wall mounting, plus reviewed supplier-ready CAD exports.",
+      "attempt_id": "attempt-006",
+      "run_id": "99a0e8f5cdae44a3afa87e644c888abc",
+      "run_path": "output/sheet-metal-supplier-handoff-01/attempt-006/run.json",
+      "run_sha256": "b8a02e182f6899e1fcd2badb0b355185e02522056361091e65237010d6fa22c8",
+      "status": "failed",
+      "selection_reason": "latest retained incomplete attempt",
+      "dataset_digest": "f18523eb2ffee3edceb65912229c89dc69cb0fc77a4f87bce12b0a79d64c08a5",
+      "template_digest": "57713c8df9f293e7e71c0ec53c1fc074c35532853a984c00b52ea0a061eab40b",
+      "dataset_path": "sheet-metal-supplier-handoff/01-barcode-reader-wall-dock",
+      "produced_artifacts": 19,
+      "produced_bytes": 2586083,
+      "missing_artifacts": [],
+      "completed_steps": 4,
+      "required_steps": 10,
+      "error_code": "TASK_BLOCKED",
+      "stopping_reason": "Create native Solid Edge sheet-metal CAD: Native CAD creation is blocked by the approved manufacturing intent. Before cad.create_sheet_metal_from_recipe may be called, supplier/tooling evidence must establish a supported complete forming sequence and tool access for the interrupted front bend, and approve or resolve the cable-notch/relief geometry within the 5.9944 mm half-die-width caution region. The 0.0879 mm-per-bend discrepancy between the controlling K-factor development and the supplier-listed bend deduction also requires supplier confirmation. No CAD document was created or modified.",
+      "known_gaps": [
+        "run did not complete",
+        "executed prompts were not retained",
+        "activity timing may be incomplete in this historical record"
+      ]
+    },
+    {
+      "case_id": "sheet-metal-supplier-handoff-02",
+      "family": "sheet-metal-supplier-handoff",
+      "title": "Four-bend cable trough for a test-station frame",
+      "summary": "An industrial test-cell builder supplies cable routing and maintenance constraints for a long open-ended steel trough with outward return flanges.",
+      "attempt_id": "attempt-006",
+      "run_id": "beaad1c60fee498fbed34e65860d57f2",
+      "run_path": "output/sheet-metal-supplier-handoff-02/attempt-006/run.json",
+      "run_sha256": "e2a8a778be89039d156d0e42676ea716dfc7a3fda0948166f7032726561848fd",
+      "status": "failed",
+      "selection_reason": "latest retained incomplete attempt",
+      "dataset_digest": "494c0f708f5008014aaa51310a82a697e50d3ae214f7ba0019fd4feed649e4bf",
+      "template_digest": "57713c8df9f293e7e71c0ec53c1fc074c35532853a984c00b52ea0a061eab40b",
+      "dataset_path": "sheet-metal-supplier-handoff/02-industrial-cable-trough",
+      "produced_artifacts": 19,
+      "produced_bytes": 2684939,
+      "missing_artifacts": [],
+      "completed_steps": 4,
+      "required_steps": 10,
+      "error_code": "MCP_CALL_FAILED",
+      "stopping_reason": "Create native Solid Edge sheet-metal CAD: the MCP tool reported an error. solid_edge_create_sheet_metal_failed None Solid Edge failed while creating native Sheet Metal flange 'left_wall': Solid Edge Flanges.AddFlangeByFace invocation failed: Exception has been thrown by the target of an invocation. --> Invalid pointer (0x80004003 (E_POINTER)) --> Exception has been thrown by the target of an invocation. --> Invalid pointer (0x80004003 (E_POINTER)) | solid_edge_create_sheet_metal_failed None Solid Edge failed while creating native Sheet Metal flange 'left_wall': Solid Edge Flanges.AddFlangeByFace invocation failed: Exception has been thrown by the target of an invocation. --> Invalid pointer (0x80004003 (E_POINTER)) --> Exception has been thrown by the target of an invocation. --> Invalid pointer (0x80004003 (E_POINTER)) Check Sheet Metal dimensions and edge targets, close modal dialogs, and retry the validated recipe in a responsive Solid Edge session.",
+      "known_gaps": [
+        "run did not complete",
+        "executed prompts were not retained",
+        "activity timing may be incomplete in this historical record"
+      ]
+    },
+    {
+      "case_id": "sheet-metal-supplier-handoff-03",
+      "family": "sheet-metal-supplier-handoff",
+      "title": "Styled two-piece instrumentation chassis for industrial data acquisition",
+      "summary": "A product team supplies an industrial styling brief and multi-bend tray/lid interfaces for a serviceable custom instrumentation enclosure.",
+      "attempt_id": "attempt-005",
+      "run_id": "8f9d95b75e544381a276c2339031f5a6",
+      "run_path": "output/sheet-metal-supplier-handoff-03/attempt-005/run.json",
+      "run_sha256": "b78ccd830b9b7328ae311031abc3e575e0136d7ccd0f4a8c2a6ef0e397ff73e0",
+      "status": "failed",
+      "selection_reason": "latest retained incomplete attempt",
+      "dataset_digest": "60f051a5a088b83d747be4dcb957e1287873bfd1a8451ca0d79ed2d6fc2b2d87",
+      "template_digest": "57713c8df9f293e7e71c0ec53c1fc074c35532853a984c00b52ea0a061eab40b",
+      "dataset_path": "sheet-metal-supplier-handoff/03-precision-instrument-chassis",
+      "produced_artifacts": 19,
+      "produced_bytes": 2588369,
+      "missing_artifacts": [],
+      "completed_steps": 4,
+      "required_steps": 13,
+      "error_code": "TASK_BLOCKED",
+      "stopping_reason": "Create native Solid Edge sheet-metal CAD: Base-tray creation was not performed. The approved manufacturing intent explicitly sets CAD release to BLOCKED_PENDING_MANDATORY_DFM_INPUT because the complete four-bend tooling sequence for the protected 80 mm walls is unsupported by the retrieved thin-sheet exception, supplier-compatible cut-feature/web limits for the protected vent and Ø3.4 mm hole geometry were not established, and mandatory native developed-geometry checks cannot exist before creation. The supplied policy requires failure rather than substituting geometry or treating manufacturing_release=HOLD as a waiver. Resolve these mandatory DFM inputs and issue revised approved intent before native CAD mutation.",
+      "known_gaps": [
+        "run did not complete",
+        "executed prompts were not retained",
+        "activity timing may be incomplete in this historical record"
+      ]
+    },
+    {
+      "case_id": "water-heater-sizing-01",
+      "family": "water-heater-sizing",
+      "title": "Single-cup countertop brewer heat-up",
+      "summary": "Select the lowest allowed heater power that heats a small brew reservoir within a three-minute wait target.",
+      "attempt_id": "attempt-005",
+      "run_id": "66b82651d9f1452f9a471d7a3418d64d",
+      "run_path": "output/water-heater-sizing-01/attempt-005/run.json",
+      "run_sha256": "739df98d9f40a03ea9d8cf263579dcebf3eff142b5ddb44e3145b4eb6b7229ab",
+      "status": "completed",
+      "selection_reason": "completed acceptance selection",
+      "dataset_digest": "39f0ae63017a37b1a62eb694f80214299adb55442dba49939c2827024641781f",
+      "template_digest": "1f15bedb18136a8d6e77dde201c9c79f14a439627901da858b207c321f166d6a",
+      "dataset_path": "water-heater-sizing/01-single-cup-countertop",
+      "produced_artifacts": 54,
+      "produced_bytes": 775885,
+      "missing_artifacts": [],
+      "completed_steps": 9,
+      "required_steps": 9,
+      "error_code": null,
+      "stopping_reason": null,
+      "known_gaps": [
+        "executed prompts were not retained",
+        "activity timing may be incomplete in this historical record"
+      ]
+    },
+    {
+      "case_id": "water-heater-sizing-02",
+      "family": "water-heater-sizing",
+      "title": "Mobile field-station brewer power budget",
+      "summary": "Compare portable brewer heat-up options under a limited inverter output and battery-energy planning budget.",
+      "attempt_id": "attempt-003",
+      "run_id": "f62ce8a479284106859d902be7299fd8",
+      "run_path": "output/water-heater-sizing-02/attempt-003/run.json",
+      "run_sha256": "0d60a13d7e445430c82ee5b137dd5e417ceedc9022862005533e61902b6af5bd",
+      "status": "completed",
+      "selection_reason": "completed acceptance selection",
+      "dataset_digest": "574ed0076a9d734981dbdb59d2bbce54aa57eb011a4852ad772275a1812069c9",
+      "template_digest": "1f15bedb18136a8d6e77dde201c9c79f14a439627901da858b207c321f166d6a",
+      "dataset_path": "water-heater-sizing/02-mobile-field-brewer",
+      "produced_artifacts": 54,
+      "produced_bytes": 1366815,
+      "missing_artifacts": [],
+      "completed_steps": 9,
+      "required_steps": 9,
+      "error_code": null,
+      "stopping_reason": null,
+      "known_gaps": [
+        "executed prompts were not retained",
+        "activity timing may be incomplete in this historical record"
+      ]
+    },
+    {
+      "case_id": "water-heater-sizing-03",
+      "family": "water-heater-sizing",
+      "title": "Pilot batch-dispenser heater study",
+      "summary": "Evaluate power settings and declared loss uncertainty for a larger pilot-batch hot-water dispenser.",
+      "attempt_id": "attempt-003",
+      "run_id": "ff1caf87d0014a42bfa5b8059d90eae3",
+      "run_path": "output/water-heater-sizing-03/attempt-003/run.json",
+      "run_sha256": "d3ae8f516cc22fe070521f8c8b6f96fc01ea91f0d725d0cc4b7454b8df1f5b99",
+      "status": "completed",
+      "selection_reason": "completed acceptance selection",
+      "dataset_digest": "b6d434f03e5abacc4a848f60fdeabddc8b70a1bc4e769ab85b1e6de17312badc",
+      "template_digest": "1f15bedb18136a8d6e77dde201c9c79f14a439627901da858b207c321f166d6a",
+      "dataset_path": "water-heater-sizing/03-pilot-batch-dispensing",
+      "produced_artifacts": 150,
+      "produced_bytes": 4839014,
+      "missing_artifacts": [],
+      "completed_steps": 25,
+      "required_steps": 25,
+      "error_code": null,
+      "stopping_reason": null,
+      "known_gaps": [
+        "executed prompts were not retained",
+        "activity timing may be incomplete in this historical record"
+      ]
+    }
+  ]
+}

@@ -21,6 +21,8 @@ import { toCanonicalWire } from "./canonical-wire";
 import { formatRecoveryDsl, parseRecoveryDsl } from "./recovery-dsl";
 import { validateRecoveryAuthoringRoundTrip } from "./recovery-authoring";
 import {
+  assignMcpWorkOperation,
+  canAssignMcpWorkOperation,
   validateAuthoringConfiguration,
   validateAuthoringConnections,
 } from "./authoring-objects";
@@ -49,6 +51,12 @@ export type RecoveryCommand =
     }
   | { kind: "set_block_title"; blockId: string; title: string }
   | { kind: "set_block_kind"; blockId: string; value: RecoveryBlock["kind"] }
+  | { kind: "assign_mcp_work_operation"; blockId: string }
+  | {
+      kind: "set_block_execution_kind";
+      blockId: string;
+      executionKind: RecoveryBlock["executionKind"];
+    }
   | {
       kind: "set_block_definition";
       blockId: string;
@@ -252,13 +260,14 @@ function applyCommand(
     return;
   }
   if (command.kind === "set_block_execution_kind") {
+    const value = "value" in command ? command.value : command.executionKind;
     const target = block(workflow, command.blockId);
     if (
       recoveryAuthoringSectionKind(target) !== "task" ||
-      !["human", "deterministic", "ai_capable"].includes(command.value)
+      !["human", "deterministic", "ai_capable"].includes(value)
     )
       throw new Error(`WFR-COMMAND-EXECUTION-KIND-INVALID:${command.blockId}`);
-    target.executionKind = command.value;
+    target.executionKind = value;
     return;
   }
   if (command.kind === "set_block_kind") {
@@ -269,6 +278,11 @@ function applyCommand(
     )
       throw new Error(`WFR-COMMAND-STEP-TYPE-INVALID:${command.blockId}`);
     target.kind = command.value;
+    return;
+  }
+  if (command.kind === "assign_mcp_work_operation") {
+    const target = block(workflow, command.blockId);
+    Object.assign(target, assignMcpWorkOperation(target));
     return;
   }
   if (command.kind === "set_block_definition") {
@@ -880,12 +894,22 @@ export function textEditCommands(
         blockId: current.id,
         title: edited.title,
       });
+    let definitionBase = current;
+    if (
+      current.executionKind !== edited.executionKind &&
+      edited.executionKind === "ai_capable" &&
+      edited.configuration.authoring_template === "mcp-task" &&
+      canAssignMcpWorkOperation(current)
+    ) {
+      edits.push({ kind: "assign_mcp_work_operation", blockId: current.id });
+      definitionBase = assignMcpWorkOperation(current);
+    }
     const definitionPatch: Partial<
       Pick<RecoveryBlock, "purpose" | "instructions">
     > = {};
     if (current.purpose !== edited.purpose)
       definitionPatch.purpose = edited.purpose;
-    if (current.instructions !== edited.instructions)
+    if (definitionBase.instructions !== edited.instructions)
       definitionPatch.instructions = edited.instructions;
     if (Object.keys(definitionPatch).length > 0)
       edits.push({
@@ -894,7 +918,7 @@ export function textEditCommands(
         patch: definitionPatch,
       });
     const keys = new Set([
-      ...Object.keys(current.configuration),
+      ...Object.keys(definitionBase.configuration),
       ...Object.keys(edited.configuration),
     ]);
     for (const key of keys) {
@@ -940,7 +964,7 @@ export function textEditCommands(
               "Restore the key or configure the block in the inspector.",
           },
         ];
-      if (current.configuration[key] !== edited.configuration[key])
+      if (definitionBase.configuration[key] !== edited.configuration[key])
         edits.push({
           kind: "set_block_configuration",
           blockId: current.id,

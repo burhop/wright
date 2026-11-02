@@ -12,6 +12,42 @@ import {
   type ToolpathDocument,
 } from "./toolpaths";
 
+/** A bounded, passive view of supplied fields; no inferred units or verdicts. */
+function RecordedValue({ value, depth = 0 }: { value: JsonValue; depth?: number }) {
+  const [expanded, setExpanded] = useState(depth === 0);
+  const [limit, setLimit] = useState(25);
+  if (value === null) return <span className="wp-muted">No value</span>;
+  if (typeof value === "boolean") return <span>{value ? "Yes" : "No"}</span>;
+  if (typeof value !== "object") return <span>{String(value)}</span>;
+  const isArray = Array.isArray(value);
+  const entries = isArray
+    ? value.map((item, index) => [String(index + 1), item] as const)
+    : Object.entries(value);
+  if (!entries.length) return <span className="wp-muted">{isArray ? "No items" : "No fields"}</span>;
+  if (depth >= 6) return <span className="wp-muted">Further detail is available in the file download.</span>;
+  const table = (
+    <div className="wp-table">
+      <table>
+        <thead><tr><th scope="col">{isArray ? "Item" : "Field"}</th><th scope="col">Value</th></tr></thead>
+        <tbody>{entries.slice(0, limit).map(([key, item]) => (
+          <tr key={key}>
+            <th scope="row" title={key}>{isArray ? key : key.replaceAll("_", " ")}</th>
+            <td><RecordedValue value={item} depth={depth + 1} /></td>
+          </tr>
+        ))}</tbody>
+      </table>
+      {entries.length > limit && <button type="button" className="wp-link" onClick={() => setLimit((current) => current + 25)}>
+        Show more ({entries.length - limit} remaining)
+      </button>}
+    </div>
+  );
+  if (depth === 0) return table;
+  return <details onToggle={(event) => setExpanded(event.currentTarget.open)}>
+    <summary>{entries.length} {isArray ? "items" : "fields"}</summary>
+    {expanded && table}
+  </details>;
+}
+
 /** Download the exact bytes supplied by the scoped representation owner. */
 export function RepresentationDownload({ blob, name }: { blob: Blob; name: string }) {
   const request = useFileDownload();
@@ -58,17 +94,21 @@ function HostRepresentationDownload({ blob, name, request }: { blob: Blob; name:
 }
 function BrowserRepresentationDownload({ blob, name }: { blob: Blob; name: string }) {
   const [link, setLink] = useState<{ blob: Blob; url: string }>();
+  const [error, setError] = useState(false);
   useEffect(() => {
-    const url = URL.createObjectURL(blob);
-    setLink({ blob, url });
-    return () => URL.revokeObjectURL(url);
+    setError(false);
+    setLink(undefined);
+    try {
+      const url = URL.createObjectURL(blob);
+      setLink({ blob, url });
+      return () => URL.revokeObjectURL(url);
+    } catch {
+      setError(true);
+    }
   }, [blob]);
+  if (error) return <p role="status">File download is unavailable in this view.</p>;
   return link?.blob === blob ? (
-    <a
-      className="wp-link"
-      href={link.url}
-      download={name.split("/").at(-1) || "representation"}
-    >
+    <a className="wp-link" href={link.url} download={name.replaceAll("\\", "/").split("/").at(-1) || "representation"}>
       Download exact file
     </a>
   ) : null;
@@ -117,7 +157,7 @@ export function DataTable({
               <tr key={index}>
                 {row.map((cell, column) => (
                   <td key={column}>
-                    {typeof cell === "string" ? cell : JSON.stringify(cell)}
+                    <RecordedValue value={cell} depth={1} />
                   </td>
                 ))}
               </tr>
@@ -464,6 +504,7 @@ export function RepresentationViewer({
     bytes?: ArrayBuffer;
     toolpaths?: ToolpathDocument;
     assessment?: string;
+    record?: JsonValue;
     message?: string;
   }>();
   const [error, setError] = useState<{ blob: Blob; message: string }>();
@@ -521,9 +562,14 @@ export function RepresentationViewer({
               try {
                 record = JSON.parse(text);
               } catch {
-                // Ordinary text fallback remains bounded below.
+                return { text };
               }
               if (isAssessmentRecord(record)) return { assessment: text };
+              // Historical or incomplete assessment data remains inspectable;
+              // this raw view supplies no assessment or approval authority.
+              if (record && typeof record === "object" && !Array.isArray(record) &&
+                  (record as Record<string, unknown>).schema_version === "wright.process-validation/1")
+                return { text: readableJson(text) };
               if (
                 record &&
                 typeof record === "object" &&
@@ -537,7 +583,7 @@ export function RepresentationViewer({
                   toolpaths: parseRecordedToolpaths(record, sourceSha256),
                 };
               }
-              if (blob.size > 1024 * 1024)
+              if (blob.size > 65536)
                 return {
                   message:
                     "This representation exceeds the supported text preview size. Download it to inspect the complete file.",
@@ -594,6 +640,7 @@ export function RepresentationViewer({
   if (data.assessment !== undefined)
     return <AssessmentReportViewer blob={blob} source={data.assessment} readReport={readValidationReport} onReady={onReady} />;
   if (data.message) return <p role="status">{data.message}</p>;
+  if (data.record !== undefined) return <RecordedValue key={sourceSha256 ?? title} value={data.record} />;
   if (
     data.bytes &&
     ["model/stl", "application/sla", "application/vnd.ms-pki.stl"].includes(

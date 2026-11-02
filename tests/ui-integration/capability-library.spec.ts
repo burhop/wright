@@ -231,10 +231,11 @@ test.describe("Offline Capability Library", () => {
     });
   });
 
-  test("reviews the three lists, lifecycle gaps, and preserved installations", async ({ page }) => {
+  test("excludes retired discovery while preserving installed integrations", async ({ page }) => {
     await page.route("**/api/mcp/capabilities?*", async route => {
-      const list = new URL(route.request().url()).searchParams.get("curation");
-      const selected = list === "removed" ? { ...capability,
+      const parameters = new URL(route.request().url()).searchParams;
+      const list = parameters.get("curation");
+      const selected = parameters.get("installed") === "true" ? { ...capability,
         available_actions: ["view_details", "observe"],
         curation: { disposition: "removed", effective_disposition: "removed", reason: "Publisher archived this implementation.",
           owner: "Wright maintainers", reviewed_at: "2026-09-08", review_due: "2026-10-08", next_action: "Review the replacement.",
@@ -255,14 +256,16 @@ test.describe("Offline Capability Library", () => {
     await expect(page).toHaveURL(/engineering_stage=manufacturing/);
     await page.getByText("Engineering lifecycle coverage", { exact: true }).click();
     await expect(page.getByTestId("capability-lifecycle-coverage")).toContainText("Gap");
-    await page.getByLabel("Catalog list").selectOption("removed");
+    await expect(page.getByLabel("Catalog list").locator('option[value="removed"]')).toHaveCount(0);
+    await expect(page.getByTestId("capability-curation-summary")).not.toContainText("removed");
+    await page.getByRole("button", { name: "Show installed integrations" }).click();
+    await expect(page).toHaveURL(/curation=all/);
+    await expect(page).toHaveURL(/installed=true/);
+    await expect(page).toHaveURL(/platform=all/);
     await page.getByRole("button", { name: /View MCP server details for/ }).click();
     await expect(page.getByRole("dialog")).toContainText("Publisher archived this implementation.");
     await expect(page.getByRole("dialog").getByRole("button", { name: "Install MCP server", exact: true })).toHaveCount(0);
     await page.keyboard.press("Escape");
-    await page.getByRole("button", { name: "Show installed integrations" }).click();
-    await expect(page).toHaveURL(/curation=all/);
-    await expect(page).toHaveURL(/installed=true/);
     await page.screenshot({ path: "test-results/mcp-curation-library.png", fullPage: true });
   });
 
@@ -422,11 +425,39 @@ test.describe("Live local Capability Library", () => {
       { timeout: 60_000 },
     );
     await page.goto("/tool-registry");
-    expect((await response).status()).toBe(200);
+    const initial = await response;
+    expect(initial.status()).toBe(200);
+    expect(new URL(initial.url()).searchParams.get("platform")).toBe("current");
+    const body = await initial.json();
+    expect(body.current_platform).toBeTruthy();
+    for (const item of body.capabilities) {
+      expect(["yes", "likely", "host-dependent"]).toContain(
+        item.requirements.supported_platforms[body.current_platform]?.status,
+      );
+      expect(item.curation.effective_disposition).not.toBe("removed");
+    }
     await expect(
       page.getByRole("heading", { name: "Engineering MCP Server Library" }),
     ).toBeVisible();
     await expect(page.getByLabel("MCP server filters")).toBeVisible();
+    await expect(page.getByTestId("nav-tool-registry")).toHaveText("Tool Registry");
+    await expect(page.getByLabel("Current platform and architecture")).toHaveValue("current");
+    await page.screenshot({ path: "test-results/registry-current-platform.png", fullPage: true });
+
+    const allResponse = page.waitForResponse(candidate =>
+      candidate.url().includes("/api/mcp/capabilities?") &&
+      !new URL(candidate.url()).searchParams.has("platform"),
+    );
+    await page.getByLabel("Current platform and architecture").selectOption("all");
+    const all = await (await allResponse).json();
+    expect(all.total).toBeGreaterThanOrEqual(body.total);
+    await page.reload();
+    await expect(page.getByLabel("Current platform and architecture")).toHaveValue("all");
+    await page.getByLabel("Current platform and architecture").selectOption("current");
+    await expect(page.getByTestId("capability-offline-source")).toContainText(`${body.total} matching MCP servers`);
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.screenshot({ path: "test-results/registry-current-platform-mobile.png", fullPage: true });
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
     expect(vendorRequests).toEqual([]);
   });
 });

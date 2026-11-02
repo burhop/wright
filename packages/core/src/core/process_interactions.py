@@ -64,6 +64,21 @@ def checked_timestamp(value: str) -> str:
 
 Timestamp = Annotated[str, AfterValidator(checked_timestamp)]
 Locator = Annotated[Identifier, AfterValidator(relative_locator)]
+
+
+def checked_file_locator(value: str) -> str:
+    # A file path is not a single identifier. Preserve its exact spelling while
+    # rejecting ambiguous whitespace/control characters before confinement checks.
+    if value.strip() != value or any(
+        ord(char) < 32 or ord(char) == 127 for char in value
+    ):
+        raise ValueError(
+            "File locator cannot contain surrounding whitespace or controls"
+        )
+    return relative_locator(value)
+
+
+FileLocator = Annotated[Text, AfterValidator(checked_file_locator)]
 # Dependencies identify either an input block or a connected block.port pair.
 # Each source identifier is bounded to 160 characters; the joined address must
 # retain both components and its separator without truncating the source identity.
@@ -221,7 +236,7 @@ class ProcessRef(Contract):
 
 
 class ArtifactRef(Contract):
-    artifact_ref: Locator
+    artifact_ref: FileLocator
     sha256: Digest
     media_type: Identifier | None = None
     result_id: ResultIdentifier | None = None
@@ -302,7 +317,7 @@ class StartReceipt(Contract):
     input_snapshot_id: Identifier
     input_digest: Digest
     run_id: Identifier
-    run_log_path: Locator | None = None
+    run_log_path: FileLocator | None = None
     initial_outcome: Literal["accepted"] = "accepted"
     created_at: Timestamp
 
@@ -344,7 +359,7 @@ class NavigationTarget(Contract):
     run_id: Identifier | None = None
     result_id: ResultIdentifier | None = None
     assessment_id: Identifier | None = None
-    artifact_ref: Locator | None = None
+    artifact_ref: FileLocator | None = None
 
     @model_validator(mode="after")
     def exact_destination(self):
@@ -375,7 +390,7 @@ class Reason(Contract):
     binding_id: Identifier | None = None
     step_id: Identifier | None = None
     navigation: NavigationTarget | None = None
-    technical_details_ref: Locator | None = None
+    technical_details_ref: FileLocator | None = None
 
 
 class InputDependency(Contract):

@@ -1883,7 +1883,7 @@ class WorkspaceWorkflowSourceStore:
         origin_path = self._metadata_directory(slug) / "template-origin.json"
         origin_content = (
             json.dumps(
-                origin,
+                {**origin, "instantiated_source_digest": storage_digest},
                 sort_keys=True,
                 separators=(",", ":"),
                 allow_nan=False,
