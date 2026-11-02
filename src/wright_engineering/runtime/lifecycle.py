@@ -89,6 +89,7 @@ class NativeLifecycle:
         self.installer = installer or RuntimeInstaller(layout)
         self.process_manager = process_manager or ProcessManager()
         self.health_probe = health_probe or self._probe_health
+        self.startup_health_probe = health_probe or self._probe_startup_health
         self.compatibility = compatibility or CompatibilityPolicy.load(
             Path(str(files("wright_engineering").joinpath("compatibility.json")))
         )
@@ -249,7 +250,7 @@ class NativeLifecycle:
                 manifest.current_operation.checkpoint = "process_launched"
                 self.store.save(manifest)
 
-                if not self.health_probe(identity):
+                if not self.startup_health_probe(identity):
                     try:
                         self.process_manager.stop(
                             identity,
@@ -1482,7 +1483,7 @@ class NativeLifecycle:
                 environment=self._runtime_environment(),
                 log_handle=log_handle,
             )
-        if not self.health_probe(identity):
+        if not self.startup_health_probe(identity):
             try:
                 self.process_manager.stop(
                     identity,
@@ -1568,8 +1569,19 @@ class NativeLifecycle:
 
     @staticmethod
     def _probe_health(identity: ProcessIdentity) -> bool:
+        return NativeLifecycle._wait_for_health(identity, timeout=30.0)
+
+    @staticmethod
+    def _probe_startup_health(identity: ProcessIdentity) -> bool:
+        # Fresh Windows environments can need more than 30 seconds to import
+        # the packaged services and reconcile their first database. Keep that
+        # bounded startup allowance separate from ordinary status observation.
+        return NativeLifecycle._wait_for_health(identity, timeout=120.0)
+
+    @staticmethod
+    def _wait_for_health(identity: ProcessIdentity, *, timeout: float) -> bool:
         url = f"http://{identity.host}:{identity.port}/api/runtime/identity"
-        deadline = time.monotonic() + 30.0
+        deadline = time.monotonic() + timeout
         while time.monotonic() < deadline:
             try:
                 with urllib.request.urlopen(url, timeout=2.0) as response:
