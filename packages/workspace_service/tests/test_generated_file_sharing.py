@@ -10,6 +10,7 @@ import time
 from concurrent.futures import ThreadPoolExecutor
 from contextlib import contextmanager
 from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 
@@ -51,6 +52,7 @@ def test_real_reader_releases_and_checkpoint_replacement_succeeds(
     target = tmp_path / "run.json"
     old, new = b'{"event":1}', b'{"event":2}'
     target.write_bytes(old)
+    files = LocalWorkspaceFiles(str(tmp_path))
     held, denied = threading.Event(), threading.Event()
     errors = []
 
@@ -76,12 +78,7 @@ def test_real_reader_releases_and_checkpoint_replacement_succeeds(
     with ThreadPoolExecutor(max_workers=1) as pool:
         reader = pool.submit(read_then_release)
         assert held.wait(2)
-        assert (
-            LocalWorkspaceFiles(str(tmp_path)).write_generated(
-                "run.json", new, "overwrite"
-            )
-            == "run.json"
-        )
+        assert files.write_generated("run.json", new, "overwrite") == "run.json"
         reader.result(timeout=2)
     assert errors and set(errors) <= {5, 32, 33}
     assert target.read_bytes() == new
@@ -89,16 +86,34 @@ def test_real_reader_releases_and_checkpoint_replacement_succeeds(
 
 
 @pytest.mark.skipif(os.name != "nt", reason="Uses actual Windows file sharing")
-def test_real_persistent_reader_fails_bounded_and_preserves_target(tmp_path):
+def test_real_persistent_reader_fails_bounded_and_preserves_target(
+    tmp_path, monkeypatch
+):
     target = tmp_path / "run.json"
     target.write_bytes(b"original")
-    started = time.monotonic()
+    files = LocalWorkspaceFiles(str(tmp_path))
+    calls, delays = [], []
+    real_replace, real_sleep = os.replace, time.sleep
+
+    def replace(source, destination):
+        calls.append((source, destination))
+        assert len(calls) <= 6, "A persistent native denial must have a finite bound"
+        assert Path(source).read_bytes() == b"new"
+        return real_replace(source, destination)
+
+    def sleep(delay):
+        delays.append(delay)
+        real_sleep(delay)
+
+    monkeypatch.setattr(filesystem.os, "replace", replace)
+    monkeypatch.setattr(filesystem, "time", SimpleNamespace(sleep=sleep))
     with windows_reader(target), pytest.raises(OSError) as caught:
-        LocalWorkspaceFiles(str(tmp_path)).write_generated(
-            "run.json", b"new", "overwrite"
-        )
+        files.write_generated("run.json", b"new", "overwrite")
     assert caught.value.winerror in {5, 32, 33}
-    assert time.monotonic() - started < 3
+    assert len(calls) == 6
+    assert len({source for source, _ in calls}) == 1
+    assert all(destination == target for _, destination in calls)
+    assert delays == [0.02, 0.04, 0.08, 0.16, 0.20]
     assert target.read_bytes() == b"original"
     assert not list(tmp_path.glob(".wright-output-*"))
 

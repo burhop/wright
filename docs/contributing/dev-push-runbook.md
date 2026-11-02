@@ -626,6 +626,17 @@ origin/peer checks, credential non-disclosure and denied-file/no-login assertion
 
 ### Windows run-record read contention
 
+Native file-publication tests initialize their Git workspace before acquiring a
+reader lock. They observe the actual finite replacement attempts, exact retry
+delays, retained temporary bytes and unchanged target; cold Git setup and host
+scheduling are not a three-second publication SLA. Removing the retry bound must
+fail deterministically while actual Windows handle sharing remains exercised.
+
+The native file-tab pin test uses a real parent-directory junction when Windows
+rejects file-symlink creation with privilege error 1314. The file bytes remain
+identical; resolving through the reparse point must fail before any owner read.
+Capable hosts retain real file-symlink coverage. Other link failures remain errors.
+
 Exact-record path resolution participates in the same bounded Windows read
 budget as opening the record. A transient missing/denied observation rechecks
 confinement and the same exact path; persistent absence, permanent denial,
