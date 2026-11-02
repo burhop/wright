@@ -783,3 +783,13 @@ CP1252 defaults, cross-drive URLs and Git Bash selection on every host. The broa
 suites remain unchanged; no failed test, payload or historical hash is waived.
 These corrections include reporting/transport source changes, so they require a
 fresh full product gate, normal pre-push gate and current-head CI.
+
+The same portability review found that selecting evidence folders with a literal
+`/report.json` suffix missed native Windows paths. Use native path components;
+a controlled POSIX/Windows path fixture requires rejection of nested report
+outputs before any output filesystem access. Exact final model responses and
+transport records also disable newline translation, including an explicit CRLF
+response test. Preserve historical bytes and both existing audit hashes. If a
+source defect is found while a gate is running, preserve that incomplete log,
+stop only the task-owned gate and qualify the final source; an interrupted gate
+is not a passing receipt.

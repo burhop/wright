@@ -1126,7 +1126,7 @@ def export(registry_path, output_path):
     targets = [output, output.with_suffix(".json"),
                output.with_name(output.stem + "-status.json")]
     record_roots = {
-        str(Path(p).parent) for p in data["source_sha256"] if p.endswith("/report.json")
+        Path(p).parent for p in data["source_sha256"] if Path(p).name == "report.json"
     }
     for target in targets:
         if str(target) in data["source_sha256"] or any(

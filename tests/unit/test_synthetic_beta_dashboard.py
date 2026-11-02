@@ -4,7 +4,7 @@ import importlib
 from copy import deepcopy
 from datetime import timedelta
 import json
-from pathlib import Path
+from pathlib import Path, PurePosixPath, PureWindowsPath
 import shutil
 import subprocess
 import sys
@@ -32,6 +32,33 @@ def test_report_link_uses_url_separators(monkeypatch):
     monkeypatch.setattr(view.os.path, "relpath", lambda *_: "records\\a b.json")
     monkeypatch.setattr(view.os, "sep", "\\")
     assert view.link(Path("unused"), Path("report.html")) == "records/a%20b.json"
+
+
+@pytest.mark.parametrize("path_type", [PurePosixPath, PureWindowsPath])
+def test_export_rejects_nested_output_inside_evidence_on_each_path_style(
+    path_type, monkeypatch
+):
+    class EvidencePath(path_type):
+        def absolute(self):
+            return self
+
+        def is_symlink(self):
+            pytest.fail(
+                "evidence confinement must reject before output filesystem access"
+            )
+
+    root = (
+        EvidencePath("/records/attempt")
+        if path_type is PurePosixPath
+        else EvidencePath("D:/records/attempt")
+    )
+    source = root / "report.json"
+    monkeypatch.setattr(view, "Path", EvidencePath)
+    monkeypatch.setattr(
+        view, "build_data", lambda *_: {"source_sha256": {str(source): "fixture"}}
+    )
+    with pytest.raises(ReportError, match="evidence source"):
+        view.export("unused", root / "nested/new-report.html")
 
 
 @pytest.fixture

@@ -174,7 +174,7 @@ def run_agent(
         "provenance_scope": "app-server observable routing/usage only; no provider-internal prompt claim",
         "isolation_scope": "caller-owned process/container; fresh ephemeral thread verified here",
     }
-    transcript = (root / "transport.jsonl").open("x", encoding="utf-8")
+    transcript = (root / "transport.jsonl").open("x", encoding="utf-8", newline="")
     incoming: queue.Queue = queue.Queue()
     process = None
     final_messages = []
@@ -490,7 +490,9 @@ def run_agent(
             raise AgentProtocolError("completed turn has no final customer report")
         record["status"] = "completed"
         record["final_text"] = redact(final_messages[-1])
-        (root / "final.txt").write_text(record["final_text"], encoding="utf-8")
+        (root / "final.txt").write_text(
+            record["final_text"], encoding="utf-8", newline=""
+        )
     except Exception as exc:
         record["status"] = "timed_out" if isinstance(exc, TimeoutError) else "failed"
         record["error"] = redact(str(exc))
@@ -514,6 +516,6 @@ def run_agent(
         record["finished_at"] = datetime.now(timezone.utc).isoformat()
         transcript.close()
         (root / "agent-result.json").write_text(
-            json.dumps(redact(record), indent=2) + "\n", encoding="utf-8"
+            json.dumps(redact(record), indent=2) + "\n", encoding="utf-8", newline=""
         )
     return record

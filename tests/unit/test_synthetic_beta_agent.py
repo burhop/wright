@@ -53,7 +53,7 @@ for line in sys.stdin:
   send({'method':'thread/tokenUsage/updated','params':{'threadId':'thread-1','turnId':'turn-1','tokenUsage':{'total':{'inputTokens':123,'outputTokens':45,'totalTokens':168},'last':{'totalTokens':168}}}})
   send({'method':'item/completed','params':{'threadId':'thread-1','turnId':'turn-1','item':{'id':'comment','type':'agentMessage','phase':'commentary','text':'interim'}}})
   send({'method':'item/completed','params':{'threadId':'thread-1','turnId':'turn-1','item':{'id':'reason','type':'reasoning','content':['do not capture hidden reasoning']}}})
-  if mode!='no-final': send({'method':'item/completed','params':{'threadId':'thread-1','turnId':'turn-1','item':{'id':'final','type':'agentMessage','phase':'final_answer','text':'{"observed":"fixture result"}'}}})
+  if mode!='no-final': send({'method':'item/completed','params':{'threadId':'thread-1','turnId':'turn-1','item':{'id':'final','type':'agentMessage','phase':'final_answer','text':'{"observed":"fixture result"}'+ ('\r\n' if mode=='line-endings' else '')}}})
   send({'method':'turn/completed','params':{'threadId':'thread-1','turn':{'id':'turn-1','status':'completed'}}})
 """
 
@@ -132,6 +132,15 @@ def test_output_schema_is_forwarded_exactly_and_recorded(tmp_path):
         json.dumps(schema, sort_keys=True, separators=(",", ":")).encode()
     ).hexdigest()
     assert result["output_schema_sha256"] == expected
+
+
+def test_final_response_preserves_exact_utf8_and_line_endings(tmp_path):
+    result = run(tmp_path, "line-endings")
+    assert result["status"] == "completed"
+    assert result["final_text"].endswith("\r\n")
+    assert (tmp_path / "output/final.txt").read_bytes() == result["final_text"].encode(
+        "utf-8"
+    )
 
 
 @pytest.mark.parametrize(
