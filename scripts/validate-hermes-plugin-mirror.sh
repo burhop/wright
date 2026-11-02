@@ -64,7 +64,7 @@ if [ "$CHANNEL" = stable ] && [ -f "$MIRROR_DIR/runtime-release.json" ]; then
   fail "stable mirror must not select a TestPyPI runtime"
 fi
 if [ -f "$MIRROR_DIR/runtime-release.json" ]; then
-  "${PYTHON_CMD[@]}" - "$MIRROR_DIR" <<'PY' || fail "invalid pinned development runtime"
+  "${PYTHON_CMD[@]}" -B - "$MIRROR_DIR" <<'PY' || fail "invalid pinned development runtime"
 import importlib.util, pathlib, sys
 root = pathlib.Path(sys.argv[1])
 spec = importlib.util.spec_from_file_location("mirror_bootstrap_validation", root / "bootstrap.py")
