@@ -1,7 +1,9 @@
 """HTTP proof of the installed setup route, with discovery metadata only."""
 
+import hashlib
 import json
 import re
+import shutil
 from types import SimpleNamespace
 from unittest.mock import AsyncMock
 
@@ -9,16 +11,27 @@ import pytest
 from api.main import app
 from api.routers.workspace import get_workspace_service
 from apps.api.tests.test_engineering_workflow_template_api import _Service
+from workspace_service import engineering_workflow_templates as template_resources
 from workspace_service import handle_setup_resources as resources
 from workspace_service.workflow_mcp_execution import WorkflowMcpRuntime
 
 PREFIX = "/api/workspace/workflow-source-templates/replacement-drawer-handle"
 
 
+@pytest.mark.parametrize("source_newline", ["lf", "crlf"])
 @pytest.mark.parametrize("mount", ["native", "windows", "different"])
 def test_handle_setup_http_proposes_inspectable_revision_then_explicit_cas(
-    sync_client, tmp_path, monkeypatch, mount
+    sync_client, tmp_path, tmp_path_factory, monkeypatch, mount, source_newline
 ):
+    # Exercise actual LF and Windows-checkout CRLF resource bytes on every host.
+    catalog_root = tmp_path_factory.mktemp("handle-template-checkout")
+    shutil.copytree(template_resources._RESOURCE_ROOT, catalog_root, dirs_exist_ok=True)
+    for source_file in (catalog_root / "templates").rglob("*.wflow"):
+        raw = source_file.read_bytes().replace(b"\r\n", b"\n")
+        if source_newline == "crlf":
+            raw = raw.replace(b"\n", b"\r\n")
+        source_file.write_bytes(raw)
+    monkeypatch.setattr(template_resources, "_RESOURCE_ROOT", catalog_root)
     monkeypatch.setattr(
         app.state,
         "gateway_service",
@@ -55,6 +68,10 @@ def test_handle_setup_http_proposes_inspectable_revision_then_explicit_cas(
         )
         assert created.status_code == 201, created.text
         document = created.json()
+        assert ("\r\n" in document["source"]) == (source_newline == "crlf")
+        initial_source = (tmp_path / document["path"]).read_bytes()
+        assert initial_source == document["source"].encode("utf-8")
+        assert hashlib.sha256(initial_source).hexdigest() == document["storage_digest"]
         scope = {
             "session_id": "session-1",
             "path": document["path"],
@@ -108,7 +125,7 @@ def test_handle_setup_http_proposes_inspectable_revision_then_explicit_cas(
             assert proposed.status_code == 400, proposed.text
             assert proposed.json()["error_code"] == "handle_setup_invalid"
             assert "exact managed POSIX workspace path" in proposed.json()["message"]
-            assert (tmp_path / document["path"]).read_text() == document["source"]
+            assert (tmp_path / document["path"]).read_bytes() == initial_source
             assert not (tmp_path / ".wright/handle-setup").exists()
             assert not (tmp_path / ".wright/workflow-runs").exists()
             assert not list(tmp_path.rglob("*.stl"))
@@ -117,7 +134,7 @@ def test_handle_setup_http_proposes_inspectable_revision_then_explicit_cas(
         proposal = proposed.json()
         assert proposal["expected_storage_digest"] == document["storage_digest"]
         assert proposal["source_digest"] != document["storage_digest"]
-        assert (tmp_path / document["path"]).read_text() == document["source"]
+        assert (tmp_path / document["path"]).read_bytes() == initial_source
         assert proposal["summary"]["selected_orientation"] == "side"
         accepted = sync_client.post(
             PREFIX + "/setup/accept",
@@ -129,6 +146,9 @@ def test_handle_setup_http_proposes_inspectable_revision_then_explicit_cas(
         )
         assert accepted.status_code == 200, accepted.text
         assert accepted.json()["source"] == proposal["source"]
+        assert (tmp_path / document["path"]).read_bytes() == proposal["source"].encode(
+            "utf-8"
+        )
         assert accepted.json()["storage_digest"] == proposal["source_digest"]
         assert accepted.json()["storage_revision"] == document["storage_revision"] + 1
         stale = sync_client.post(PREFIX + "/setup/options", json=scope)

@@ -738,3 +738,15 @@ capabilities remain tested on both platforms. This is a recipe limitation, not
 Windows qualification of that manufacturing process or a restriction on the
 independent Windows pilot. Both gates and Windows CI already collect these
 owners; no suite or production validation is excluded.
+
+
+PR #180's next Windows run reached the expected mount rejection, then exposed
+an assertion that normalized stored CRLF through `read_text()` before comparing
+with the exact API source. Source preservation checks must compare `read_bytes()`
+with the original UTF-8 bytes and storage digest. The setup HTTP fixture now
+copies packaged template resources into isolated storage and exercises both LF
+and CRLF on every host, for native, Windows-shaped and mismatched mounts. Keep
+all rejection, no-staging, explicit-CAS, stale-revision and no-execution checks;
+do not normalize the accepted source or relax its digest to satisfy a fixture.
+This is a test-only correction: retain the exact green product full-gate receipt,
+run affected checks plus the normal push gate, and require fresh current-head CI.
