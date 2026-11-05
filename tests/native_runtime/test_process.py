@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 import hashlib
+import subprocess
 from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 
@@ -160,6 +162,7 @@ def test_launch_records_observed_os_identity(monkeypatch, tmp_path: Path) -> Non
     executable = runtime / "bin" / "python"
     process = FakeProcess()
     observation = ProcessObservation(42, "2026-07-28T12:00:00Z", executable)
+    monkeypatch.setattr("wright_engineering.runtime.process.sys.platform", "linux")
     monkeypatch.setattr("subprocess.Popen", lambda *_args, **_kwargs: process)
 
     _, identity, _ = ProcessManager(FakeInspector(observation)).launch(
@@ -182,6 +185,7 @@ def test_launch_terminates_when_os_identity_is_unavailable(
     runtime = tmp_path / "runtime"
     executable = runtime / "bin" / "python"
     process = FakeProcess()
+    monkeypatch.setattr("wright_engineering.runtime.process.sys.platform", "linux")
     monkeypatch.setattr("subprocess.Popen", lambda *_args, **_kwargs: process)
     monkeypatch.setattr("time.sleep", lambda _seconds: None)
 
@@ -196,6 +200,152 @@ def test_launch_terminates_when_os_identity_is_unavailable(
         )
 
     assert process.terminated is True
+
+
+@pytest.mark.parametrize("transient_launcher", [False, True])
+def test_macos_launch_waits_for_exact_probed_interpreter(
+    monkeypatch, tmp_path: Path, transient_launcher: bool
+) -> None:
+    runtime = tmp_path / "runtime"
+    launcher = runtime / "bin" / "python"
+    framework = tmp_path / "Python.framework" / "Python"
+    process = FakeProcess()
+    observations = [ProcessObservation(42, "same-start", framework)]
+    if transient_launcher:
+        observations.insert(0, ProcessObservation(42, "same-start", launcher))
+
+    class Inspector(FakeInspector):
+        def observe(self, pid: int) -> ProcessObservation:
+            if len(observations) > 1:
+                return observations.pop(0)
+            return observations[0]
+
+    inspector = Inspector(None)
+    probe_calls = []
+
+    def probe(command, **kwargs):
+        probe_calls.append((command, kwargs))
+        assert command[:3] == [str(launcher), "-I", "-c"]
+        assert kwargs["timeout"] == 10 and kwargs["check"] is True
+        assert kwargs["env"]["WRIGHT_RUNTIME_ID"] == "runtime-1"
+        return SimpleNamespace(stdout=str(framework) + "\n")
+
+    monkeypatch.setattr("wright_engineering.runtime.process.sys.platform", "darwin")
+    monkeypatch.setattr("subprocess.run", probe)
+    monkeypatch.setattr("subprocess.Popen", lambda *_args, **_kwargs: process)
+    monkeypatch.setattr("time.sleep", lambda _seconds: None)
+    manager = ProcessManager(inspector)
+    _, identity, _ = manager.launch(
+        [str(launcher), "-m", "wright_engineering.cli"],
+        runtime_id="runtime-1",
+        runtime_path=runtime,
+        operation_id="operation-1",
+        host="127.0.0.1",
+        port=8765,
+    )
+    assert len(probe_calls) == 1
+    assert identity.executable_path == str(framework)
+    assert identity.launcher_path == str(launcher)
+    assert not process.terminated
+    manager.require_identity(identity, runtime, expected_runtime_id="runtime-1")
+    # A later executable change must still prevent any stop signal.
+    observations[0] = ProcessObservation(42, "same-start", launcher)
+    with pytest.raises(ProcessError, match="process_executable_mismatch"):
+        manager.stop(identity, runtime, expected_runtime_id="runtime-1")
+    assert inspector.signals == []
+
+
+@pytest.mark.parametrize("observed_kind", ["launcher", "other-framework", "missing"])
+def test_macos_launch_rejects_unconfirmed_interpreter(
+    monkeypatch, tmp_path: Path, observed_kind: str
+) -> None:
+    runtime = tmp_path / "runtime"
+    launcher = runtime / "bin" / "python"
+    framework = tmp_path / "Python.framework" / "Python"
+    other = launcher if observed_kind == "launcher" else framework / "other"
+    observation = (
+        None
+        if observed_kind == "missing"
+        else ProcessObservation(42, "same-start", other)
+    )
+    process = FakeProcess()
+    monkeypatch.setattr("wright_engineering.runtime.process.sys.platform", "darwin")
+    monkeypatch.setattr(
+        "subprocess.run", lambda *_a, **_kw: SimpleNamespace(stdout=str(framework))
+    )
+    monkeypatch.setattr("subprocess.Popen", lambda *_a, **_kw: process)
+    monkeypatch.setattr("time.sleep", lambda _seconds: None)
+    inspector = FakeInspector(observation)
+    with pytest.raises(ProcessError, match="process_identity_unavailable"):
+        ProcessManager(inspector).launch(
+            [str(launcher)],
+            runtime_id="runtime-1",
+            runtime_path=runtime,
+            operation_id="operation-1",
+            host="127.0.0.1",
+            port=8765,
+        )
+    assert process.terminated
+    assert inspector.signals == []
+
+
+@pytest.mark.parametrize(
+    "probe_result",
+    [
+        "",
+        "relative/python",
+        "/one\n/two",
+        "/one\r/two",
+        "/bad\0path",
+        "/" + "a" * 4096,
+        "timeout",
+        "error",
+        "missing",
+    ],
+    ids=[
+        "empty",
+        "relative",
+        "multiline",
+        "carriage-return",
+        "nul",
+        "oversize",
+        "timeout",
+        "nonzero",
+        "missing",
+    ],
+)
+def test_macos_probe_failure_does_not_launch_server(
+    monkeypatch, tmp_path: Path, probe_result: str
+) -> None:
+    runtime = tmp_path / "runtime"
+    launcher = runtime / "bin" / "python"
+
+    def probe(*_args, **_kwargs):
+        if probe_result == "timeout":
+            raise subprocess.TimeoutExpired("fixture", 10)
+        if probe_result == "error":
+            raise subprocess.CalledProcessError(1, "fixture")
+        if probe_result == "missing":
+            raise FileNotFoundError("fixture")
+        return SimpleNamespace(stdout=probe_result)
+
+    def launch(*_args, **_kwargs):
+        pytest.fail("Server must not start after an invalid interpreter probe")
+
+    monkeypatch.setattr("wright_engineering.runtime.process.sys.platform", "darwin")
+    monkeypatch.setattr("subprocess.run", probe)
+    monkeypatch.setattr("subprocess.Popen", launch)
+    with pytest.raises(
+        ProcessError, match="process_interpreter_probe_(failed|invalid)"
+    ):
+        ProcessManager(FakeInspector(None)).launch(
+            [str(launcher)],
+            runtime_id="runtime-1",
+            runtime_path=runtime,
+            operation_id="operation-1",
+            host="127.0.0.1",
+            port=8765,
+        )
 
 
 class SequencedWaitInspector(FakeInspector):

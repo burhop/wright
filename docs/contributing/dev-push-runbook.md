@@ -19,6 +19,15 @@ in its program-compatibility tranche; the fast gate includes it with native
 runtime changes. A retained predecessor is eligible only when it is the exact
 recorded update candidate; failed and unreferenced installations remain rejected.
 
+The macOS framework interpreter may replace its launcher in the same process.
+The launch owner probes the contained interpreter's exact OS executable before
+starting the server and waits for that executable before freezing its identity.
+Both native gates run the deterministic transition and rejection cases early on
+every host, including probe failure and later executable drift. PID, birth time,
+runtime, launcher confinement and exact executable checks remain required before
+signals; an arbitrary framework path is not sufficient. These controlled cases
+do not replace the installed macOS start/status/doctor/stop/restart CI evidence.
+
 ## The 60-second pre-push check
 
 1. Confirm the branch contains one reviewable outcome. If unrelated work is

@@ -486,6 +486,8 @@ if [[ "$CHECK_PYTHON" == "1" ]]; then
   run "$GATE_PYTHON" -m pytest tests/test_docker_smoke_contract.py -q -k hermes_security_overrides
   # Exercise Windows namespace/reparse contracts even when this host is Unix.
   run "$GATE_PYTHON" -m pytest packages/workspace_service/tests/test_workspace_path.py -q
+  # Reproduce macOS launcher-to-framework identity transitions on every host.
+  run "$GATE_PYTHON" -m pytest tests/native_runtime/test_process.py -q
   # Observe real late-worker cleanup before expensive suites (Windows PR165).
   run "$GATE_PYTHON" -m pytest packages/workspace_service/tests/test_native_process_runtime.py -q -k deadline_prevents_late_worker_artifact_publication
   # Fail early on the full Windows portability failure set (PR180).

@@ -339,3 +339,26 @@ Start and cancellation, not just saved files. This does not establish engineerin
 or actual desktop acceptance. New gates and CI remain pending; the predecessor
 `2dc995ae` passed full/pre-push gates and all current-head CI but remains installed
 until the correction is qualified. No merge or publication occurred.
+
+## 5 November — current native matrix and macOS launch correction
+
+`a690da09` passed full gate 19 and normal pre-push 12, was pushed to draft PR191
+and installed only in the named owned candidate. The CI wheel is byte-identical
+to the qualified `3739369c...` artifact. Installed Windows x64 and Linux x64
+desktop and Hermes checks pass; the new no-tools Start/cancel/restart boundary
+passes on both. These are backend proofs, not desktop GUI acceptance.
+
+macOS ARM64 fails before that fixture: initial Start reports healthy but doctor
+and stop reject an executable identity change. A controlled reproduction shows
+the existing launch owner can freeze the transient launcher before CPython's
+framework re-exec. Actual CI executable paths were not captured, so this remains
+the supported diagnosis rather than direct path evidence. The correction probes
+the contained interpreter's exact executable and waits for it before freezing
+identity; later equality, containment, birth-time and runtime checks remain intact.
+Both gates now name the deterministic process-owner checks early. Focused
+process/security/lifecycle/gate checks pass (108 tests); the full native suite
+passes with 163 tests and seven existing platform skips on GB10. A sandboxed
+attempt stalled in an asyncio command fixture and was interrupted; its log is
+retained separately from the host-run pass. Fresh full qualification and installed
+macOS CI are required. No failed receipt is relabeled or retried
+as success. Engineering journeys and actual Windows acceptance remain open.

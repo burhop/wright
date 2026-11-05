@@ -128,6 +128,7 @@ def test_history_loading_contract_is_checked_before_broad_frontend_suites() -> N
 def test_native_gates_check_path_and_runtime_security_before_long_checks() -> None:
     commands = (
         '"$GATE_PYTHON" -m pytest packages/workspace_service/tests/test_workspace_path.py -q',
+        '"$GATE_PYTHON" -m pytest tests/native_runtime/test_process.py -q',
         '"$GATE_PYTHON" -m pytest tests/test_docker_smoke_contract.py -q -k hermes_security_overrides',
     )
     for name in ("push", "merge"):

@@ -30,9 +30,18 @@ boundary. Evidence: `desktop-routing-red-control.json`,
 `installed-pending-restart-corrected-2/receipt.json`. The prior direct-restart
 failure is retained; this is explicit recovery, not automatic resumed execution.
 
-Full gate 18, pre-push 11, all 30 checks/11 workflows and three native platform
-matrices passed on preceding head `2dc995ae`. Correction gates/CI remain pending.
-The named runtime remains on that preceding head. Actual Windows Codex visual,
+Full gate 19 and normal pre-push 12 pass on `a690da09`, now installed in the named
+owned candidate. Its exact wheel passes installed desktop and Hermes checks on
+Windows x64 and Linux x64, including Start/cancel/restart. macOS ARM64 fails
+before the workflow fixture: Start reports healthy, then doctor/stop reject
+`process_executable_mismatch`. The rejection is preserved. A deterministic
+launcher-to-framework transition reproduces this failure; a narrow launch-owner
+correction passes focused tests, with new full gates and installed macOS CI still
+required. Exact CI paths were not captured, so the launcher explanation remains
+an inference until native qualification. Evidence: `ci-platform-a690da09/`,
+`macos-launch-race-red.log`, `macos-launch-focused.log`.
+
+Actual Windows Codex visual,
 file-delivery and chat-restoration acceptance, full engineering journeys and other
 mandatory unqualified rows below remain open. Historical checkpoints retain their
 original scope and must not be read as current candidate identities.

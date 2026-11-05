@@ -121,6 +121,40 @@ class ProcessManager:
         if not hmac.compare_digest(actual, identity.challenge_hash):
             raise ProcessError("health_challenge_mismatch")
 
+    @staticmethod
+    def _macos_interpreter_executable(
+        launcher: Path, environment: Mapping[str, str]
+    ) -> Path:
+        # Framework Python re-execs after launching. Probe the same contained
+        # interpreter before spawning the server, rather than freezing its
+        # transient launcher path or relaxing later process identity checks.
+        try:
+            result = subprocess.run(
+                [
+                    str(launcher),
+                    "-I",
+                    "-c",
+                    "import os, psutil; print(psutil.Process(os.getpid()).exe())",
+                ],
+                env=environment,
+                stdin=subprocess.DEVNULL,
+                capture_output=True,
+                text=True,
+                timeout=10,
+                check=True,
+            )
+        except (OSError, subprocess.SubprocessError) as exc:
+            raise ProcessError("process_interpreter_probe_failed") from exc
+        value = result.stdout.strip()
+        if (
+            not value
+            or len(value) > 4096
+            or any(character in value for character in ("\n", "\r", "\0"))
+            or not Path(value).is_absolute()
+        ):
+            raise ProcessError("process_interpreter_probe_invalid")
+        return Path(value).resolve(strict=False)
+
     def launch(
         self,
         command: Sequence[str],
@@ -150,6 +184,11 @@ class ProcessManager:
                 "WRIGHT_RUNTIME_OPERATION_ID": operation_id,
             }
         )
+        expected_executable = (
+            self._macos_interpreter_executable(launcher, child_environment)
+            if sys.platform == "darwin"
+            else None
+        )
         output = log_handle if log_handle is not None else subprocess.DEVNULL
         if os.name == "nt":
             process = subprocess.Popen(
@@ -174,8 +213,14 @@ class ProcessManager:
             )
         observation = None
         for _ in range(20):
-            observation = self.inspector.observe(process.pid)
-            if observation is not None or process.poll() is not None:
+            observed = self.inspector.observe(process.pid)
+            if observed is not None and (
+                expected_executable is None
+                or observed.executable_path.resolve(strict=False) == expected_executable
+            ):
+                observation = observed
+                break
+            if process.poll() is not None:
                 break
             time.sleep(0.05)
         if observation is None:
