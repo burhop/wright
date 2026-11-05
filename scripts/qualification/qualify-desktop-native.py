@@ -84,6 +84,8 @@ receipt = {
     "python": platform.python_version(),
     "expected_ui_sha256": expected_ui_sha256,
     "engineering_runs": 0,
+    "engineering_tool_calls": 0,
+    "fixture_process_runs": 0,
 }
 
 
@@ -111,6 +113,103 @@ def lifecycle(command, label, *, required=True):
                 "error_type": type(exc).__name__,
             }
         raise AssertionError(f"{command} failed; see {label} evidence")
+
+
+REASONING_SOURCE = """workflow desktop_handoff
+  name: "Desktop reasoning handoff"
+  purpose: "Qualify one desktop-supplied digital inspection brief through Wright's source runtime."
+  discipline: "mechanical.inspection"
+  reviewed_ai_suggestions: true
+end
+task brief
+  name: "Prepare a digital inspection brief"
+  purpose: "Separate supplied dimensions from missing inspection criteria without claiming measurement."
+  step_type: work
+  group: null
+  performed_by: ai_assisted
+  inputs: [{"key":"brief_prompt","kind":"engineering_document","name":"Prompt","item":null,"required":false,"quantity":"optional","description":"Optional upstream requirements"}]
+  outputs: [{"key":"brief_response","kind":"engineering_document","name":"Inspection brief","item":null,"required":true,"quantity":"one","description":"Digital inspection brief, not measured evidence"}]
+  prompt: "Prepare a short digital inspection brief for a rectangular plate: length 120 mm, width 80 mm, thickness 6 mm, four mounting holes of diameter 8 mm. Identify the dimensions to check, distinguish supplied requirements from unspecified hole locations, and explain why no manufacturing release can be claimed. This task performs no physical action and no CAD measurement."
+  settings: {"authoring_template":"ai-prompt","output_format":"markdown","output_filename":"inspection-brief.md"}
+  tool: null
+  reusable_step: null
+end
+"""
+
+
+async def reasoning_lifecycle(call, scope, label):
+    """Start through the real installed API; cancel without supplying a model reply."""
+    if "reasoning_start" not in receipt:
+        document = await call(
+            "wright_workflow_create",
+            {
+                **scope,
+                "path": "workflows/reasoning-lifecycle.workflow.wflow",
+                "source": REASONING_SOURCE,
+            },
+        )
+        source = {
+            **scope,
+            "path": document["path"],
+            "source_digest": document["storage_digest"],
+        }
+        prepared = await call("wright_process_prepare", {**source, "bindings": []})
+        start_arguments = {
+            **source,
+            "input_snapshot_id": prepared["snapshot_id"],
+            "input_digest": prepared["digest"],
+            "request_id": "native-reasoning-start",
+        }
+        started = await call("wright_process_start", start_arguments)
+        receipt["reasoning_start"] = started
+        receipt["fixture_process_runs"] = 1
+        reference = {**source, "run_id": started["run_id"]}
+        receipt["reasoning_reference"] = reference
+        receipt["reasoning_start_arguments"] = start_arguments
+        async with asyncio.timeout(30):
+            while True:
+                pending = await call("wright_reasoning_pending", scope)
+                tasks = [
+                    task
+                    for task in pending["tasks"]
+                    if task["request"]["run_id"] == started["run_id"]
+                ]
+                if tasks:
+                    break
+                await asyncio.sleep(0.25)
+        assert len(tasks) == 1
+        task = tasks[0]
+        assert task["request"]["binding"]["adapter"] == "openai-desktop-harness"
+        assert task["request"]["payload"]["tools"] == []
+        assert task["request"]["payload"]["tool_choice"] == "none"
+        receipt["reasoning_request"] = task
+        # Repeated Start reconciles the same receipt, not a second run.
+        assert await call("wright_process_start", start_arguments) == started
+        receipt["reasoning_cancel"] = await call(
+            "wright_process_cancel",
+            {
+                **reference,
+                "request_id": "native-reasoning-cancel",
+            },
+        )
+        async with asyncio.timeout(30):
+            while True:
+                snapshot = await call("wright_process_read", reference)
+                if snapshot["state"] == "cancelled":
+                    break
+                await asyncio.sleep(0.25)
+    reference = receipt["reasoning_reference"]
+    snapshot = await call("wright_process_read", reference)
+    assert snapshot["state"] == "cancelled", snapshot["state"]
+    assert (
+        await call("wright_process_start", receipt["reasoning_start_arguments"])
+        == receipt["reasoning_start"]
+    )
+    pending = await call("wright_reasoning_pending", scope)
+    assert not any(
+        t["request"]["run_id"] == reference["run_id"] for t in pending["tasks"]
+    )
+    receipt.setdefault("reasoning_states", {})[label] = snapshot["state"]
 
 
 async def bridge(label):
@@ -166,7 +265,7 @@ async def bridge(label):
 
                 async def call(name, arguments):
                     result = await session.call_tool(name, arguments)
-                    assert not result.isError, f"{name} failed"
+                    assert not result.isError, f"{name} failed: {result.content}"
                     return result.structuredContent or json.loads(
                         result.content[0].text
                     )
@@ -199,6 +298,7 @@ async def bridge(label):
                     == receipt["saved_source"]["storage_digest"]
                 )
                 assert reopened["source"] == receipt["saved_source"]["source"]
+                await reasoning_lifecycle(call, scope, label)
                 receipt[label] = {
                     "tools": sorted(tool.name for tool in tools.tools),
                     "status": status.model_dump(mode="json"),

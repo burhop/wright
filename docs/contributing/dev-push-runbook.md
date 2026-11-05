@@ -4,6 +4,14 @@ Read this page before every push to a branch with an open pull request targeting
 `dev`, and again immediately before making that pull request ready to merge.
 Direct pushes to `dev` are not part of the supported development workflow.
 
+The desktop native candidate qualification also starts one isolated response-only
+fixture through the installed MCP/API, observes its no-tools reasoning request,
+cancels it, and checks the same cancelled run after restart. Installation and
+save/reopen alone missed a composed-engine routing defect. This fixture invokes
+no model response, engineering provider, review or physical action; it is not
+actual desktop rendering or full engineering acceptance. Preserve that Start
+boundary in the native Windows, Linux and macOS matrix.
+
 The native lifecycle regression includes update → rollback → update through the
 installed migration owner. An in-process migration mock alone missed rejection
 of the retained predecessor during reactivation. The full gate names this suite

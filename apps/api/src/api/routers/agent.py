@@ -382,7 +382,11 @@ async def get_agent_engine(request: Request) -> BaseAgentEngine:
         except (ValueError, UnicodeDecodeError):
             pass
     sync_manager = getattr(request.app.state, "agent_sync_manager", None)
-    default_platform = getattr(sync_manager, "active_agent", "hermes")
+    # An opt-in host composition can supply its own engine without changing the
+    # persisted tool-sync default. Resolve against the engine actually installed.
+    default_platform = getattr(engine, "platform", None) or getattr(
+        sync_manager, "active_agent", "hermes"
+    )
     platform = default_platform
     if isinstance(session_id, str) and session_id:
         from api.composition import workspace_service

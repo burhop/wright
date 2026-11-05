@@ -54,6 +54,61 @@ def test_default_does_not_replace_existing_agent_or_routes(monkeypatch):
         enabled()
 
 
+@pytest.mark.asyncio
+@pytest.mark.parametrize("platform", ["openai-desktop-harness", "hermes", "missing"])
+async def test_installed_desktop_routes_by_saved_platform(
+    candidate, monkeypatch, platform
+):
+    from fastapi import HTTPException
+    from starlette.requests import Request
+    from api import composition
+    from api.routers import agent
+
+    app, _, _ = candidate
+    # The normal startup sync owner retains its Hermes default. The installed
+    # desktop composition has a different engine; no saved session may switch.
+    app.state.agent_sync_manager = SimpleNamespace(active_agent="hermes")
+    hermes = object()
+    app.state.agent_engines = {"hermes": hermes}
+    monkeypatch.setattr(
+        composition,
+        "workspace_service",
+        lambda: SimpleNamespace(
+            repository=SimpleNamespace(session_platform=lambda _: platform)
+        ),
+    )
+    attempts = []
+
+    def unavailable(name, **kwargs):
+        attempts.append(name)
+        raise ValueError("Fixture: unavailable platform")
+
+    monkeypatch.setattr(agent, "create_agent_engine", unavailable)
+    request = Request(
+        {
+            "type": "http",
+            "method": "POST",
+            "path": "/api/workspace/process-interfaces/runs",
+            "query_string": b"session_id=saved-session",
+            "headers": [],
+            "app": app,
+        }
+    )
+    if platform == "missing":
+        with pytest.raises(HTTPException) as failure:
+            await agent.get_agent_engine(request)
+        assert failure.value.status_code == 503
+        assert attempts == ["missing"]
+    else:
+        selected = await agent.get_agent_engine(request)
+        assert selected is (
+            hermes if platform == "hermes" else app.state.desktop_backend
+        )
+        assert attempts == []
+    assert request.state.agent_platform == platform
+    assert app.state.agent_sync_manager.active_agent == "hermes"
+
+
 @pytest.mark.parametrize(
     "mode,host", [("compat", "127.0.0.1"), ("enforced", "0.0.0.0")]
 )

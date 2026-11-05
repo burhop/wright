@@ -11,7 +11,33 @@ one success percentage. The checkpoint below records the new candidate separatel
 from the mandatory acceptance definitions; a partial boundary pass does not satisfy
 an entire story.
 
-## Latest bounded observations — 5 November
+## Latest installed execution boundary — 5 November
+
+A15/P12 has a new bounded PASS on normal wheel
+`3739369cc276e61646bc069b7ab71a436951697074ed49981a65cfa89bc53e00`:
+response-only Start reaches the desktop reasoning owner, repeated Start returns
+the same receipt, cancellation persists across native stop/start. An independent
+owned-crash probe preserves one pending request and one run; after explicit native
+stale-process reconciliation, a late answer is rejected with no response/output
+write. Source and run-file hashes remain unchanged. No tools, model answers,
+engineering reviews or physical operations occurred.
+
+The preceding wheel failed Start with a saved-platform error even though its
+lifecycle CI passed. The new regression preserves desktop and saved-Hermes routes
+and unknown-platform refusal. Existing native CI now covers the actual Start
+boundary. Evidence: `desktop-routing-red-control.json`,
+`installed-routing-cancellation-1/receipt.json`,
+`installed-pending-restart-corrected-2/receipt.json`. The prior direct-restart
+failure is retained; this is explicit recovery, not automatic resumed execution.
+
+Full gate 18, pre-push 11, all 30 checks/11 workflows and three native platform
+matrices passed on preceding head `2dc995ae`. Correction gates/CI remain pending.
+The named runtime remains on that preceding head. Actual Windows Codex visual,
+file-delivery and chat-restoration acceptance, full engineering journeys and other
+mandatory unqualified rows below remain open. Historical checkpoints retain their
+original scope and must not be read as current candidate identities.
+
+## Previous bounded observations — 5 November
 
 - **A03/P08 source correction:** optional “Workflows using this connection” reads
   only explicit saved bindings in the selected workspace. Eight workflow rows

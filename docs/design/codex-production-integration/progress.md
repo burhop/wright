@@ -318,3 +318,24 @@ The build and tests use a simulated Linux desktop, not actual Windows Codex UI.
 Current pushed `9805a0fa` has all 30 checks/11 workflows passing; this new product
 change still requires prescribed gates and current-head CI before push/integration.
 All remaining engineering and actual-desktop acceptance requirements stand.
+
+
+## 5 November — actual installed Start boundary and recovery
+
+A fresh text-only fixture found a routing defect missed by install/save/restart
+checks: the composed desktop engine was compared with the persisted Hermes sync
+default and rejected as an unavailable saved platform. Two focused red controls
+prove the desktop failure and incorrect saved-Hermes selection. The correction
+uses the actual engine platform without changing the saved session, sync default,
+model, profile or permission. Twenty-five affected tests pass.
+
+Normal wheel `3739369c...` passes actual installed MCP start/pending/cancel/restart
+and unchanged cancelled state. A separate abrupt-loss fixture uses the existing
+lifecycle's explicit stale-process reconciliation, then proves the same pending
+request and run, rejects a late response, and retains source/run hashes. Its first
+direct restart failed safely and remains evidence. Neither probe calls engineering
+tools or supplies a model answer. The native CI harness now exercises a no-tool
+Start and cancellation, not just saved files. This does not establish engineering
+or actual desktop acceptance. New gates and CI remain pending; the predecessor
+`2dc995ae` passed full/pre-push gates and all current-head CI but remains installed
+until the correction is qualified. No merge or publication occurred.

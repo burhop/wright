@@ -332,6 +332,8 @@ def connection_control_state(
 
 
 class DesktopBackend:
+    platform = "openai-desktop-harness"
+
     def __init__(
         self,
         service,

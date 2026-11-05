@@ -4,7 +4,34 @@
 This is the sole implementation checklist. Historical implementation remains credited;
 an unchecked task means the new delivery claim has not yet been qualified.
 
-## Current P08 correction — scoped connection usage
+## Current P12/P15 correction — installed session routing
+
+The installed no-tool reasoning probe exposed a real Start failure on `2dc995ae`:
+the desktop engine was installed while routing still used the tool-sync owner's
+Hermes default. The correction identifies the installed engine's platform and
+keeps saved session ownership; it does not select another model or change profiles.
+The red control fails for both the desktop start and saved-Hermes routing.
+Twenty-five focused composition/routing tests pass after the correction.
+
+The normal rebuilt wheel `3739369c...` now passes a fresh response-only start,
+exact pending request, cancellation and cancelled-state preservation on restart.
+A separate abrupt-loss probe passes the existing stale-process recovery, preserves
+the pending request and same run, and rejects a late answer without writing a
+response or replaying work. The first direct restart was correctly refused and is
+retained; recovery used the existing lifecycle owner. These are isolated fixtures,
+not engineering results, actual desktop rendering or automatic execution recovery.
+The existing native CI harness now exercises start/cancel/restart on all three
+platforms. Its new platform results and prescribed correction gates are pending.
+
+At preceding head `2dc995ae`, full gate 18, pre-push 11 and all 30 CI checks across
+11 workflows passed. The named installed candidate still uses that preceding
+wheel `c5cae5ad...`; the routing correction is not installed there yet. P08's
+installed usage proof and all mandatory engineering/desktop gaps remain intact.
+Evidence: `installed-pending-restart-2dc995ae-diagnostic/`,
+`installed-pending-restart-corrected-2/`, `installed-routing-cancellation-1/`,
+`desktop-routing-focused.log`, under the private production-integration index.
+
+## Previous P08 correction — scoped connection usage
 
 The provider-controls view now has an on-demand, read-only list of saved workflows
 that explicitly reference the selected connection. It reuses the confined source
