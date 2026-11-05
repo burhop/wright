@@ -18,7 +18,7 @@ The normal-build wheel with the installed migration correction is SHA-256
 `faa5bf561e93529ce01ede7ab2492f465db27bfb2160fce28bcf99f3670bf277`;
 UI SHA-256 `95bfbff7d17b34eabad7b7cbf23bedf9e989e5637173c01b656cd4ab2ac6992f`.
 Evidence paths below are relative to private `.local-run/production-integration/`.
-The named GB10 plugin wrapper is now 0.39.0 using this wheel. Live Windows observations still refer to prototype 0.38.1; the current chat reports its older connection.
+This is the preceding migration-correction wheel; the current named 0.39.0 runtime uses the later file-list wheel documented below. Live Windows observations still refer to prototype 0.38.1; the current chat reports its older connection.
 
 `installed-gate-artifact/` qualifies the identical UI from the normal build
 (wheel `6e356e931d0af0f9552702fbbe8436b94bf4fd86f6438657d16b147184482e77`).
@@ -30,8 +30,8 @@ The normal pipeline regenerates both from current source and the frozen uv lock.
 
 The installed authoring proof asserts the exact imported destination and source.
 The earlier `installed-authoring-2` PASS lacked that assertion and is superseded.
-Full typed-port, reference/validation/UI dependency transfers remain beyond the
-minimal disposable fixture; no full portability or Windows claim is inferred.
+Declared reference transfer is additionally verified below; full typed-port
+interaction and validation/UI dependency transfer remain beyond these fixtures; no full portability or Windows claim is inferred.
 
 | IDs / boundary | Status | Evidence and remaining requirement |
 | --- | --- | --- |
@@ -43,7 +43,7 @@ minimal disposable fixture; no full portability or Windows claim is inferred.
 | A07 explicit panel fallback | PASS in simulated host | `installed-gate-artifact/browser/receipt.json`: native acknowledgement followed by **Open workflow here**, real packaged editor and source. Windows fallback remains NOT TESTED |
 | A08 readiness entry | PASS for retained read-only case | Same browser receipt; no engineering start and no claim all handle capabilities are ready |
 | A09–A11 actual handle reasoning/review/correction | BLOCKED | Reviewed strength basis and usable provider bindings remain required. No fabricated reviews, material limits or solver results |
-| A12 retained results navigation | PASS for exercised subset | Exact selected run, decoded hash-matched image, producing-step Results 1/1, no false mismatch, return to same run. Full engineering summary and edited-source visual negative control still pending |
+| A12 retained results navigation | PASS for exercised subset | Exact selected run, decoded hash-matched image, producing-step Results 1/1, no false mismatch, return to same run. Edited-source mismatch/Undo also passes in the later installed check; full engineering summary remains pending |
 | A13 actual Windows file delivery | NOT TESTED | Verified bytes in MCP/browser do not prove Windows download or open |
 | A14 changed-input full engineering rerun | BLOCKED | Requires the same real engineering basis and review as A11; historical runs preserved |
 | A15 installed restart | PASS for exercised subset | `light-manager-update/receipt.json`: dependency-light CLI installs, restarts and updates with exact saved-source preservation; copied completed-run restart also passes. Broader cancellation/uncertain-effect fixtures retained; no live-engineering claim |
@@ -51,12 +51,12 @@ minimal disposable fixture; no full portability or Windows claim is inferred.
 | A17 narrow panel | PASS in simulated host | Browser receipt and `results-narrow.png`: 480 px no body overflow. Human usability acceptance remains NOT TESTED |
 | A18 generality | NOT TESTED for full new proof | Retained block regression passes; complete existing Robot workflow and Hermes qualification remain pending |
 | Q02 scoped option reads | PASS | `options-boundary-tests-2.log`: 408 passed, 10 skipped across relevant boundary suite; new fixed-kind reader rejects cross-scope/arbitrary-route requests |
-| Q03–Q04 complete content/configuration controls | NOT TESTED as complete acceptance | Existing contract regression retained; backend/security gates passed at `3f373cf0`; whole gate remains FAIL at browser startup |
+| Q03–Q04 complete content/configuration controls | NOT TESTED as complete acceptance | Existing contract regression retained; backend/security gates passed at `3f373cf0`; later gate 9 passes with the documented local browser-host exception; complete CI remains pending |
 | Q05 copied-state migration | PASS for exercised subset | Installed receipt: original and copied workflow/history/output hashes unchanged; selected immutable input/start receipt copied without credentials, live jobs or grants |
 | Q06 Windows local; Q07 Windows + GB10 | NOT TESTED on maintained candidate | Existing prototype screenshots remain historical evidence only |
-| Q08 Linux ARM64 / Docker | PASS for installation / security subsets | Installed Linux receipts pass. Migration-correction image `60085b5e80b0494401cfa48959407b9cfa22a3f39d466bd94d103ba2d5b7b773` passes exact-image security, smoke and authenticated desktop opt-in checks (`docker-smoke-current.json`, `docker-desktop-check.json`). x64 remains NOT TESTED; new file-list image qualification is separate |
+| Q08 Linux ARM64 / Docker | PASS for installation / security subsets | Installed Linux receipts pass. Migration-correction image `60085b5e80b0494401cfa48959407b9cfa22a3f39d466bd94d103ba2d5b7b773` passes exact-image security, smoke and authenticated desktop opt-in checks (`docker-smoke-current.json`, `docker-desktop-check.json`). x64 remains NOT TESTED; current file-list image `635a9c835da4b760d2190d9b6be35ed40d868b0edacf4eb8b254c39595083129` also passes exact-image security/smoke/desktop opt-in checks |
 | Q09 compatibility/fallback | PASS for local contracts | Content-hashed assets, versioned plugin files, scope checks and explicit fallback preserved; host selection is unresolved |
-| Q10 repository gates/CI | FAIL / CI NOT TESTED | Gate 7 passed backend, 2,310 frontend tests, docs/security; 36 browser-launch failures prevented PASS. Firefox repaired and 19 tests pass with isolated API. WebKit 2370 aborts on GB10 64 KiB pages (binary ceiling 16 KiB), before Wright. No waiver, push, PR, merge or release |
+| Q10 repository gates/CI | Local gate PASS with documented host limitation / CI NOT TESTED | Gate 9 at `de0886b9` passes using the existing documented `SKIP_PLAYWRIGHT=1` option: WebKit 2370 aborts before Wright on this 64 KiB host. Separate installed Chromium journeys and isolated Firefox 19-test suite pass. This is not a full browser PASS; normal pre-push and complete current-head CI remain required. Gate 7/8 failures are retained |
 
 ## Subsequent file-list correction
 
@@ -68,14 +68,20 @@ canonical run records are collapsed but searchable/openable. Ordinary engineerin
 JSON is not hidden by extension. File types stay on one line at 480 px. The
 installed authoring and exact retained-results journeys still pass. Screenshots
 are Linux Chromium with a simulated desktop; these do not establish Windows
-acceptance. This later wheel has not replaced the named 0.39.0 live candidate.
+acceptance. This later wheel now runs in the authorized owned candidate, behind the unchanged 0.39.0 wrapper. `file-list-live-update.json` and `file-list-profile-check.json` verify the normal manager update, actual MCP profile and exact hashed UI. Original services/settings and engineering files are preserved; no desktop restart or Windows observation is claimed.
 
 `firefox-isolated/receipt.json` records 19 existing workspace-surface tests passing.
 The first standalone attempt lacked an API and is retained as failed environment
 evidence. `webkit-host-limitation.json` and debugger logs establish a browser
-startup limitation; no test was deleted, skipped by policy, or relabeled PASS.
+startup limitation; no browser binary, kernel, test assertion or security policy was changed. Gate 9 uses the existing documented local-host skip option, with complete CI browser coverage still required.
 The related [upstream WebKit/64 KiB report](https://bugs.launchpad.net/ubuntu/+source/webkit2gtk/+bug/2156420)
 supports the diagnosis; current local binary disassembly is the exact-host evidence.
+
+## Additional installed qualification (5 November)
+
+- `installed-first-contact/`: normal chooser → one named workspace → New workflow → exact workspace/session chat handoff, with one simulated-host message, visible next action and 480 px layout. No generated workflow or native Windows chat delivery is claimed.
+- `installed-reference-transfer/asset-transfer-proof.json`: actual installed MCP owners export/import an existing declared SVG reference with identical source and asset bytes, reject collisions, preserve missing-capability readiness and start zero runs. Saved UI/validation dependency portability remains unverified.
+- `installed-edited-source-proof-3/browser/receipt.json`: a genuine unaccepted source edit shows the mismatch, separates the current unproduced output from explicitly marked saved-run results, and Undo restores Results 1/1 and the matching inspector. `negative-control-audit.json` verifies every original and copied preexisting file unchanged and the sole new copied-workspace draft matches its exact observed request. The read-only helper's FAIL is retained: its no-new-file assertion intentionally does not permit this new test draft. The independent strict audit qualifies this negative control only; it does not relabel that helper run or weaken the normal preservation check.
 
 ## Mandatory stories and controls
 

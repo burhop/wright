@@ -176,3 +176,28 @@ normal wheel and sdist were rebuilt and the final installed journey passed with
 all retained files unchanged. Evidence: `file-list-focused.log` (21 tests),
 `file-list-final-proof/` (actual installed package, simulated Linux host), and
 `file-list-final-lint.log`. No engineering work was run.
+
+
+## Current installed candidate and additional qualification (5 November)
+
+The named 0.39.0 wrapper now launches normal-build wheel
+`9b03e94d95ab5fe742d9f1b3b6d96013d28bc47a483b2488ca774ce7c6d4a2b8`
+from the owned maintained candidate. Actual MCP profile/resource verification and
+exact-image Docker checks pass; image ID
+`635a9c835da4b760d2190d9b6be35ed40d868b0edacf4eb8b254c39595083129`.
+No unrelated lifecycle/configuration or Windows pilot change occurred.
+
+Gate 9 at `de0886b9` passes with the repository's documented local browser-host
+exception. Complete current-head CI remains required, including browsers. The
+strict CLI/release type check passes; the existing broad warning-mode mypy check
+still reports duplicate test `conftest` modules, not a clean broad type check.
+The earlier failed gates remain retained; none is relabeled.
+
+Installed first-contact creation and exact-scoped chat handoff, reference-byte
+portability/collision rejection, and genuine edited-source mismatch/Undo now have
+separate receipts. The negative draft test's original read-only helper correctly
+rejects a newly added draft; its separate strict audit confirms that one exact
+observed draft is the only addition and all preexisting files remain unchanged.
+See acceptance for precise scopes and evidence. No real engineering run or new
+Windows observation was performed. Full handle/Robot, required human review and
+Windows acceptance remain mandatory and unfinished.
