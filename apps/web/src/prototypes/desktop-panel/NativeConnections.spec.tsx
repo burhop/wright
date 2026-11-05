@@ -378,10 +378,12 @@ it("reopens an existing setup through reads only", async () => {
     expect(screen.getByRole("region", { name: "Setup plan" })).toHaveFocus(),
   );
   expect(
-    screen.getByText("Sign-in and credential options").closest("details"),
+    screen.getByText("Credentials and configuration").closest("details"),
   ).not.toHaveAttribute("open");
   expect(screen.queryByRole("checkbox")).toBeNull();
-  expect(screen.getByText("Sign-in and credential options")).toBeVisible();
+  expect(screen.getByText("Credentials and configuration")).toBeVisible();
+  expect(screen.getByRole("button", { name: "Check connection" })).toBeVisible();
+  expect(screen.getByRole("button", { name: "Refresh saved status" })).toBeVisible();
   expect(call.mock.calls.map(([name]) => name)).toEqual([
     "wright_connections_list",
     "wright_connection_plans",

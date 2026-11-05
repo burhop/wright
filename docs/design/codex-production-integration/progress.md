@@ -253,3 +253,34 @@ A lifecycle-to-migration regression fails on the old implementation and passes
 with the correction, alongside 18 related tests. The full gate now names this
 boundary explicitly. Updated installed-artifact proof, remaining second-cycle
 results and new gates are pending; there is no third push or dev merge yet.
+
+
+## Installed connection setup and visible next action (5 November)
+
+At `b9553937`, the full merge and pre-push gates pass; the local WebKit
+host exception remains explicitly recorded, with CI browser coverage separate.
+The third CI cycle passes the previously failing two-version native lifecycle
+and installed lifecycle on Linux x64, macOS ARM64 and Windows x64 using the
+identical wheel `3b727ba9f40876c433e9c40af1a599a4f3725e04638154c256f24d897624d1f5`.
+Windows backend CI is still running at this checkpoint. No merge is claimed.
+
+P08 now has an actual installed setup proof: a fresh disposable workspace
+imports the pinned independent OASiS command, previews/reviews/applies its
+setup, validates initialize/initialized/tools-list (17 tools), and explicitly
+enables workspace availability. The provider runs network-disabled with no
+credentials. The enable receipt explicitly records `invocation_approved: false`;
+no solver, engineering workflow or physical action runs. Private evidence:
+`.local-run/production-integration/installed-connections-3/`. Browser-launch
+and sandbox setup failures are retained separately; they are not product passes.
+This is installed Linux with a simulated desktop, not Windows UI acceptance.
+
+That journey exposed an actionable presentation defect: protocol checking and
+workspace enablement were hidden under a credentials-only disclosure, and a
+local provider misleadingly asked users to sign in. The small correction makes
+Check connection and Refresh saved status visible after completed setup, leaves
+credential editing collapsed, and says sign-in is requested only when needed.
+Opening saved setup still performs no validation, sign-in or enable action.
+Existing scope, stale-reply, failure and uncertain-outcome guards are unchanged.
+The focused 30 tests and TypeScript pass; rebuilt installed UI verification and
+new gates remain pending. Remaining P08 cases and full engineering/Windows
+acceptance stay open.

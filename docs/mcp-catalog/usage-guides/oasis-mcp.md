@@ -171,3 +171,24 @@ Reused the cached qualified image in the disposable ARM64 guest, with network di
 The image transfer took 75.614 seconds. Docker's imported OCI identity differs from the older source image identity; filesystem layers, architecture and creation match, while legacy container hostname and attachment configuration fields are omitted. Preserve this comparison rather than repeatedly transferring because the image ID differs. Receipts and limitations: preparation readiness (retained local evidence: `artifacts/first-contact/synthetic-beta-003/operator-retries/preparation-138/RESULT.md`). Engineering output and review gates still require their own evidence; discovery is not engineering qualification.
 
 Local evidence references identify preserved operator records; they are not included in the public documentation build.
+
+
+## Maintained desktop setup qualification, 5 November 2026
+
+The maintained installed Wright candidate at `b9553937` was exercised through
+its Connections UI and actual MCP bridge on Linux ARM64 in fresh isolated state.
+The previously qualified container
+`sha256:9d8dbbde565bc8208a8cce03491b198b36105a1b5ceb556e82f5bdf17fa59ac4`
+was already cached. Its installed `oasis-mcp` 1.1.0 MIT license was inspected.
+It ran with networking disabled, a read-only root, UID/GID 1000, bounded
+resources and only fresh workspace/output mounts. No account or credentials
+were required.
+
+Custom-command preview, reviewed setup, current protocol validation and explicit
+workspace enablement passed. Initialization and tools/list reported 17 tools;
+no engineering tool was invoked. Availability remained separate from invocation
+authority (`invocation_approved: false`). This is protocol/setup evidence, not
+a new FEM result or Windows desktop acceptance. The
+[maintained integration progress](../../design/codex-production-integration/progress.md#installed-connection-setup-and-visible-next-action-5-november)
+records the test boundary and preserved private evidence location. Historical
+engineering evidence and its limitations above remain unchanged.
