@@ -58,7 +58,10 @@ ENV DEBIAN_FRONTEND=noninteractive
 ENV PATH=/opt/hermes/bin:/opt/hermes/.venv/bin:/usr/local/bin:/usr/local/sbin:/usr/sbin:/usr/bin:/sbin:/bin
 ENV HERMES_HOME=/home/agent/.hermes
 
+# Debian DSA-6607-1: retain the fixed apt transport in both runtime stages.
 RUN apt-get update && apt-get install -y --no-install-recommends \
+    apt=3.0.4 \
+    libapt-pkg7.0=3.0.4 \
     bsdutils \
     ca-certificates \
     curl=8.14.1-2+deb13u7 \
@@ -155,7 +158,10 @@ ENV WRIGHT_SURFACES_LIVE_APPS_ENABLED=1
 # System packages: Wright operator utilities and supervisor. Hermes, Python,
 # and uv come from the Hermes base image. The Rivet runtime uses the same
 # pinned Node.js distribution as the frontend build stage.
+# Debian DSA-6607-1: retain the fixed apt transport in both runtime stages.
 RUN apt-get update && apt-get install -y --no-install-recommends \
+    apt=3.0.4 \
+    libapt-pkg7.0=3.0.4 \
     bsdutils \
     bzip2 \
     ca-certificates \

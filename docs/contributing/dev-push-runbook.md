@@ -843,3 +843,9 @@ native Windows desktop panel acceptance.
 The maintained desktop plugin is also a Docker/wheel input. Its manifest, MCP
 profile and skill are bundled byte-for-byte; changes select Docker PR CI and the
 local exact-image scan. A prior image cannot qualify changed plugin instructions.
+
+The maintained-desktop candidate scan on 5 November found CVE-2026-109518 in
+Debian's `apt` and `libapt-pkg7.0` 3.0.3. Both runtime stages explicitly install
+3.0.4, the [Debian DSA-6607-1 fixed version](https://security-tracker.debian.org/tracker/CVE-2026-109518).
+The existing exact-image/current-database scan remains mandatory; this is a package
+update, not a vulnerability exception or a clean-scan claim.

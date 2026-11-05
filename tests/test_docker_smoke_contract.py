@@ -188,6 +188,8 @@ def test_docker_smoke_strictly_reconciles_hermes_security_overrides() -> None:
     assert '"certifi==2026.10.19"' in dockerfile
     assert "aiohttp==3.14.4" in dockerfile
     for fixed_package in (
+        "apt=3.0.4",
+        "libapt-pkg7.0=3.0.4",
         "curl=8.14.1-2+deb13u7",
         "libcurl4t64=8.14.1-2+deb13u7",
         "libexpat1=2.9.0-1~deb13u1",
