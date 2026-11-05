@@ -270,7 +270,7 @@ while IFS= read -r changed_file; do
   # Match the OCI PR build boundary; contract tests alone do not inspect installed
   # Hermes, OS or nested Node dependencies against a current vulnerability DB.
   case "$changed_file" in
-    .github/workflows/docker-pr.yml|.github/workflows/docker-build.yml|.dockerignore|docker/*|docs/mcp-catalog/usage-guides/*|prototypes/desktop-harness/engineering-experience/handle/replacement-handle-draft.workflow.wflow|apps/*|packages/*|src/*|hermes-plugin-wright/*|examples/process-interfaces/definition.py|examples/process-interfaces/printed-replacement-part/*|integrations/rivet/editor/*|integrations/rivet/runner/*|specs/080-canonical-workflow-recovery/fixtures/mounting-bracket.workflow.json|pyproject.toml|uv.lock|package.json|package-lock.json|README.md|scripts/release/scan_image.py|scripts/release/vulnerability_policy.py|scripts/check-dev-*)
+    .github/workflows/docker-pr.yml|.github/workflows/docker-build.yml|.dockerignore|docker/*|docs/mcp-catalog/usage-guides/*|prototypes/desktop-harness/engineering-experience/handle/replacement-handle-draft.workflow.wflow|apps/*|packages/*|src/*|hermes-plugin-wright/*|examples/process-interfaces/definition.py|examples/process-interfaces/printed-replacement-part/*|integrations/rivet/editor/*|integrations/rivet/runner/*|integrations/codex/plugin/*|specs/080-canonical-workflow-recovery/fixtures/mounting-bracket.workflow.json|pyproject.toml|uv.lock|package.json|package-lock.json|README.md|scripts/release/scan_image.py|scripts/release/vulnerability_policy.py|scripts/check-dev-*)
       CHECK_DOCKER_SCAN=1
       CHECK_PYTHON=1
       ;;
@@ -567,6 +567,7 @@ if [[ "$CHECK_FRONTEND" == "1" ]]; then
     run npx prettier --check apps/web/
   fi
   run npx tsc --noEmit -p apps/web/tsconfig.app.json
+  run node apps/web/build-native-panel.mjs --check
   # Check LF/CRLF cold reconstruction before expensive suites (PR163).
   run npm run test --workspace=apps/web -- --run \
     src/prototypes/workflow-recovery/WorkflowDocumentReconstruction.spec.tsx \

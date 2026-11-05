@@ -1,0 +1,21 @@
+{
+  "interface": {
+    "displayName": "Wright",
+    "shortDescription": "Create and inspect engineering workflows in a Wright workspace",
+    "longDescription": "Engineering workspaces, workflows, tools and durable results beside the desktop conversation. Experimental capabilities are reported explicitly.",
+    "developerName": "Wright",
+    "category": "Productivity",
+    "capabilities": [
+      "Read",
+      "Write"
+    ],
+    "defaultPrompt": [
+      "Open Wright so I can choose or create a workspace and describe my engineering job."
+    ]
+  },
+  "skills": "./skills/",
+  "mcpServers": "./.mcp.json",
+  "name": "wright-desktop",
+  "version": "0.1.9",
+  "description": "Experimental maintained Wright desktop integration."
+}

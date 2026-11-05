@@ -27,6 +27,9 @@ parser.add_argument(
     type=Path,
     help="Explicit JSON manifest for a read-only copied workspace",
 )
+parser.add_argument(
+    "--browser-script", type=Path, help="Read-only installed UI rehearsal after restart"
+)
 args = parser.parse_args()
 EVIDENCE = args.evidence_dir.resolve()
 EVIDENCE.mkdir(parents=True, exist_ok=False)
@@ -85,6 +88,9 @@ def file_manifest(root):
 
 def copy_retained():
     from data_vault.workspace_repository import WorkspaceRepository
+    from data_vault.process_input_repository import ProcessInputRepository
+    from data_vault.state_store import connect_state_db
+    from core.process_interactions import InputSnapshot, StartReceipt
 
     original = Path(retained["directory"]).resolve(strict=True)
     target = layout.workspaces / "retained-copy"
@@ -109,6 +115,30 @@ def copy_retained():
         "files": manifest,
         "scope": retained,
     }
+    # File history alone cannot authorize attaching a durable process. Copy only
+    # this completed run's original immutable receipt/input, not account tables,
+    # review grants, responses or live task state. No start operation is invoked.
+    with connect_state_db(retained["database"], read_only=True) as db:
+        row = db.execute(
+            "SELECT payload_json FROM process_start_receipts WHERE workspace_id=? AND source_path=? AND run_id=?",
+            (retained["workspace_id"], retained["path"], retained["run_id"]),
+        ).fetchone()
+        start = StartReceipt.model_validate_json(row["payload_json"])
+        row = db.execute(
+            "SELECT payload_json FROM process_input_snapshots WHERE workspace_id=? AND snapshot_id=?",
+            (retained["workspace_id"], start.input_snapshot_id),
+        ).fetchone()
+        inputs = InputSnapshot.model_validate_json(row["payload_json"])
+    assert start.process.source_digest == retained["source_digest"]
+    owner = ProcessInputRepository(str(layout.data / "wright.db"))
+    copied, created = owner.reserve_start(inputs, start)
+    assert created and copied == start
+    receipt["retained"]["copied_receipt_sha256"] = hashlib.sha256(
+        start.model_dump_json().encode()
+    ).hexdigest()
+    receipt["retained"]["copied_input_sha256"] = hashlib.sha256(
+        inputs.model_dump_json().encode()
+    ).hexdigest()
 
 
 async def inspect_retained(call):
@@ -276,6 +306,28 @@ for resume in (False, True):
         if retained and not resume:
             copy_retained()
         asyncio.run(exercise(resume))
+        if resume and args.browser_script:
+            if not retained:
+                raise ValueError("Browser rehearsal requires explicit copied state")
+            receipt_path = EVIDENCE / "installed-receipt.json"
+            receipt_path.write_text(json.dumps(receipt, indent=2) + "\n")
+            subprocess.run(
+                [
+                    "node",
+                    str(args.browser_script.resolve()),
+                    str(receipt_path),
+                    str(EVIDENCE / "browser"),
+                ],
+                env={**env, "WRIGHT_DESKTOP_API_URL": url},
+                check=True,
+                timeout=180,
+            )
+            # UI inspection must not change original or copied historical data.
+            for root in ("original", "copy"):
+                assert (
+                    file_manifest(Path(receipt["retained"][root]))
+                    == receipt["retained"]["files"]
+                )
         receipt["status"] = "PASS" if resume else "INITIAL_PASS"
     except BaseException as error:
         receipt["status"] = "FAIL"

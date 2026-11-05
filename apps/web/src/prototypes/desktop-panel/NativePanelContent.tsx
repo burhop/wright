@@ -1,6 +1,9 @@
 import { NativeEditorConnections } from "./NativeEditorConnections";
 import { WorkflowToolDiscovery } from "../workflow-recovery/workflow-tool-discovery";
-import { createNativeToolDiscovery } from "./native-tool-discovery";
+import {
+  createNativeOptionReader,
+  createNativeToolDiscovery,
+} from "./native-tool-discovery";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   ProcessClientError,
@@ -174,6 +177,11 @@ export function NativePanelContent({
   );
   const discoverTools = useMemo(
     () => ({
+      readOptions: createNativeOptionReader(
+        initial.workspace_id,
+        sessionId,
+        readEvidence,
+      ),
       read: createNativeToolDiscovery(
         initial.workspace_id,
         sessionId,

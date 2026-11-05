@@ -63,3 +63,25 @@ Current scope, evidence and remaining acceptance are tracked in
 to the maintained implementation for regression compatibility; they are not the
 installation path. Their immutable installed snapshots and run evidence remain
 unchanged.
+
+### Versioned plugin assets
+
+`integrations/codex/plugin` contains the maintained manifest, MCP profile and
+Wright workflow skill. The wheel carries identical files under `api/desktop/plugin`.
+This uses OpenAI's supported `.codex-plugin/plugin.json` compatibility layout;
+see [plugin structure](https://developers.openai.com/plugins/build/plugins).
+The plugin version follows the Wright package version; the UI resource retains
+its independent content hash. Packaging a skill does not prove a host loaded it
+or injected its text into a model request.
+
+The profile expects `wright` on the host execution environment's PATH and an
+already running, explicitly desktop-enabled installation on port 8000. When
+preparing an isolated installation, set only that plugin's `WRIGHT_HOME` and
+`--api-url` to the candidate's selected home and loopback port. Its token remains
+in Wright's owner-only storage. Installing the plugin does not start a service,
+select an account, change other profiles or grant tool actions. These are candidate
+assets, not a marketplace publication or proof of Windows installation.
+
+When native opening shows text, the workspace file menu provides **Open workflow
+here** using the existing editor in the conversation panel. This is an explicit
+fallback; it does not claim to change the host's native viewer preference.

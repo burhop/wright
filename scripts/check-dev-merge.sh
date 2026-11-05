@@ -124,6 +124,7 @@ else
   run npx prettier --check apps/web/
 fi
 run npx tsc --noEmit -p apps/web/tsconfig.app.json
+run node apps/web/build-native-panel.mjs --check
 # Check LF/CRLF cold reconstruction before expensive suites (PR163).
 run npm run test --workspace=apps/web -- --run \
   src/prototypes/workflow-recovery/WorkflowDocumentReconstruction.spec.tsx \

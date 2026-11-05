@@ -8,7 +8,7 @@ from typing import Annotated, Any, Literal
 
 import httpx
 from mcp.types import ToolAnnotations
-from pydantic import Field, StrictStr
+from pydantic import Field, StrictBool, StrictStr, model_validator
 
 from api.schemas.workspace import WorkflowInputFilesResponse
 from core.process_interfaces import ProcessUI
@@ -19,6 +19,21 @@ from core.workflow_bundle import BundleInspection, WorkflowBundle
 class EditorToolsRequest(Contract):
     workspace_id: Identifier
     session_id: Identifier
+
+
+class EditorOptionsRequest(EditorToolsRequest):
+    kind: Literal["cad", "application", "input-files"]
+    server_id: Identifier | None = None
+    include_resources: StrictBool = False
+
+    @model_validator(mode="after")
+    def validate_subject(self):
+        if self.kind == "input-files":
+            if self.server_id is not None or self.include_resources:
+                raise ValueError("File listing does not accept server options")
+        elif not self.server_id:
+            raise ValueError("Application options require a selected server")
+        return self
 
 
 class ExportRequest(Contract):
@@ -65,6 +80,47 @@ class WrightRequestRejected(ValueError):
 
 
 def register_native_source_tools(mcp, client):
+    @mcp.tool(
+        annotations=ToolAnnotations(
+            readOnlyHint=True,
+            destructiveHint=False,
+            idempotentHint=True,
+            openWorldHint=True,
+        ),
+        structured_output=True,
+        meta={"ui": {"visibility": ["app"]}},
+    )
+    async def wright_workflow_editor_options(
+        request: EditorOptionsRequest,
+    ) -> dict[str, Any]:
+        """Read existing scoped engineering choices; gateway permissions still apply."""
+        await client.scope(request.workspace_id, request.session_id)
+        routes = {
+            "cad": "/api/workspace/workflow-sources/cad",
+            "application": "/api/workspace/workflow-sources/application",
+            "input-files": "/api/workspace/workflow-sources/input-files",
+        }
+        params = {"session_id": request.session_id}
+        if request.server_id:
+            params["server_id"] = request.server_id
+            params["documents" if request.kind == "cad" else "resources"] = (
+                "true" if request.include_resources else "false"
+            )
+        result = await client.call("GET", routes[request.kind], params=params)
+        if not isinstance(result, dict):
+            raise ValueError("Wright returned invalid engineering options")
+        if request.kind == "input-files":
+            files = WorkflowInputFilesResponse.model_validate(result)
+            if files.workspace_id != request.workspace_id:
+                raise ValueError("Files belong to another workspace")
+            result = files.model_dump(mode="json")
+        return {
+            "workspace_id": request.workspace_id,
+            "session_id": request.session_id,
+            "kind": request.kind,
+            "options": result,
+        }
+
     @mcp.tool(
         annotations=ToolAnnotations(
             readOnlyHint=True,

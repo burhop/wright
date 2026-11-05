@@ -1,3 +1,4 @@
+import { useWorkflowOptionReader } from "./workflow-tool-discovery";
 import {
   exportFormatLabel,
   outputConsumers,
@@ -176,6 +177,7 @@ export function CadTaskOptions({
   readOnly: boolean;
   onApply: (commands: RecoveryCommand[]) => boolean;
 }) {
+  const readOptions = useWorkflowOptionReader();
   const [pendingExport, setPendingExport] = useState<{
     id: string;
     format: string;
@@ -196,9 +198,7 @@ export function CadTaskOptions({
     setCaps(null);
     setError("");
     if (sessionId && server && !block.configuration.application_resource)
-      void fetch(
-        `/api/workspace/workflow-sources/cad?${new URLSearchParams({ session_id: sessionId, server_id: server })}`,
-      )
+      void readOptions("cad", sessionId, server)
         .then(async (r) => {
           if (!r.ok)
             throw new Error(
@@ -215,14 +215,17 @@ export function CadTaskOptions({
     return () => {
       current = false;
     };
-  }, [sessionId, server, Boolean(block.configuration.application_resource)]);
+  }, [
+    sessionId,
+    server,
+    Boolean(block.configuration.application_resource),
+    readOptions,
+  ]);
   async function refreshDocuments() {
     setBusy(true);
     setError("");
     try {
-      const r = await fetch(
-        `/api/workspace/workflow-sources/cad?${new URLSearchParams({ session_id: sessionId ?? "", server_id: server, documents: "true" })}`,
-      );
+      const r = await readOptions("cad", sessionId ?? "", server, true);
       if (!r.ok)
         throw new Error(
           "Could not list open models. Start the configured CAD application and refresh.",
@@ -236,9 +239,7 @@ export function CadTaskOptions({
   }
   async function refreshFiles() {
     try {
-      const r = await fetch(
-        `/api/workspace/workflow-sources/input-files?session_id=${encodeURIComponent(sessionId ?? "")}`,
-      );
+      const r = await readOptions("input-files", sessionId ?? "");
       if (!r.ok) throw new Error("Could not list workspace files.");
       setFiles((await r.json()).files);
     } catch (e) {

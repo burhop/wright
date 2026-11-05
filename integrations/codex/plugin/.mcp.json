@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "wright_desktop": {
+      "command": "wright",
+      "args": [
+        "mcp",
+        "desktop",
+        "--api-url",
+        "http://127.0.0.1:8000"
+      ]
+    }
+  }
+}

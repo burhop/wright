@@ -1,3 +1,4 @@
+import { useWorkflowOptionReader } from "./workflow-tool-discovery";
 import { useEffect, useState } from "react";
 import { findBlock, findPort, type RecoveryWorkflow } from "./model";
 import {
@@ -69,6 +70,7 @@ export function useEngineeringConnectionCapabilities(
   workflow: RecoveryWorkflow,
   sessionId?: string,
 ) {
+  const readOptions = useWorkflowOptionReader();
   const [caps, setCaps] = useState<Record<string, ApplicationCapabilities>>({});
   const servers = [
     ...new Set(
@@ -85,11 +87,7 @@ export function useEngineeringConnectionCapabilities(
     setCaps({});
     if (!sessionId) return;
     for (const server of servers.split("|").filter(Boolean)) {
-      const query = new URLSearchParams({
-        session_id: sessionId,
-        server_id: server,
-      });
-      void fetch(`/api/workspace/workflow-sources/application?${query}`)
+      void readOptions("application", sessionId, server)
         .then(async (response) => (response.ok ? response.json() : null))
         .then((value) => {
           if (current && value)
@@ -100,6 +98,6 @@ export function useEngineeringConnectionCapabilities(
     return () => {
       current = false;
     };
-  }, [sessionId, servers]);
+  }, [sessionId, servers, readOptions]);
   return caps;
 }

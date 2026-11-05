@@ -301,6 +301,11 @@ are checked separately, so reverting a dirty file cannot mask a changed HEAD
 or index; untracked inputs are also rejected. It never builds or publishes. For a standalone scan, use
 `python -m scripts.release.scan_image --image <image>`.
 
+Frontend gates regenerate the desktop UI in comparison-only mode. A stale bundled
+editor fails even if the ordinary web app builds. Run
+`node apps/web/build-native-panel.mjs` to refresh both maintained and compatibility
+assets before committing. Normal native artifact builds also regenerate this asset.
+
 The Dockerfile copies the closed setup-resource inventory before workspace
 package installation, including its versioned JSON and instruction assets.
 Recipe changes also select packaging closure, Docker smoke, gate-selection and
@@ -834,3 +839,7 @@ early, retaining the complete frontend suites. This test/gate-only correction
 retains the exact green product full-gate receipt, runs affected checks and the
 normal push gate, and requires fresh current-head CI. It does not establish
 native Windows desktop panel acceptance.
+
+The maintained desktop plugin is also a Docker/wheel input. Its manifest, MCP
+profile and skill are bundled byte-for-byte; changes select Docker PR CI and the
+local exact-image scan. A prior image cannot qualify changed plugin instructions.

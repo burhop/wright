@@ -55,7 +55,12 @@ it("uses workspace files as the native-tab landing view with accepted names and 
     throw Error("Unexpected operation: " + name);
   };
   render(
-    <NativeHomePanel call={call} onOpen={onOpen} onOpenFile={nativeOpen} />,
+    <NativeHomePanel
+      call={call}
+      onOpen={onOpen}
+      onOpenFile={nativeOpen}
+      onOpenInPanel={onOpen}
+    />,
   );
   await screen.findByRole("option", { name: "Alpha" });
   fireEvent.change(await screen.findByLabelText("Workspace"), {
@@ -92,6 +97,19 @@ it("uses workspace files as the native-tab landing view with accepted names and 
   ).toBeVisible();
   expect(screen.getByRole("button", { name: "Connections" })).toBeVisible();
   expect(screen.getByRole("button", { name: "Previous runs" })).toBeVisible();
+  // An acknowledged open does not establish the chosen native viewer. The
+  // explicit fallback uses the same source owner, without another host open.
+  fireEvent.click(
+    screen.getByLabelText("File details for Block preview recovery"),
+  );
+  fireEvent.click(screen.getByRole("button", { name: "Open workflow here" }));
+  await waitFor(() =>
+    expect(onOpen).toHaveBeenCalledExactlyOnceWith(
+      alpha,
+      "workflows/block-preview-recovery.workflow.wflow",
+    ),
+  );
+  expect(nativeOpen).toHaveBeenCalledTimes(1);
 });
 
 it("keeps a native-open failure visible without losing file navigation or retrying", async () => {

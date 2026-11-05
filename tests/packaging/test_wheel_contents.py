@@ -89,6 +89,27 @@ def test_built_wheel_contains_public_helper_contracts_and_renderer_assets(
             archive.read("api/desktop/native-editor.html")
             == (ROOT / "apps/api/src/api/desktop/native-editor.html").read_bytes()
         )
+        plugin = ROOT / "integrations/codex/plugin"
+        for asset in plugin.rglob("*"):
+            if asset.is_file():
+                assert (
+                    archive.read(
+                        "api/desktop/plugin/" + asset.relative_to(plugin).as_posix()
+                    )
+                    == asset.read_bytes()
+                )
+        manifest = json.loads(
+            archive.read("api/desktop/plugin/.codex-plugin/plugin.json")
+        )
+        project = tomllib.loads((ROOT / "pyproject.toml").read_text())
+        assert manifest["version"] == project["project"]["version"]
+        assert manifest["mcpServers"] == "./.mcp.json"
+        assert manifest["skills"] == "./skills/"
+        config = json.loads(archive.read("api/desktop/plugin/.mcp.json"))
+        assert config["mcpServers"]["wright_desktop"] == {
+            "command": "wright",
+            "args": ["mcp", "desktop", "--api-url", "http://127.0.0.1:8000"],
+        }
         editor_manifest = json.loads(
             archive.read("workspace_service/_rivet/editor/manifest.json")
         )

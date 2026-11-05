@@ -506,6 +506,13 @@ function home() {
           initialSelection={selectedWorkspace ?? navigation}
           initialView={homeView}
           onOpenFile={nativeWorkspaceFiles ? openWorkspaceFile : undefined}
+          onOpenInPanel={(workspace, path) =>
+            openSavedWorkflow(
+              workspace.workspace_id,
+              workspace.session_id,
+              path,
+            )
+          }
           nativeFileNotice={nativeFileNotice}
           onNavigate={rememberView}
           restorationNotice={restorationNotice}

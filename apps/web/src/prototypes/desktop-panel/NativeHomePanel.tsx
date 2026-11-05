@@ -99,6 +99,7 @@ export function NativeHomePanel({
   lastLocation,
   onReopen,
   onOpenFile,
+  onOpenInPanel,
   nativeFileNotice,
   onPlanInChat,
 }: {
@@ -126,6 +127,10 @@ export function NativeHomePanel({
     run: RecordedRun,
   ) => Promise<void>;
   readonly onOpen: (workspace: DesktopWorkspace, path: string) => Promise<void>;
+  readonly onOpenInPanel?: (
+    workspace: DesktopWorkspace,
+    path: string,
+  ) => Promise<void>;
   /** Present only when the backend and host have qualified native file tabs. */
   readonly onOpenFile?: (
     workspace: DesktopWorkspace,
@@ -220,7 +225,7 @@ export function NativeHomePanel({
       try {
         if (await onOpenFile(selected, path)) {
           setFileNotice(
-            `Open request sent for ${titles[file.path] ?? file.name}. Check the desktop tabs.`,
+            `Open request sent for ${titles[file.path] ?? file.name}. Check the desktop tabs.${workflowPaths.has(file.path) ? " If you see text, use the file’s ⋯ menu → Open workflow here." : ""}`,
           );
           return;
         }
@@ -238,12 +243,12 @@ export function NativeHomePanel({
     }
     setPreviewPath(path);
   }
-  async function openWorkflow(file: FileNode) {
+  async function openWorkflow(file: FileNode, open = onOpen) {
     if (!selected || loading || creating || opening) return;
     setLoading(true);
     setOpening(true);
     try {
-      await onOpen(selected, file.path.replace(/^\//, ""));
+      await open(selected, file.path.replace(/^\//, ""));
     } catch {
       setError(
         "The workflow could not be opened. Your saved source is unchanged.",
@@ -818,6 +823,15 @@ export function NativeHomePanel({
                         ⋯
                       </summary>
                       <code>{file.path}</code>
+                      {workflowPaths.has(file.path) && onOpenInPanel && (
+                        <button
+                          type="button"
+                          disabled={loading || creating || opening}
+                          onClick={() => void openWorkflow(file, onOpenInPanel)}
+                        >
+                          Open workflow here
+                        </button>
+                      )}
                     </details>
                   ) : (
                     <small title={file.path}>{file.path}</small>

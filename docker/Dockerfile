@@ -296,6 +296,7 @@ COPY --chown=agent:agent \
     examples/process-interfaces/printed-replacement-part/handle-geometry/
 COPY --chown=agent:agent integrations/rivet/editor/ integrations/rivet/editor/
 COPY --chown=agent:agent integrations/rivet/runner/ integrations/rivet/runner/
+COPY --chown=agent:agent integrations/codex/plugin/ integrations/codex/plugin/
 
 USER root
 

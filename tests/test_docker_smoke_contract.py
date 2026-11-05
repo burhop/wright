@@ -134,6 +134,7 @@ def test_docker_runtime_serves_image_built_frontend_dist() -> None:
     assert "COPY --from=web-builder /usr/local/lib/node_modules" in dockerfile
     assert "integrations/rivet/editor/ integrations/rivet/editor/" in dockerfile
     assert "integrations/rivet/runner/ integrations/rivet/runner/" in dockerfile
+    assert "integrations/codex/plugin/ integrations/codex/plugin/" in dockerfile
     assert "integrations/rivet/spike/" in dockerignore
     assert "!integrations/rivet/editor/dist/**" in dockerignore
     assert "!integrations/rivet/runner/dist/**" in dockerignore
