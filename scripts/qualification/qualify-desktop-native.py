@@ -87,7 +87,7 @@ receipt = {
 }
 
 
-def lifecycle(command, label):
+def lifecycle(command, label, *, required=True):
     result = subprocess.run(
         [manager_python, "-I", "-m", "wright_engineering.cli", "native", command],
         env=env,
@@ -98,8 +98,19 @@ def lifecycle(command, label):
     )
     (evidence / f"{label}.stdout").write_text(result.stdout)
     (evidence / f"{label}.stderr").write_text(result.stderr)
-    assert result.returncode == 0, f"{command} failed; see {label} evidence"
+    receipt.setdefault("lifecycle_exit_codes", {})[label] = result.returncode
+    # Keep the CLI's already-redacted result even when the command fails. CI
+    # uploads the receipt, not the private stdout/stderr files.
     receipt[label] = json.loads(result.stdout)
+    if required and result.returncode != 0:
+        try:
+            lifecycle("doctor", f"{label}-doctor", required=False)
+        except Exception as exc:
+            receipt[f"{label}-doctor"] = {
+                "code": "diagnostic_unavailable",
+                "error_type": type(exc).__name__,
+            }
+        raise AssertionError(f"{command} failed; see {label} evidence")
 
 
 async def bridge(label):

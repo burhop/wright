@@ -4,6 +4,17 @@
 This is the sole implementation checklist. Historical implementation remains credited;
 an unchecked task means the new delivery claim has not yet been qualified.
 
+## Latest native matrix result — 5 November
+
+P15's actual Windows x64 and Linux x64 installed desktop MCP tests passed at
+`15dbfef8`, including viewer-byte identity, save/reopen, restart and final stop.
+macOS ARM64 failed final stop after its successful read/restart checks. Preserve
+that failure: the initial CI receipt omitted the failed command's diagnostic.
+The bounded correction retains failed CLI/doctor evidence; runtime cause remains
+unverified. Actual desktop UI acceptance and complete engineering journeys remain
+separate mandatory work. No service, account, engineering run or requirement was
+changed to obtain these results.
+
 ## Native desktop profile qualification — 5 November
 
 The installed product at `df6ea4c4` passes the normal pre-push gate and its

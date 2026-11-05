@@ -873,3 +873,10 @@ Debian's `apt` and `libapt-pkg7.0` 3.0.3. Both runtime stages explicitly install
 3.0.4, the [Debian DSA-6607-1 fixed version](https://security-tracker.debian.org/tracker/CVE-2026-109518).
 The existing exact-image/current-database scan remains mandatory; this is a package
 update, not a vulnerability exception or a clean-scan claim.
+
+The desktop native CI harness must retain the CLI's redacted structured result
+and exit code before asserting success. A macOS final-stop failure was initially
+uploaded without its diagnostic because the assertion preceded receipt storage.
+On failure, collect the existing read-only doctor result without retrying the
+mutation; diagnostic failure must not replace the original failure or create a
+pass. Keep raw stdout/stderr private and retain all required platform checks.

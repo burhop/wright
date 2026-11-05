@@ -11,6 +11,21 @@ one success percentage. The checkpoint below records the new candidate separatel
 from the mandatory acceptance definitions; a partial boundary pass does not satisfy
 an entire story.
 
+## Native matrix observation — 5 November, head 15dbfef8
+
+Actual installed desktop MCP tests now PASS on Windows x64 and Linux x64 using
+the same `59d8274e...` wheel. Both retain exact viewer bytes and saved source
+through restart and stop successfully. This establishes the tested backend
+profile, not Windows Codex app rendering/download/chat restoration.
+
+macOS ARM64 connected, served the exact viewer and preserved saved source through
+restart, but FAILED final shutdown. CI's original receipt omitted the failing
+command result; the cause is not yet established. A qualification-only correction
+now retains failed CLI results/exit codes and a read-only doctor observation.
+It does not change shutdown policy, retry a failed action or claim a runtime fix.
+Evidence: `ci-desktop-15dbfef8/platform-summary.json` and retained macOS job log;
+required current-head CI and all original engineering/UI blockers remain open.
+
 ## Native desktop profile qualification — 5 November
 
 | Boundary | Result | Evidence / limitation |
