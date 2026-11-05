@@ -9,6 +9,7 @@ from wright_engineering.runtime.artifacts import RuntimeArtifact
 from wright_engineering.runtime.compatibility import CompatibilityPolicy
 from wright_engineering.runtime.layout import NativeLayout
 from wright_engineering.runtime.lifecycle import NativeLifecycle
+from wright_engineering.runtime.migrations import NativeMigrationManager
 from wright_engineering.runtime.models import (
     LifecycleState,
     ProcessIdentity,
@@ -99,7 +100,9 @@ def lifecycle(
         installer=installer or FakeInstaller(layout),  # type: ignore[arg-type]
         process_manager=process_manager or FakeProcessManager(),  # type: ignore[arg-type]
         health_probe=health_probe or (lambda _: True),
-        migration_manager=migration_manager,
+        # FakeInstaller creates no usable interpreter. These lifecycle tests keep
+        # the real in-process vault owner; installed delegation is tested separately.
+        migration_manager=migration_manager or NativeMigrationManager(),
         compatibility=compatibility,
         manager_id="cli",
         adapter_protocol="wright-lifecycle-v1",

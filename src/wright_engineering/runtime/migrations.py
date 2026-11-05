@@ -6,8 +6,14 @@ import hashlib
 import json
 import os
 import sqlite3
+import subprocess
 from pathlib import Path
 from typing import Any
+
+from .installer import RuntimeInstaller
+from .layout import NativeLayout
+from .models import RuntimeStatus
+from .state import ManifestStore
 
 
 _PROGRAM_STATE_TABLES = (
@@ -39,11 +45,68 @@ class MigrationPreflightError(RuntimeError):
 
 
 class NativeMigrationManager:
+    def __init__(self, layout: NativeLayout | None = None) -> None:
+        self.layout = layout
+
+    def _installed_call(self, action: str, data_root: Path, **arguments: Any) -> Any:
+        """Use installed vault dependencies, retaining the same migration owner."""
+        assert self.layout is not None
+        if data_root.resolve() != self.layout.data.resolve():
+            raise MigrationPreflightError("migration_data_root_mismatch")
+        manifest = ManifestStore(self.layout).load(create=False)
+        runtime_id = manifest.active_runtime_id
+        if action == "prepare_activation":
+            runtime_id = (
+                manifest.current_operation.candidate_runtime_id
+                if manifest.current_operation
+                else None
+            )
+        elif action != "current_schema":
+            raise MigrationPreflightError("migration_operation_invalid")
+        runtime = manifest.runtimes.get(runtime_id or "")
+        if runtime is None or runtime.status not in {
+            RuntimeStatus.ACTIVE,
+            RuntimeStatus.VERIFIED,
+        }:
+            raise MigrationPreflightError("migration_runtime_unavailable")
+        environment = self.layout.require_contained(
+            Path(runtime.environment_path), self.layout.runtimes
+        )
+        python = RuntimeInstaller.environment_python(environment)
+        if not python.is_file():
+            raise MigrationPreflightError("migration_runtime_unavailable")
+        # Both methods exist in predecessor runtimes. An unconfigured manager in
+        # the child executes locally, so this also avoids recursive delegation.
+        program = (
+            "import json, sys; from pathlib import Path; "
+            "from wright_engineering.runtime.migrations import NativeMigrationManager; "
+            "p=json.load(sys.stdin); p['data_root']=Path(p['data_root']); "
+            f"print(json.dumps(NativeMigrationManager().{action}(**p)))"
+        )
+        try:
+            completed = subprocess.run(
+                [str(python), "-I", "-c", program],
+                input=json.dumps({"data_root": str(data_root), **arguments}),
+                capture_output=True,
+                text=True,
+                timeout=180,
+                check=True,
+            )
+            return json.loads(completed.stdout)
+        except (OSError, subprocess.SubprocessError, json.JSONDecodeError) as exc:
+            # Do not copy database contents or child tracebacks into CLI evidence.
+            raise MigrationPreflightError("installed_migration_failed") from exc
+
     @staticmethod
     def database_path(data_root: Path) -> Path:
         return data_root / "wright.db"
 
     def current_schema(self, data_root: Path) -> int:
+        if self.layout is not None:
+            version = self._installed_call("current_schema", data_root)
+            if type(version) is not int or version < 0:
+                raise MigrationPreflightError("installed_schema_invalid")
+            return version
         from data_vault import database_status
 
         return database_status(self.database_path(data_root)).current_version
@@ -56,6 +119,19 @@ class NativeMigrationManager:
         data_schema_max: int,
         operation_id: str,
     ) -> str | None:
+        if self.layout is not None:
+            backup = self._installed_call(
+                "prepare_activation",
+                data_root,
+                data_schema_min=data_schema_min,
+                data_schema_max=data_schema_max,
+                operation_id=operation_id,
+            )
+            if backup is not None:
+                if not isinstance(backup, str):
+                    raise MigrationPreflightError("installed_backup_invalid")
+                self.layout.require_contained(Path(backup), self.layout.data)
+            return backup
         from data_vault import upgrade_database
         from data_vault.migrations import require_schema_compatible
 

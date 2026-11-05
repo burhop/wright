@@ -109,3 +109,41 @@ UI is `95bfbff7d17b34eabad7b7cbf23bedf9e989e5637173c01b656cd4ab2ac6992f`.
 Thirty-six focused panel/transfer tests and the actual frontend type/format checks
 pass. The original and copied engineering files remain unchanged. These are
 installed Linux/browser proofs, not actual Windows downloads or host acceptance.
+
+## Normal build and dependency-light update (04:56 UTC)
+
+The normal package gate regenerated stale checked-in main-app assets and the
+runtime-extra lock hash. The earlier direct-built wheel qualified its desktop
+bundle but is superseded for the complete installed-app claim. Normal-build wheel
+`6e356e931d0af0f9552702fbbe8436b94bf4fd86f6438657d16b147184482e77` passes the
+installed browser and managed lifecycle proofs; both retained failures and all
+previous artifacts remain preserved.
+
+Actual deployment preparation then found that the dependency-light CLI imported
+vault/runtime dependencies during update (`ModuleNotFoundError: structlog`). The
+full gate was stopped and recorded incomplete before correcting this product
+fault. The migration owner now uses the confined active runtime for schema reads
+and verified candidate runtime for activation; it invokes the same vault migration
+methods, preserving their backup, compatibility and operation-identity checks.
+No heavy runtime dependencies were added to the manager. Child errors remain
+failures; no fallback or tracebacks containing database content enter CLI evidence.
+
+The native regression suite passes: 147 tests, 7 existing skips. Eleven new
+boundary cases cover installed selection, exact inputs, invalid state/path/schema,
+child failures and backup confinement. Fake-installer lifecycle fixtures explicitly
+retain the actual in-process migration owner because they contain no executable
+runtime. The installed proof uses a real dependency-light CLI without structlog,
+starts the prior wheel, saves a disposable workflow, restarts, updates to corrected
+wheel `faa5bf561e93529ce01ede7ab2492f465db27bfb2160fce28bcf99f3670bf277`, and
+reopens identical source. Evidence: `light-manager-update/receipt.json`.
+
+PR #190 coordination is recorded in comment 6649945546. Its startup/readiness
+policy remains untouched; shared lifecycle change is constructor plumbing only.
+A fresh owned candidate has been prepared outside repository and temporary paths;
+original prototype services/data are preserved. Named plugin activation and the
+fresh full gate remain pending at this checkpoint. No engineering run occurred.
+
+The bare `.wflow` control also violates the existing accepted-source path contract
+(`workflows/<name>.workflow.wflow`). It must not be used as proof of saved-workflow
+rendering. Two canonical controls are now registered in a disposable candidate
+workspace. This corrects the experiment, not host automatic viewer selection.

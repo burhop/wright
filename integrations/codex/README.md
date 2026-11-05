@@ -85,3 +85,13 @@ assets, not a marketplace publication or proof of Windows installation.
 When native opening shows text, the workspace file menu provides **Open workflow
 here** using the existing editor in the conversation panel. This is an explicit
 fallback; it does not claim to change the host's native viewer preference.
+
+### Native updates
+
+The lightweight CLI keeps runtime dependencies in the managed environment. Schema
+reads use the verified active runtime; update preflight uses the verified candidate
+runtime and the existing vault migration/backup owner. A missing or unconfined
+runtime fails before migration. The manager does not install extra dependencies
+merely to inspect state, and a failed update is not silently retried. Native
+lifecycle qualification must exercise the dependency-light CLI, not only a Python
+environment that already contains all runtime packages.

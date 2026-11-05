@@ -12,8 +12,8 @@ an unchecked task means the new delivery claim has not yet been qualified.
 - P01 baseline preserved; P02 screen/action map recorded; P03 automatic viewer observation FAIL on 0.38.1, offline diagnosis retained.
 - P04/P05 implemented: packaged authenticated desktop composition, CLI, scoped option reads, plugin/skill and content-hashed editor. Boundary suite: 408 passed, 10 skipped; focused UI suite: 50 passed.
 - P06 copied-state rehearsal passes without credentials/live jobs/grants. Installed results journey passes in Linux Chromium with a simulated host: fallback editor, exact image, producing-step availability, same-run return, narrow layout.
-- Normal managed install/start/status/doctor/MCP/stop/restart passes on Linux ARM64 (`managed-native-1/receipt.json`). Existing live plugin remains 0.38.1.
-- Docker security scan passes after Debian apt 3.0.4 correction; full merge gate continues. Mandatory engineering basis/reviews and actual Windows acceptance are unresolved, not waived.
+- Dependency-light managed install/start/status/doctor/MCP/stop/restart/update passes on Linux ARM64 (`light-manager-update/receipt.json`). The exact saved workflow survives. Existing live plugin remains 0.38.1; the isolated maintained candidate is prepared.
+- Earlier Docker security scan passes after Debian apt 3.0.4 correction. Native update exposed a missing dependency boundary; corrected native suite passes (147, 7 skips). Fresh full gate/image needed. Mandatory engineering basis/reviews and Windows acceptance remain unresolved.
 - Evidence: `.local-run/production-integration/`; no live instance changed.
 - Preserve the prior plan and private/native evidence. Move this checklist into
   the accepted feature record if required; replace this page with a pointer then.
