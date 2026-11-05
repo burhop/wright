@@ -95,6 +95,10 @@ writeFileSync(
   resolve(repository, "prototypes/desktop-harness/native-editor.html"),
   html,
 );
+writeFileSync(
+  resolve(repository, "apps/api/src/api/desktop/native-editor.html"),
+  html,
+);
 console.log(
   JSON.stringify({
     resource: "native-editor.html",

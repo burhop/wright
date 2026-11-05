@@ -659,10 +659,13 @@ def test_codeql_cancels_superseded_runs_and_skips_generated_bundles() -> None:
         "integrations/rivet/runner/artifacts/**",
         "src/wright_engineering/static/web/**",
         "prototypes/desktop-harness/native-editor.html",
+        "apps/api/src/api/desktop/native-editor.html",
     ):
         assert generated_path in config
     assert "apps/web/src" not in config
-    assert "apps/api" not in config
+    ignored = yaml.safe_load(config)["paths-ignore"]
+    assert "apps/api" not in ignored
+    assert "apps/api/**" not in ignored
 
 
 def test_native_panel_codeql_exclusion_keeps_maintained_sources_scannable() -> None:
@@ -678,6 +681,7 @@ def test_native_panel_codeql_exclusion_keeps_maintained_sources_scannable() -> N
         *ROOT.glob("apps/web/src/**/*.tsx"),
         *ROOT.glob("prototypes/desktop-harness/*.py"),
         *ROOT.glob("prototypes/desktop-harness/*.ts"),
+        *ROOT.glob("apps/api/src/api/desktop/*.py"),
     ]
     assert maintained
     for source in maintained:
@@ -686,6 +690,7 @@ def test_native_panel_codeql_exclusion_keeps_maintained_sources_scannable() -> N
     builder = _read("apps/web/build-native-panel.mjs")
     assert "apps/web/src/prototypes/desktop-panel/native-entry.tsx" in builder
     assert generated in builder
+    assert "apps/api/src/api/desktop/native-editor.html" in builder
     assert "minify: true" in builder
     gate = _read("scripts/check-dev-push.sh")
     assert ".github/codeql/*" in gate

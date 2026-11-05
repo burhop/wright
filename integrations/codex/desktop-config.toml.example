@@ -1,0 +1,8 @@
+# Experimental desktop UI profile. Start an explicitly desktop-enabled Wright
+# runtime first. The bridge reads the existing installation's private token.
+[mcp_servers.wright]
+command = "wright"
+args = ["mcp", "desktop", "--api-url", "http://127.0.0.1:8000"]
+
+[mcp_servers.wright.env]
+WRIGHT_HOME = "<isolated-wright-home>"

@@ -88,6 +88,12 @@ PR #159 also exposed a gap between the separately qualified desktop prototype
 and normal gate collection. Python prototype changes now select its existing owner
 tests as an isolated pytest root in both native gates. These include frozen routing,
 authentication, private credentials, scope, recovery, and observable evidence.
+Maintained `api.desktop`, desktop launcher/profile and integration changes also
+select those same boundary tests plus `tests/desktop_integration`. The packaged
+HTML is the identical generated output of the scanned UI sources; its exact
+packaged path joins the existing generated-bundle CodeQL exclusion. All desktop
+Python and TypeScript sources remain scanned.
+
 GitHub CodeQL remains the whole-program data-flow check. Its name heuristic treated
 the public `remote_oauth_flow` selector as a password; the internal selector is now
 named `remote_signin_mode`, while the CLI flag, serialized key, and supported values

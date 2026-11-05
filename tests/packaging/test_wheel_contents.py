@@ -78,6 +78,17 @@ def test_built_wheel_contains_public_helper_contracts_and_renderer_assets(
     installed = tmp_path / "installed"
     with zipfile.ZipFile(wheels[0]) as archive:
         names = set(archive.namelist())
+        # Desktop entrypoints and exact UI bytes must work without a checkout.
+        assert {
+            "api/desktop/composition.py",
+            "api/desktop/entrypoint.py",
+            "api/desktop/mcp_bridge.py",
+            "wright_engineering/desktop_launcher.py",
+        } <= names
+        assert (
+            archive.read("api/desktop/native-editor.html")
+            == (ROOT / "apps/api/src/api/desktop/native-editor.html").read_bytes()
+        )
         editor_manifest = json.loads(
             archive.read("workspace_service/_rivet/editor/manifest.json")
         )

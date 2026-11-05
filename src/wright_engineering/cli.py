@@ -60,6 +60,11 @@ def main(argv: list[str] | None = None) -> int:
     serve.add_argument("--session-id", default="wright-engineering")
     serve.add_argument("--workspace-id", default="wright-engineering")
     serve.add_argument("--token-env", default="WRIGHT_API_TOKEN")
+    desktop = mcp_subcommands.add_parser(
+        "desktop",
+        help="Connect the desktop UI to an explicitly enabled Wright runtime.",
+    )
+    desktop.add_argument("--api-url", default="http://127.0.0.1:8000")
     models = subcommands.add_parser(
         "models", help="Validate engineering-model extension contracts locally."
     )
@@ -137,6 +142,10 @@ def main(argv: list[str] | None = None) -> int:
             workspace_id=args.workspace_id,
             token_env=args.token_env,
         )
+    if args.command == "mcp" and args.mcp_command == "desktop":
+        from .desktop_launcher import serve_desktop
+
+        return serve_desktop(args.api_url)
     if args.command == "models":
         from model_registry.conformance import (
             validate_adapter_file,

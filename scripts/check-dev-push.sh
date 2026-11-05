@@ -275,6 +275,15 @@ while IFS= read -r changed_file; do
       CHECK_PYTHON=1
       ;;
   esac
+  # Maintained desktop extraction retains the original boundary regressions.
+  # Keep this independent of the generic API/CLI selections below.
+  case "$changed_file" in
+    apps/api/src/api/desktop/*|src/wright_engineering/desktop_launcher.py|src/wright_engineering/manager_profiles.py|tests/desktop_integration/*|integrations/codex/*)
+      CHECK_PYTHON=1
+      CHECK_GITLEAKS_HISTORY=1
+      PYTHON_TEST_TARGETS+=(prototypes/desktop-harness/tests tests/desktop_integration tests/native_runtime/test_codex_manager_profile.py)
+      ;;
+  esac
   # Packaged recipe JSON/instruction assets are build inputs too. Retain the
   # ordinary Python selection below while covering non-Python resource changes.
   case "$changed_file" in
