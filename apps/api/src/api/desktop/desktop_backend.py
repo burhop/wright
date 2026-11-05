@@ -431,6 +431,7 @@ class DesktopBackend:
                 ("desktop_oauth", "desktop_oauth.py"),
                 ("desktop_credential_form", "desktop_credential_form.py"),
                 ("desktop_connection_template", "desktop_connection_template.py"),
+                ("connection_workflow_usage", "connection_workflow_usage.py"),
                 ("native_file_contracts", "native_file_contracts.py"),
             ]
             + ([("native_editor", "native-editor.html")] if native_editor else [])
@@ -1112,6 +1113,42 @@ class DesktopBackend:
                 "workspace_id": body.workspace_id,
                 "session_id": body.session_id,
                 "availability": result,
+            }
+
+        @router.get("/connection-workflows")
+        async def read_connection_workflows(
+            workspace_id: str,
+            session_id: str,
+            capability_id: str,
+            server_id: str,
+            service: McpApiService = Depends(get_mcp_api_service),
+        ):
+            from .connection_workflow_usage import connection_workflow_usage
+            from api.services.mcp_services import (
+                McpServiceError,
+                mcp_service_http_exception,
+            )
+
+            row = self.workspace(workspace_id, session_id)
+            try:
+                state = connection_control_state(
+                    service,
+                    capability_id,
+                    server_id,
+                    repository=self.service.repository,
+                )
+            except McpServiceError as error:
+                raise mcp_service_http_exception(error) from error
+            usage = await connection_workflow_usage(
+                self.service.workflow_sources, row["local_path"], server_id
+            )
+            return {
+                "workspace_id": workspace_id,
+                "session_id": session_id,
+                "capability_id": capability_id,
+                "server_id": server_id,
+                "control_digest": state["control_digest"],
+                "usage": usage,
             }
 
         @router.get("/connection-controls")

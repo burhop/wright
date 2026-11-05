@@ -11,6 +11,28 @@ one success percentage. The checkpoint below records the new candidate separatel
 from the mandatory acceptance definitions; a partial boundary pass does not satisfy
 an entire story.
 
+## Latest bounded observations — 5 November
+
+- **A03/P08 source correction:** optional “Workflows using this connection” reads
+  only explicit saved bindings in the selected workspace. Eight workflow rows
+  are shown at a time; step names and file paths are expandable. Incomplete or
+  unavailable scans are never represented as update safety. Scope, source-store,
+  malformed/unbound/changed-file and component checks pass. Installed qualification
+  and gates for this addition remain pending; no connection was modified.
+- **A05/A06 installed subset:** typed keyboard/pointer editing, Undo/Redo, input
+  and instruction editing, exact accepted save/reopen, 36 instruction body hashes
+  across export/import, and two-window stale-save preservation PASS on installed
+  df6ea4c4. Evidence: `current-additional-qualification.json`,
+  `installed-conflict-authoring-2/semantic-audit.json`. Linux simulated host only.
+- **Q06/Q08 native profile:** current-head native run `42031104717` at 9805a0fa
+  PASS on Windows x64, Linux x64 and macOS ARM64, exact wheel `59d8274e...` and UI
+  `6a8d381b...`. The prior macOS final-stop failure below was not reproduced; no
+  runtime fix or root cause is claimed. Full current-head CI is separately recorded
+  in `pr191-sixth-cycle-status.json`.
+
+All mandatory stories below remain intact. No engineering run, actual Windows GUI
+acceptance, dev merge or publication is established by these observations.
+
 ## Native matrix observation — 5 November, head 15dbfef8
 
 Actual installed desktop MCP tests now PASS on Windows x64 and Linux x64 using

@@ -732,6 +732,23 @@ def server(
         return {"ok": True, "document": document}
 
     @mcp.tool(annotations=read, meta={"ui": {"visibility": ["app"]}})
+    async def wright_connection_workflows(
+        workspace_id: str, session_id: str, capability_id: str, server_id: str
+    ) -> dict:
+        """Read explicit saved workflow references in this workspace; no update safety or execution approval."""
+        await client.scope(workspace_id, session_id)
+        return await client.call(
+            "GET",
+            "/api/desktop/connection-workflows",
+            params={
+                "workspace_id": workspace_id,
+                "session_id": session_id,
+                "capability_id": capability_id,
+                "server_id": server_id,
+            },
+        )
+
+    @mcp.tool(annotations=read, meta={"ui": {"visibility": ["app"]}})
     async def wright_connection_controls(
         workspace_id: str, session_id: str, capability_id: str, server_id: str
     ) -> dict:

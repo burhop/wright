@@ -4,6 +4,30 @@
 This is the sole implementation checklist. Historical implementation remains credited;
 an unchecked task means the new delivery claim has not yet been qualified.
 
+## Current P08 correction — scoped connection usage
+
+The provider-controls view now has an on-demand, read-only list of saved workflows
+that explicitly reference the selected connection. It reuses the confined source
+store and canonical parser; accepted source digests travel with the projection.
+Unbound, unreadable and unsupported sources, time/size/count limits are explicit.
+Other workspaces, live runs and unsaved drafts remain outside this snapshot; no
+configuration, permission, source or runtime action is performed. Replacement
+configuration drafts do not move existing workflows to a new provider.
+
+Focused source/route/bridge/UI checks pass, including copies of the existing handle
+and Robot source. Installed candidate and prescribed gates for this addition are
+pending. This is P08 progress, not completion of OAuth reconnect/update-impact or
+engineering acceptance. Current installed product remains df6ea4c4; the new code
+has not been installed into the named plugin yet.
+
+At preceding head 9805a0fa, the actual native desktop MCP matrix passed on Windows
+x64, Linux x64 and macOS ARM64 with exact wheel/UI identities. The earlier macOS
+final-stop failure did not recur; its cause remains unclassified. Installed
+Linux browser proofs also pass typed connections, versioned instruction editing
+and exact export/import (36 instruction bodies), and concurrent-save rejection
+with both canonical source and the local edit preserved. These simulated-host
+proofs do not establish actual Windows Codex rendering.
+
 ## Latest native matrix result — 5 November
 
 P15's actual Windows x64 and Linux x64 installed desktop MCP tests passed at
