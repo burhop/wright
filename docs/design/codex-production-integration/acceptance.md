@@ -11,6 +11,26 @@ one success percentage. The checkpoint below records the new candidate separatel
 from the mandatory acceptance definitions; a partial boundary pass does not satisfy
 an entire story.
 
+## Latest bounded qualification — 5 November, Connections correction
+
+These observations supersede only the matching subset claims in the older
+checkpoint below; mandatory stories remain unchanged.
+
+| Boundary | Result | Evidence / limitation |
+| --- | --- | --- |
+| A03 isolated installed custom MCP | PASS for setup/control subset | `installed-connections-corrected/` and `installed-connections-management-continuation-3/`: actual pinned OASiS protocol with 17 tools; explicit setup, validation, enablement, start/stop, disable, replacement draft and removal. Zero engineering tool calls; no invocation approval. OAuth/reconnect/update impact remains incomplete |
+| A05/A12 preserved editor and exact run | PASS for installed exercised subset | `connections-retained-regression/`: rename/Undo/Redo/save/search/reopen/export/import and retained image → producing step → same exact run; original evidence unchanged |
+| A06 references/validation/interface source | PASS for bounded transfer subset | `installed-dependency-transfer/asset-transfer-proof.json`: identical declared reference and pinned validation-profile bytes, tamper/collision rejection; explicitly inactive portable interface fixture. Does not establish saved-interface authoring/export/build acceptance |
+| Q01/Q08 final artifact | PASS for installed Linux and Docker subset | Wheel `59d8274e048ddb08a72d3e746d1ce0224eab0ab571ceff2a7cf97dd3ab679abe`; UI `6a8d381b7970c5415b0640362f315038ba815c8deede41bd77b971e2a949bd74`. Final rebuild matches installed tested bytes; authenticated configuration denies anonymous reads |
+| Q06 native Windows backend lifecycle | PASS on preceding b9553937 only | Actual installed CI install/start/status/doctor/stop/uninstall with Hermes adapter. This is not Windows Codex panel, viewer, file-delivery or chat-restoration acceptance |
+| Q10 CI / current local correction | Prior pushed head PASS; correction pending | `pr191-third-cycle-final.json`: all 30 checks/11 workflows terminal without failures on b9553937. Later local gate failures for image revision metadata, test formatting and stale checked-in UI are retained; corrected final head still requires its own prescribed gates and CI |
+
+The named installed wrapper remains 0.39.0 on the previously qualified runtime
+until a separately recorded scoped update. The new UI's connection checks are
+visible without opening credential settings. Normal entry and 480 px layout are
+verified in a simulated host, not the actual desktop. No personal sign-in,
+engineering review, engineering workflow run or physical operation was performed.
+
 ## Candidate checkpoint
 
 Candidate: unpublished Wright 0.1.9, maintained branch `codex/codex-production-integration`.

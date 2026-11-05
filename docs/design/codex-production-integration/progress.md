@@ -284,3 +284,11 @@ Existing scope, stale-reply, failure and uncertain-outcome guards are unchanged.
 The focused 30 tests and TypeScript pass; rebuilt installed UI verification and
 new gates remain pending. Remaining P08 cases and full engineering/Windows
 acceptance stay open.
+
+### Connections correction: checked-in asset consistency
+
+The normal build and installed tests used the corrected UI, but the subsequent
+full gate rejected stale checked-in native HTML. Both generated copies now match
+the tested UI hash exactly. The earlier failed gate remains FAIL; no test or
+security rule was weakened. Test formatting was also corrected. Final repository
+gates and current-head CI remain required before the next feature push/integration.

@@ -4,6 +4,26 @@
 This is the sole implementation checklist. Historical implementation remains credited;
 an unchecked task means the new delivery claim has not yet been qualified.
 
+## Latest qualification checkpoint — 5 November, Connections correction
+
+The earlier checkpoints below remain historical evidence. P08 now has an actual
+installed, isolated custom-MCP setup/validation/enablement and management proof
+using pinned OASiS: start/stop, workspace disable, replacement draft without apply,
+and explicit removal. No engineering tools were invoked and enablement granted no
+invocation authority. Connection checks are now visible independently of credential
+editing. OAuth reconnect/update-impact acceptance remains incomplete.
+
+The final tested wheel SHA-256 is
+`59d8274e048ddb08a72d3e746d1ce0224eab0ab571ceff2a7cf97dd3ab679abe`, with UI
+`6a8d381b7970c5415b0640362f315038ba815c8deede41bd77b971e2a949bd74`.
+Installed setup/management, retained-results/authoring and authenticated Docker
+checks pass on Linux; these do not establish actual Windows desktop acceptance.
+Current checked-in bundles are regenerated to match that tested UI. A prior gate
+correctly rejected stale checked-in bundles even though the normal artifact build
+had regenerated them. The failure is preserved; complete final gates/CI remain
+required. All 30 checks/11 workflows on the preceding pushed `b9553937` passed.
+The full engineering and actual desktop blockers below are unchanged.
+
 ## Current checkpoint
 
 - Baseline dev: `4f370caa9743f869f769f8c8e2332b6b63be438b`, rechecked 5 November.
