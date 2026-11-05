@@ -331,8 +331,13 @@ def test_working_view_requires_opt_in_and_reuses_immutable_editor_resource(bridg
     }
     native = bridge.server(client, native_editor=True, native_working_view=True)
     tools = {t.name: t for t in asyncio.run(native.list_tools())}
-    assert len(tools) == 59
-    for name in ("wright_workspace_pending", "wright_workflow_editor_tools", "wright_workflow_editor_options"):
+    assert len(tools) == 60
+    for name in (
+        "wright_workspace_pending",
+        "wright_workflow_editor_tools",
+        "wright_workflow_editor_options",
+        "wright_connection_workflows",
+    ):
         assert tools[name].annotations.readOnlyHint is True
         assert tools[name].meta["ui"]["visibility"] == ["app"]
     for name in ("wright_editor_drafts_read", "wright_editor_draft_save", "wright_workspace_settings_read", "wright_workspace_settings_save"):
