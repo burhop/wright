@@ -11,6 +11,22 @@ one success percentage. The checkpoint below records the new candidate separatel
 from the mandatory acceptance definitions; a partial boundary pass does not satisfy
 an entire story.
 
+## Native desktop profile qualification — 5 November
+
+| Boundary | Result | Evidence / limitation |
+| --- | --- | --- |
+| Q06/Q08 installed package at df6ea4c4 | PASS for native Hermes lifecycle only | `current-native-platform-evidence.json`: actual Windows x64, Linux x64 and macOS ARM64 CI receipts use the exact wheel below. No Codex desktop rendering claim |
+| Q08 installed desktop MCP profile | PASS on Linux ARM64 | `desktop-native-matrix-local/dist/desktop-native-Linux/receipt.json`: exact new CI step, separate installed manager/runtime, authenticated connection, exact viewer bytes, save/reopen/restart and owned shutdown; zero engineering runs |
+| Q06 Windows desktop MCP profile | NOT TESTED by the new matrix yet | The candidate matrix now invokes the same desktop harness on Windows, Linux and macOS; current correction's CI evidence is required |
+| Q10 product gates | PASS for recorded scope | Full gate 15 at parent `2114dd23` plus unchanged generated assets/identical wheel; normal pre-push gate 7 at `df6ea4c4`. Current correction's gate and CI remain pending |
+
+The named 0.39.0 wrapper now serves the df6ea4c4 artifact through its owned runtime,
+verified by `connections-live-update.json` and `connections-live-profile-check.json`.
+Its wheel and UI hashes match the latest bounded qualification below. Historical
+statements about earlier installations remain dated evidence. Windows native file
+selection remains FAIL from the user's observation; GUI checks, complete engineering
+journeys and human reviews are not established by backend CI.
+
 ## Latest bounded qualification — 5 November, Connections correction
 
 These observations supersede only the matching subset claims in the older

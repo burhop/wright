@@ -95,3 +95,10 @@ runtime fails before migration. The manager does not install extra dependencies
 merely to inspect state, and a failed update is not silently retried. Native
 lifecycle qualification must exercise the dependency-light CLI, not only a Python
 environment that already contains all runtime packages.
+
+The native candidate CI matrix runs the maintained desktop MCP qualification in
+an isolated home on Windows, Linux and macOS, alongside the existing Hermes
+checks. It verifies the desktop adapter identity, exact packaged viewer resource
+and saved workflow source across restart. Its receipts describe backend lifecycle
+and protocol behavior; they do not qualify native Codex panel rendering, file
+delivery or chat restoration.

@@ -858,6 +858,16 @@ The maintained desktop plugin is also a Docker/wheel input. Its manifest, MCP
 profile and skill are bundled byte-for-byte; changes select Docker PR CI and the
 local exact-image scan. A prior image cannot qualify changed plugin instructions.
 
+The native candidate matrix also exercises the maintained desktop MCP profile
+on each existing Windows, Linux and macOS runner. It reuses the same immutable
+wheel and platform wheelhouse, with separate driver and dependency-light manager
+environments and a fresh authenticated desktop-enabled home. The existing
+qualification harness checks connection identity, exact served viewer bytes,
+saved workflow source and restart preservation, then stops its owned runtime.
+Hermes lifecycle checks remain required. Desktop MCP receipts identify the actual
+OS and architecture; neither profile's backend checks establish that the Codex
+desktop app rendered a panel, delivered a download or restored a chat.
+
 The maintained-desktop candidate scan on 5 November found CVE-2026-109518 in
 Debian's `apt` and `libapt-pkg7.0` 3.0.3. Both runtime stages explicitly install
 3.0.4, the [Debian DSA-6607-1 fixed version](https://security-tracker.debian.org/tracker/CVE-2026-109518).

@@ -4,6 +4,25 @@
 This is the sole implementation checklist. Historical implementation remains credited;
 an unchecked task means the new delivery claim has not yet been qualified.
 
+## Native desktop profile qualification — 5 November
+
+The installed product at `df6ea4c4` passes the normal pre-push gate and its
+owned-runtime update/readback checks. Full gate 15 ran on parent `2114dd23`;
+its generated assets were committed unchanged and the final wheel is byte-identical
+to the installed qualified artifact. These are distinct receipts, not a new full
+suite run on the descendant commit.
+
+P15 now adds the existing desktop MCP lifecycle harness to the native Windows,
+Linux and macOS candidate matrix, alongside required Hermes checks. An exact
+local execution of that CI step passes on Linux ARM64: separate dependency-light
+manager, installed runtime, authenticated connection, exact packaged viewer,
+save/reopen and restart with identical source. No engineering runs occurred.
+Evidence: `desktop-native-matrix-local/dist/desktop-native-Linux/receipt.json`.
+Native Windows/macOS desktop-profile results remain pending this correction's CI;
+actual Codex rendering, file delivery and chat restoration remain unverified.
+This test/CI-only correction preserves the installed product and all mandatory
+engineering/desktop acceptance blockers.
+
 ## Latest qualification checkpoint — 5 November, Connections correction
 
 The earlier checkpoints below remain historical evidence. P08 now has an actual

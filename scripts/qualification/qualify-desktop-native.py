@@ -7,10 +7,12 @@ from importlib.metadata import version
 import json
 import os
 from pathlib import Path
+import platform
 import socket
 import subprocess
 import sys
 import tempfile
+import zipfile
 
 from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
@@ -32,6 +34,15 @@ evidence = args.evidence_dir.resolve()
 evidence.mkdir(parents=True, exist_ok=False)
 home = Path(tempfile.mkdtemp(prefix="wright-managed-desktop-"))
 wheel = args.wheel.resolve(strict=True)
+with zipfile.ZipFile(wheel) as archive:
+    viewer_paths = [
+        name
+        for name in archive.namelist()
+        if name.endswith("api/desktop/native-editor.html")
+    ]
+    if len(viewer_paths) != 1:
+        raise ValueError("Candidate must contain exactly one maintained desktop viewer")
+    expected_ui_sha256 = hashlib.sha256(archive.read(viewer_paths[0])).hexdigest()
 manager_python = str(
     args.manager_python.absolute() if args.manager_python else sys.executable
 )
@@ -67,7 +78,11 @@ receipt = {
     "wheel_sha256": hashlib.sha256(wheel.read_bytes()).hexdigest(),
     "initial_wheel_sha256": env["WRIGHT_RUNTIME_SHA256"],
     "manager_python": manager_python,
-    "topology": "Linux ARM64; actual managed lifecycle; no desktop visual claim",
+    "topology": "Installed managed desktop MCP; no desktop visual claim",
+    "platform": platform.system(),
+    "architecture": platform.machine(),
+    "python": platform.python_version(),
+    "expected_ui_sha256": expected_ui_sha256,
     "engineering_runs": 0,
 }
 
@@ -115,6 +130,28 @@ async def bridge(label):
                 )
                 assert value["connected"] is True
                 assert value["binding"]["adapter"] == "openai-desktop-harness"
+                resources = await session.list_resources()
+                viewer_uri = next(
+                    resource.uri
+                    for resource in resources.resources
+                    if str(resource.uri).startswith("ui://wright/workflow/")
+                )
+                viewer = await session.read_resource(viewer_uri)
+                ui_sha256 = hashlib.sha256(
+                    viewer.contents[0].text.encode("utf-8")
+                ).hexdigest()
+                expected_wheel = (
+                    initial_wheel
+                    if label == "first-bridge" or label == "restarted-bridge"
+                    else wheel
+                )
+                with zipfile.ZipFile(expected_wheel) as archive:
+                    expected_ui = hashlib.sha256(
+                        archive.read(viewer_paths[0])
+                    ).hexdigest()
+                assert ui_sha256 == expected_ui, (
+                    "Served viewer differs from installed candidate"
+                )
 
                 async def call(name, arguments):
                     result = await session.call_tool(name, arguments)
@@ -155,6 +192,7 @@ async def bridge(label):
                     "tools": sorted(tool.name for tool in tools.tools),
                     "status": status.model_dump(mode="json"),
                     "saved_source_sha256": reopened["storage_digest"],
+                    "served_ui_sha256": ui_sha256,
                 }
 
 
