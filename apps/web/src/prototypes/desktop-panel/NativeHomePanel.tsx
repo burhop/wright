@@ -216,6 +216,22 @@ export function NativeHomePanel({
           }),
       )
     : filteredFiles;
+  // Presentation only: ordinary engineering JSON remains alongside other files.
+  // Canonical run records remain searchable and accessible in technical details.
+  const isRunRecord = (file: FileNode) =>
+    Boolean(onOpenFile) &&
+    /^\/?runs\/[^/]+\/[0-9a-f]{32}\.json$/.test(file.path);
+  const technicalFiles = matchingFiles.filter(isRunRecord);
+  const mainFiles = matchingFiles.filter((file) => !isRunRecord(file));
+  const fileTitle = (file: FileNode) => titles[file.path] ?? file.name;
+  const duplicateTitles = new Set(
+    files
+      .map(fileTitle)
+      .filter((title, index, all) => all.indexOf(title) !== index),
+  );
+  const fileFolder = (file: FileNode) =>
+    file.path.replace(/^\//, "").split("/").slice(0, -1).join(" / ") ||
+    "Workspace root";
   async function openFile(file: FileNode, opener: HTMLButtonElement) {
     if (!selected || opening || loading || creating) return;
     previewOpener.current = opener;
@@ -469,6 +485,57 @@ export function NativeHomePanel({
     await onOpen(workspace, path);
     if (onOpenFile) await select(workspace);
   }
+
+  const fileAccessibleName = (file: FileNode) =>
+    duplicateTitles.has(fileTitle(file))
+      ? `${fileTitle(file)} — ${fileFolder(file)}`
+      : fileTitle(file);
+  const renderFileRow = (file: FileNode) => (
+    <li key={file.path}>
+      <button
+        type="button"
+        disabled={loading || creating || opening}
+        title={file.path}
+        aria-label={onOpenFile ? fileAccessibleName(file) : undefined}
+        onClick={(event) => void openFile(file, event.currentTarget)}
+      >
+        <span>
+          {onOpenFile ? (titles[file.path] ?? file.name) : file.name}
+          {onOpenFile && duplicateTitles.has(fileTitle(file)) && (
+            <small className="native-home__file-folder">
+              {fileFolder(file)}
+            </small>
+          )}
+        </span>
+        {onOpenFile && (
+          <span className="native-home__file-kind" aria-hidden="true">
+            {workflowPaths.has(file.path)
+              ? "Workflow"
+              : (file.name.split(".").at(-1)?.toUpperCase() ?? "File")}
+          </span>
+        )}
+      </button>
+      {onOpenFile ? (
+        <details className="native-home__file-details">
+          <summary aria-label={`File details for ${fileAccessibleName(file)}`}>
+            ⋯
+          </summary>
+          <code>{file.path}</code>
+          {workflowPaths.has(file.path) && onOpenInPanel && (
+            <button
+              type="button"
+              disabled={loading || creating || opening}
+              onClick={() => void openWorkflow(file, onOpenInPanel)}
+            >
+              Open workflow here
+            </button>
+          )}
+        </details>
+      ) : (
+        <small title={file.path}>{file.path}</small>
+      )}
+    </li>
+  );
 
   return (
     <main
@@ -786,60 +853,24 @@ export function NativeHomePanel({
               aria-label="Workspace files"
               tabIndex={0}
             >
-              {matchingFiles.map((file) => (
-                <li key={file.path}>
-                  <button
-                    type="button"
-                    disabled={loading || creating || opening}
-                    title={file.path}
-                    aria-label={
-                      onOpenFile ? (titles[file.path] ?? file.name) : undefined
-                    }
-                    onClick={(event) =>
-                      void openFile(file, event.currentTarget)
-                    }
-                  >
-                    <span>
-                      {onOpenFile
-                        ? (titles[file.path] ?? file.name)
-                        : file.name}
-                    </span>
-                    {onOpenFile && (
-                      <span
-                        className="native-home__file-kind"
-                        aria-hidden="true"
-                      >
-                        {workflowPaths.has(file.path)
-                          ? "Workflow"
-                          : (file.name.split(".").at(-1)?.toUpperCase() ??
-                            "File")}
-                      </span>
-                    )}
-                  </button>
-                  {onOpenFile ? (
-                    <details className="native-home__file-details">
-                      <summary
-                        aria-label={`File details for ${titles[file.path] ?? file.name}`}
-                      >
-                        ⋯
-                      </summary>
-                      <code>{file.path}</code>
-                      {workflowPaths.has(file.path) && onOpenInPanel && (
-                        <button
-                          type="button"
-                          disabled={loading || creating || opening}
-                          onClick={() => void openWorkflow(file, onOpenInPanel)}
-                        >
-                          Open workflow here
-                        </button>
-                      )}
-                    </details>
-                  ) : (
-                    <small title={file.path}>{file.path}</small>
-                  )}
-                </li>
-              ))}
+              {mainFiles.map(renderFileRow)}
             </ul>
+            {technicalFiles.length > 0 && (
+              <details
+                className="native-home__file-options"
+                open={fileQuery.trim() ? true : undefined}
+              >
+                <summary>
+                  Technical run records ({technicalFiles.length})
+                </summary>
+                <ul
+                  className="native-home__files"
+                  aria-label="Technical run records"
+                >
+                  {technicalFiles.map(renderFileRow)}
+                </ul>
+              </details>
+            )}
             {onOpenFile && (
               <details className="native-home__file-options">
                 <summary>Templates and workflow details</summary>

@@ -167,6 +167,45 @@ try {
   const title = "Inspect existing block and recover preview";
   const row = f.getByRole("button", { name: title, exact: true });
   await expect(row).toBeVisible();
+  const technical = f
+    .locator("details.native-home__file-options")
+    .filter({ hasText: /^Technical run records/ });
+  await expect(technical).not.toHaveAttribute("open");
+  const fileList = f.getByRole("list", {
+    name: "Workspace files",
+    exact: true,
+  });
+  const previews = fileList.getByRole("button", {
+    name: /^block-isometric\.png — /,
+  });
+  await expect(previews).toHaveCount(3);
+  const names = await previews.evaluateAll((nodes) =>
+    nodes.map((node) => node.getAttribute("aria-label")),
+  );
+  if (new Set(names).size !== 3)
+    throw Error("Duplicate result files remain indistinguishable");
+  await expect(
+    fileList.getByRole("button", { name: /^inspection\.json — / }),
+  ).toHaveCount(3);
+  await page.screenshot({ path: resolve(output, "workspace-files.png") });
+  await page.setViewportSize({ width: 480, height: 820 });
+  await expect(previews.first()).toBeInViewport();
+  const kind = previews.first().locator(".native-home__file-kind");
+  await expect(kind).toHaveText("PNG");
+  const kindFits = await kind.evaluate((node) => {
+    const range = document.createRange();
+    range.selectNodeContents(node);
+    return range.getClientRects().length === 1;
+  });
+  if (!kindFits) throw Error("File type wraps across lines in the narrow panel");
+  const fileOverflow = await f
+    .locator("body")
+    .evaluate((node) => node.scrollWidth > node.clientWidth + 1);
+  if (fileOverflow) throw Error("Workspace files overflow the narrow panel");
+  await page.screenshot({
+    path: resolve(output, "workspace-files-narrow.png"),
+  });
+  await page.setViewportSize({ width: 1100, height: 900 });
   await f
     .getByLabel("Find a file", { exact: true })
     .fill("block preview recovery");

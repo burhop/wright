@@ -18,7 +18,7 @@ The normal-build wheel with the installed migration correction is SHA-256
 `faa5bf561e93529ce01ede7ab2492f465db27bfb2160fce28bcf99f3670bf277`;
 UI SHA-256 `95bfbff7d17b34eabad7b7cbf23bedf9e989e5637173c01b656cd4ab2ac6992f`.
 Evidence paths below are relative to private `.local-run/production-integration/`.
-Live Windows observations refer to prototype 0.38.1, not this wheel.
+The named GB10 plugin wrapper is now 0.39.0 using this wheel. Live Windows observations still refer to prototype 0.38.1; the current chat reports its older connection.
 
 `installed-gate-artifact/` qualifies the identical UI from the normal build
 (wheel `6e356e931d0af0f9552702fbbe8436b94bf4fd86f6438657d16b147184482e77`).
@@ -51,12 +51,31 @@ minimal disposable fixture; no full portability or Windows claim is inferred.
 | A17 narrow panel | PASS in simulated host | Browser receipt and `results-narrow.png`: 480 px no body overflow. Human usability acceptance remains NOT TESTED |
 | A18 generality | NOT TESTED for full new proof | Retained block regression passes; complete existing Robot workflow and Hermes qualification remain pending |
 | Q02 scoped option reads | PASS | `options-boundary-tests-2.log`: 408 passed, 10 skipped across relevant boundary suite; new fixed-kind reader rejects cross-scope/arbitrary-route requests |
-| Q03–Q04 complete content/configuration controls | NOT TESTED as complete acceptance | Existing contract regression retained; current-head full gate underway |
+| Q03–Q04 complete content/configuration controls | NOT TESTED as complete acceptance | Existing contract regression retained; backend/security gates passed at `3f373cf0`; whole gate remains FAIL at browser startup |
 | Q05 copied-state migration | PASS for exercised subset | Installed receipt: original and copied workflow/history/output hashes unchanged; selected immutable input/start receipt copied without credentials, live jobs or grants |
 | Q06 Windows local; Q07 Windows + GB10 | NOT TESTED on maintained candidate | Existing prototype screenshots remain historical evidence only |
-| Q08 Linux ARM64 / Docker | PASS for installation / security subsets | Installed Linux receipts pass. Earlier exact image scans passed after Debian apt 3.0.4 fix; the migration correction needs its own rebuilt image/scan. x64 and full image smoke pending |
+| Q08 Linux ARM64 / Docker | PASS for installation / security subsets | Installed Linux receipts pass. Migration-correction image `60085b5e80b0494401cfa48959407b9cfa22a3f39d466bd94d103ba2d5b7b773` passes exact-image security, smoke and authenticated desktop opt-in checks (`docker-smoke-current.json`, `docker-desktop-check.json`). x64 remains NOT TESTED; new file-list image qualification is separate |
 | Q09 compatibility/fallback | PASS for local contracts | Content-hashed assets, versioned plugin files, scope checks and explicit fallback preserved; host selection is unresolved |
-| Q10 repository gates/CI | NOT TESTED to completion | Incomplete gate retained after installed update exposed runtime-only dependency imports; focused native suite passes (147, 7 skipped). Fresh full gate and pre-push/CI remain required; no push, PR, merge or release yet |
+| Q10 repository gates/CI | FAIL / CI NOT TESTED | Gate 7 passed backend, 2,310 frontend tests, docs/security; 36 browser-launch failures prevented PASS. Firefox repaired and 19 tests pass with isolated API. WebKit 2370 aborts on GB10 64 KiB pages (binary ceiling 16 KiB), before Wright. No waiver, push, PR, merge or release |
+
+## Subsequent file-list correction
+
+Normal-build wheel `9b03e94d95ab5fe742d9f1b3b6d96013d28bc47a483b2488ca774ce7c6d4a2b8`
+and UI `74aeb02f85013de9358f05523e7ab460f1bbad4171d64d2bfb4623ee661792b9`
+pass `file-list-final-proof/installed-receipt.json` and its browser receipt.
+Duplicate filenames have distinct visible folder captions and accessible names;
+canonical run records are collapsed but searchable/openable. Ordinary engineering
+JSON is not hidden by extension. File types stay on one line at 480 px. The
+installed authoring and exact retained-results journeys still pass. Screenshots
+are Linux Chromium with a simulated desktop; these do not establish Windows
+acceptance. This later wheel has not replaced the named 0.39.0 live candidate.
+
+`firefox-isolated/receipt.json` records 19 existing workspace-surface tests passing.
+The first standalone attempt lacked an API and is retained as failed environment
+evidence. `webkit-host-limitation.json` and debugger logs establish a browser
+startup limitation; no test was deleted, skipped by policy, or relabeled PASS.
+The related [upstream WebKit/64 KiB report](https://bugs.launchpad.net/ubuntu/+source/webkit2gtk/+bug/2156420)
+supports the diagnosis; current local binary disassembly is the exact-host evidence.
 
 ## Mandatory stories and controls
 

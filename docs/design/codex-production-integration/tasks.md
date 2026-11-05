@@ -6,19 +6,15 @@ an unchecked task means the new delivery claim has not yet been qualified.
 
 ## Current checkpoint
 
-- Planning baseline: `4f370caa9743f869f769f8c8e2332b6b63be438b`, 4 November 2026.
-- Fresh isolated installed-artifact proofs only; no existing service, workflow, plugin or account changed.
-- Goal submitted on 4 November. Active branch: `codex/codex-production-integration`.
-- P01 baseline preserved; P02 screen/action map recorded; P03 automatic viewer observation FAIL on 0.38.1, offline diagnosis retained.
-- P04/P05 implemented: packaged authenticated desktop composition, CLI, scoped option reads, plugin/skill and content-hashed editor. Boundary suite: 408 passed, 10 skipped; focused UI suite: 50 passed.
-- P06 copied-state rehearsal passes without credentials/live jobs/grants. Installed results journey passes in Linux Chromium with a simulated host: fallback editor, exact image, producing-step availability, same-run return, narrow layout.
-- Dependency-light managed install/start/status/doctor/MCP/stop/restart/update passes on Linux ARM64 (`light-manager-update/receipt.json`). The exact saved workflow survives. Existing live plugin remains 0.38.1; the isolated maintained candidate is prepared.
-- Earlier Docker security scan passes after Debian apt 3.0.4 correction. Native update exposed a missing dependency boundary; corrected native suite passes (147, 7 skips). Fresh full gate/image needed. Mandatory engineering basis/reviews and Windows acceptance remain unresolved.
-- Evidence: `.local-run/production-integration/`; no live instance changed.
-- Preserve the prior plan and private/native evidence. Move this checklist into
-  the accepted feature record if required; replace this page with a pointer then.
-- During implementation keep this section short: exact candidate, completed IDs,
-  current task, blockers, next action, and evidence index. Logs belong in evidence.
+- Baseline dev: `4f370caa9743f869f769f8c8e2332b6b63be438b`, rechecked 5 November.
+- Active branch: `codex/codex-production-integration`; goal submitted 4 November.
+- P01/P02 preserved baseline and screen/action map. P03 automatic viewer observation FAIL on 0.38.1; external controls lacked accepted workspace context. Canonical controls now exist, without a new Windows rendering claim.
+- P04/P05 maintained package, CLI, authenticated composition, scoped reads, plugin and hashed UI implemented. P06 copied-state and dependency-light install/restart/update proofs pass; original engineering state is unchanged.
+- Named GB10 prototype wrapper **0.39.0** now uses the owned maintained candidate. Original prototype services/data and other settings are preserved. This conversation still reports its older connection; no desktop restart or further human request while the user is absent.
+- P09/P10 installed Linux simulated-host proof passes: duplicate-file folders, collapsed technical run records, narrow file types, explicit editor fallback, exact retained image/producing-step/same-run return, rename/Undo/Redo/save/search/reopen and exact import destination. Full engineering summaries and full dependency portability remain open.
+- Full gate 7 at `3f373cf0` passed backend, 2,310 frontend tests, docs and exact-image security, then failed at 36 missing Firefox/WebKit executables (164 browser passes, 15 skips). Firefox was installed and its isolated 19-test workspace suite now passes. WebKit 2370 aborts before Wright loads: its binary has a 16 KiB page ceiling, while GB10 uses 64 KiB. Gate remains FAIL, with no waiver or security change.
+- Exact baseline Docker smoke and authenticated desktop opt-in checks pass. The newer file-list wheel is locally qualified, not yet installed into the named live candidate. Required pre-push/CI, actual Windows acceptance, reviewed handle analysis basis/provider bindings and complete Robot proof remain open.
+- Evidence: private `.local-run/production-integration/`; [acceptance](acceptance.md) separates subset proofs from mandatory stories. No engineering run or production publication occurred.
 
 ## Ordered checklist
 

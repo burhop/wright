@@ -147,3 +147,32 @@ The bare `.wflow` control also violates the existing accepted-source path contra
 (`workflows/<name>.workflow.wflow`). It must not be used as proof of saved-workflow
 rendering. Two canonical controls are now registered in a disposable candidate
 workspace. This corrects the experiment, not host automatic viewer selection.
+
+## Named activation, installed navigation and browser qualification (5 November)
+
+Only `wright-desktop-gb10-prototype` was updated to wrapper 0.39.0 after local
+qualification. Its command now uses the dependency-light manager and owned state
+under `~/.local/share/wright-desktop-maintained-candidate`, with no repository
+launcher or temporary build path. The prior service, cache and data remain.
+The current chat still reports the older binding; no fresh visual acceptance or
+desktop restart was claimed. Evidence: `named-plugin-update.json`,
+`stable-candidate-profile-check.json`, `current-chat-connection-observation.json`.
+
+Full gate 7 completed FAIL, not pending: all preceding backend/security/docs and
+2,310 frontend tests passed, followed by 164 browser passes, 15 skips and 36
+missing-browser failures. Firefox now passes 19 existing tests with an isolated
+API. After scoped dependency repair, WebKit still aborts before any Wright page.
+Debugger evidence identifies its 16 KiB page ceiling on this 64 KiB GB10 host.
+No kernel, browser binary, security option or test policy was changed. The failed
+full gate remains blocking; no push/CI or merge is claimed.
+
+P09's installed screenshot review found indistinguishable duplicate files and
+internal run records in the main list. A narrow presentation correction adds
+folder captions/accessibility names only for duplicates and collapses canonical
+run records into searchable technical details, retaining normal JSON files.
+The first screenshot caught wrapping file-type labels; a non-wrapping type cell
+and a rendered text-rectangle assertion correct and cover that defect. The
+normal wheel and sdist were rebuilt and the final installed journey passed with
+all retained files unchanged. Evidence: `file-list-focused.log` (21 tests),
+`file-list-final-proof/` (actual installed package, simulated Linux host), and
+`file-list-final-lint.log`. No engineering work was run.
