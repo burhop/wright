@@ -23,7 +23,7 @@
 | Automatic native file viewer choice | FAIL | User observed all three files as text on installed 0.38.1 |
 | Manual viewer for unregistered `/tmp` controls | FAIL | Saved-context rejection; diagnostic controls were not workspace-owned |
 | New candidate Windows UI/download/chat restore | NOT TESTED | No authorized Windows capture/control available tonight |
-| Full merge gate | IN PROGRESS | First attempt stopped at required missing candidate image; build exact committed image next |
+| Full merge gate | IN PROGRESS | Image/security passed; occupied port avoided; two formatting findings corrected; complete gate still required |
 | Complete handle engineering journey and changed-input rerun | NOT TESTED | Reviewed analysis basis/provider readiness still required |
 
 The controls' context failure must not be fixed by weakening workspace validation.
@@ -72,3 +72,40 @@ It also caught and corrected the real engineering-option HTTP transport gap.
 The full original desktop boundary suite is being requalified with its normal
 `python -m pytest` invocation; a direct pytest invocation omitted the repository
 root from fixture imports and is not treated as a product failure or pass.
+
+## Managed installation and security (04:06 UTC)
+
+The boundary suite completed with 408 passed and 10 skipped. The same unpublished
+wheel then passed actual normal managed installation/start/status/doctor, desktop
+MCP connection, stop, restart and reconnect in a fresh isolated Linux ARM64 home.
+The normal CLI selected its installed private runtime without a repository launcher.
+The owned process was stopped; no live prototype lifecycle changed. Evidence:
+`managed-native-1/receipt.json`; the reproducible helper is
+`scripts/qualification/qualify-desktop-native.py`. No engineering run occurred.
+
+The full gate initially caught a real fixed High/Critical Debian apt transport
+vulnerability. Both image stages now install apt/libapt-pkg7.0 3.0.4 with the
+existing other security pins preserved. No waiver or scanner-policy change was
+used. Image `wright-desktop-maintained:ba9edc0b` passes the scan; evidence is
+`test-results/docker-image-security/20261105T040324Z-bcb39ff5/public`.
+Full repository qualification continues; CI and merge are not yet claimed.
+
+## Installed authoring and import correction (04:15 UTC)
+
+The installed browser now exercises a separate disposable workspace through
+rename, Undo/Redo, save, title search, reopen, export/download, import inspection
+and opening the imported source. It does not edit the retained-history workspace.
+The first authoring receipt's PASS was too broad: its screenshot showed the old
+file after import. The strengthened exact-path assertion fails on the old wheel
+(`installed-authoring-negative/`) and passes after the import callback opens the
+destination in the same editor (`installed-authoring-fixed/`). Native file opening
+from workspace rows remains available; import no longer treats a native-open
+acknowledgement as proof that its destination rendered. The original misleading
+receipt and screenshot are preserved as superseded evidence.
+
+The corrected tested wheel is SHA-256
+`499cde7b7e05d33e570324feb95b4d5ba7afb3e43c561b8dddc27fb588704222`;
+UI is `95bfbff7d17b34eabad7b7cbf23bedf9e989e5637173c01b656cd4ab2ac6992f`.
+Thirty-six focused panel/transfer tests and the actual frontend type/format checks
+pass. The original and copied engineering files remain unchanged. These are
+installed Linux/browser proofs, not actual Windows downloads or host acceptance.

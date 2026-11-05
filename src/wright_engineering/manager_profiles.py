@@ -73,7 +73,9 @@ def build_manager_profile(
         if manager_id != "codex" or transport != "stdio":
             raise ValueError("desktop_profile_requires_codex_stdio")
         if any(value is not None for value in (workspace, session_id, workspace_id)):
-            raise ValueError("desktop_profile_uses_explicit_workspace_selection_in_the_panel")
+            raise ValueError(
+                "desktop_profile_uses_explicit_workspace_selection_in_the_panel"
+            )
         return ManagerProfile(
             manager_id=manager_id,
             adapter_protocol=protocol,

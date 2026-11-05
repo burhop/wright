@@ -1,14 +1,55 @@
 # Production integration acceptance matrix
 
-**Status:** planned qualification, 4 November 2026.
+**Status:** candidate qualification in progress, 5 November 2026. Not production accepted.
 Parent: [plan](../codex-production-integration-plan.md). Work: [tasks](tasks.md).
 
 Historical proofs are regression inputs, not a blanket pass on a new candidate.
 Use **PASS / FAIL / BLOCKED / NOT TESTED / OUT OF SCOPE**, with exact evidence.
 Record source implementation, automated browser tests, installed runtime, native
 desktop observations and human acceptance separately. Do not average them into
-one success percentage. Every row below is currently **NOT TESTED for the future
-production candidate**; baseline evidence is described in the parent plan.
+one success percentage. The checkpoint below records the new candidate separately
+from the mandatory acceptance definitions; a partial boundary pass does not satisfy
+an entire story.
+
+## Candidate checkpoint
+
+Candidate: unpublished Wright 0.1.9, maintained branch `codex/codex-production-integration`.
+Installed wheel SHA-256 `b40ccb20a03ca2378f33f64e6421e22758b79cf8ca49990a8c43b6cb0737aef6`;
+UI SHA-256 `1f1badcc5e7d0a86ec6ee44cbf87637b7cf54dcc4bfdfca0f0c6d2f395ca27de`.
+Evidence paths below are relative to private `.local-run/production-integration/`.
+Live Windows observations refer to unchanged prototype 0.38.1, not this wheel.
+The later import correction is separately qualified in `installed-authoring-fixed/`:
+wheel `499cde7b7e05d33e570324feb95b4d5ba7afb3e43c561b8dddc27fb588704222`,
+UI `95bfbff7d17b34eabad7b7cbf23bedf9e989e5637173c01b656cd4ab2ac6992f`.
+It passes rename, Undo/Redo, save/search/reopen and portable import opening the exact
+destination. The earlier `installed-authoring-2` PASS did not assert destination
+identity and is superseded, not accepted as import-navigation proof. Full typed-port,
+reference/validation/UI dependency transfers remain beyond this minimal fixture.
+
+| IDs / boundary | Status | Evidence and remaining requirement |
+| --- | --- | --- |
+| A01, Q01 installed Linux artifact | PASS | `installed-browser-7/installed-receipt.json`: installed package outside checkout, authenticated API and MCP, exact packaged editor; Windows install remains NOT TESTED |
+| A02, A05 selected workspace/save/reopen/search | PASS for exercised subset | Installed receipt plus browser receipt: disposable source save/reopen and retained title/normalized-name search; full authoring interactions remain NOT TESTED on this candidate |
+| A03 tool management; A04 actual conversation authoring | NOT TESTED | Existing contracts retained; no new account/setup actions or live conversation authorship claimed |
+| A06 full portable round trip | NOT TESTED | Retained mechanisms; full installed UI journey pending |
+| A07 automatic native file selection | FAIL on observed 0.38.1 | `native-observation.md`: all three controls opened text. Manual external control rejected missing saved context; not evidence of authorized workspace viewer failure |
+| A07 explicit panel fallback | PASS in simulated host | `installed-browser-7/browser/receipt.json`: native acknowledgement followed by **Open workflow here**, real packaged editor and source. Windows fallback remains NOT TESTED |
+| A08 readiness entry | PASS for retained read-only case | Same browser receipt; no engineering start and no claim all handle capabilities are ready |
+| A09–A11 actual handle reasoning/review/correction | BLOCKED | Reviewed strength basis and usable provider bindings remain required. No fabricated reviews, material limits or solver results |
+| A12 retained results navigation | PASS for exercised subset | Exact selected run, decoded hash-matched image, producing-step Results 1/1, no false mismatch, return to same run. Full engineering summary and edited-source visual negative control still pending |
+| A13 actual Windows file delivery | NOT TESTED | Verified bytes in MCP/browser do not prove Windows download or open |
+| A14 changed-input full engineering rerun | BLOCKED | Requires the same real engineering basis and review as A11; historical runs preserved |
+| A15 installed restart | PASS for exercised subset | Installed receipt retains source and copied completed run across restart; broader cancellation/uncertain-effect fixtures retained, no new live-engineering claim |
+| A16 actual chat switching | NOT TESTED | No Windows automation available in this session; no observation requested while user away |
+| A17 narrow panel | PASS in simulated host | Browser receipt and `results-narrow.png`: 480 px no body overflow. Human usability acceptance remains NOT TESTED |
+| A18 generality | NOT TESTED for full new proof | Retained block regression passes; complete existing Robot workflow and Hermes qualification remain pending |
+| Q02 scoped option reads | PASS | `options-boundary-tests-2.log`: 408 passed, 10 skipped across relevant boundary suite; new fixed-kind reader rejects cross-scope/arbitrary-route requests |
+| Q03–Q04 complete content/configuration controls | NOT TESTED as complete acceptance | Existing contract regression retained; current-head full gate underway |
+| Q05 copied-state migration | PASS for exercised subset | Installed receipt: original and copied workflow/history/output hashes unchanged; selected immutable input/start receipt copied without credentials, live jobs or grants |
+| Q06 Windows local; Q07 Windows + GB10 | NOT TESTED on maintained candidate | Existing prototype screenshots remain historical evidence only |
+| Q08 Linux ARM64 / Docker | PASS for installation / security subsets | Installed browser receipt; image scan `20261105T040324Z-bcb39ff5` passed after Debian apt 3.0.4 fix. x64 and full image smoke pending |
+| Q09 compatibility/fallback | PASS for local contracts | Content-hashed assets, versioned plugin files, scope checks and explicit fallback preserved; host selection is unresolved |
+| Q10 repository gates/CI | NOT TESTED to completion | Full merge gate running; no candidate push, PR, merge or release yet |
 
 ## Mandatory stories and controls
 

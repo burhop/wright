@@ -20,7 +20,10 @@ from starlette.types import ASGIApp, Receive, Scope, Send
 
 
 from api.agent_platform_engines import create_agent_engine
-from api.desktop.composition import DesktopBoundaryMiddleware, enabled as desktop_enabled
+from api.desktop.composition import (
+    DesktopBoundaryMiddleware,
+    enabled as desktop_enabled,
+)
 from api.config import (
     DATABASE_PATH,
     McpTransportSettings,

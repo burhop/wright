@@ -1,5 +1,5 @@
 // Installed MCP + actual bundled UI + copied retained state. Host is simulated.
-// No engineering actions, source edits, credentials or original files are changed.
+// Retained history stays read-only; authoring uses a separate disposable workspace.
 import { createServer } from "node:http";
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
@@ -13,6 +13,15 @@ const scope = {
   workspace_id: fixture.workspace_id,
   session_id: fixture.session_id,
 };
+const disposable = receipt.workspace_result;
+const authoring = new Set([
+  "wright_workflow_save",
+  "wright_editor_draft_save",
+  "wright_workflow_export",
+  "wright_workflow_import_inspect",
+  "wright_workflow_import",
+  "wright_workflow_transfer_assets",
+]);
 mkdirSync(output);
 const calls = [],
   errors = [],
@@ -96,10 +105,14 @@ const server = createServer(async (req, res) => {
     }
     const { name, arguments: args } = JSON.parse(text),
       body = args.request ?? args;
-    if (!allowed.has(name))
+    const isDisposable =
+      body.workspace_id === disposable.workspace_id &&
+      body.session_id === disposable.session_id;
+    if (!allowed.has(name) && !(isDisposable && authoring.has(name)))
       throw Error(`Action denied by read-only fixture: ${name}`);
     if (
       name !== "wright_workspace_list" &&
+      !isDisposable &&
       (body.workspace_id !== scope.workspace_id ||
         body.session_id !== scope.session_id)
     )
@@ -246,6 +259,86 @@ try {
   expect(errors).toEqual([]);
   checks.push(
     "Exact retained image visibly rendered and hashed; producing step shows available output without false mismatch; return retains selected run; narrow layout has no body overflow",
+  );
+  await page.setViewportSize({ width: 1100, height: 900 });
+  await f.getByRole("button", { name: "Workspace home", exact: false }).click();
+  await f
+    .getByRole("button", { name: "Change workspace", exact: true })
+    .click();
+  await f
+    .getByLabel("Workspace", { exact: true })
+    .selectOption(disposable.workspace_id);
+  await f
+    .getByLabel("File details for Installed artifact check", { exact: true })
+    .click();
+  await f
+    .getByRole("button", { name: "Open workflow here", exact: true })
+    .click();
+  const name = f.getByRole("textbox", { name: "Workflow name", exact: true });
+  await name.fill("Engineering authoring check");
+  await name.press("Enter");
+  await f.getByTestId("workflow-recovery-undo").click();
+  await expect(name).toHaveValue("Installed artifact check");
+  await f.getByTestId("workflow-recovery-redo").click();
+  await expect(name).toHaveValue("Engineering authoring check");
+  await f.getByTestId("workflow-recovery-save").click();
+  await expect(f.getByTestId("workflow-recovery-save")).toBeDisabled();
+  await f.getByRole("button", { name: "Workspace home", exact: false }).click();
+  await f
+    .getByLabel("Find a file", { exact: true })
+    .fill("Engineering authoring check");
+  await expect(
+    f.getByRole("button", { name: "Engineering authoring check", exact: true }),
+  ).toBeVisible();
+  await f
+    .getByLabel("File details for Engineering authoring check", { exact: true })
+    .click();
+  await f
+    .getByRole("button", { name: "Open workflow here", exact: true })
+    .click();
+  await expect(name).toHaveValue("Engineering authoring check");
+  await f.getByText("Workflow details", { exact: true }).click();
+  await f
+    .getByRole("button", { name: "Export / import workflow", exact: true })
+    .click();
+  const downloadPromise = page.waitForEvent("download");
+  await f.getByTestId("workflow-transfer-export").click();
+  const download = await downloadPromise;
+  const transferPath = resolve(output, "disposable-transfer.json");
+  await download.saveAs(transferPath);
+  await f.getByTestId("workflow-transfer-upload").setInputFiles(transferPath);
+  await f
+    .getByTestId("workflow-transfer-destination")
+    .fill("workflows/imported-authoring-check.workflow.wflow");
+  await f.getByTestId("workflow-transfer-inspect").click();
+  await f
+    .getByRole("button", { name: "Import inspected definition", exact: true })
+    .click();
+  await expect
+    .poll(() =>
+      page.evaluate(() => window.context?.structuredContent?.workflow?.path),
+    )
+    .toBe("workflows/imported-authoring-check.workflow.wflow");
+  await expect(name).toHaveValue("Engineering authoring check");
+  await f.getByTestId("workflow-recovery-view-code").click();
+  await expect(f.getByTestId("workflow-recovery-source-editor")).toHaveValue(
+    /name: "Engineering authoring check"/,
+  );
+  const original = await call("wright_workflow_read", {
+    workspace_id: disposable.workspace_id,
+    session_id: disposable.session_id,
+    path: "workflows/installed-check.workflow.wflow",
+  });
+  const imported = await call("wright_workflow_read", {
+    workspace_id: disposable.workspace_id,
+    session_id: disposable.session_id,
+    path: "workflows/imported-authoring-check.workflow.wflow",
+  });
+  expect(imported.source).toBe(original.source);
+  await page.screenshot({ path: resolve(output, "authoring-imported.png") });
+  expect(errors).toEqual([]);
+  checks.push(
+    "Separate disposable workspace: rename, Undo/Redo, save, title search, reopen, browser download of portable definition, inspect/import and reopened source. No Windows file-delivery claim.",
   );
   status = "PASS";
 } finally {
