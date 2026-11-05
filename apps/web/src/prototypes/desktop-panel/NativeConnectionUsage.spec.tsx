@@ -23,11 +23,15 @@ const usage = {
     },
   ],
 };
-function show(extra = {}) {
-  const call = vi.fn().mockResolvedValue({
-    content: [],
-    structuredContent: { ...scope, control_digest: digest, usage, ...extra },
-  });
+function show(extra = {}, textOnly = false) {
+  const data = { ...scope, control_digest: digest, usage, ...extra };
+  const call = vi
+    .fn()
+    .mockResolvedValue(
+      textOnly
+        ? { content: [{ type: "text", text: JSON.stringify(data) }] }
+        : { content: [], structuredContent: data },
+    );
   render(
     <NativeConnectionUsage call={call} scope={scope} controlDigest={digest} />,
   );
@@ -82,6 +86,18 @@ it.each([
   },
 ])("rejects foreign or stale response identity", async (extra) => {
   show(extra);
+  expect(
+    await screen.findByText(/Workflow usage could not be confirmed/),
+  ).toBeVisible();
+  expect(screen.queryByText("Mounting bracket")).not.toBeInTheDocument();
+});
+
+it("reads the installed MCP JSON text response with the same identity checks", async () => {
+  show({}, true);
+  expect(await screen.findByText("Mounting bracket")).toBeVisible();
+});
+it("rejects foreign identity in the installed MCP JSON text response", async () => {
+  show({ workspace_id: "foreign" }, true);
   expect(
     await screen.findByText(/Workflow usage could not be confirmed/),
   ).toBeVisible();

@@ -49,7 +49,10 @@ export function NativeConnectionUsage({
     setError("");
     try {
       const result = await call("wright_connection_workflows", scope);
-      const data = result.structuredContent;
+      const text = result.content.find((item) => item.type === "text");
+      const data =
+        result.structuredContent ??
+        (text?.type === "text" ? JSON.parse(text.text) : null);
       const next = data?.usage as Usage | undefined;
       if (
         result.isError ||
