@@ -105,7 +105,7 @@ class NativeLifecycle:
         self.logger = lifecycle_logger or LifecycleLogger(
             self.layout.logs / "lifecycle.jsonl"
         )
-        self.migration_manager = migration_manager or NativeMigrationManager()
+        self.migration_manager = migration_manager or NativeMigrationManager(layout)
         self.host = host
         self.port = port
 

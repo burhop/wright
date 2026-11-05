@@ -7,3 +7,4 @@ paths-ignore:
   - src/wright_engineering/static/web/**
   # Built by apps/web/build-native-panel.mjs from the scanned TS/TSX sources.
   - prototypes/desktop-harness/native-editor.html
+  - apps/api/src/api/desktop/native-editor.html

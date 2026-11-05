@@ -1,5 +1,10 @@
 # Wright engineering journeys inside the OpenAI desktop harness
 
+**Accepted production follow-on, 4 November 2026:** see the
+[production integration plan](codex-production-integration-plan.md), its bounded
+tasks and acceptance matrix. Its implementation goal is active; the decisions and
+dated evidence below remain preserved and do not establish production acceptance.
+
 **Recorded:** 28 October 2026. **Status:** implementation goal submitted on 28 October.
 Local implementation, isolated digital qualification, focused commits, repository
 gates, feature push and draft PR are authorized. A locally qualified update to only

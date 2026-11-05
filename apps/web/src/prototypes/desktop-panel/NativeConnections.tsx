@@ -28,6 +28,7 @@ export type ConnectionsCall = (
     | "wright_connection_enable"
     | "wright_connection_disable"
     | "wright_connection_controls"
+    | "wright_connection_workflows"
     | "wright_connection_control",
   args: Record<string, unknown>,
 ) => Promise<CallToolResult>;
@@ -483,32 +484,29 @@ export function NativeConnections({
             </p>
           )}
           {plan.state === "completed" && (
-            <details>
-              <summary>Sign-in and credential options</summary>
-              <p>
-                Use these only if credentials are missing or the provider
-                requires sign-in again. Expired validation alone does not mean
-                you must reconnect.
-              </p>
-              {plan?.state === "completed" && (
-                <NativeSignin
-                  key={plan.plan_id}
-                  scope={{
-                    workspace_id: workspace.workspace_id,
-                    session_id: workspace.session_id,
-                    plan_id: plan.plan_id,
-                    plan_digest: plan.plan_digest,
-                  }}
-                  providerName={
-                    items.find(
-                      (item) => item.capability_id === plan.capability_id,
-                    )?.name
-                  }
-                  call={call}
-                  openLink={openLink}
-                />
-              )}
-              {plan?.state === "completed" && (
+            <>
+              <NativeSignin
+                key={plan.plan_id}
+                scope={{
+                  workspace_id: workspace.workspace_id,
+                  session_id: workspace.session_id,
+                  plan_id: plan.plan_id,
+                  plan_digest: plan.plan_digest,
+                }}
+                providerName={
+                  items.find(
+                    (item) => item.capability_id === plan.capability_id,
+                  )?.name
+                }
+                call={call}
+                openLink={openLink}
+              />
+              <details>
+                <summary>Credentials and configuration</summary>
+                <p>
+                  Change these only when the provider requires different
+                  credentials or configuration.
+                </p>
                 <NativeCredentials
                   key={`credentials-${plan.plan_id}`}
                   scope={{
@@ -519,8 +517,8 @@ export function NativeConnections({
                   }}
                   call={call}
                 />
-              )}
-            </details>
+              </details>
+            </>
           )}
           <details open={plan.state !== "completed"}>
             <summary>

@@ -59,6 +59,7 @@ def build_manager_profile(
     api_url: str = "http://127.0.0.1:8000",
     wright_home: str | os.PathLike[str] | None = None,
     wright_command: str = "wright",
+    desktop: bool = False,
 ) -> ManagerProfile:
     if manager_id not in {"hermes", "codex"}:
         raise ValueError("manager_unsupported")
@@ -68,6 +69,23 @@ def build_manager_profile(
         "codex": ("mcp-v1", "mcp-config", ()),
     }
     protocol, install_interface, prerequisites = protocols[manager_id]
+    if desktop:
+        if manager_id != "codex" or transport != "stdio":
+            raise ValueError("desktop_profile_requires_codex_stdio")
+        if any(value is not None for value in (workspace, session_id, workspace_id)):
+            raise ValueError(
+                "desktop_profile_uses_explicit_workspace_selection_in_the_panel"
+            )
+        return ManagerProfile(
+            manager_id=manager_id,
+            adapter_protocol=protocol,
+            install_interface=install_interface,
+            transport=transport,
+            wright_home=layout.wright_home,
+            command=wright_command,
+            args=("mcp", "desktop", "--api-url", api_url),
+            prerequisites=prerequisites,
+        )
     if transport == "streamable-http":
         return ManagerProfile(
             manager_id=manager_id,

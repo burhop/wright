@@ -95,3 +95,22 @@ def test_uninstall_port_preserves_exact_scope_without_session_sync_override(cont
     client.call.assert_awaited_once_with(
         "POST", "/api/desktop/connection-controls", json=request(operation="uninstall")
     )
+
+
+def test_workflow_usage_port_is_app_only_and_preserves_exact_scope(controls):
+    server, client = controls
+    tools = {tool.name: tool for tool in asyncio.run(server.list_tools())}
+    tool = tools["wright_connection_workflows"]
+    assert tool.meta["ui"]["visibility"] == ["app"]
+    assert tool.annotations.readOnlyHint is True
+    scope = {
+        "workspace_id": "a",
+        "session_id": "chat-a",
+        "capability_id": "provider",
+        "server_id": "registered",
+    }
+    asyncio.run(server.call_tool("wright_connection_workflows", scope))
+    client.scope.assert_awaited_once_with("a", "chat-a")
+    client.call.assert_awaited_once_with(
+        "GET", "/api/desktop/connection-workflows", params=scope
+    )

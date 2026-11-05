@@ -289,6 +289,7 @@
   text-align: left;
   background: transparent;
   overflow-wrap: anywhere;
+  font-family: inherit;
   font-size: 13px;
 }
 .native-home .native-home__files button:hover {
@@ -332,9 +333,20 @@
   white-space: nowrap;
 }
 .native-home__file-kind {
+  flex-shrink: 0;
+  white-space: nowrap;
   margin-left: auto;
   font-size: 11px;
   color: var(--native-host-muted, #b5b5b5);
+}
+.native-home .native-home__files .native-home__file-folder {
+  display: block;
+  margin: 2px 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--native-host-muted, #b5b5b5);
+  font-size: 11px;
 }
 .native-home__file-details {
   margin: 0;

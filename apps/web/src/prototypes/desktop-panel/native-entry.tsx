@@ -506,6 +506,13 @@ function home() {
           initialSelection={selectedWorkspace ?? navigation}
           initialView={homeView}
           onOpenFile={nativeWorkspaceFiles ? openWorkspaceFile : undefined}
+          onOpenInPanel={(workspace, path) =>
+            openSavedWorkflow(
+              workspace.workspace_id,
+              workspace.session_id,
+              path,
+            )
+          }
           nativeFileNotice={nativeFileNotice}
           onNavigate={rememberView}
           restorationNotice={restorationNotice}
@@ -831,21 +838,8 @@ async function open() {
               }}
               transferCall={transferCall}
               onOpenTransferred={async (path) => {
-                if (nativeWorkspaceFiles) {
-                  if (
-                    !(await openWorkspaceFile(
-                      {
-                        workspace_id: String(input.workspace_id),
-                        session_id: String(input.session_id),
-                      },
-                      path,
-                    ))
-                  )
-                    throw new Error(
-                      "The imported file has no qualified native viewer.",
-                    );
-                  return;
-                }
+                // Transfer begins in this editor. Keep its destination here;
+                // a native file-open acknowledgement cannot confirm rendering.
                 await openSavedWorkflow(
                   String(input.workspace_id),
                   String(input.session_id),

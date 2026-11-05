@@ -1,3 +1,4 @@
+import { useWorkflowOptionReader } from "./workflow-tool-discovery";
 import {
   exportFormatLabel,
   outputConsumers,
@@ -322,6 +323,7 @@ export function ApplicationTaskOptions({
   readOnly: boolean;
   onApply: (commands: RecoveryCommand[]) => boolean;
 }) {
+  const readOptions = useWorkflowOptionReader();
   const server = String(block.configuration.mcp_server ?? "");
   const options = readJson<ApplicationOptions | null>(
     block.configuration.application_resource,
@@ -342,10 +344,13 @@ export function ApplicationTaskOptions({
   const [exportFormats, setExportFormats] = useState<Record<string, string[]>>(
     {},
   );
-  const endpoint = (resources = false) =>
-    `/api/workspace/workflow-sources/application?${new URLSearchParams({ session_id: sessionId ?? "", server_id: server, resources: String(resources) })}`;
   async function load(resources = false): Promise<ApplicationCapabilities> {
-    const response = await fetch(endpoint(resources));
+    const response = await readOptions(
+      "application",
+      sessionId ?? "",
+      server,
+      resources,
+    );
     if (!response.ok)
       throw new Error(
         "Could not load application resources. Check the selected server in Tool Registry.",
@@ -367,7 +372,7 @@ export function ApplicationTaskOptions({
     return () => {
       active = false;
     };
-  }, [sessionId, server, block.configuration.cad]);
+  }, [sessionId, server, block.configuration.cad, readOptions]);
   const producers = workflow.blocks.filter(
     (b) =>
       b.id !== block.id &&
@@ -384,12 +389,10 @@ export function ApplicationTaskOptions({
     setExportFormats({});
     if (options?.source !== "upstream" || !sessionId) return;
     for (const producer of producers) {
-      const query = new URLSearchParams({
-        session_id: sessionId,
-        server_id: String(producer.configuration.mcp_server ?? ""),
-      });
-      void fetch(
-        `/api/workspace/workflow-sources/${producer.configuration.cad ? "cad" : "application"}?${query}`,
+      void readOptions(
+        producer.configuration.cad ? "cad" : "application",
+        sessionId,
+        String(producer.configuration.mcp_server ?? ""),
       )
         .then(async (response) => (response.ok ? response.json() : null))
         .then((value) => {
@@ -408,7 +411,7 @@ export function ApplicationTaskOptions({
     return () => {
       current = false;
     };
-  }, [sessionId, options?.source, producerIdentity]);
+  }, [sessionId, options?.source, producerIdentity, readOptions]);
   async function refresh() {
     setBusy(true);
     setError("");

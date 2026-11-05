@@ -60,6 +60,33 @@ def validate_checkout_readiness(path: Path) -> None:
         checkout = re.search(r"uses:\s*actions/checkout@", steps)
         if checkout is None:
             continue
+        # The pinned Hermes lifecycle dependency excludes Python >= 3.14.
+        # A runner-default interpreter can drift independently of the tested
+        # platform matrix. Both native jobs must explicitly select its runtime.
+        if 'python -m pip install psutil "hermes-agent==0.19.0"' in steps:
+            preparation = steps.split(
+                'python -m pip install psutil "hermes-agent==0.19.0"', 1
+            )[0]
+            interpreter = re.search(
+                r"uses: actions/setup-python@[^\n]+\n\s+with:\n\s+python-version: ([^\n]+)",
+                preparation,
+            )
+            if interpreter is None:
+                raise WorkflowPolicyError(
+                    f"{path}:{name}: pinned Hermes requires explicit Python 3.13"
+                )
+            version = interpreter[1].strip()
+            if version == "${{ matrix.python }}":
+                versions = re.findall(
+                    r'^\s+python: "([^"\n]+)"$', metadata, re.MULTILINE
+                )
+                compatible = bool(versions) and set(versions) == {"3.13"}
+            else:
+                compatible = version == '"3.13"'
+            if not compatible:
+                raise WorkflowPolicyError(
+                    f"{path}:{name}: pinned Hermes requires explicit Python 3.13"
+                )
         runner = re.search(r"^    runs-on:\s*(.+)$", metadata, re.MULTILINE)
         windows = runner is not None and (
             "windows" in runner[1].lower()

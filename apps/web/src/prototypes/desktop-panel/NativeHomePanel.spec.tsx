@@ -14,6 +14,79 @@ import { NativeHomePanel, type HomeCall } from "./NativeHomePanel";
 
 afterEach(cleanup);
 
+it("distinguishes duplicate files and keeps internal run records in searchable details", async () => {
+  const nativeOpen = vi.fn().mockResolvedValue(true);
+  const runId = "a".repeat(32);
+  const paths = [
+    "/results/first-design/preview.png",
+    "/results/revised-design/preview.png",
+    "/results/first-design/inspection.json",
+    `/runs/handle/${runId}.json`,
+    `/uploads/${runId}.json`,
+  ];
+  const call: HomeCall = async (name) => {
+    if (name === "wright_workspace_list")
+      return result({ workspaces: [alpha] });
+    if (name === "wright_workspace_files")
+      return result({
+        workspace_id: alpha.workspace_id,
+        session_id: alpha.session_id,
+        tree: {
+          type: "directory",
+          children: paths.map((path) => ({
+            type: "file",
+            path,
+            name: path.split("/").at(-1),
+          })),
+        },
+      });
+    throw Error("Unexpected operation: " + name);
+  };
+  render(
+    <NativeHomePanel call={call} onOpen={vi.fn()} onOpenFile={nativeOpen} />,
+  );
+  await screen.findByRole("option", { name: "Alpha" });
+  fireEvent.change(screen.getByLabelText("Workspace"), {
+    target: { value: alpha.workspace_id },
+  });
+  const revised = await screen.findByRole("button", {
+    name: "preview.png — results / revised-design",
+  });
+  expect(screen.getByText("results / first-design")).toBeVisible();
+  expect(screen.getByText("results / revised-design")).toBeVisible();
+  expect(screen.getByRole("button", { name: "inspection.json" })).toBeVisible();
+  expect(
+    screen.getByRole("button", { name: `${runId}.json — uploads` }),
+  ).toBeVisible();
+  const technical = screen
+    .getByText("Technical run records (1)")
+    .closest("details")!;
+  expect(technical).not.toHaveAttribute("open");
+  expect(within(technical).getByText("runs / handle")).not.toBeVisible();
+  fireEvent.click(revised);
+  await waitFor(() =>
+    expect(nativeOpen).toHaveBeenCalledWith(
+      alpha,
+      "results/revised-design/preview.png",
+    ),
+  );
+  fireEvent.change(screen.getByLabelText("Find a file"), {
+    target: { value: `runs/handle/${runId}` },
+  });
+  expect(technical).toHaveAttribute("open");
+  const record = screen.getByRole("button", {
+    name: `${runId}.json — runs / handle`,
+  });
+  expect(record).toBeVisible();
+  fireEvent.click(record);
+  await waitFor(() =>
+    expect(nativeOpen).toHaveBeenLastCalledWith(
+      alpha,
+      `runs/handle/${runId}.json`,
+    ),
+  );
+});
+
 it("uses workspace files as the native-tab landing view with accepted names and contextual tools", async () => {
   const nativeOpen = vi.fn().mockResolvedValue(true);
   const onOpen = vi.fn();
@@ -55,7 +128,12 @@ it("uses workspace files as the native-tab landing view with accepted names and 
     throw Error("Unexpected operation: " + name);
   };
   render(
-    <NativeHomePanel call={call} onOpen={onOpen} onOpenFile={nativeOpen} />,
+    <NativeHomePanel
+      call={call}
+      onOpen={onOpen}
+      onOpenFile={nativeOpen}
+      onOpenInPanel={onOpen}
+    />,
   );
   await screen.findByRole("option", { name: "Alpha" });
   fireEvent.change(await screen.findByLabelText("Workspace"), {
@@ -92,6 +170,19 @@ it("uses workspace files as the native-tab landing view with accepted names and 
   ).toBeVisible();
   expect(screen.getByRole("button", { name: "Connections" })).toBeVisible();
   expect(screen.getByRole("button", { name: "Previous runs" })).toBeVisible();
+  // An acknowledged open does not establish the chosen native viewer. The
+  // explicit fallback uses the same source owner, without another host open.
+  fireEvent.click(
+    screen.getByLabelText("File details for Block preview recovery"),
+  );
+  fireEvent.click(screen.getByRole("button", { name: "Open workflow here" }));
+  await waitFor(() =>
+    expect(onOpen).toHaveBeenCalledExactlyOnceWith(
+      alpha,
+      "workflows/block-preview-recovery.workflow.wflow",
+    ),
+  );
+  expect(nativeOpen).toHaveBeenCalledTimes(1);
 });
 
 it("keeps a native-open failure visible without losing file navigation or retrying", async () => {

@@ -40,6 +40,7 @@ export type HomeCall = (
     | "wright_workspace_settings_save"
     | "wright_workflow_read"
     | "wright_workflow_editor_tools"
+    | "wright_workflow_editor_options"
     | "wright_workflow_create"
     | "wright_workflow_templates"
     | "wright_workflow_template_create"
@@ -68,6 +69,7 @@ export type HomeCall = (
     | "wright_connection_enable"
     | "wright_connection_disable"
     | "wright_connection_controls"
+    | "wright_connection_workflows"
     | "wright_connection_control",
   args: Record<string, unknown>,
 ) => Promise<CallToolResult>;
@@ -99,6 +101,7 @@ export function NativeHomePanel({
   lastLocation,
   onReopen,
   onOpenFile,
+  onOpenInPanel,
   nativeFileNotice,
   onPlanInChat,
 }: {
@@ -126,6 +129,10 @@ export function NativeHomePanel({
     run: RecordedRun,
   ) => Promise<void>;
   readonly onOpen: (workspace: DesktopWorkspace, path: string) => Promise<void>;
+  readonly onOpenInPanel?: (
+    workspace: DesktopWorkspace,
+    path: string,
+  ) => Promise<void>;
   /** Present only when the backend and host have qualified native file tabs. */
   readonly onOpenFile?: (
     workspace: DesktopWorkspace,
@@ -210,6 +217,22 @@ export function NativeHomePanel({
           }),
       )
     : filteredFiles;
+  // Presentation only: ordinary engineering JSON remains alongside other files.
+  // Canonical run records remain searchable and accessible in technical details.
+  const isRunRecord = (file: FileNode) =>
+    Boolean(onOpenFile) &&
+    /^\/?runs\/[^/]+\/[0-9a-f]{32}\.json$/.test(file.path);
+  const technicalFiles = matchingFiles.filter(isRunRecord);
+  const mainFiles = matchingFiles.filter((file) => !isRunRecord(file));
+  const fileTitle = (file: FileNode) => titles[file.path] ?? file.name;
+  const duplicateTitles = new Set(
+    files
+      .map(fileTitle)
+      .filter((title, index, all) => all.indexOf(title) !== index),
+  );
+  const fileFolder = (file: FileNode) =>
+    file.path.replace(/^\//, "").split("/").slice(0, -1).join(" / ") ||
+    "Workspace root";
   async function openFile(file: FileNode, opener: HTMLButtonElement) {
     if (!selected || opening || loading || creating) return;
     previewOpener.current = opener;
@@ -220,7 +243,7 @@ export function NativeHomePanel({
       try {
         if (await onOpenFile(selected, path)) {
           setFileNotice(
-            `Open request sent for ${titles[file.path] ?? file.name}. Check the desktop tabs.`,
+            `Open request sent for ${titles[file.path] ?? file.name}. Check the desktop tabs.${workflowPaths.has(file.path) ? " If you see text, use the file’s ⋯ menu → Open workflow here." : ""}`,
           );
           return;
         }
@@ -238,12 +261,12 @@ export function NativeHomePanel({
     }
     setPreviewPath(path);
   }
-  async function openWorkflow(file: FileNode) {
+  async function openWorkflow(file: FileNode, open = onOpen) {
     if (!selected || loading || creating || opening) return;
     setLoading(true);
     setOpening(true);
     try {
-      await onOpen(selected, file.path.replace(/^\//, ""));
+      await open(selected, file.path.replace(/^\//, ""));
     } catch {
       setError(
         "The workflow could not be opened. Your saved source is unchanged.",
@@ -463,6 +486,57 @@ export function NativeHomePanel({
     await onOpen(workspace, path);
     if (onOpenFile) await select(workspace);
   }
+
+  const fileAccessibleName = (file: FileNode) =>
+    duplicateTitles.has(fileTitle(file))
+      ? `${fileTitle(file)} — ${fileFolder(file)}`
+      : fileTitle(file);
+  const renderFileRow = (file: FileNode) => (
+    <li key={file.path}>
+      <button
+        type="button"
+        disabled={loading || creating || opening}
+        title={file.path}
+        aria-label={onOpenFile ? fileAccessibleName(file) : undefined}
+        onClick={(event) => void openFile(file, event.currentTarget)}
+      >
+        <span>
+          {onOpenFile ? (titles[file.path] ?? file.name) : file.name}
+          {onOpenFile && duplicateTitles.has(fileTitle(file)) && (
+            <small className="native-home__file-folder">
+              {fileFolder(file)}
+            </small>
+          )}
+        </span>
+        {onOpenFile && (
+          <span className="native-home__file-kind" aria-hidden="true">
+            {workflowPaths.has(file.path)
+              ? "Workflow"
+              : (file.name.split(".").at(-1)?.toUpperCase() ?? "File")}
+          </span>
+        )}
+      </button>
+      {onOpenFile ? (
+        <details className="native-home__file-details">
+          <summary aria-label={`File details for ${fileAccessibleName(file)}`}>
+            ⋯
+          </summary>
+          <code>{file.path}</code>
+          {workflowPaths.has(file.path) && onOpenInPanel && (
+            <button
+              type="button"
+              disabled={loading || creating || opening}
+              onClick={() => void openWorkflow(file, onOpenInPanel)}
+            >
+              Open workflow here
+            </button>
+          )}
+        </details>
+      ) : (
+        <small title={file.path}>{file.path}</small>
+      )}
+    </li>
+  );
 
   return (
     <main
@@ -780,51 +854,24 @@ export function NativeHomePanel({
               aria-label="Workspace files"
               tabIndex={0}
             >
-              {matchingFiles.map((file) => (
-                <li key={file.path}>
-                  <button
-                    type="button"
-                    disabled={loading || creating || opening}
-                    title={file.path}
-                    aria-label={
-                      onOpenFile ? (titles[file.path] ?? file.name) : undefined
-                    }
-                    onClick={(event) =>
-                      void openFile(file, event.currentTarget)
-                    }
-                  >
-                    <span>
-                      {onOpenFile
-                        ? (titles[file.path] ?? file.name)
-                        : file.name}
-                    </span>
-                    {onOpenFile && (
-                      <span
-                        className="native-home__file-kind"
-                        aria-hidden="true"
-                      >
-                        {workflowPaths.has(file.path)
-                          ? "Workflow"
-                          : (file.name.split(".").at(-1)?.toUpperCase() ??
-                            "File")}
-                      </span>
-                    )}
-                  </button>
-                  {onOpenFile ? (
-                    <details className="native-home__file-details">
-                      <summary
-                        aria-label={`File details for ${titles[file.path] ?? file.name}`}
-                      >
-                        ⋯
-                      </summary>
-                      <code>{file.path}</code>
-                    </details>
-                  ) : (
-                    <small title={file.path}>{file.path}</small>
-                  )}
-                </li>
-              ))}
+              {mainFiles.map(renderFileRow)}
             </ul>
+            {technicalFiles.length > 0 && (
+              <details
+                className="native-home__file-options"
+                open={fileQuery.trim() ? true : undefined}
+              >
+                <summary>
+                  Technical run records ({technicalFiles.length})
+                </summary>
+                <ul
+                  className="native-home__files"
+                  aria-label="Technical run records"
+                >
+                  {technicalFiles.map(renderFileRow)}
+                </ul>
+              </details>
+            )}
             {onOpenFile && (
               <details className="native-home__file-options">
                 <summary>Templates and workflow details</summary>

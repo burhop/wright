@@ -100,7 +100,15 @@ def controls(tmp_path, monkeypatch):
         ),
     )
     backend = DesktopBackend(
-        SimpleNamespace(db_path=database, repository=repository), tmp_path, 5207
+        SimpleNamespace(
+            db_path=database,
+            repository=repository,
+            workflow_sources=SimpleNamespace(
+                list_input_files=AsyncMock(return_value=[])
+            ),
+        ),
+        tmp_path,
+        5207,
     )
     app = FastAPI()
     app.state.security_settings = SecuritySettings(
@@ -349,7 +357,9 @@ async def test_uninstall_denied_and_uncertain_outcomes_never_repeat_owner(contro
         owner.uninstall_server = AsyncMock(side_effect=OSError("PRIVATE diagnostic"))
         failed = await client.post("/api/desktop/connection-controls", json=request)
         assert failed.status_code == 503 and "PRIVATE" not in failed.text
-        owner.uninstall_server.assert_awaited_once_with("playwright-mcp", sync_agent_profile=False)
+        owner.uninstall_server.assert_awaited_once_with(
+            "playwright-mcp", sync_agent_profile=False
+        )
 
 
 @pytest.mark.asyncio
@@ -486,3 +496,30 @@ async def test_explicit_replacement_read_requires_admin_exact_scope_and_current_
     engine.stop_server.assert_not_awaited()
     gateway.assert_not_called()
     assert before.command == ["fixture-command", "PRIVATE_CONFIGURATION"]
+
+
+@pytest.mark.asyncio
+async def test_workflow_usage_is_scoped_read_only_and_rejects_wrong_provider(controls):
+    app, owner, repository, engine, gateway, sync, directory = controls
+    before = repository.enabled_tools("alpha")
+    async with httpx.AsyncClient(
+        transport=httpx.ASGITransport(app), base_url="http://test"
+    ) as client:
+        result = await client.get("/api/desktop/connection-workflows", params=scope)
+        assert result.status_code == 200
+        assert result.json()["usage"]["scan_complete"]
+        assert result.json()["usage"]["matches"] == []
+        assert "PRIVATE" not in result.text
+        wrong = await client.get(
+            "/api/desktop/connection-workflows", params={**scope, "server_id": "other"}
+        )
+        assert wrong.status_code == 409
+        foreign = await client.get(
+            "/api/desktop/connection-workflows",
+            params={**scope, "workspace_id": "other"},
+        )
+        assert foreign.status_code == 403
+    engine.start_server.assert_not_awaited()
+    engine.stop_server.assert_not_awaited()
+    assert repository.enabled_tools("alpha") == before
+    sync.assert_not_called()

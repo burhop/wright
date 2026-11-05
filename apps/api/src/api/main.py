@@ -20,6 +20,10 @@ from starlette.types import ASGIApp, Receive, Scope, Send
 
 
 from api.agent_platform_engines import create_agent_engine
+from api.desktop.composition import (
+    DesktopBoundaryMiddleware,
+    enabled as desktop_enabled,
+)
 from api.config import (
     DATABASE_PATH,
     McpTransportSettings,
@@ -279,6 +283,12 @@ async def lifespan(app: FastAPI):
         app.state.agent_sync_manager = AgentSyncManager(
             DATABASE_PATH, sync_workspace_tools_to_wright_gateway
         )
+    from api.desktop.composition import configure as configure_desktop
+
+    from api.composition import workspace_service as desktop_workspace_service
+
+    if desktop_enabled():
+        configure_desktop(app, desktop_workspace_service())
     if not hasattr(app.state, "agent_engine"):
         app.state.agent_engine = create_agent_engine(
             app.state.agent_sync_manager.active_agent, db_path=DATABASE_PATH
@@ -399,6 +409,7 @@ app.add_middleware(
     WorkflowSourceBodyLimitMiddleware,
     max_body_bytes=_WORKFLOW_SOURCE_TRANSPORT_MAX_BYTES,
 )
+app.add_middleware(DesktopBoundaryMiddleware)
 app.add_middleware(ProcessInterfaceBodyLimitMiddleware, max_body_bytes=67_108_864)
 app.add_middleware(WorkflowBundleBodyLimitMiddleware, max_body_bytes=21_000_000)
 

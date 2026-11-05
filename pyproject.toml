@@ -85,6 +85,7 @@ wright-model-registry = { workspace = true }
 cache-keys = [
     { file = "pyproject.toml" },
     { file = "integrations/rivet/**" },
+    { file = "integrations/codex/plugin/**" },
 ]
 
 [tool.uv.workspace]
@@ -159,6 +160,7 @@ packages = [
 ]
 
 [tool.hatch.build.targets.wheel.force-include]
+"integrations/codex/plugin" = "api/desktop/plugin"
 "examples/process-interfaces/definition.py" = "workspace_service/engineering_workflow_templates/setup_resources/definition.py"
 "examples/process-interfaces/printed-replacement-part/prepare.py" = "workspace_service/engineering_workflow_templates/setup_resources/printed-replacement-part/prepare.py"
 "examples/process-interfaces/printed-replacement-part/provider_inputs.py" = "workspace_service/engineering_workflow_templates/setup_resources/printed-replacement-part/provider_inputs.py"
@@ -206,6 +208,7 @@ artifacts = [
 # package links first, then suppress the real directories as already visited.
 # Direct roots also avoid traversing unrelated local caches and worktrees.
 only-include = [
+    "integrations/codex/plugin",
     "examples/process-interfaces/definition.py",
     "examples/process-interfaces/printed-replacement-part/prepare.py",
     "examples/process-interfaces/printed-replacement-part/provider_inputs.py",

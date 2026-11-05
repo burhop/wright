@@ -4,6 +4,30 @@ Read this page before every push to a branch with an open pull request targeting
 `dev`, and again immediately before making that pull request ready to merge.
 Direct pushes to `dev` are not part of the supported development workflow.
 
+The desktop native candidate qualification also starts one isolated response-only
+fixture through the installed MCP/API, observes its no-tools reasoning request,
+cancels it, and checks the same cancelled run after restart. Installation and
+save/reopen alone missed a composed-engine routing defect. This fixture invokes
+no model response, engineering provider, review or physical action; it is not
+actual desktop rendering or full engineering acceptance. Preserve that Start
+boundary in the native Windows, Linux and macOS matrix.
+
+The native lifecycle regression includes update → rollback → update through the
+installed migration owner. An in-process migration mock alone missed rejection
+of the retained predecessor during reactivation. The full gate names this suite
+in its program-compatibility tranche; the fast gate includes it with native
+runtime changes. A retained predecessor is eligible only when it is the exact
+recorded update candidate; failed and unreferenced installations remain rejected.
+
+The macOS framework interpreter may replace its launcher in the same process.
+The launch owner probes the contained interpreter's exact OS executable before
+starting the server and waits for that executable before freezing its identity.
+Both native gates run the deterministic transition and rejection cases early on
+every host, including probe failure and later executable drift. PID, birth time,
+runtime, launcher confinement and exact executable checks remain required before
+signals; an arbitrary framework path is not sufficient. These controlled cases
+do not replace the installed macOS start/status/doctor/stop/restart CI evidence.
+
 ## The 60-second pre-push check
 
 1. Confirm the branch contains one reviewable outcome. If unrelated work is
@@ -88,6 +112,12 @@ PR #159 also exposed a gap between the separately qualified desktop prototype
 and normal gate collection. Python prototype changes now select its existing owner
 tests as an isolated pytest root in both native gates. These include frozen routing,
 authentication, private credentials, scope, recovery, and observable evidence.
+Maintained `api.desktop`, desktop launcher/profile and integration changes also
+select those same boundary tests plus `tests/desktop_integration`. The packaged
+HTML is the identical generated output of the scanned UI sources; its exact
+packaged path joins the existing generated-bundle CodeQL exclusion. All desktop
+Python and TypeScript sources remain scanned.
+
 GitHub CodeQL remains the whole-program data-flow check. Its name heuristic treated
 the public `remote_oauth_flow` selector as a password; the internal selector is now
 named `remote_signin_mode`, while the CLI flag, serialized key, and supported values
@@ -116,6 +146,13 @@ Other values and paths remain subject to the scanner.
 GitHub is retiring `macos-14` on 2 November 2026 after scheduled brownouts.
 Native candidate and published-lifecycle matrices use `macos-15`, retaining
 ARM64 macOS coverage and the existing lifecycle test and evidence requirements.
+
+PR #191 exposed an unpinned Python interpreter in the native lifecycle job:
+the runner default exceeded the pinned Hermes 0.19.0 support range. That job
+now selects Python 3.13 like the native platform matrix. The shared workflow
+readiness policy, exercised by the merge and push gates, rejects missing,
+incompatible or late interpreter setup in these Hermes installation jobs.
+It preserves every lifecycle command and the broader public-package Python matrix.
 
 The OCI scanner may fail before it writes a vulnerability report. Its public
 projection now includes only an allowlisted reported category (for example DB
@@ -294,6 +331,11 @@ and no Docker build input changed. Committed, staged and unstaged differences
 are checked separately, so reverting a dirty file cannot mask a changed HEAD
 or index; untracked inputs are also rejected. It never builds or publishes. For a standalone scan, use
 `python -m scripts.release.scan_image --image <image>`.
+
+Frontend gates regenerate the desktop UI in comparison-only mode. A stale bundled
+editor fails even if the ordinary web app builds. Run
+`node apps/web/build-native-panel.mjs` to refresh both maintained and compatibility
+assets before committing. Normal native artifact builds also regenerate this asset.
 
 The Dockerfile copies the closed setup-resource inventory before workspace
 package installation, including its versioned JSON and instruction assets.
@@ -828,3 +870,30 @@ early, retaining the complete frontend suites. This test/gate-only correction
 retains the exact green product full-gate receipt, runs affected checks and the
 normal push gate, and requires fresh current-head CI. It does not establish
 native Windows desktop panel acceptance.
+
+The maintained desktop plugin is also a Docker/wheel input. Its manifest, MCP
+profile and skill are bundled byte-for-byte; changes select Docker PR CI and the
+local exact-image scan. A prior image cannot qualify changed plugin instructions.
+
+The native candidate matrix also exercises the maintained desktop MCP profile
+on each existing Windows, Linux and macOS runner. It reuses the same immutable
+wheel and platform wheelhouse, with separate driver and dependency-light manager
+environments and a fresh authenticated desktop-enabled home. The existing
+qualification harness checks connection identity, exact served viewer bytes,
+saved workflow source and restart preservation, then stops its owned runtime.
+Hermes lifecycle checks remain required. Desktop MCP receipts identify the actual
+OS and architecture; neither profile's backend checks establish that the Codex
+desktop app rendered a panel, delivered a download or restored a chat.
+
+The maintained-desktop candidate scan on 5 November found CVE-2026-109518 in
+Debian's `apt` and `libapt-pkg7.0` 3.0.3. Both runtime stages explicitly install
+3.0.4, the [Debian DSA-6607-1 fixed version](https://security-tracker.debian.org/tracker/CVE-2026-109518).
+The existing exact-image/current-database scan remains mandatory; this is a package
+update, not a vulnerability exception or a clean-scan claim.
+
+The desktop native CI harness must retain the CLI's redacted structured result
+and exit code before asserting success. A macOS final-stop failure was initially
+uploaded without its diagnostic because the assertion preceded receipt storage.
+On failure, collect the existing read-only doctor result without retrying the
+mutation; diagnostic failure must not replace the original failure or create a
+pass. Keep raw stdout/stderr private and retain all required platform checks.

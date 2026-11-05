@@ -39,6 +39,11 @@ def test_native_candidate_builds_once_and_runs_every_claimed_platform() -> None:
         )
     ]
     assert "--runtime-smoke" in platform_matrix
+    assert "scripts/qualification/qualify-desktop-native.py" in platform_matrix
+    assert '"--manager-python"' in platform_matrix
+    assert '"--no-index"' in platform_matrix
+    assert "native-desktop-smoke-${{ runner.os }}-${{ runner.arch }}" in platform_matrix
+    assert "dist/desktop-native-*/receipt.json" in platform_matrix
     assert "--base-only" not in platform_matrix
     assert "hermes-agent==0.19.0" in workflow
     lifecycle = workflow[workflow.index("native-lifecycle-contract:") :]

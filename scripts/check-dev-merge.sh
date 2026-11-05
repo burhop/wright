@@ -90,6 +90,8 @@ run "$GATE_PYTHON" -m pytest tests/docker/test_mcp_bundle.py -q -k bundle_mcp_sd
 run "$GATE_PYTHON" -m pytest tests/test_docker_smoke_contract.py -q -k hermes_security_overrides
 # Exercise Windows namespace/reparse contracts on every host before long checks.
 run "$GATE_PYTHON" -m pytest packages/workspace_service/tests/test_workspace_path.py -q
+# Reproduce macOS launcher-to-framework identity transitions on every host.
+run "$GATE_PYTHON" -m pytest tests/native_runtime/test_process.py -q
 # Observe real late-worker cleanup before expensive suites (Windows PR165).
 run "$GATE_PYTHON" -m pytest packages/workspace_service/tests/test_native_process_runtime.py -q -k deadline_prevents_late_worker_artifact_publication
 # Fail early on the full Windows portability failure set (PR180).
@@ -124,6 +126,7 @@ else
   run npx prettier --check apps/web/
 fi
 run npx tsc --noEmit -p apps/web/tsconfig.app.json
+run node apps/web/build-native-panel.mjs --check
 # Check LF/CRLF cold reconstruction before expensive suites (PR163).
 run npm run test --workspace=apps/web -- --run \
   src/prototypes/workflow-recovery/WorkflowDocumentReconstruction.spec.tsx \
@@ -167,6 +170,7 @@ run uv run python -m pytest -q \
 # packaging, accessibility, and Gate E regressions.
 run uv run --extra runtime python -m pytest -q \
   tests/program_hardening \
+  tests/native_runtime/test_installed_migrations.py \
   tests/native_runtime/test_program_state_compatibility.py \
   tests/native_runtime/test_rollback.py \
   tests/native_runtime/test_security.py \

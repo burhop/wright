@@ -240,7 +240,7 @@ export function NativeSignin({
     } catch {
       setValidated(false);
       setMessage(
-        "Validation outcome is not confirmed. Check sign-in status and recorded readiness before another attempt; no request was repeated.",
+        "Validation outcome is not confirmed. Refresh saved status before another attempt; no request was repeated.",
       );
     } finally {
       validationInFlight.current = false;
@@ -277,7 +277,7 @@ export function NativeSignin({
       );
     } catch {
       setMessage(
-        "Workspace availability was not confirmed. Check sign-in status to read saved provider availability; no enable request was repeated.",
+        "Workspace availability was not confirmed. Refresh saved status to read saved provider availability; no enable request was repeated.",
       );
     } finally {
       ++readGeneration.current;
@@ -285,20 +285,22 @@ export function NativeSignin({
     }
   }
   return (
-    <section aria-label="Provider sign-in" ref={focusRef} tabIndex={-1}>
+    <section
+      aria-label="Connection and workspace access"
+      ref={focusRef}
+      tabIndex={-1}
+    >
       <h3>
         {providerName
-          ? `Connect ${providerName}`
-          : "Sign in and check provider"}
+          ? `Connection: ${providerName}`
+          : "Connection and workspace access"}
       </h3>
       <p>
-        Sign in to your provider and check the connection. Workspace tool access
-        is a separate step.
+        Check whether this tool can connect. Wright asks you to sign in only if
+        needed. Then choose whether to enable it in this workspace.
       </p>
       <button disabled={attempted || pending} onClick={() => void start()}>
-        {providerName
-          ? `Connect ${providerName}`
-          : "Sign in and validate provider"}
+        Check connection
       </button>
       <button
         disabled={enablePending}
@@ -308,11 +310,11 @@ export function NativeSignin({
             setCallback(undefined);
             setDeviceCode(undefined);
             setValidated(false);
-            setMessage("Sign-in status unavailable.");
+            setMessage("Saved connection status unavailable.");
           })
         }
       >
-        Check sign-in status
+        Refresh saved status
       </button>
       {validated && (
         <button

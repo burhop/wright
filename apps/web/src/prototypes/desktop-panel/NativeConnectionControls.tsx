@@ -3,6 +3,7 @@ import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import type { DesktopWorkspace } from "./NativeHomePanel";
 import type { ImportedConnection } from "./connection-config-import";
 import type { ConnectionsCall } from "./NativeConnections";
+import { NativeConnectionUsage } from "./NativeConnectionUsage";
 
 export interface ControlState {
   capability_id: string;
@@ -231,6 +232,12 @@ export function NativeConnectionControls({
       {message && <p role="status">{message}</p>}
       {state && (
         <>
+          <NativeConnectionUsage
+            key={state.control_digest}
+            call={call}
+            scope={scope}
+            controlDigest={state.control_digest}
+          />
           <p>
             Process: {state.status}.{" "}
             {state.bound_workspace_id

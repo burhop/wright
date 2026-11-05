@@ -36,7 +36,7 @@ it("does not start sign-in on render and opens only app-private URL on explicit 
   const openLink = vi.fn().mockResolvedValue(undefined);
   render(<NativeSignin scope={scope} call={call} openLink={openLink} />);
   expect(call).not.toHaveBeenCalled();
-  fireEvent.click(screen.getByRole("button", { name: "Check sign-in status" }));
+  fireEvent.click(screen.getByRole("button", { name: "Refresh saved status" }));
   const open = await screen.findByRole("button", {
     name: "Open provider sign-in",
   });
@@ -51,16 +51,14 @@ it("does not start sign-in on render and opens only app-private URL on explicit 
 it("does not retry validation after lost acknowledgement", async () => {
   const call = vi.fn().mockRejectedValue(Error("transport lost"));
   render(<NativeSignin scope={scope} call={call} />);
-  fireEvent.click(
-    screen.getByRole("button", { name: "Sign in and validate provider" }),
-  );
+  fireEvent.click(screen.getByRole("button", { name: "Check connection" }));
   expect(
     await screen.findByText(/Validation outcome is not confirmed/),
   ).toBeVisible();
   expect(
-    screen.getByRole("button", { name: "Sign in and validate provider" }),
+    screen.getByRole("button", { name: "Check connection" }),
   ).toBeDisabled();
-  fireEvent.click(screen.getByRole("button", { name: "Check sign-in status" }));
+  fireEvent.click(screen.getByRole("button", { name: "Refresh saved status" }));
   await waitFor(() =>
     expect(
       call.mock.calls.filter(
@@ -78,8 +76,10 @@ it("rejects another plan's private navigation data", async () => {
     structuredContent: { ...status.structuredContent, plan_id: "other" },
   });
   render(<NativeSignin scope={scope} call={call} openLink={vi.fn()} />);
-  fireEvent.click(screen.getByRole("button", { name: "Check sign-in status" }));
-  expect(await screen.findByText("Sign-in status unavailable.")).toBeVisible();
+  fireEvent.click(screen.getByRole("button", { name: "Refresh saved status" }));
+  expect(
+    await screen.findByText("Saved connection status unavailable."),
+  ).toBeVisible();
   expect(
     screen.queryByRole("button", { name: "Open provider sign-in" }),
   ).toBeNull();
@@ -100,11 +100,9 @@ it("discards a pending manual status read when validation finishes", async () =>
     return ++reads === 1 ? Promise.resolve(status) : manual;
   });
   render(<NativeSignin scope={scope} call={call} />);
-  fireEvent.click(
-    screen.getByRole("button", { name: "Sign in and validate provider" }),
-  );
+  fireEvent.click(screen.getByRole("button", { name: "Check connection" }));
   await screen.findByRole("button", { name: "Open provider sign-in" });
-  fireEvent.click(screen.getByRole("button", { name: "Check sign-in status" }));
+  fireEvent.click(screen.getByRole("button", { name: "Refresh saved status" }));
   await act(async () => finish(status));
   await act(async () => lateRead(status));
   expect(
@@ -125,9 +123,7 @@ it("requires a separate enable click and does not repeat an uncertain grant", as
   expect(
     screen.queryByRole("button", { name: "Enable in this workspace" }),
   ).toBeNull();
-  fireEvent.click(
-    screen.getByRole("button", { name: "Sign in and validate provider" }),
-  );
+  fireEvent.click(screen.getByRole("button", { name: "Check connection" }));
   const enable = await screen.findByRole("button", {
     name: "Enable in this workspace",
   });
@@ -178,11 +174,9 @@ it("recovers a lost validation reply by reading saved status before explicit ena
     return recovered();
   });
   render(<NativeSignin scope={scope} call={call} />);
-  fireEvent.click(
-    screen.getByRole("button", { name: "Sign in and validate provider" }),
-  );
+  fireEvent.click(screen.getByRole("button", { name: "Check connection" }));
   await screen.findByText(/Validation outcome is not confirmed/);
-  fireEvent.click(screen.getByRole("button", { name: "Check sign-in status" }));
+  fireEvent.click(screen.getByRole("button", { name: "Refresh saved status" }));
   const enable = await screen.findByRole("button", {
     name: "Enable in this workspace",
   });
@@ -203,7 +197,7 @@ it("reopens a saved enabled provider by read only and never replays the grant", 
   const call = vi.fn().mockResolvedValue(recovered("passed", true));
   render(<NativeSignin scope={scope} call={call} />);
   expect(call).not.toHaveBeenCalled();
-  fireEvent.click(screen.getByRole("button", { name: "Check sign-in status" }));
+  fireEvent.click(screen.getByRole("button", { name: "Refresh saved status" }));
   await screen.findByText(/Saved workspace availability is enabled/);
   expect(
     screen.getByRole("button", { name: "Enable in this workspace" }),
@@ -218,7 +212,7 @@ it.each(["failed", "stale", "blocked"])(
     const call = vi.fn().mockResolvedValue(recovered(state));
     render(<NativeSignin scope={scope} call={call} />);
     fireEvent.click(
-      screen.getByRole("button", { name: "Check sign-in status" }),
+      screen.getByRole("button", { name: "Refresh saved status" }),
     );
     await screen.findByText(new RegExp("Saved provider check is " + state));
     expect(
@@ -232,8 +226,8 @@ it("rejects recovered provider status for another plan digest", async () => {
     .fn()
     .mockResolvedValue(recovered("passed", false, "b".repeat(64)));
   render(<NativeSignin scope={scope} call={call} />);
-  fireEvent.click(screen.getByRole("button", { name: "Check sign-in status" }));
-  await screen.findByText("Sign-in status unavailable.");
+  fireEvent.click(screen.getByRole("button", { name: "Refresh saved status" }));
+  await screen.findByText("Saved connection status unavailable.");
   expect(
     screen.queryByRole("button", { name: "Enable in this workspace" }),
   ).toBeNull();
@@ -256,7 +250,7 @@ it("shows a device code and opens only the operator URL without callback instruc
   const call = vi.fn().mockResolvedValue(deviceStatus);
   const openLink = vi.fn().mockResolvedValue(undefined);
   render(<NativeSignin scope={scope} call={call} openLink={openLink} />);
-  fireEvent.click(screen.getByRole("button", { name: "Check sign-in status" }));
+  fireEvent.click(screen.getByRole("button", { name: "Refresh saved status" }));
   expect(await screen.findByText("TEST-1234")).toBeVisible();
   expect(document.body.textContent).toContain("No network setup is needed");
   expect(document.body.textContent).not.toContain("Forward");
@@ -276,7 +270,7 @@ it("shows a device code and opens only the operator URL without callback instruc
     },
     _meta: {},
   });
-  fireEvent.click(screen.getByRole("button", { name: "Check sign-in status" }));
+  fireEvent.click(screen.getByRole("button", { name: "Refresh saved status" }));
   await waitFor(() => expect(screen.queryByText("TEST-1234")).toBeNull());
 });
 
@@ -295,8 +289,10 @@ it("rejects a device completion URL on another origin", async () => {
   });
   const openLink = vi.fn();
   render(<NativeSignin scope={scope} call={call} openLink={openLink} />);
-  fireEvent.click(screen.getByRole("button", { name: "Check sign-in status" }));
-  expect(await screen.findByText("Sign-in status unavailable.")).toBeVisible();
+  fireEvent.click(screen.getByRole("button", { name: "Refresh saved status" }));
+  expect(
+    await screen.findByText("Saved connection status unavailable."),
+  ).toBeVisible();
   expect(screen.queryByText("TEST-1234")).toBeNull();
   expect(openLink).not.toHaveBeenCalled();
 });
@@ -326,21 +322,21 @@ it("allows a new explicit connection attempt only after reading a recorded termi
         },
   );
   render(<NativeSignin scope={scope} call={call} providerName="SteveCAD" />);
-  fireEvent.click(screen.getByRole("button", { name: "Connect SteveCAD" }));
+  fireEvent.click(screen.getByRole("button", { name: "Check connection" }));
   await screen.findByText(/Protocol validation: failed/);
   expect(
-    screen.getByRole("button", { name: "Connect SteveCAD" }),
+    screen.getByRole("button", { name: "Check connection" }),
   ).toBeDisabled();
-  fireEvent.click(screen.getByRole("button", { name: "Check sign-in status" }));
+  fireEvent.click(screen.getByRole("button", { name: "Refresh saved status" }));
   await waitFor(() =>
     expect(
-      screen.getByRole("button", { name: "Connect SteveCAD" }),
+      screen.getByRole("button", { name: "Check connection" }),
     ).toBeEnabled(),
   );
   expect(
     call.mock.calls.filter(([name]) => name === "wright_connection_validate"),
   ).toHaveLength(1);
-  fireEvent.click(screen.getByRole("button", { name: "Connect SteveCAD" }));
+  fireEvent.click(screen.getByRole("button", { name: "Check connection" }));
   await waitFor(() =>
     expect(
       call.mock.calls.filter(([name]) => name === "wright_connection_validate"),
@@ -349,7 +345,7 @@ it("allows a new explicit connection attempt only after reading a recorded termi
   expect(document.body.textContent).not.toContain("forwarding");
 });
 
-it("keeps Connect disabled when an old failed status arrives before the new validation binds", async () => {
+it("keeps Check connection disabled when an old failed status arrives before the new validation binds", async () => {
   let finish!: (value: ReturnType<typeof recovered>) => void;
   const validation = new Promise<ReturnType<typeof recovered>>((resolve) => {
     finish = resolve;
@@ -360,7 +356,7 @@ it("keeps Connect disabled when an old failed status arrives before the new vali
     name === "wright_connection_validate" ? validation : Promise.resolve(stale),
   );
   render(<NativeSignin scope={scope} call={call} providerName="SteveCAD" />);
-  const connect = screen.getByRole("button", { name: "Connect SteveCAD" });
+  const connect = screen.getByRole("button", { name: "Check connection" });
   fireEvent.click(connect);
   await waitFor(() =>
     expect(call).toHaveBeenCalledWith(
@@ -375,6 +371,6 @@ it("keeps Connect disabled when an old failed status arrives before the new vali
   ).toHaveLength(1);
   await act(async () => finish(recovered("failed")));
   expect(connect).toBeDisabled();
-  fireEvent.click(screen.getByRole("button", { name: "Check sign-in status" }));
+  fireEvent.click(screen.getByRole("button", { name: "Refresh saved status" }));
   await waitFor(() => expect(connect).toBeEnabled());
 });

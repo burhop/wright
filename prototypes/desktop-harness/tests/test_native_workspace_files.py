@@ -340,12 +340,14 @@ async def test_connection_and_closed_schema_and_feature_gate(native_files):
 
 @pytest.mark.asyncio
 async def test_runtime_freezes_new_boundary(native_files):
+    from api.desktop import native_workspace_files as packaged_files
+
     versions = json.loads((native_files.state / "desktop-versions.json").read_text())
     assert versions["native_workspace_files"] is True
     assert (
         versions["files"]["native_workspace_files"]
         == hashlib.sha256(
-            (PROTOTYPE / "native_workspace_files.py").read_bytes()
+            Path(packaged_files.__file__).read_bytes()
         ).hexdigest()
     )
 

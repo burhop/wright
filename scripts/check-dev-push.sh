@@ -270,9 +270,18 @@ while IFS= read -r changed_file; do
   # Match the OCI PR build boundary; contract tests alone do not inspect installed
   # Hermes, OS or nested Node dependencies against a current vulnerability DB.
   case "$changed_file" in
-    .github/workflows/docker-pr.yml|.github/workflows/docker-build.yml|.dockerignore|docker/*|docs/mcp-catalog/usage-guides/*|prototypes/desktop-harness/engineering-experience/handle/replacement-handle-draft.workflow.wflow|apps/*|packages/*|src/*|hermes-plugin-wright/*|examples/process-interfaces/definition.py|examples/process-interfaces/printed-replacement-part/*|integrations/rivet/editor/*|integrations/rivet/runner/*|specs/080-canonical-workflow-recovery/fixtures/mounting-bracket.workflow.json|pyproject.toml|uv.lock|package.json|package-lock.json|README.md|scripts/release/scan_image.py|scripts/release/vulnerability_policy.py|scripts/check-dev-*)
+    .github/workflows/docker-pr.yml|.github/workflows/docker-build.yml|.dockerignore|docker/*|docs/mcp-catalog/usage-guides/*|prototypes/desktop-harness/engineering-experience/handle/replacement-handle-draft.workflow.wflow|apps/*|packages/*|src/*|hermes-plugin-wright/*|examples/process-interfaces/definition.py|examples/process-interfaces/printed-replacement-part/*|integrations/rivet/editor/*|integrations/rivet/runner/*|integrations/codex/plugin/*|specs/080-canonical-workflow-recovery/fixtures/mounting-bracket.workflow.json|pyproject.toml|uv.lock|package.json|package-lock.json|README.md|scripts/release/scan_image.py|scripts/release/vulnerability_policy.py|scripts/check-dev-*)
       CHECK_DOCKER_SCAN=1
       CHECK_PYTHON=1
+      ;;
+  esac
+  # Maintained desktop extraction retains the original boundary regressions.
+  # Keep this independent of the generic API/CLI selections below.
+  case "$changed_file" in
+    apps/api/src/api/desktop/*|src/wright_engineering/desktop_launcher.py|src/wright_engineering/manager_profiles.py|tests/desktop_integration/*|integrations/codex/*)
+      CHECK_PYTHON=1
+      CHECK_GITLEAKS_HISTORY=1
+      PYTHON_TEST_TARGETS+=(prototypes/desktop-harness/tests tests/desktop_integration tests/native_runtime/test_codex_manager_profile.py)
       ;;
   esac
   # Packaged recipe JSON/instruction assets are build inputs too. Retain the
@@ -477,6 +486,8 @@ if [[ "$CHECK_PYTHON" == "1" ]]; then
   run "$GATE_PYTHON" -m pytest tests/test_docker_smoke_contract.py -q -k hermes_security_overrides
   # Exercise Windows namespace/reparse contracts even when this host is Unix.
   run "$GATE_PYTHON" -m pytest packages/workspace_service/tests/test_workspace_path.py -q
+  # Reproduce macOS launcher-to-framework identity transitions on every host.
+  run "$GATE_PYTHON" -m pytest tests/native_runtime/test_process.py -q
   # Observe real late-worker cleanup before expensive suites (Windows PR165).
   run "$GATE_PYTHON" -m pytest packages/workspace_service/tests/test_native_process_runtime.py -q -k deadline_prevents_late_worker_artifact_publication
   # Fail early on the full Windows portability failure set (PR180).
@@ -558,6 +569,7 @@ if [[ "$CHECK_FRONTEND" == "1" ]]; then
     run npx prettier --check apps/web/
   fi
   run npx tsc --noEmit -p apps/web/tsconfig.app.json
+  run node apps/web/build-native-panel.mjs --check
   # Check LF/CRLF cold reconstruction before expensive suites (PR163).
   run npm run test --workspace=apps/web -- --run \
     src/prototypes/workflow-recovery/WorkflowDocumentReconstruction.spec.tsx \

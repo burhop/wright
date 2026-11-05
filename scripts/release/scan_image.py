@@ -40,6 +40,7 @@ BUILD_INPUTS = (
     "examples/process-interfaces/printed-replacement-part",
     "integrations/rivet/editor",
     "integrations/rivet/runner",
+    "integrations/codex/plugin",
     "specs/080-canonical-workflow-recovery/fixtures/mounting-bracket.workflow.json",
     "pyproject.toml",
     "uv.lock",

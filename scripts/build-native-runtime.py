@@ -90,6 +90,10 @@ def build_frontend() -> None:
         }
     )
     _run([npm, "run", "build"], cwd=WEB_ROOT, env=environment)
+    node = shutil.which("node")
+    if node is None:
+        raise CandidateBuildError("node is required on the release build host")
+    _run([node, str(WEB_ROOT / "build-native-panel.mjs")], cwd=ROOT)
 
 
 def inspect_web_dist(source: Path) -> list[dict[str, object]]:

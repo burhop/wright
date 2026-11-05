@@ -1,6 +1,41 @@
 import { z } from "zod";
 import type { HomeCall } from "./NativeHomePanel";
 import type { WorkflowMcpTool } from "../workflow-recovery/mcp-settings";
+import type { WorkflowOptionReader } from "../workflow-recovery/workflow-tool-discovery";
+
+export function createNativeOptionReader(
+  workspaceId: string,
+  sessionId: string,
+  call?: HomeCall,
+): WorkflowOptionReader {
+  return async (kind, requestedSession, serverId, includeResources = false) => {
+    if (requestedSession !== sessionId || !call)
+      throw Error("Engineering options are unavailable for this workspace.");
+    const response = await call("wright_workflow_editor_options", {
+      request: {
+        workspace_id: workspaceId,
+        session_id: sessionId,
+        kind,
+        ...(serverId ? { server_id: serverId } : {}),
+        include_resources: includeResources,
+      },
+    });
+    if (response.isError)
+      throw Error("Wright could not read the selected engineering options.");
+    const data = z
+      .object({
+        workspace_id: z.literal(workspaceId),
+        session_id: z.literal(sessionId),
+        kind: z.literal(kind),
+        options: z.record(z.string(), z.unknown()),
+      })
+      .strict()
+      .parse(response.structuredContent);
+    return new Response(JSON.stringify(data.options), {
+      headers: { "content-type": "application/json" },
+    });
+  };
+}
 
 const tool = z
   .object({
