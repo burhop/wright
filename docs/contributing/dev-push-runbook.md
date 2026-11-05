@@ -4,6 +4,13 @@ Read this page before every push to a branch with an open pull request targeting
 `dev`, and again immediately before making that pull request ready to merge.
 Direct pushes to `dev` are not part of the supported development workflow.
 
+The native lifecycle regression includes update → rollback → update through the
+installed migration owner. An in-process migration mock alone missed rejection
+of the retained predecessor during reactivation. The full gate names this suite
+in its program-compatibility tranche; the fast gate includes it with native
+runtime changes. A retained predecessor is eligible only when it is the exact
+recorded update candidate; failed and unreferenced installations remain rejected.
+
 ## The 60-second pre-push check
 
 1. Confirm the branch contains one reviewable outcome. If unrelated work is

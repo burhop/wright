@@ -168,6 +168,7 @@ run uv run python -m pytest -q \
 # packaging, accessibility, and Gate E regressions.
 run uv run --extra runtime python -m pytest -q \
   tests/program_hardening \
+  tests/native_runtime/test_installed_migrations.py \
   tests/native_runtime/test_program_state_compatibility.py \
   tests/native_runtime/test_rollback.py \
   tests/native_runtime/test_security.py \

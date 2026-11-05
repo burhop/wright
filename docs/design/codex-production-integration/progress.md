@@ -231,3 +231,25 @@ Exact CI findings and focused logs are retained in private
 `.local-run/production-integration/ci-correction-diagnosis.json`. Remaining
 first-cycle jobs and correction qualification are pending. No second push,
 installed-candidate update, engineering run, dev merge or release is claimed.
+
+## Second CI cycle and retained-version correction (5 November, 08:25 UTC)
+
+Head `b6d9ee82` passed the normal pre-push gate and installed wheel/UI proof.
+Only the owned candidate was updated to wheel `333e4b08…`; its profile, exact
+retained image and unchanged historical files passed read-only verification.
+Current-head CodeQL is green with no open branch alerts; no rule was suppressed.
+
+CI's now-running two-version lifecycle proof exposed a separate product defect:
+upgrade and rollback succeed, but upgrading again rejects the retained version's
+`PREDECESSOR` status before activation. An isolated installed-wheel reproduction
+confirms the same sequence; the prior runtime remains active and the test service
+is stopped afterward. Full gate 10 was interrupted before editing, preserving
+its completed tranches without claiming a mixed-source full pass.
+
+The correction permits migration preflight from the exact recorded predecessor
+only when it is the selected activation candidate. Paths, interpreter checks,
+schema compatibility, and failed/unreferenced runtime rejection remain intact.
+A lifecycle-to-migration regression fails on the old implementation and passes
+with the correction, alongside 18 related tests. The full gate now names this
+boundary explicitly. Updated installed-artifact proof, remaining second-cycle
+results and new gates are pending; there is no third push or dev merge yet.

@@ -19,7 +19,7 @@ from wright_engineering.runtime.models import (
     utc_now,
 )
 
-from .support import lifecycle, seed_runtime
+from .support import FakeInstaller, artifact, lifecycle, seed_runtime
 
 
 @pytest.fixture
@@ -164,4 +164,69 @@ def test_backup_identity_cannot_escape_owned_data(managed, monkeypatch, tmp_path
             data_schema_min=0,
             data_schema_max=43,
             operation_id="exact-subject",
+        )
+
+
+def test_update_after_rollback_uses_the_retained_installed_candidate(
+    tmp_path, monkeypatch
+):
+    owner = lifecycle(tmp_path)
+    owner.migration_manager = NativeLifecycle(owner.layout).migration_manager
+
+    class InstalledInterpreter(FakeInstaller):
+        def install(self, artifact, runtime_id):
+            environment = super().install(artifact, runtime_id)
+            python = RuntimeInstaller.environment_python(environment)
+            python.parent.mkdir(exist_ok=True)
+            python.touch()
+            return environment
+
+    owner.installer = InstalledInterpreter(owner.layout)
+    previous = seed_runtime(owner, version="0.1.4", runtime_id="previous")
+    python = RuntimeInstaller.environment_python(Path(previous.environment_path))
+    python.parent.mkdir(exist_ok=True)
+    python.touch()
+    retained = owner.layout.data / "retained-result.txt"
+    retained.parent.mkdir(parents=True, exist_ok=True)
+    retained.write_text("historical result", encoding="utf-8")
+    activation_calls = []
+
+    def installed_call(command, **kwargs):
+        if "current_schema" in command[-1]:
+            return subprocess.CompletedProcess(command, 0, "5")
+        activation_calls.append(command[0])
+        return subprocess.CompletedProcess(command, 0, "null")
+
+    monkeypatch.setattr(subprocess, "run", installed_call)
+    candidate = artifact(tmp_path, "0.1.5")
+    assert owner.update(artifact=candidate).ok
+    candidate_id = owner.store.load().active_runtime_id
+    assert owner.rollback().ok
+    rolled_back = owner.store.load()
+    assert rolled_back.active_runtime_id == previous.runtime_id
+    assert rolled_back.predecessor_runtime_id == candidate_id
+    assert rolled_back.runtimes[candidate_id].status is RuntimeStatus.PREDECESSOR
+    result = owner.update(artifact=candidate)
+    assert result.ok, result.to_dict()
+    assert owner.store.load().active_runtime_id == candidate_id
+    assert owner.installer.installed == ["0.1.5"]
+    assert len(activation_calls) == 2
+    assert activation_calls[0] == activation_calls[1]
+    assert retained.read_text(encoding="utf-8") == "historical result"
+
+
+def test_unreferenced_predecessor_cannot_supply_migration_code(managed, monkeypatch):
+    manifest = managed.store.load()
+    manifest.runtimes["candidate"].status = RuntimeStatus.PREDECESSOR
+    assert manifest.predecessor_runtime_id is None
+    managed.store.save(manifest)
+    monkeypatch.setattr(
+        subprocess, "run", lambda *a, **k: pytest.fail("Must reject before launch")
+    )
+    with pytest.raises(MigrationPreflightError, match="migration_runtime_unavailable"):
+        managed.migration_manager.prepare_activation(
+            data_root=managed.layout.data,
+            data_schema_min=0,
+            data_schema_max=43,
+            operation_id="unreferenced-predecessor",
         )

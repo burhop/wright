@@ -64,10 +64,19 @@ class NativeMigrationManager:
         elif action != "current_schema":
             raise MigrationPreflightError("migration_operation_invalid")
         runtime = manifest.runtimes.get(runtime_id or "")
-        if runtime is None or runtime.status not in {
+        allowed_statuses = {
             RuntimeStatus.ACTIVE,
             RuntimeStatus.VERIFIED,
-        }:
+        }
+        # Rollback retains the formerly active, verified candidate as the exact
+        # predecessor. Updating to it again must run its migration preflight,
+        # without promoting failed or unreferenced installations to authority.
+        if (
+            action == "prepare_activation"
+            and runtime_id == manifest.predecessor_runtime_id
+        ):
+            allowed_statuses.add(RuntimeStatus.PREDECESSOR)
+        if runtime is None or runtime.status not in allowed_statuses:
             raise MigrationPreflightError("migration_runtime_unavailable")
         environment = self.layout.require_contained(
             Path(runtime.environment_path), self.layout.runtimes
