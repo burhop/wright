@@ -292,3 +292,29 @@ full gate rejected stale checked-in native HTML. Both generated copies now match
 the tested UI hash exactly. The earlier failed gate remains FAIL; no test or
 security rule was weakened. Test formatting was also corrected. Final repository
 gates and current-head CI remain required before the next feature push/integration.
+
+
+## Saved workflow references in Connections (5 November)
+
+P08 now provides an optional bounded lookup before changing or removing a
+connection. It reads explicit saved bindings through the existing confined source
+owner/parser and carries exact source digests. Unknown bindings, corrupt or
+unreadable sources and scan limits remain incomplete, never a safety assertion.
+Other workspaces, active runs and unsaved drafts are outside the snapshot.
+No executor, approval authority or provider-upgrade framework was introduced.
+
+Source `45afb43d` and correction `6b760bfb` pass backend scope/confinement/source
+checks and 18 focused frontend tests. The real installed MCP path exposed a
+JSON-text response that mocks omitted; the new regression fails on the old code.
+The corrected normal wheel (`c5cae5ad71959b94b66d286a4e6261658bb48f61f02a27a6edbe46ecc06012d4`)
+passes visible workflow/step/path identities, explicit incomplete Robot bindings,
+unchanged saved sources, narrow rendering and restart. Fresh isolated OASiS
+setup/protocol checks used the already qualified network-disabled image; no
+engineering tool was invoked and invocation approval remained false.
+
+Private evidence is indexed under `.local-run/production-integration/`: corrected
+installed proof, original failure receipts and screenshots are preserved.
+The build and tests use a simulated Linux desktop, not actual Windows Codex UI.
+Current pushed `9805a0fa` has all 30 checks/11 workflows passing; this new product
+change still requires prescribed gates and current-head CI before push/integration.
+All remaining engineering and actual-desktop acceptance requirements stand.

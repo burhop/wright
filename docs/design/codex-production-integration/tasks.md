@@ -15,8 +15,12 @@ configuration, permission, source or runtime action is performed. Replacement
 configuration drafts do not move existing workflows to a new provider.
 
 Focused source/route/bridge/UI checks pass, including copies of the existing handle
-and Robot source. Installed candidate and prescribed gates for this addition are
-pending. This is P08 progress, not completion of OAuth reconnect/update-impact or
+and Robot source. The rebuilt installed wheel at `6b760bfb` passes the actual
+MCP/UI projection, visible step/file identities, incomplete Robot binding warning,
+unchanged saved sources, narrow panel and restart checks in a simulated Linux
+host. The installed test caught JSON-text response handling missed by mocks; the
+regression fails before its correction and 18 affected tests pass afterward.
+Prescribed full gates and new-head CI for this addition are pending. This is P08 progress, not completion of OAuth reconnect/update-impact or
 engineering acceptance. Current installed product remains df6ea4c4; the new code
 has not been installed into the named plugin yet.
 

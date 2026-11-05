@@ -17,8 +17,13 @@ an entire story.
   only explicit saved bindings in the selected workspace. Eight workflow rows
   are shown at a time; step names and file paths are expandable. Incomplete or
   unavailable scans are never represented as update safety. Scope, source-store,
-  malformed/unbound/changed-file and component checks pass. Installed qualification
-  and gates for this addition remain pending; no connection was modified.
+  malformed/unbound/changed-file and component checks pass. The installed normal
+  wheel `c5cae5ad...` at `6b760bfb` passes the actual MCP/UI path, visible identities,
+  incomplete Robot warning, unchanged saved source and narrow view, plus restart.
+  Evidence: `usage-corrected-artifact.json` and `installed-connection-usage-corrected/`.
+  This is Linux with a simulated desktop; full gates and new-head CI are pending.
+  Earlier wrong-wheel harness and JSON-text product failures remain retained;
+  no engineering tool was called and no invocation approval was granted.
 - **A05/A06 installed subset:** typed keyboard/pointer editing, Undo/Redo, input
   and instruction editing, exact accepted save/reopen, 36 instruction body hashes
   across export/import, and two-window stale-save preservation PASS on installed
