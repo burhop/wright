@@ -123,6 +123,13 @@ GitHub is retiring `macos-14` on 2 November 2026 after scheduled brownouts.
 Native candidate and published-lifecycle matrices use `macos-15`, retaining
 ARM64 macOS coverage and the existing lifecycle test and evidence requirements.
 
+PR #191 exposed an unpinned Python interpreter in the native lifecycle job:
+the runner default exceeded the pinned Hermes 0.19.0 support range. That job
+now selects Python 3.13 like the native platform matrix. The shared workflow
+readiness policy, exercised by the merge and push gates, rejects missing,
+incompatible or late interpreter setup in these Hermes installation jobs.
+It preserves every lifecycle command and the broader public-package Python matrix.
+
 The OCI scanner may fail before it writes a vulnerability report. Its public
 projection now includes only an allowlisted reported category (for example DB
 download or registry rate limiting), retaining raw details locally. An unclassified

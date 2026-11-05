@@ -66,6 +66,35 @@ def test_opt_in_requires_authenticated_loopback(monkeypatch, mode, host):
     assert not hasattr(app.state, "desktop_backend")
 
 
+@pytest.mark.parametrize("mode", ["authorization_code", "device_code"])
+def test_public_signin_mode_preserves_canonical_runtime_provenance(tmp_path, mode):
+    from api.desktop.desktop_backend import DesktopBackend
+    from core.process_validation import canonical_digest
+
+    database = str(tmp_path / "wright.db")
+    upgrade_database(database)
+    backend = DesktopBackend(
+        SimpleNamespace(db_path=database), tmp_path, 0, remote_signin_mode=mode
+    )
+    metadata = json.loads((tmp_path / "desktop-versions.json").read_text())
+    assert metadata["remote_oauth_flow"] == mode
+    assert metadata == backend.runtime
+    assert (
+        backend.binding.connection_id
+        == "wright-desktop-prototype:" + canonical_digest(metadata)
+    )
+
+
+def test_unknown_signin_mode_is_rejected_before_persistence_without_echo(tmp_path):
+    from api.desktop.desktop_backend import DesktopBackend
+
+    invalid = "not-a-supported-public-mode"
+    with pytest.raises(ValueError, match="^Unsupported remote OAuth flow$") as failure:
+        DesktopBackend(None, tmp_path, 0, remote_signin_mode=invalid)
+    assert invalid not in str(failure.value)
+    assert list(tmp_path.iterdir()) == []
+
+
 @pytest.mark.asyncio
 async def test_metadata_is_authenticated_uses_same_owners_and_no_private_descriptors(
     candidate,

@@ -350,7 +350,13 @@ class DesktopBackend:
         remote_signin_mode="authorization_code",
         write_legacy_descriptor=True,
     ):
-        if remote_signin_mode not in {"authorization_code", "device_code"}:
+        # Persist a canonical public mode, never an environment-sourced value.
+        # This selector is configuration provenance, not an OAuth credential.
+        if remote_signin_mode == "authorization_code":
+            remote_signin_mode = "authorization_code"
+        elif remote_signin_mode == "device_code":
+            remote_signin_mode = "device_code"
+        else:
             raise ValueError("Unsupported remote OAuth flow")
         if native_working_view and not native_editor:
             raise ValueError("Native working view requires the native editor resource")

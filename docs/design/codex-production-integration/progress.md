@@ -201,3 +201,33 @@ observed draft is the only addition and all preexisting files remain unchanged.
 See acceptance for precise scopes and evidence. No real engineering run or new
 Windows observation was performed. Full handle/Robot, required human review and
 Windows acceptance remain mandatory and unfinished.
+
+## First PR qualification cycle (5 November, 07:35 UTC)
+
+Draft PR [#191](https://github.com/burhop/wright/pull/191) contains head
+`01ad105f`; the normal pre-push gate passed without skip flags, including 48
+editor/process and 6 MCP onboarding browser checks. The full merge receipt
+remains at product head `de0886b9` with its documented WebKit host exception.
+Native installed smoke passed on Windows, macOS and Linux in CI. These are
+packaged-runtime checks, not native Codex UI or file-delivery acceptance.
+
+Two first-cycle findings are being corrected together. The native lifecycle job
+lacked an explicit Python setup and its runner default could not install the
+pinned Hermes 0.19.0. It now selects the same 3.13 interpreter as the native
+platform matrix; the shared gate policy rejects missing, late or incompatible
+setup. All lifecycle commands and dependency versions remain intact.
+
+CodeQL identified an environment-backed public sign-in mode flowing into
+configuration provenance. The existing owner already rejects every value except
+`authorization_code` and `device_code`; it now maps accepted input to those fixed
+literals before storing/hashing public metadata. Credential handling, the shared
+canonical digest, and scanner rules are unchanged. Invalid input is rejected
+before persistence without echoing its value. The focused desktop suite passes
+25 tests; workflow/native/correction policy suites pass 31. The initial sandboxed
+ASGI attempt stalled and was interrupted; only the subsequent authorized loopback
+run is counted.
+
+Exact CI findings and focused logs are retained in private
+`.local-run/production-integration/ci-correction-diagnosis.json`. Remaining
+first-cycle jobs and correction qualification are pending. No second push,
+installed-candidate update, engineering run, dev merge or release is claimed.

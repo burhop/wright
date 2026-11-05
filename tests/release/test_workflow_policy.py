@@ -26,6 +26,53 @@ BOOTSTRAP = (
 CHECKOUT = "      - uses: actions/checkout@" + "a" * 40 + "\n"
 
 
+@pytest.mark.parametrize(
+    "version,late", [(None, False), ("3.14", False), ("3.13", True)]
+)
+def test_hermes_lifecycle_rejects_missing_incompatible_or_late_python(
+    tmp_path, version, late
+):
+    workflow = tmp_path / "workflow.yml"
+    setup = (
+        "      - uses: actions/setup-python@" + "b" * 40 + "\n"
+        f'        with:\n          python-version: "{version}"\n'
+        if version
+        else ""
+    )
+    install = '      - run: python -m pip install psutil "hermes-agent==0.19.0"\n'
+    workflow.write_text(
+        "jobs:\n  lifecycle:\n    runs-on: ubuntu-latest\n    steps:\n"
+        + CHECKOUT
+        + (install + setup if late else setup + install),
+        encoding="utf-8",
+    )
+    with pytest.raises(WorkflowPolicyError, match="explicit Python 3.13"):
+        validate_checkout_readiness(workflow)
+
+
+def test_hermes_python_setup_cannot_be_borrowed_from_a_different_job(tmp_path):
+    workflow = tmp_path / "workflow.yml"
+    setup = (
+        "      - uses: actions/setup-python@" + "b" * 40 + "\n"
+        '        with:\n          python-version: "3.13"\n'
+    )
+    install = '      - run: python -m pip install psutil "hermes-agent==0.19.0"\n'
+    ready = (
+        "  ready:\n    runs-on: ubuntu-latest\n    steps:\n"
+        + CHECKOUT
+        + setup
+        + install
+    )
+    unready = (
+        "  unready:\n    runs-on: ubuntu-latest\n    steps:\n" + CHECKOUT + install
+    )
+    workflow.write_text("jobs:\n" + ready, encoding="utf-8")
+    validate_checkout_readiness(workflow)
+    workflow.write_text("jobs:\n" + ready + unready, encoding="utf-8")
+    with pytest.raises(WorkflowPolicyError, match="unready"):
+        validate_checkout_readiness(workflow)
+
+
 @pytest.mark.parametrize("runner", ["windows-latest", "${{ matrix.os }}"])
 @pytest.mark.parametrize("late", [False, True])
 def test_windows_checkout_rejects_absent_or_late_setup(tmp_path, runner, late):
