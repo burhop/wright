@@ -51,9 +51,7 @@ it("does not start sign-in on render and opens only app-private URL on explicit 
 it("does not retry validation after lost acknowledgement", async () => {
   const call = vi.fn().mockRejectedValue(Error("transport lost"));
   render(<NativeSignin scope={scope} call={call} />);
-  fireEvent.click(
-    screen.getByRole("button", { name: "Check connection" }),
-  );
+  fireEvent.click(screen.getByRole("button", { name: "Check connection" }));
   expect(
     await screen.findByText(/Validation outcome is not confirmed/),
   ).toBeVisible();
@@ -79,7 +77,9 @@ it("rejects another plan's private navigation data", async () => {
   });
   render(<NativeSignin scope={scope} call={call} openLink={vi.fn()} />);
   fireEvent.click(screen.getByRole("button", { name: "Refresh saved status" }));
-  expect(await screen.findByText("Saved connection status unavailable.")).toBeVisible();
+  expect(
+    await screen.findByText("Saved connection status unavailable."),
+  ).toBeVisible();
   expect(
     screen.queryByRole("button", { name: "Open provider sign-in" }),
   ).toBeNull();
@@ -100,9 +100,7 @@ it("discards a pending manual status read when validation finishes", async () =>
     return ++reads === 1 ? Promise.resolve(status) : manual;
   });
   render(<NativeSignin scope={scope} call={call} />);
-  fireEvent.click(
-    screen.getByRole("button", { name: "Check connection" }),
-  );
+  fireEvent.click(screen.getByRole("button", { name: "Check connection" }));
   await screen.findByRole("button", { name: "Open provider sign-in" });
   fireEvent.click(screen.getByRole("button", { name: "Refresh saved status" }));
   await act(async () => finish(status));
@@ -125,9 +123,7 @@ it("requires a separate enable click and does not repeat an uncertain grant", as
   expect(
     screen.queryByRole("button", { name: "Enable in this workspace" }),
   ).toBeNull();
-  fireEvent.click(
-    screen.getByRole("button", { name: "Check connection" }),
-  );
+  fireEvent.click(screen.getByRole("button", { name: "Check connection" }));
   const enable = await screen.findByRole("button", {
     name: "Enable in this workspace",
   });
@@ -178,9 +174,7 @@ it("recovers a lost validation reply by reading saved status before explicit ena
     return recovered();
   });
   render(<NativeSignin scope={scope} call={call} />);
-  fireEvent.click(
-    screen.getByRole("button", { name: "Check connection" }),
-  );
+  fireEvent.click(screen.getByRole("button", { name: "Check connection" }));
   await screen.findByText(/Validation outcome is not confirmed/);
   fireEvent.click(screen.getByRole("button", { name: "Refresh saved status" }));
   const enable = await screen.findByRole("button", {
@@ -296,7 +290,9 @@ it("rejects a device completion URL on another origin", async () => {
   const openLink = vi.fn();
   render(<NativeSignin scope={scope} call={call} openLink={openLink} />);
   fireEvent.click(screen.getByRole("button", { name: "Refresh saved status" }));
-  expect(await screen.findByText("Saved connection status unavailable.")).toBeVisible();
+  expect(
+    await screen.findByText("Saved connection status unavailable."),
+  ).toBeVisible();
   expect(screen.queryByText("TEST-1234")).toBeNull();
   expect(openLink).not.toHaveBeenCalled();
 });
