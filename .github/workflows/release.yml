@@ -782,7 +782,7 @@ jobs:
           name: final-release-evidence
           path: final-evidence
       - name: Publish GitHub Release only after every verification
-        uses: softprops/action-gh-release@7c4723f7a335432393329f8f1c564994ce50185d # v3
+        uses: softprops/action-gh-release@8a0cd651e5b2365bd640854a3fa5dfc70e4875f3 # v3
         with:
           tag_name: ${{ needs.preflight-and-python-build.outputs.tag }}
           draft: false
