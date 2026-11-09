@@ -19,10 +19,10 @@
     "@testing-library/user-event": "^14.6.8",
     "@wright/process-client": "file:../../packages/process_client",
     "@wright/ui-kit": "file:../../packages/ui_kit",
-    "@xyflow/react": "12.12.0",
+    "@xyflow/react": "12.12.1",
     "dompurify": "3.4.17",
     "idb": "^8.0.4",
-    "jose": "6.2.14",
+    "jose": "6.2.15",
     "plotly.js-dist-min": "3.7.0",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
@@ -35,15 +35,15 @@
   "devDependencies": {
     "@axe-core/playwright": "^4.14.0",
     "@eslint/js": "^10.0.1",
-    "@playwright/test": "^1.64.1",
+    "@playwright/test": "^1.65.0",
     "@testing-library/jest-dom": "^7.0.1",
     "@testing-library/react": "^16.3.3",
     "@types/node": "^26.6.5",
     "@types/plotly.js": "3.0.15",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
-    "@types/three": "^0.186.0",
-    "@vitejs/plugin-react": "^6.1.2",
+    "@types/three": "^0.187.0",
+    "@vitejs/plugin-react": "^6.2.1",
     "eslint": "^10.13.0",
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-react-refresh": "^0.5.7",
@@ -53,7 +53,7 @@
     "rollup-plugin-license": "^3.7.1",
     "typescript": "~6.0.2",
     "typescript-eslint": "^8.72.1",
-    "vite": "8.3.5",
-    "vitest": "^5.0.5"
+    "vite": "8.3.6",
+    "vitest": "^5.1.0"
   }
 }
