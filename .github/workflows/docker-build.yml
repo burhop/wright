@@ -80,7 +80,7 @@ jobs:
         run: python -c "from pathlib import Path; from scripts.release.vulnerability_policy import evaluate_report; evaluate_report(Path('trivy.json'), Path('docker/release-policy.json'))"
       - name: Attest pushed candidate digest
         if: ${{ inputs.push-candidate }}
-        uses: actions/attest@f6bf1532d7d6793fce74eac584813a8eee607999 # v4
+        uses: actions/attest@badbb428b0055a04f53d6ce00bda98cf1c04e56e # v4
         with:
           subject-name: ${{ steps.image.outputs.name }}
           subject-digest: ${{ steps.build.outputs.digest }}
