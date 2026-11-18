@@ -24,3 +24,19 @@ One executable graph contains one workflow and 1–32 tasks. Inputs and tasks ha
 The bundle is a JSON object with `schema_version`, `mode`, accepted `source`, its `source_digest`, and inventories for declared dependencies, optional assets and optional interface source. Preserve the existing export wrapper carrying `bundle` and `bundle_digest`. Integrity, executable validity, local readiness and engineering acceptance are separate checks. Transferring a definition does not transfer live runs, credentials, stored answers, grants, accepted reviews or trusted UI builds.
 
 Initial conformance cases exercise exact-byte hashes across LF/CRLF and Unicode, duplicate or incomplete declarations, missing provider identity, two configured providers exchanging the first call's output, and stopped runs with partial evidence. The engineering application additionally verifies compatibility with its existing authoring, validation and review contracts.
+
+## Run the two-provider example
+
+Install the built `wright-workflow` wheel in a Python 3.11+ environment. The source distribution contains `examples/handoff`. From its parent directory, use that environment's Python and entry point.
+
+```console
+python handoff/configure.py bindings.json
+wright-workflow parse handoff/length.workflow.wflow
+wright-workflow run handoff/length.workflow.wflow --bindings bindings.json --run-dir runs/length
+```
+
+The example starts two local stdio MCP servers. The writer produces `points.csv`. The reader receives the writer's named port, reads the file, and reports its SHA-256 and a length of 5 mm. The receipt identifies both tool contracts and the producing attempt. Reopening the same completed run returns its existing receipt.
+
+The caller's binding file supplies the executable, arguments, reviewed program file hashes and permitted tools for each logical server. Keep the binding file under local control. A portable step carries `mcp_binding` with version `wright.mcp-binding/1`, provider name, reported build, upstream tool name and tool contract digest. The digest covers the SDK's wire representation of name, input/output schemas, annotations, metadata and execution declarations when present. Provider/build qualification and the executable's reviewed bytes are checked separately. Historical `mcp_schema_digest` continues to identify the gateway-qualified name, server revision, schemas, approval requirements and Wright adapter metadata.
+
+A declared human-input barrier yields `waiting_input`. To answer, put the pending subject and the typed `value` in a JSON object, then run `wright-workflow resume --run-dir runs/length --bindings bindings.json --response answer.json`. Completed answers reconcile by subject and value. A failed tool response stops downstream calls. An interrupted dispatch records `outcome_unknown` and keeps its attempt ID. Use the provider's evidence to investigate that attempt. A repeated run command returns the saved hold.

@@ -84,6 +84,13 @@ def dependency_inventory(sections) -> tuple[BundleDependency, ...]:
             )
         server = settings.get("mcp_server") or settings.get("mcp_server_id")
         if server:
+            portable = {}
+            if "mcp_binding" in settings:
+                from .bindings import PortableBinding
+
+                portable["portable_binding"] = PortableBinding.model_validate(
+                    settings["mcp_binding"]
+                ).model_dump(mode="json")
             tool = settings.get("mcp_tool", "")
             add(
                 "provider",
@@ -92,6 +99,7 @@ def dependency_inventory(sections) -> tuple[BundleDependency, ...]:
                 tool_name=str(tool),
                 schema_digest=settings.get("mcp_schema_digest", ""),
                 qualification="requires-local-registry-review",
+                **portable,
             )
         if section["kind"] == "task" and fields.get("performed_by") == "ai_assisted":
             add(

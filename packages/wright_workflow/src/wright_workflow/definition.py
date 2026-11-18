@@ -27,6 +27,26 @@ class Definition:
     bundle: WorkflowBundle | None
     dependencies: tuple[BundleDependency, ...]
 
+    @property
+    def required_features(self):
+        """Identify the selected handlers without connecting to a provider."""
+        from .fixed import FIXED_SETTINGS
+
+        result = {}
+        for block_id, block in self.graph.blocks.items():
+            fields = block["fields"]
+            settings = fields.get("settings", {})
+            if block["kind"] == "input":
+                result[block_id] = ["input"]
+                continue
+            template = settings.get("authoring_template") or fields.get(
+                "performed_by", "task"
+            )
+            result[block_id] = [template]
+            if template == "mcp-tool":
+                result[block_id].extend(sorted(set(settings) - FIXED_SETTINGS))
+        return result
+
 
 def _unique_keys(pairs):
     result = {}

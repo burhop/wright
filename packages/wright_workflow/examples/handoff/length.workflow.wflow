@@ -1,0 +1,42 @@
+workflow length
+  name: "Measure a line segment"
+  purpose: "Pass exact coordinate bytes to an independent measuring tool"
+  discipline: "engineering"
+  reviewed_ai_suggestions: false
+end
+
+task writer
+  name: "Write points"
+  purpose: "Write coordinate bytes"
+  step_type: "work"
+  group: null
+  performed_by: "configured_tool"
+  inputs: []
+  outputs: [{"key":"coordinates","name":"coordinates","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"coordinates"}]
+  prompt: ""
+  settings: {"authoring_template":"mcp-tool","mcp_server":"writer","mcp_tool":"write_points","mcp_binding":{"version":"wright.mcp-binding/1","provider":"example-write_points","build":"1.0.0","tool":"write_points","contract_sha256":"27ed9e6381d5e3b3164cc2b200b74603a76197523dfaf1a9215700b32bbcbfc4"},"mcp_arguments":"{\"path\": \"points.csv\"}","expected_files":"points.csv","expected_file_ports":{"coordinates":"points.csv"}}
+  tool: null
+  reusable_step: null
+end
+
+task reader
+  name: "Measure length"
+  purpose: "Measure the connected file"
+  step_type: "work"
+  group: null
+  performed_by: "configured_tool"
+  inputs: [{"key":"source_file","name":"source_file","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"source file"}]
+  outputs: [{"key":"measurement","name":"measurement","kind":"structured_result","item":null,"required":true,"quantity":"one","description":"measurement"}]
+  prompt: ""
+  settings: {"authoring_template":"mcp-tool","mcp_server":"reader","mcp_tool":"measure_length","mcp_binding":{"version":"wright.mcp-binding/1","provider":"example-measure_length","build":"1.0.0","tool":"measure_length","contract_sha256":"8dd5b2f16c5b2217d4cbcbcd8fdf5f9face35f196caf4acfb8bc80530a3666ac"},"mcp_arguments":"{}","mcp_argument_ports":"{\"source_file\": \"path\"}","mcp_file_dependencies":{"source_file":{"source":"connected_output"}}}
+  tool: null
+  reusable_step: null
+end
+
+connection coordinates_to_reader
+  type: "item"
+  from: "writer.coordinates"
+  to: "reader.source_file"
+  label: "Coordinate file"
+  when: null
+end

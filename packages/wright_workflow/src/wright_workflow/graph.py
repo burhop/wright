@@ -74,6 +74,7 @@ class WorkflowGraph:
     blocks: dict
     ports: dict
     incoming: dict
+    dependencies: dict
     outgoing: dict
     ordered: list[str]
     revisions: dict
@@ -253,6 +254,7 @@ def compile_graph(sections) -> WorkflowGraph:
         blocks,
         ports,
         incoming,
+        dependencies,
         outgoing,
         ordered,
         revisions,
