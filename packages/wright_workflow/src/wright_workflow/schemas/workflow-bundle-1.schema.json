@@ -1,0 +1,600 @@
+{
+  "$defs": {
+    "BundleAsset": {
+      "additionalProperties": false,
+      "properties": {
+        "path": {
+          "title": "Path",
+          "type": "string"
+        },
+        "sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Sha256",
+          "type": "string"
+        },
+        "data_base64": {
+          "maxLength": 11184812,
+          "title": "Data Base64",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path",
+        "sha256",
+        "data_base64"
+      ],
+      "title": "BundleAsset",
+      "type": "object"
+    },
+    "BundleDependency": {
+      "additionalProperties": false,
+      "properties": {
+        "category": {
+          "enum": [
+            "reference",
+            "validation_profile",
+            "provider",
+            "model",
+            "instructions",
+            "ui"
+          ],
+          "title": "Category",
+          "type": "string"
+        },
+        "identity": {
+          "maxLength": 1024,
+          "minLength": 1,
+          "title": "Identity",
+          "type": "string"
+        },
+        "disposition": {
+          "enum": [
+            "embedded",
+            "external"
+          ],
+          "title": "Disposition",
+          "type": "string"
+        },
+        "sha256": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sha256"
+        },
+        "details": {
+          "additionalProperties": true,
+          "title": "Details",
+          "type": "object"
+        }
+      },
+      "required": [
+        "category",
+        "identity",
+        "disposition"
+      ],
+      "title": "BundleDependency",
+      "type": "object"
+    },
+    "InterfaceBinding": {
+      "additionalProperties": false,
+      "properties": {
+        "binding_id": {
+          "maxLength": 160,
+          "minLength": 1,
+          "title": "Binding Id",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "input",
+            "output",
+            "assessment",
+            "interaction",
+            "observation",
+            "action"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "selector": {
+          "maxLength": 160,
+          "minLength": 1,
+          "title": "Selector",
+          "type": "string"
+        },
+        "block_id": {
+          "anyOf": [
+            {
+              "maxLength": 160,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Block Id"
+        },
+        "port_id": {
+          "anyOf": [
+            {
+              "maxLength": 160,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Port Id"
+        },
+        "expected_schema": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expected Schema"
+        },
+        "required": {
+          "default": true,
+          "title": "Required",
+          "type": "boolean"
+        },
+        "fallback": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Fallback"
+        }
+      },
+      "required": [
+        "binding_id",
+        "kind",
+        "selector"
+      ],
+      "title": "InterfaceBinding",
+      "type": "object"
+    },
+    "InterfaceManifest": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "const": "wright.process-ui/1",
+          "default": "wright.process-ui/1",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "ui_id": {
+          "maxLength": 160,
+          "minLength": 1,
+          "title": "Ui Id",
+          "type": "string"
+        },
+        "revision_id": {
+          "maxLength": 160,
+          "minLength": 1,
+          "title": "Revision Id",
+          "type": "string"
+        },
+        "parent_revision": {
+          "anyOf": [
+            {
+              "maxLength": 160,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Parent Revision"
+        },
+        "title": {
+          "maxLength": 8192,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "process": {
+          "$ref": "#/$defs/ProcessRef"
+        },
+        "interaction_version": {
+          "const": "wright.process-interaction/1",
+          "default": "wright.process-interaction/1",
+          "title": "Interaction Version",
+          "type": "string"
+        },
+        "client_version": {
+          "maxLength": 32,
+          "pattern": "^\\d+\\.\\d+\\.\\d+$",
+          "title": "Client Version",
+          "type": "string"
+        },
+        "kit_version": {
+          "maxLength": 32,
+          "pattern": "^\\d+\\.\\d+\\.\\d+$",
+          "title": "Kit Version",
+          "type": "string"
+        },
+        "bindings": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/InterfaceBinding"
+          },
+          "maxItems": 256,
+          "title": "Bindings",
+          "type": "array"
+        },
+        "capabilities": {
+          "default": [
+            "process.read",
+            "process.results",
+            "process.navigate"
+          ],
+          "items": {
+            "enum": [
+              "process.read",
+              "process.inputs",
+              "process.start",
+              "process.respond",
+              "process.review",
+              "process.action",
+              "process.cancel",
+              "process.results",
+              "process.navigate"
+            ],
+            "type": "string"
+          },
+          "title": "Capabilities",
+          "type": "array"
+        },
+        "navigation": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/NavigationTarget"
+          },
+          "maxItems": 256,
+          "title": "Navigation",
+          "type": "array"
+        },
+        "viewers": {
+          "default": [],
+          "items": {
+            "maxLength": 160,
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Viewers",
+          "type": "array"
+        }
+      },
+      "required": [
+        "ui_id",
+        "revision_id",
+        "title",
+        "process",
+        "client_version",
+        "kit_version"
+      ],
+      "title": "InterfaceManifest",
+      "type": "object"
+    },
+    "NavigationTarget": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "enum": [
+            "process",
+            "block",
+            "run",
+            "result",
+            "assessment",
+            "evidence"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "block_id": {
+          "anyOf": [
+            {
+              "maxLength": 160,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Block Id"
+        },
+        "run_id": {
+          "anyOf": [
+            {
+              "maxLength": 160,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Run Id"
+        },
+        "result_id": {
+          "anyOf": [
+            {
+              "maxLength": 482,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Result Id"
+        },
+        "assessment_id": {
+          "anyOf": [
+            {
+              "maxLength": 160,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Assessment Id"
+        },
+        "artifact_ref": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Artifact Ref"
+        }
+      },
+      "required": [
+        "kind"
+      ],
+      "title": "NavigationTarget",
+      "type": "object"
+    },
+    "PortableInterface": {
+      "additionalProperties": false,
+      "description": "An editable candidate, never a transferable trusted build or approval.",
+      "properties": {
+        "manifest": {
+          "$ref": "#/$defs/InterfaceManifest"
+        },
+        "source": {
+          "$ref": "#/$defs/SourceEnvelope"
+        },
+        "source_digest": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Source Digest",
+          "type": "string"
+        }
+      },
+      "required": [
+        "manifest",
+        "source",
+        "source_digest"
+      ],
+      "title": "PortableInterface",
+      "type": "object"
+    },
+    "ProcessRef": {
+      "additionalProperties": false,
+      "properties": {
+        "workspace_id": {
+          "maxLength": 160,
+          "minLength": 1,
+          "title": "Workspace Id",
+          "type": "string"
+        },
+        "source_path": {
+          "maxLength": 160,
+          "minLength": 1,
+          "title": "Source Path",
+          "type": "string"
+        },
+        "source_digest": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Source Digest",
+          "type": "string"
+        },
+        "semantic_digest": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Semantic Digest"
+        },
+        "source_contract": {
+          "default": "canonical-source",
+          "maxLength": 160,
+          "minLength": 1,
+          "title": "Source Contract",
+          "type": "string"
+        }
+      },
+      "required": [
+        "workspace_id",
+        "source_path",
+        "source_digest"
+      ],
+      "title": "ProcessRef",
+      "type": "object"
+    },
+    "SourceAsset": {
+      "additionalProperties": false,
+      "description": "Bounded local raster asset. No executable SVG, HTML or remote URL.",
+      "properties": {
+        "media_type": {
+          "enum": [
+            "image/png",
+            "image/jpeg",
+            "image/webp",
+            "image/gif"
+          ],
+          "title": "Media Type",
+          "type": "string"
+        },
+        "data_base64": {
+          "maxLength": 13981016,
+          "title": "Data Base64",
+          "type": "string"
+        }
+      },
+      "required": [
+        "media_type",
+        "data_base64"
+      ],
+      "title": "SourceAsset",
+      "type": "object"
+    },
+    "SourceEnvelope": {
+      "additionalProperties": false,
+      "properties": {
+        "files": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "maxProperties": 32,
+          "minProperties": 1,
+          "title": "Files",
+          "type": "object"
+        },
+        "assets": {
+          "additionalProperties": {
+            "$ref": "#/$defs/SourceAsset"
+          },
+          "maxProperties": 31,
+          "title": "Assets",
+          "type": "object"
+        }
+      },
+      "required": [
+        "files"
+      ],
+      "title": "SourceEnvelope",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "wright.workflow-bundle/1",
+      "default": "wright.workflow-bundle/1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "mode": {
+      "enum": [
+        "source",
+        "bundle"
+      ],
+      "title": "Mode",
+      "type": "string"
+    },
+    "source": {
+      "maxLength": 1048576,
+      "title": "Source",
+      "type": "string"
+    },
+    "source_digest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Source Digest",
+      "type": "string"
+    },
+    "layout": {
+      "anyOf": [
+        {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Layout"
+    },
+    "assets": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/BundleAsset"
+      },
+      "maxItems": 64,
+      "title": "Assets",
+      "type": "array"
+    },
+    "dependencies": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/BundleDependency"
+      },
+      "maxItems": 256,
+      "title": "Dependencies",
+      "type": "array"
+    },
+    "interfaces": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/PortableInterface"
+      },
+      "maxItems": 16,
+      "title": "Interfaces",
+      "type": "array"
+    }
+  },
+  "required": [
+    "mode",
+    "source",
+    "source_digest"
+  ],
+  "title": "WorkflowBundle",
+  "type": "object"
+}

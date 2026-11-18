@@ -1,0 +1,295 @@
+{
+  "$defs": {
+    "WorkflowBehaviorPolicy": {
+      "additionalProperties": false,
+      "description": "A declaration of delegated choices; never permission to change constraints.",
+      "properties": {
+        "assumption_policy": {
+          "default": "require_specified",
+          "enum": [
+            "document_reasonable",
+            "require_specified"
+          ],
+          "title": "Assumption Policy",
+          "type": "string"
+        },
+        "protected_requirements": {
+          "default": [],
+          "items": {
+            "maxLength": 160,
+            "minLength": 1,
+            "type": "string"
+          },
+          "maxItems": 256,
+          "title": "Protected Requirements",
+          "type": "array"
+        }
+      },
+      "title": "WorkflowBehaviorPolicy",
+      "type": "object"
+    },
+    "WorkflowInstructionAsset": {
+      "additionalProperties": false,
+      "description": "An embedded template with a checked body digest and declared variables.",
+      "properties": {
+        "schema_version": {
+          "const": "wright.instruction-asset/1",
+          "default": "wright.instruction-asset/1",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "id": {
+          "maxLength": 160,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "role": {
+          "enum": [
+            "workflow-task",
+            "image-generation",
+            "mcp-task",
+            "recovery",
+            "protocol",
+            "validation",
+            "chat",
+            "process-ui-author",
+            "resource-context"
+          ],
+          "title": "Role",
+          "type": "string"
+        },
+        "version": {
+          "maxLength": 160,
+          "minLength": 1,
+          "title": "Version",
+          "type": "string"
+        },
+        "body": {
+          "maxLength": 131072,
+          "title": "Body",
+          "type": "string"
+        },
+        "body_digest": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Body Digest",
+          "type": "string"
+        },
+        "origin": {
+          "maxLength": 160,
+          "minLength": 1,
+          "title": "Origin",
+          "type": "string"
+        },
+        "variables": {
+          "default": [],
+          "items": {
+            "maxLength": 160,
+            "minLength": 1,
+            "type": "string"
+          },
+          "maxItems": 64,
+          "title": "Variables",
+          "type": "array"
+        },
+        "execution_contract": {
+          "const": "wright.workflow-instructions/1",
+          "default": "wright.workflow-instructions/1",
+          "title": "Execution Contract",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "role",
+        "version",
+        "body",
+        "body_digest",
+        "origin"
+      ],
+      "title": "WorkflowInstructionAsset",
+      "type": "object"
+    },
+    "WorkflowInstructionBinding": {
+      "additionalProperties": false,
+      "properties": {
+        "role": {
+          "enum": [
+            "workflow-task",
+            "image-generation",
+            "mcp-task",
+            "recovery",
+            "protocol",
+            "validation",
+            "chat",
+            "process-ui-author",
+            "resource-context"
+          ],
+          "title": "Role",
+          "type": "string"
+        },
+        "asset_ids": {
+          "items": {
+            "maxLength": 160,
+            "minLength": 1,
+            "type": "string"
+          },
+          "maxItems": 64,
+          "minItems": 1,
+          "title": "Asset Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "role",
+        "asset_ids"
+      ],
+      "title": "WorkflowInstructionBinding",
+      "type": "object"
+    },
+    "WorkflowInstructionOverride": {
+      "additionalProperties": false,
+      "description": "Explicit layer semantics; no inference from the wording of instructions.",
+      "properties": {
+        "origin": {
+          "maxLength": 160,
+          "minLength": 1,
+          "title": "Origin",
+          "type": "string"
+        },
+        "roles": {
+          "default": [
+            "workflow-task",
+            "image-generation",
+            "mcp-task"
+          ],
+          "items": {
+            "enum": [
+              "workflow-task",
+              "image-generation",
+              "mcp-task",
+              "recovery",
+              "protocol",
+              "validation",
+              "chat",
+              "process-ui-author",
+              "resource-context"
+            ],
+            "type": "string"
+          },
+          "title": "Roles",
+          "type": "array"
+        },
+        "mode": {
+          "default": "append",
+          "enum": [
+            "append",
+            "replace"
+          ],
+          "title": "Mode",
+          "type": "string"
+        },
+        "text": {
+          "default": "",
+          "maxLength": 131072,
+          "title": "Text",
+          "type": "string"
+        },
+        "assumption_policy": {
+          "anyOf": [
+            {
+              "enum": [
+                "document_reasonable",
+                "require_specified"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Assumption Policy"
+        }
+      },
+      "required": [
+        "origin"
+      ],
+      "title": "WorkflowInstructionOverride",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "The portable instruction dependency collection frozen with saved source.",
+  "properties": {
+    "schema_version": {
+      "const": "wright.workflow-instructions/1",
+      "default": "wright.workflow-instructions/1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "profile_id": {
+      "maxLength": 160,
+      "minLength": 1,
+      "title": "Profile Id",
+      "type": "string"
+    },
+    "profile_version": {
+      "maxLength": 160,
+      "minLength": 1,
+      "title": "Profile Version",
+      "type": "string"
+    },
+    "action_intent_contract": {
+      "anyOf": [
+        {
+          "const": "wright.workflow-action-intent/1",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Action Intent Contract"
+    },
+    "assets": {
+      "items": {
+        "$ref": "#/$defs/WorkflowInstructionAsset"
+      },
+      "maxItems": 128,
+      "minItems": 1,
+      "title": "Assets",
+      "type": "array"
+    },
+    "bindings": {
+      "items": {
+        "$ref": "#/$defs/WorkflowInstructionBinding"
+      },
+      "maxItems": 16,
+      "minItems": 1,
+      "title": "Bindings",
+      "type": "array"
+    },
+    "policy": {
+      "$ref": "#/$defs/WorkflowBehaviorPolicy"
+    },
+    "layers": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/WorkflowInstructionOverride"
+      },
+      "maxItems": 16,
+      "title": "Layers",
+      "type": "array"
+    }
+  },
+  "required": [
+    "profile_id",
+    "profile_version",
+    "assets",
+    "bindings"
+  ],
+  "title": "WorkflowInstructionSet",
+  "type": "object"
+}
