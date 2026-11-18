@@ -16,4 +16,5 @@ dependencies = ["pydantic>=2.10,<3", "jsonschema>=4.23,<5"]
 packages = ["src/wright_workflow"]
 
 [tool.hatch.build.targets.sdist]
-include = ["/src", "/tests", "/examples", "/FORMAT.md", "/LICENSE", "/pyproject.toml"]
+ignore-vcs = true
+include = ["/src/wright_workflow/**/*.py", "/src/wright_workflow/schemas/*.json", "/tests/**/*.py", "/examples", "/FORMAT.md", "/LICENSE", "/pyproject.toml"]
