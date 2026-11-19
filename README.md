@@ -1,10 +1,21 @@
 # Wright
 
-Wright reads native `.workflow.wflow` definitions and executes their fixed MCP calls. A developer supplies the workflow, local server bindings and any declared inputs. The executor records the exact output each downstream step consumed and checkpoints each run in its own directory.
+Wright runs engineering workflows written in `.workflow.wflow` files. A workflow names the tools to call, their inputs and outputs, and the connections between steps. You supply the Model Context Protocol (MCP) servers. Wright checks the definition, calls the configured tools in order, and records which output each step consumed.
+
+The included example measures the distance between two points. One MCP server writes the coordinates `(0, 0)` and `(3, 4)` in millimetres. A second server reads the file and returns **5 mm**. Both servers run locally. Once installed, the example runs offline without an account or language model.
 
 ## Run the example
 
-From a checkout, activate a Python 3.11 or newer virtual environment and run:
+Use **Python 3.11 or newer**. From the GitHub source view containing this README, choose **Code → Download ZIP** and extract it, or use your Git checkout. Open a terminal in the directory containing `pyproject.toml` and `examples/handoff`.
+
+Create and activate a virtual environment.
+
+| Platform | Create | Activate |
+| --- | --- | --- |
+| Windows PowerShell | `py -3 -m venv .venv` | `.\.venv\Scripts\Activate.ps1` |
+| macOS or Linux | `python3 -m venv .venv` | `. .venv/bin/activate` |
+
+Then run these commands from the same directory.
 
 ```shell
 python -m pip install .
@@ -13,8 +24,18 @@ wright-workflow parse examples/handoff/length.workflow.wflow
 wright-workflow run examples/handoff/length.workflow.wflow --bindings bindings.json --run-dir runs/length
 ```
 
-The example starts two local MCP processes. The writer saves two points to a file. The reader consumes that file and reports a distance of **5 mm**. Its receipt includes the file's digest and the producer port. Running the same command again returns the saved result.
+`configure.py` writes local bindings for the two example servers using the active Python environment. `parse` prints the source digest, ordered blocks, ports and required features. `run` invokes the tools and prints a JSON receipt.
 
-See the [executable profile](FORMAT.md) for source and bundle rules, tool qualification, human input and interrupted calls. The command is `wright-workflow` and the import is `wright_workflow`. Both can coexist with the historical `wright-engineering` application. Existing installations can continue using their selected releases and workspace data.
+In the receipt, look for `"status": "completed"` and `"length_mm": 5.0` under `ports["reader.measurement"].value`. Open `runs/length/files/points.csv` to see the 18 bytes that the reader measured. Its SHA-256 appears on both the writer’s output and the reader’s consumed input. Running the same command again returns the recorded result. Choose a fresh run directory for a new measurement. [Example workflow and providers](examples/handoff)
 
-The [MIT license](LICENSE) covers this implementation and its Wright-derived profile. The profile links to the separate October interchange draft.
+## Use Wright with your own tools
+
+Write or obtain a workflow, configure the named MCP servers in a local bindings file, and supply JSON inputs for any declared input blocks. Wright also reads a `wright.workflow-bundle/1` JSON document containing the source and its declared dependencies. The CLI and Python API use the same parser and executor. [Inputs, tool bindings, Python API and resuming a run](docs/using-wright.md)
+
+## How Wright relates to the format standard
+
+The **Engineering Process Specification** is the draft interchange standard. It describes what an engineering process should preserve when it moves between tools. **Wright** is an MIT-licensed implementation with a documented executable subset. Its profile defines the source and bundle formats Wright reads today. The bundled schemas, example and conformance tests give other implementers concrete files and expected results. Independent interoperability remains an open milestone.
+
+- [Engineering Process Specification and current draft](https://github.com/burhop/engineering-process-spec)
+- [Wright executable profile](FORMAT.md) · [JSON schemas](src/wright_workflow/schemas) · [Conformance tests](tests)
+- [MIT license](LICENSE) · [Historical Wright releases](https://github.com/burhop/wright/releases)
