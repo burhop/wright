@@ -1,1 +1,0 @@
-The current heat-analysis outputs passed the pinned simplified-conduction validation profile, and revision_60 is the selected candidate; this does not constitute physical thermal qualification.

@@ -1,3 +1,0 @@
-wrightPrghFanPressure.C
-
-LIB = $(FOAM_USER_LIBBIN)/libwrightPiFan
