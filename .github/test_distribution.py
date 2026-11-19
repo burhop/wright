@@ -63,7 +63,7 @@ def verify(dist):
             f"{package['name']}=={package['version']}" for package in packages
         )), flush=True)
         subprocess.run([python, "-m", "pip", "check"], check=True, cwd=root)
-        check_quickstart(Path(python), source / "examples" / "handoff", root)
+        check_quickstart(Path(python), environment, source / "examples" / "handoff", root)
         subprocess.run([python, "-m", "pip", "install", "pytest"], check=True, cwd=root)
         checks = Path(__file__).resolve().parent
         test_env = {**os.environ, "PYTEST_DISABLE_PLUGIN_AUTOLOAD": "1"}
@@ -78,12 +78,24 @@ def verify(dist):
         )
 
 
-def check_quickstart(python, example, root):
+def check_provider_python(command, environment):
+    # A launcher can have multiple paths, and two venvs can link to the same binary.
+    if not command.is_absolute():
+        raise ValueError(f"Expected an absolute Python launcher path, got {command}")
+    prefix = Path(subprocess.check_output(
+        [command, "-I", "-c", "import sys; print(sys.prefix)"], text=True,
+    ).rstrip("\r\n"))
+    if not prefix.samefile(environment):
+        raise ValueError(f"Provider command {command} started {prefix}, expected {environment}")
+    print(f"Provider command {command} uses the selected environment {prefix}", flush=True)
+
+
+def check_quickstart(python, environment, example, root):
     bindings = root / "bindings.json"
     subprocess.run([python, example / "configure.py", bindings], cwd=root, check=True)
-    for server in json.loads(bindings.read_bytes()).values():
-        if Path(server["command"]) != python:
-            raise ValueError("The configured provider would run outside the selected interpreter path")
+    servers = json.loads(bindings.read_bytes()).values()
+    for command in {Path(server["command"]) for server in servers}:
+        check_provider_python(command, environment)
     cli = python.with_name("wright-workflow.exe" if os.name == "nt" else "wright-workflow")
     source = example / "length.workflow.wflow"
     parsed = json.loads(subprocess.check_output([cli, "parse", source], cwd=root))
