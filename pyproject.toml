@@ -1,140 +1,23 @@
-[project]
-name = "wright-engineering"
-version = "0.1.9"
-description = "Managed manager-neutral application and CLI for the Wright engineering workspace"
-requires-python = ">=3.11"
-readme = "README.md"
-license = {text = "MIT"}
-authors = [{ name = "Wright Project", email = "wright@makerengineer.com" }]
-keywords = ["wright", "engineering", "local-first", "agent", "docker"]
-classifiers = [
-    "Development Status :: 3 - Alpha",
-    "Environment :: Console",
-    "Intended Audience :: Developers",
-    "License :: OSI Approved :: MIT License",
-    "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.11",
-    "Programming Language :: Python :: 3.12",
-    "Programming Language :: Python :: 3.13",
-    "Programming Language :: Python :: 3.14",
-    "Topic :: Scientific/Engineering",
-]
-dependencies = [
-    "packaging>=24,<27",
-    "psutil>=6,<8",
-]
-
-[project.optional-dependencies]
-runtime = [
-    "fastapi>=0.115,<1",
-    "uvicorn[standard]>=0.30,<1",
-    "python-jose[cryptography]>=3.3,<4",
-    "passlib[bcrypt]>=1.7,<2",
-    "structlog>=24.1,<27",
-    "opentelemetry-api>=1.25,<2",
-    "opentelemetry-sdk>=1.25,<2",
-    "opentelemetry-exporter-otlp>=1.25,<2",
-    "pydantic>=2.7,<3",
-    "httpx>=0.28,<1",
-    "httpx-sse>=0.4,<1",
-    "PyYAML>=6,<7",
-    "mcp>=1.27.2,<2",
-    "jsonschema>=4.26,<5",
-    "python-multipart>=0.0.32,<1",
-]
-
-[project.urls]
-Homepage = "https://github.com/burhop/wright"
-Source = "https://github.com/burhop/wright"
-Issues = "https://github.com/burhop/wright/issues"
-Documentation = "https://burhop.github.io/wright/"
-Releases = "https://github.com/burhop/wright/releases"
-
-[project.scripts]
-wright = "wright_engineering.cli:main"
-
-[tool.uv.sources]
-wright-engineering = { workspace = true }
-wright-workspace-service = { workspace = true }
-
-[tool.uv.workspace]
-members = [
-    "apps/api",
-    "hermes-plugin-wright",
-    "packages/core",
-    "packages/agent_adapters",
-    "packages/tool_registry",
-    "packages/data_vault",
-    "packages/workspace_service",
-]
-
-[tool.pytest.ini_options]
-testpaths = [
-    "apps/api/tests",
-    "packages/agent_adapters/tests",
-    "packages/core/tests",
-    "packages/data_vault/tests",
-    "packages/tool_registry/tests",
-    "packages/workspace_service/tests",
-    "tests",
-]
-markers = [
-    "gateway: provider-neutral GatewayService contract and isolation tests",
-    "mcp_protocol: official MCP SDK transport and protocol compatibility tests",
-    "release: exact-artifact release identity, supply-chain, and recovery contracts",
-]
-
-[dependency-groups]
-dev = [
-    "build>=1.2,<2",
-    "pytest>=8.0",
-    "pytest-asyncio>=0.23",
-    "respx>=0.22",
-    "ruff>=0.4",
-]
-
 [build-system]
-requires = ["hatchling"]
+requires = ["hatchling>=1.27,<2"]
 build-backend = "hatchling.build"
 
-[tool.check-wheel-contents]
-# The public runtime is intentionally self-contained and bundles these package
-# roots in one wheel; W009 would otherwise reject that reviewed layout.
-ignore = ["W009"]
+[project]
+name = "wright-workflow"
+version = "0.1.0.dev2"
+description = "Native Wright workflow format, parser and reference executor"
+readme = "FORMAT.md"
+license = "MIT"
+license-files = ["LICENSE"]
+requires-python = ">=3.11"
+dependencies = ["pydantic>=2.10,<3", "jsonschema>=4.23,<5", "mcp>=1.30,<2"]
+
+[project.scripts]
+wright-workflow = "wright_workflow.cli:main"
 
 [tool.hatch.build.targets.wheel]
-packages = [
-    "src/wright_engineering",
-    "apps/api/src/api",
-    "packages/core/src/core",
-    "packages/agent_adapters/src/agent_adapters",
-    "packages/tool_registry/src/tool_registry",
-    "packages/data_vault/src/data_vault",
-    "packages/workspace_service/src/workspace_service",
-]
+packages = ["src/wright_workflow"]
 
 [tool.hatch.build.targets.sdist]
-include = [
-    "/src/wright_engineering",
-    "/apps/api/src/api",
-    "/packages/core/src/core",
-    "/packages/agent_adapters/src/agent_adapters",
-    "/packages/tool_registry/src/tool_registry",
-    "/packages/data_vault/src/data_vault",
-    "/packages/workspace_service/src/workspace_service",
-    "/README.md",
-    "/LICENSE",
-    "/pyproject.toml",
-]
-exclude = [
-    "/.gitignore",
-    "/.github",
-    "/.specify",
-    "/docker",
-    "/docs",
-    "/hermes-plugin-wright",
-    "/scripts",
-    "/specs",
-    "/tests",
-    "/windows-sandbox",
-]
+ignore-vcs = true
+include = ["/src/wright_workflow/**/*.py", "/src/wright_workflow/schemas/*.json", "/tests/**/*.py", "/examples", "/FORMAT.md", "/LICENSE", "/pyproject.toml"]

@@ -1,3 +1,0 @@
-import importlib
-name = "tool_registry"
-importlib.import_module(name)
