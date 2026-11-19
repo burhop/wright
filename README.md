@@ -8,11 +8,11 @@ The included example measures the distance between two points. One MCP server wr
 
 Use **Python 3.11 or newer**. From the GitHub source view containing this README, choose **Code → Download ZIP** and extract it, or use your Git checkout. Open a terminal in the directory containing `pyproject.toml` and `examples/handoff`.
 
-Create and activate a virtual environment.
+Create and activate a virtual environment. On Windows, check that `python --version` reports Python 3.11 or newer. If you installed a supported version through the Windows Python launcher, you can select it explicitly, for example with `py -3.13 -m venv .venv`.
 
 | Platform | Create | Activate |
 | --- | --- | --- |
-| Windows PowerShell | `py -3 -m venv .venv` | `.\.venv\Scripts\Activate.ps1` |
+| Windows PowerShell | `python -m venv .venv` | `.\.venv\Scripts\Activate.ps1` |
 | macOS or Linux | `python3 -m venv .venv` | `. .venv/bin/activate` |
 
 Then run these commands from the same directory.
