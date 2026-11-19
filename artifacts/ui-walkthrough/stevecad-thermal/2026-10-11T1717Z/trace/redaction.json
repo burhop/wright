@@ -1,5 +1,0 @@
-{
-  "status": "redacted",
-  "scope": "Shared redaction plus exact private credential-value removal; raw trace remains ignored.",
-  "credentials_in_public_trace": false
-}

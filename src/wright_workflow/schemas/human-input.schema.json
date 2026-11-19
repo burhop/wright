@@ -1,0 +1,92 @@
+{
+  "$defs": {
+    "HumanInputCondition": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "unresolved_fields",
+          "title": "Kind",
+          "type": "string"
+        },
+        "source": {
+          "maxLength": 321,
+          "pattern": "^[a-z][a-z0-9_]*\\.[a-z][a-z0-9_]*$",
+          "title": "Source",
+          "type": "string"
+        },
+        "fields": {
+          "items": {
+            "maxLength": 160,
+            "minLength": 1,
+            "type": "string"
+          },
+          "maxItems": 32,
+          "minItems": 1,
+          "title": "Fields",
+          "type": "array"
+        }
+      },
+      "required": [
+        "kind",
+        "source",
+        "fields"
+      ],
+      "title": "HumanInputCondition",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "version": {
+      "enum": [
+        1,
+        2,
+        3
+      ],
+      "title": "Version",
+      "type": "integer"
+    },
+    "kind": {
+      "const": "input",
+      "title": "Kind",
+      "type": "string"
+    },
+    "instructions": {
+      "maxLength": 8000,
+      "minLength": 1,
+      "title": "Instructions",
+      "type": "string"
+    },
+    "response_schema": {
+      "additionalProperties": true,
+      "title": "Response Schema",
+      "type": "object"
+    },
+    "output_port": {
+      "maxLength": 160,
+      "minLength": 1,
+      "title": "Output Port",
+      "type": "string"
+    },
+    "when": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/HumanInputCondition"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    }
+  },
+  "required": [
+    "version",
+    "kind",
+    "instructions",
+    "response_schema",
+    "output_port"
+  ],
+  "title": "HumanInputDeclaration",
+  "type": "object"
+}

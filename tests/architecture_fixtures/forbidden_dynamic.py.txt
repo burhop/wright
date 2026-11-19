@@ -1,2 +1,0 @@
-import importlib
-importlib.import_module("tool_registry.manager")

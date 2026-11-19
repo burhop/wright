@@ -1,6 +1,0 @@
-{
-  "server_id": "openfoam-mcp-webworn",
-  "status": "failed",
-  "diagnostic": "RuntimeError: direct and gateway safe-tool results differed",
-  "cleanup": "attempted"
-}

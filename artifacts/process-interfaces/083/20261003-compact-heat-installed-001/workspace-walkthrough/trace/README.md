@@ -1,1 +1,0 @@
-Authenticated traces remain in the private isolated fixture and are not published. The initial001 browser launch failed before navigation, so no screenshot or trace was possible. Later stopped observations preserve their actual captures.

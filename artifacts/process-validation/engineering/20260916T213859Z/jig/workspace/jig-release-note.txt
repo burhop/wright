@@ -1,1 +1,0 @@
-The current jig STEP revision was released after its pinned seat-geometry profile passed validation.

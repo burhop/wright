@@ -1,5 +1,0 @@
-{
-  "command": "node ../../node_modules/typescript/bin/tsc --noEmit -p tsconfig.app.json",
-  "cwd": "apps/web",
-  "exit_code": 0
-}

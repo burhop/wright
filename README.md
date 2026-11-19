@@ -1,340 +1,41 @@
-<p align="center">
-  <img src="docs/images/wright-logo.png" width="180" alt="Wright Logo">
-</p>
+# Wright
 
-<h1 align="center">Wright</h1>
+Wright runs engineering workflows written in `.workflow.wflow` files. A workflow names the tools to call, their inputs and outputs, and the connections between steps. You supply the Model Context Protocol (MCP) servers. Wright checks the definition, calls the configured tools in order, and records which output each step consumed.
 
-<p align="center">
-  <strong>Public-alpha, local-first agent orchestration for physical engineering.</strong>
-</p>
+The included example measures the distance between two points. One MCP server writes the coordinates `(0, 0)` and `(3, 4)` in millimetres. A second server reads the file and returns **5 mm**. Both servers run locally. Once installed, the example runs offline without an account or language model.
 
-<p align="center">
-  <a href="https://github.com/burhop/wright/actions/workflows/python-quality.yml?query=branch%3Amain"><img src="https://github.com/burhop/wright/actions/workflows/python-quality.yml/badge.svg?branch=main" alt="Production Python CI"></a>
-  <a href="https://github.com/burhop/wright/actions/workflows/frontend-quality.yml?query=branch%3Amain"><img src="https://github.com/burhop/wright/actions/workflows/frontend-quality.yml/badge.svg?branch=main" alt="Production Frontend CI"></a>
-  <a href="https://github.com/burhop/wright/actions/workflows/docker-pr.yml"><img src="https://github.com/burhop/wright/actions/workflows/docker-pr.yml/badge.svg" alt="OCI Pull Request Validation"></a>
-  <a href="https://github.com/burhop/wright/actions/workflows/docs-deploy.yml?query=branch%3Amain"><img src="https://github.com/burhop/wright/actions/workflows/docs-deploy.yml/badge.svg?branch=main" alt="Production Docs"></a>
-  <a href="https://github.com/burhop/wright/actions/workflows/public-alpha-safety.yml?query=branch%3Amain"><img src="https://github.com/burhop/wright/actions/workflows/public-alpha-safety.yml/badge.svg?branch=main" alt="Production Security Scan"></a>
-  <a href="https://github.com/burhop/wright/actions/workflows/release.yml?query=branch%3Amain"><img src="https://github.com/burhop/wright/actions/workflows/release.yml/badge.svg?branch=main" alt="Production Release"></a>
-  <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/license-MIT-yellow.svg" alt="License: MIT"></a>
-  <a href="https://www.python.org/downloads/"><img src="https://img.shields.io/badge/python-3.11%2B-blue.svg" alt="Python 3.11+"></a>
-  <a href="https://nodejs.org/"><img src="https://img.shields.io/badge/node-22%2B-green.svg" alt="Node 22+"></a>
-  <a href="https://github.com/burhop/wright/pkgs/container/wright"><img src="https://img.shields.io/badge/image-GHCR-blue" alt="GHCR image"></a>
-  <a href="https://pypi.org/project/wright-engineering/"><img src="https://img.shields.io/badge/pypi-wright--engineering-blue" alt="PyPI package"></a>
-  <a href="https://github.com/burhop/wright/discussions"><img src="https://img.shields.io/badge/discussions-GitHub-orange?logo=github" alt="GitHub Discussions"></a>
-  <a href="https://github.com/burhop/wright/stargazers"><img src="https://img.shields.io/github/stars/burhop/wright.svg?style=social" alt="GitHub stars"></a>
-</p>
+## Run the example
 
----
+Use **Python 3.11 or newer**. From the GitHub source view containing this README, choose **Code → Download ZIP** and extract it, or use your Git checkout. Open a terminal in the directory containing `pyproject.toml` and `examples/handoff`.
 
-## Public Alpha Status
+Create and activate a virtual environment. On Windows, check that `python --version` reports Python 3.11 or newer. If you installed a supported version through the Windows Python launcher, you can select it explicitly, for example with `py -3.13 -m venv .venv`.
 
-Wright is alpha software for developer testing, MCP porting, demos, and selected
-beta feedback. Expect rough edges, incomplete workflows, and changing APIs.
+| Platform | Create | Activate |
+| --- | --- | --- |
+| Windows PowerShell | `python -m venv .venv` | `.\.venv\Scripts\Activate.ps1` |
+| macOS or Linux | `python3 -m venv .venv` | `. .venv/bin/activate` |
 
-The status badges above are pinned to the production branch, `main`. Integration
-work happens on `dev`, so `dev` CI may fail while production remains green; use
-the GitHub Actions branch filter when checking a specific branch.
+Then run these commands from the same directory.
 
-Wright is bring-your-own-AI. The repository and Docker image do not bundle an
-LLM, API key, local model, hosted model, or paid engineering backend. Configure
-`LLM_API_URL`, `LLM_API_KEY`, and `LLM_API_MODEL` for an OpenAI-compatible
-endpoint, a local model server, or a hosted provider.
-
-MCP-specific host software such as FreeCAD, OpenSCAD, CalculiX, Blender, vendor
-CAD systems, license managers, or hardware drivers is installed only for the
-selected MCP validation or usage case. It is not part of the base Docker image.
-Engineering MCP server validation follows
-[the clean-container process](docs/mcp-catalog/mcp-server-testing-process.md).
-
-## Why Wright?
-
-Engineering teams need AI-assisted workflows without handing every design to a
-single hosted black box. Wright coordinates agents and deterministic tools while
-leaving LLM/provider choice, credentials, licenses, and host software under the
-operator's control.
-
-Engineers build a process with blocks, connections and source, then carry out
-that same process in a working view inside a Wright workspace tab. They can
-provide inputs, inspect designs and calculations, trace findings to their evidence,
-and respond at declared questions or review steps. An optional AI-created interface
-can present the job as a dashboard, comparison or guided sequence.
-
-The [workflow platform vision](docs/design/workflow-platform-vision.md) and
-[process UI design](docs/design/process-apps.md) keep these experiences on shared
-execution, validation and storage services. Engineering tools remain independent
-MCP providers. Manufacturing is one use; analysis, investigation and documentation
-can use different workflow structures.
-
-The first public alpha is aimed at developers, MCP porters, demo users, and
-selected beta feedback. Local and hybrid deployments are supported, but real
-engineering toolchains still require explicit configuration.
-
-## What Works Today
-
-- A graphical workflow editor with typed connections, source editing, inspectors,
-  undo/redo and saved definitions.
-- Common working views for inputs, progress, results and deliberate user decisions;
-  optional AI-created interfaces that can be previewed, saved and reused.
-- Inspectable workflow/step instructions and assumption policy, saved with the
-  workflow. Export/import includes required supported dependencies and diagnoses
-  capabilities that must be configured in the receiving workspace.
-- Durable runs, declared input/review checkpoints, output checks and exact evidence
-  links. A successful tool call alone does not establish an engineering pass.
-- Ten versioned engineering workflow templates that create editable workspace
-  workflows with recorded origins, readiness disclosures, and durable approval
-  checkpoints.
-- MCP tool registry metadata and selected-server validation paths.
-- Deterministic CAD, CAE, CAM, and calculation tool actuation through adapters.
-- Docker appliance for the Wright API, static web UI, Hermes profile/bootstrap,
-  and general validation tooling.
-- A manager-neutral packaged runtime with a production Hermes Git adapter and
-  a direct MCP profile for Codex. Using Codex as Wright's replacement agent
-  runtime is a separate integration project; OpenClaw integration remains future work.
-- BYO-AI configuration for local or hosted OpenAI-compatible endpoints.
-
-The Docker appliance is not a complete CAD/CAE/CAM workstation and does not
-silently install every possible backend.
-
-These descriptions cover the current development source. Published releases may
-lag it. The workflow editor and process views require their build configuration;
-see [the current-source setup and user guide](docs/workflows/process-working-interfaces.md).
-Provider availability, licensing and engineering acceptance must be established
-for the selected workflow.
-
-## User Interface
-
-1. **Build:** use **Workflows** for a blank process, or open a saved workflow or
-   template. Add inputs and tasks, select workspace MCP providers, and connect
-   the outputs that the next step needs.
-2. **Prepare:** save, choose **Open working view**, supply inputs and resolve
-   readiness findings before starting.
-3. **Follow and inspect:** view progress, open actual output files and validation
-   evidence, and answer only the interactions declared by the process.
-4. **Return:** use the saved run's working view to inspect the same durable run.
-   Opening it does not repeat completed work.
-
-See the [illustrated workspace guide](docs/workflows/engineering-workspace-tour.md)
-and [working-view reference](docs/workflows/process-working-interfaces.md) for
-current controls, screenshots and limitations. Agent chat, workspace files and
-the tool registry support these journeys in the same workspace.
-
-![A declared engineering review in Wright](docs/images/workflows/working-review.png)
-
-*Current development UI: the saved process is waiting for its declared intent
-review. Evidence is available; the design has not been approved or manufactured.*
-
-## Quick Start
-
-### Native Hermes (Primary User Path)
-
-Hermes is Wright's primary manager path. Hermes uses Git for plugin installation,
-so Git is its one adapter prerequisite; Wright itself does not require Docker,
-Node.js, npm, a Wright checkout, `WRIGHT_REPO_DIR`, or a manual Python package
-command. Install the thin production adapter through Hermes:
-
-```text
-hermes plugins install https://github.com/burhop/hermes-plugin-wright --enable
+```shell
+python -m pip install .
+python examples/handoff/configure.py bindings.json
+wright-workflow parse examples/handoff/length.workflow.wflow
+wright-workflow run examples/handoff/length.workflow.wflow --bindings bindings.json --run-dir runs/length
 ```
 
-Then use `/wright start`, `/wright status`, `/wright doctor`, `/wright stop`,
-`/wright update`, `/wright rollback`, `/wright uninstall`, and the separately
-confirmed `/wright purge`. See the
-[native Hermes guide](docs/getting-started/hermes-plugin.md) for data behavior
-and the live availability gate.
+`configure.py` writes local bindings for the two example servers using the active Python environment. `parse` prints the source digest, ordered blocks, ports and required features. `run` invokes the tools and prints a JSON receipt.
 
-### Docker Appliance
+In the receipt, look for `"status": "completed"` and `"length_mm": 5.0` under `ports["reader.measurement"].value`. Open `runs/length/files/points.csv` to see the 18 bytes that the reader measured. Its SHA-256 appears on both the writer’s output and the reader’s consumed input. Running the same command again returns the recorded result. Choose a fresh run directory for a new measurement. [Example workflow and providers](examples/handoff)
 
-Docker is the mandatory turnkey path for users who want a working appliance
-without Hermes setup. Published release images use `burhop/wright:<tag>` on Docker Hub and
-`ghcr.io/burhop/wright:<tag>` on GHCR.
+## Use Wright with your own tools
 
-With a release image and an env file:
+Write or obtain a workflow, configure the named MCP servers in a local bindings file, and supply JSON inputs for any declared input blocks. Wright also reads a `wright.workflow-bundle/1` JSON document containing the source and its declared dependencies. The CLI and Python API use the same parser and executor. [Inputs, tool bindings, Python API and resuming a run](docs/using-wright.md)
 
-```bash
-cp docker/.env.example docker/.env
-# Edit docker/.env and set LLM_API_URL, LLM_API_KEY, and LLM_API_MODEL
-docker run --rm -p 127.0.0.1:8080:8000 --env-file docker/.env burhop/wright:<tag>
-```
+## How Wright relates to the format standard
 
-From a source checkout while developing or before a release image is cut:
+The **Engineering Process Specification** is the draft interchange standard. It describes what an engineering process should preserve when it moves between tools. **Wright** is an MIT-licensed implementation with a documented executable subset. Its profile defines the source and bundle formats Wright reads today. The bundled schemas, example and conformance tests give other implementers concrete files and expected results. Independent interoperability remains an open milestone.
 
-```bash
-git clone https://github.com/burhop/wright.git
-cd wright
-cp docker/.env.example docker/.env
-# Edit docker/.env and set LLM_API_URL, LLM_API_KEY, and LLM_API_MODEL
-docker compose -f docker-compose.minimal.yml up -d --build
-```
-
-Then open:
-
-```text
-http://localhost:8080
-```
-
-The default `docker-compose.yml` also starts Jaeger and maps Wright to
-`http://localhost:8000`. See the
-[Docker quickstart](docs/getting-started/quickstart-docker.md) and
-[Docker deployment guide](docs/user-guide/docker.md) for LAN access, local model
-server, persistent volume, and cleanup examples.
-
-An experimental MCP-enabled appliance flavor is documented in the
-[MCP Docker quickstart](docs/getting-started/quickstart-docker-mcp.md). It keeps
-the same Wright UI access pattern but uses separate default volumes and a
-reviewed MCP bundle.
-The managed platform image matrix is documented in the
-[Docker image family guide](docs/getting-started/docker-image-family.md).
-
-For development outside Docker, see [CONTRIBUTING.md](CONTRIBUTING.md).
-
-## Images and Releases
-
-Public release images are published as:
-
-```text
-burhop/wright:<tag>
-ghcr.io/burhop/wright:<tag>
-```
-
-`wright-engineering` is the one complete public application distribution used
-by every supported manager adapter. The Hermes repository is a standard-library-only
-Git adapter; Codex connects directly through an MCP profile. Neither adapter
-duplicates Wright lifecycle or application code, and the public wheel
-has no dependency on private `wright-*` packages.
-
-Every production release requires both the published native Hermes lifecycle
-and byte-identical Docker publication to GHCR and Docker Hub. Prerelease tags
-such as `v0.1.0-alpha.1` do not move `latest`; stable tags may.
-
-## Architecture
-
-Wright is a modular monorepo with a FastAPI gateway, React/Vite web UI,
-agent-neutral workspace services, Hermes and future runtime adapters, an MCP
-tool registry, and local workspace state.
-
-### Workspace Artifacts
-
-Models, drawings, images and verification documents are kept in the workspace
-volume or checkout you control. Open them through **Workspace Files** or a
-workflow's results. SQLite stores durable run state and artifact references;
-files retain their exact revisions and remain available after a view closes.
-
-```mermaid
-flowchart TD
-    User([User Web Browser]) -->|HTTP / WebSockets| API[FastAPI API Gateway]
-    API -->|Thin HTTP translation| Workspace[Workspace Service]
-    Workspace -->|Runtime selection and context| Agent[Agent Adapters]
-    Workspace -->|Tool assignment and policy| MCP[MCP Tool Registry]
-    API -->|Catalog and lifecycle reads| MCP
-    Agent -->|Wright gateway protocol| MCP
-    MCP -->|Selected server| Tools[CAD, CAE, CAM, calculators]
-    API -->|State, files, and logs| LocalState[SQLite and local workspace files]
-```
-
-Hermes remains the default first-class adapter, but `.hermes.md` and
-`~/.hermes` profile behavior lives in Hermes adapter/profile code. Generic
-workspace lifecycle code delegates context materialization through
-`packages/agent_adapters` contracts so OpenClaw and future engines can plug in
-without inheriting Hermes file formats.
-
-### Repository Structure
-
-```text
-wright/
-|-- apps/
-|   |-- api/                    # FastAPI gateway
-|   `-- web/                    # React + Vite frontend
-|-- packages/
-|   |-- core/                   # Shared domain models and logging
-|   |-- agent_adapters/         # Adapter pattern for agent runtimes
-|   |-- workspace_service/      # Workspace application use cases and local adapters
-|   |-- tool_registry/          # MCP registry and validation logic
-|   `-- data_vault/             # SQLite lifecycle, repositories, and secret storage
-|-- hermes-plugin-wright/       # Wright Hermes plugin compatibility package
-|-- tests/
-|   |-- ui-integration/         # Playwright integration tests
-|   `-- e2e/                    # Smoke and system tests
-|-- docker/                     # Dockerfile and supervisord configuration
-|-- docs/                       # Documentation site content and runbooks
-|-- specs/                      # Spec Kit feature artifacts
-`-- .github/                   # Community templates and CI workflows
-```
-
-Refer to [docs/virtual_engineer_architecture.pdf](docs/virtual_engineer_architecture.pdf)
-for the formal architecture analysis and [constitution.md](constitution.md) for
-core project engineering standards.
-
-## Development
-
-Run the main local quality gates:
-
-```bash
-uv run --extra runtime --extra engineering-models python -m pytest
-uv run ruff check apps/api/ packages/
-uv run ruff format --check apps/api/ packages/
-npm ci
-npx -w apps/web eslint .
-npx prettier --check apps/web/
-npx tsc --noEmit -p apps/web/tsconfig.app.json
-npm run test --workspace=apps/web
-npm run build --workspace=apps/web
-mkdocs build --strict
-```
-
-Run repository-wide and history-sensitive checks from a full clone. If an
-existing checkout is shallow, fetch the missing history first with
-`git fetch --unshallow` (or use `git fetch --depth=<larger-number>` when a full
-history download is impractical).
-
-Helper scripts live in [scripts/](scripts), including public-alpha leak scans,
-Docker smoke tests, CI failure log fetching, and release checks.
-
-## Spec Kit
-
-Wright uses [spec-kit](https://github.com/github/spec-kit) for design-led
-feature work. Most substantive changes should start with a feature spec, plan,
-tasks, and implementation checklist under `specs/`.
-
-## Contributing
-
-Contributions are welcome. Please read [CONTRIBUTING.md](CONTRIBUTING.md) for
-local setup, branch discipline, testing, pull request expectations, and the
-Spec Kit workflow.
-
-Looking for a place to start? Browse issues labeled
-[`good-first-issue`](https://github.com/burhop/wright/labels/good-first-issue).
-
-## Community and Support
-
-- Ask usage questions in
-  [GitHub Discussions](https://github.com/burhop/wright/discussions).
-- Contact maintainers for support, sponsorship, and partner questions at
-  `wright@makerengineer.com`.
-- Report reproducible bugs with
-  [GitHub Issues](https://github.com/burhop/wright/issues/new/choose).
-- Report security issues privately using [SECURITY.md](SECURITY.md); do not
-  open public security issues.
-
-## Support and Sponsorship
-
-Wright is open source, but integration testing, model evaluation, and engineering
-tool adapters require ongoing resources.
-
-- API, token, and compute sponsorships help cover continuous LLM testing.
-- Hardware contributions help test local-first and air-gapped deployments.
-- Tool ecosystem contributions help expand the MCP catalog safely.
-- Code, docs, and Spec Kit contributions help harden the public alpha.
-
-[Sponsor Wright on GitHub](https://github.com/sponsors/burhop)
-
-## License
-
-This project is licensed under the MIT License. See [LICENSE](LICENSE).
-
-## Star History and Contributors
-
-[![Star History Chart](https://api.star-history.com/svg?repos=burhop/wright&type=Date)](https://github.com/burhop/wright)
-
-<a href="https://github.com/burhop/wright/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=burhop/wright" alt="Contributors list">
-</a>
+- [Engineering Process Specification and current draft](https://github.com/burhop/engineering-process-spec)
+- [Wright executable profile](FORMAT.md) · [JSON schemas](src/wright_workflow/schemas) · [Conformance tests](tests)
+- [MIT license](LICENSE) · [Historical Wright releases](https://github.com/burhop/wright/releases)
