@@ -1,0 +1,9 @@
+# The first shared release was built with these source bytes on Windows.
+/src/wright_workflow/** text eol=crlf
+/tests/** text eol=crlf
+/examples/handoff/** text eol=crlf
+/.gitignore text eol=crlf
+/FORMAT.md text eol=crlf
+/LICENSE text eol=crlf
+/pyproject.toml text eol=crlf
+/scripts/*.sh text eol=lf
