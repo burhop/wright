@@ -32,7 +32,8 @@ def verify(dist):
             if ".." in path.parts or path.parts[0] not in {"wright_workflow", wheel.name.split("-py", 1)[0] + ".dist-info"}:
                 raise ValueError(f"Unexpected wheel member {member}")
     with tempfile.TemporaryDirectory() as directory:
-        root = Path(directory)
+        # macOS can put TMPDIR under /var, a symlink to /private/var.
+        root = Path(directory).resolve(strict=True)
         with tarfile.open(archive) as contents:
             prefix = archive.name.removesuffix(".tar.gz")
             for item in contents:
