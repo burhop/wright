@@ -6,4 +6,6 @@ The gate creates a temporary environment, builds the sdist and its wheel, checks
 
 Open a draft pull request with the gate result and both artifact digests. CI builds one distribution pair and tests those same artifacts on Windows, Linux and macOS with Python 3.11 and 3.13. Review the installed test results before merging. Package publication requires its own release decision.
 
-The reviewed 0.1.0.dev2 artifacts use Hatchling 1.31.0 and Windows line endings for the shipped source files. Git attributes preserve those exact example and source bytes across checkouts. The gate compares the built artifacts with the recorded SHA-256 digests in `.github/shared-distributions.sha256`.
+The reviewed 0.1.0.dev2 artifacts use Hatchling 1.31.0 and Windows line endings for the shipped source files. Git attributes preserve those exact example and source bytes across checkouts. The gate requires both filenames and SHA-256 digests to match `.github/shared-distributions.sha256`.
+
+Each installed job creates an empty virtual environment, records the engine's resolved runtime dependencies before adding pytest, and runs `pip check`. It checks imports in the installed Python files and loads each module from the wheel. During conformance the engine process rejects commercial module imports and external address lookups or connections. The two example MCP providers run as separate caller-configured stdio processes.

@@ -2,6 +2,8 @@
 
 import argparse
 import hashlib
+import json
+import os
 from pathlib import Path, PurePosixPath
 import subprocess
 import sys
@@ -12,14 +14,17 @@ import zipfile
 
 
 def verify(dist):
+    dist = dist.resolve(strict=True)
     wheel, = dist.glob("*.whl")
     archive, = dist.glob("*.tar.gz")
     expected = pinned_digests()
+    if {p.name for p in dist.iterdir()} != expected.keys() or {wheel.name, archive.name} != expected.keys():
+        raise ValueError("The distribution directory must contain exactly the reviewed wheel and sdist")
     for artifact in (wheel, archive):
         with artifact.open("rb") as stream:
             digest = hashlib.file_digest(stream, "sha256").hexdigest()
         print(f"{artifact.name}  sha256 {digest}", flush=True)
-        if artifact.name in expected and digest != expected[artifact.name]:
+        if digest != expected[artifact.name]:
             raise ValueError(f"{artifact.name} differs from the reviewed shared artifact")
     with zipfile.ZipFile(wheel) as contents:
         for member in contents.namelist():
@@ -44,10 +49,32 @@ def verify(dist):
                     raise ValueError(f"Unexpected source distribution file {relative}")
             contents.extractall(root, filter="data")
         source, = root.iterdir()
-        subprocess.run([sys.executable, "-m", "pip", "install", str(wheel)], check=True, cwd=root)
+        environment = root / "installed"
+        # The example records the resolved provider interpreter in its reviewed binding.
+        builder = venv.EnvBuilder(with_pip=True, symlinks=False)
+        builder.create(environment)
+        python = builder.ensure_directories(environment).env_exec_cmd
+        report = root / "installation.json"
         subprocess.run(
-            [sys.executable, "-I", "-m", "pytest", "-q", str(source / "tests")],
+            [python, "-m", "pip", "install", "--report", str(report), str(wheel)],
             check=True, cwd=root,
+        )
+        packages = [entry["metadata"] for entry in json.loads(report.read_bytes())["install"]]
+        print("Installed runtime dependencies:", ", ".join(sorted(
+            f"{package['name']}=={package['version']}" for package in packages
+        )), flush=True)
+        subprocess.run([python, "-m", "pip", "check"], check=True, cwd=root)
+        subprocess.run([python, "-m", "pip", "install", "pytest"], check=True, cwd=root)
+        checks = Path(__file__).resolve().parent
+        test_env = {**os.environ, "PYTEST_DISABLE_PLUGIN_AUTOLOAD": "1"}
+        subprocess.run(
+            [python, "-I", "-m", "pytest", "-q", str(checks / "test_boundaries.py")],
+            check=True, cwd=root, env=test_env,
+        )
+        subprocess.run(
+            [python, "-I", str(checks / "check_installed.py"),
+             str(report), str(source / "tests")],
+            check=True, cwd=root, env=test_env,
         )
 
 
@@ -73,12 +100,7 @@ def check_dev_push():
         scratch = Path(directory)
         dist = scratch / "artifacts"
         build_in_isolation(dist)
-        builder = venv.EnvBuilder(with_pip=True)
-        environment = scratch / "installed"
-        builder.create(environment)
-        python = builder.ensure_directories(environment).env_exec_cmd
-        subprocess.run([python, "-m", "pip", "install", "pytest"], check=True)
-        subprocess.run([python, "-I", str(Path(__file__).resolve()), "--dist", str(dist)], check=True, cwd=scratch)
+        verify(dist)
 
 
 if __name__ == "__main__":
