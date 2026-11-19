@@ -50,8 +50,7 @@ def verify(dist):
             contents.extractall(root, filter="data")
         source, = root.iterdir()
         environment = root / "installed"
-        # The example records the resolved provider interpreter in its reviewed binding.
-        builder = venv.EnvBuilder(with_pip=True, symlinks=False)
+        builder = venv.EnvBuilder(with_pip=True, symlinks=os.name != "nt")
         builder.create(environment)
         python = builder.ensure_directories(environment).env_exec_cmd
         report = root / "installation.json"
@@ -64,6 +63,7 @@ def verify(dist):
             f"{package['name']}=={package['version']}" for package in packages
         )), flush=True)
         subprocess.run([python, "-m", "pip", "check"], check=True, cwd=root)
+        check_quickstart(Path(python), source / "examples" / "handoff", root)
         subprocess.run([python, "-m", "pip", "install", "pytest"], check=True, cwd=root)
         checks = Path(__file__).resolve().parent
         test_env = {**os.environ, "PYTEST_DISABLE_PLUGIN_AUTOLOAD": "1"}
@@ -76,6 +76,32 @@ def verify(dist):
              str(report), str(source / "tests")],
             check=True, cwd=root, env=test_env,
         )
+
+
+def check_quickstart(python, example, root):
+    bindings = root / "bindings.json"
+    subprocess.run([python, example / "configure.py", bindings], cwd=root, check=True)
+    for server in json.loads(bindings.read_bytes()).values():
+        if Path(server["command"]) != python:
+            raise ValueError("The configured provider would run outside the selected interpreter path")
+    cli = python.with_name("wright-workflow.exe" if os.name == "nt" else "wright-workflow")
+    source = example / "length.workflow.wflow"
+    parsed = json.loads(subprocess.check_output([cli, "parse", source], cwd=root))
+    if parsed["source_digest"] != hashlib.sha256(source.read_bytes()).hexdigest():
+        raise ValueError("The installed CLI parsed a different source")
+    run_dir = root / "quickstart"
+    receipt = json.loads(subprocess.check_output(
+        [cli, "run", source, "--bindings", bindings, "--run-dir", run_dir], cwd=root,
+    ))
+    if receipt["status"] != "completed":
+        raise ValueError(f"The installed quickstart stopped at {receipt['status']}")
+    produced = receipt["ports"]["writer.coordinates"]
+    consumed = receipt["attempts"][1]["consumed"]["writer.coordinates"]
+    digest = hashlib.sha256((run_dir / "files" / produced["path"]).read_bytes()).hexdigest()
+    measured = receipt["ports"]["reader.measurement"]["value"]
+    if produced != consumed or produced["sha256"] != digest or measured != {"length_mm": 5, "sha256": digest}:
+        raise ValueError("The installed CLI handoff did not match the measured file")
+    print(f"Installed quickstart: {produced['size']} bytes, SHA-256 {digest}, {measured['length_mm']} mm", flush=True)
 
 
 def pinned_digests():

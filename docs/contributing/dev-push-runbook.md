@@ -2,7 +2,7 @@
 
 Before pushing a feature branch for a pull request to `dev`, run `scripts/check-dev-push.ps1` on Windows or `sh scripts/check-dev-push.sh` on Unix. Use Python 3.11 or newer with the current security patches. Windows accepts `-Python` to select an interpreter. The Unix script accepts the `PYTHON` environment variable.
 
-The gate creates a temporary environment, builds the sdist and its wheel, checks their contents, installs the wheel and runs the tests from the unpacked sdist. The tests exercise actual MCP subprocesses and a file handoff. Configure pip with a local wheelhouse for offline runs. Point the operating system's temporary directory at the desired build volume.
+The gate builds the sdist and its wheel, checks their contents and installs the wheel in a new virtual environment. Before adding test dependencies, it runs the quickstart from the sdist with the installed `wright-workflow` command and verifies the file received by the second MCP provider. It uses the platform default launcher layout, including linked Python executables on Linux and macOS. Configure pip with a local wheelhouse for offline runs. Point the operating system's temporary directory at the desired build volume.
 
 Open a draft pull request with the gate result and both artifact digests. CI builds one distribution pair and tests those same artifacts on Windows, Linux and macOS with Python 3.11 and 3.13. Review the installed test results before merging. Package publication requires its own release decision.
 

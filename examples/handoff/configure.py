@@ -26,7 +26,8 @@ REVIEWED = {
 def configuration():
     here = Path(__file__).resolve().parent
     program = here / "provider.py"
-    python = Path(sys.executable).resolve()
+    # Preserve the virtual environment's launcher path when it points to a base Python.
+    python = Path(sys.executable).absolute()
     pins = {
         str(path): hashlib.sha256(path.read_bytes()).hexdigest()
         for path in (python, program)
