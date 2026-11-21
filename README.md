@@ -1,4 +1,33 @@
-# Wright
+<p align="center">
+  <img src="docs/images/wright-logo.jpg" width="180" alt="Wright logo">
+</p>
+
+<h1 align="center">Wright</h1>
+
+<p align="center">
+  <strong>Public-alpha, local-first agent orchestration for physical engineering.</strong>
+</p>
+
+<p align="center">
+  <a href="https://github.com/burhop/wright/actions/workflows/ci.yml?query=branch%3Amain"><img src="https://github.com/burhop/wright/actions/workflows/ci.yml/badge.svg?branch=main" alt="Production CI"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-yellow.svg" alt="MIT license"></a>
+  <a href="https://www.python.org/downloads/"><img src="https://img.shields.io/badge/python-3.11%2B-blue.svg" alt="Python 3.11+"></a>
+  <a href="docs/using-wright.md"><img src="https://img.shields.io/badge/docs-Usage_guide-blue" alt="Usage guide"></a>
+  <a href="https://github.com/burhop/engineering-process-spec"><img src="https://img.shields.io/badge/standard-Engineering_Process_Specification-blue" alt="Engineering Process Specification"></a>
+  <a href="https://github.com/burhop/wright/discussions"><img src="https://img.shields.io/badge/discussions-GitHub-orange?logo=github" alt="GitHub Discussions"></a>
+  <a href="https://github.com/burhop/wright"><img src="https://img.shields.io/github/stars/burhop/wright.svg?style=social" alt="GitHub stars"></a>
+</p>
+
+<details>
+<summary>Builds, packages and tooling for earlier Wright releases</summary>
+
+The [earlier releases](https://github.com/burhop/wright/releases) shipped the [wright-engineering package on PyPI](https://pypi.org/project/wright-engineering/) and the [Wright container image on GHCR](https://github.com/burhop/wright/pkgs/container/wright). Their frontend used [Node.js 22+](https://nodejs.org/).
+
+View the archived workflows for [Python CI](https://github.com/burhop/wright/blob/4f370caa9743f869f769f8c8e2332b6b63be438b/.github/workflows/python-quality.yml) · [Frontend CI](https://github.com/burhop/wright/blob/4f370caa9743f869f769f8c8e2332b6b63be438b/.github/workflows/frontend-quality.yml) · [OCI pull request validation](https://github.com/burhop/wright/blob/4f370caa9743f869f769f8c8e2332b6b63be438b/.github/workflows/docker-pr.yml) · [Docs](https://github.com/burhop/wright/blob/4f370caa9743f869f769f8c8e2332b6b63be438b/.github/workflows/docs-deploy.yml) · [Security scan](https://github.com/burhop/wright/blob/4f370caa9743f869f769f8c8e2332b6b63be438b/.github/workflows/public-alpha-safety.yml) · [Release](https://github.com/burhop/wright/blob/4f370caa9743f869f769f8c8e2332b6b63be438b/.github/workflows/release.yml).
+
+</details>
+
+---
 
 Wright runs engineering workflows written in `.workflow.wflow` files. A workflow names the tools to call, their inputs and outputs, and the connections between steps. You supply the Model Context Protocol (MCP) servers. Wright checks the definition, calls the configured tools in order, and records which output each step consumed.
 
